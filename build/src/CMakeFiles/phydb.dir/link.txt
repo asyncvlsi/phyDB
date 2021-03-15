@@ -1,2 +1,0 @@
-/usr/bin/ar qc libphydb.a  CMakeFiles/phydb.dir/DataType.cpp.o CMakeFiles/phydb.dir/layer.cpp.o CMakeFiles/phydb.dir/site.cpp.o CMakeFiles/phydb.dir/spacingtable.cpp.o
-/usr/bin/ranlib libphydb.a
