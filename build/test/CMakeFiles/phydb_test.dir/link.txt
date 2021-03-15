@@ -1,0 +1,1 @@
+/opt/apps/ossw/applications/gcc/gcc-8.2/ubt18/bin/g++     CMakeFiles/phydb_test.dir/test.cpp.o  -o phydb_test  -L/net/ohm/export/cdgc/michael/EDA/asyncvlsi/PhyDB/test/../src -Wl,-rpath,/net/ohm/export/cdgc/michael/EDA/asyncvlsi/PhyDB/test/../src ../src/libphydb.a 

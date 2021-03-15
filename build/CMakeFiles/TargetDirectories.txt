@@ -1,0 +1,9 @@
+/net/ohm/export/cdgc/michael/EDA/asyncvlsi/PhyDB/build/CMakeFiles/rebuild_cache.dir
+/net/ohm/export/cdgc/michael/EDA/asyncvlsi/PhyDB/build/CMakeFiles/PhyDB_test.dir
+/net/ohm/export/cdgc/michael/EDA/asyncvlsi/PhyDB/build/CMakeFiles/edit_cache.dir
+/net/ohm/export/cdgc/michael/EDA/asyncvlsi/PhyDB/build/test/CMakeFiles/rebuild_cache.dir
+/net/ohm/export/cdgc/michael/EDA/asyncvlsi/PhyDB/build/test/CMakeFiles/phydb_test.dir
+/net/ohm/export/cdgc/michael/EDA/asyncvlsi/PhyDB/build/test/CMakeFiles/edit_cache.dir
+/net/ohm/export/cdgc/michael/EDA/asyncvlsi/PhyDB/build/src/CMakeFiles/rebuild_cache.dir
+/net/ohm/export/cdgc/michael/EDA/asyncvlsi/PhyDB/build/src/CMakeFiles/phydb.dir
+/net/ohm/export/cdgc/michael/EDA/asyncvlsi/PhyDB/build/src/CMakeFiles/edit_cache.dir
