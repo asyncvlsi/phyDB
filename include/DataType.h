@@ -7,10 +7,10 @@ namespace phydb {
 
 template <typename T>
 class Point2D {
-    public: 
+    public:
         T x;
         T y;
- 
+
         Point2D( ): x(0), y(0) { }
         Point2D(T xx, T yy): x(xx), y(yy) { }
         void set(T xx, T yy) {
@@ -42,7 +42,7 @@ using Size2D = Point2D<T>;
 
 template <typename T>
 class Point3D {
-    public: 
+    public:
         T x;
         T y;
         T z;
@@ -81,10 +81,10 @@ class Point3D {
 
 template <typename T>
 class Rect2D {
-    public: 
+    public:
         Point2D<T> ll; //lower left
         Point2D<T> ur; //upper right
-        
+
         Rect2D( ): ll(0, 0), ur(0, 0) { }
         Rect2D(Point2D<T> LL, Point2D<T> UR): ll(LL), ur(UR) {
             assert(this->isLegal());
@@ -110,7 +110,7 @@ class Rect2D {
         bool isEmpty( ) {
             return ll.isEmpty( ) && ur.isEmpty( );
         }
-        
+
         bool boundaryExclusiveCover(Point2D<T> p) {
             return (ll.x < p.x && ll.y < p.y && ur.x > p.x && ur.y > p.y);
         }
@@ -118,6 +118,12 @@ class Rect2D {
             return (ll.x <= p.x && ll.y <= p.y && ur.x >= p.x && ur.y >= p.y);
         }
 
+        T LLX() const { return ll.x; }
+        T LLY() const { return ll.y; }
+        T URX() const { return ur.x; }
+        T URY() const { return ur.y; }
+        T getHeight() const { return ur.y - ll.y; }
+        T getWidth() const { return ur.x - ll.x; }
 };
 
 template <typename T>
@@ -125,11 +131,11 @@ class Rect3D {
     public:
         Point3D<T> ll;
         Point3D<T> ur;
-        
+
         Rect3D( ): ll(0, 0, 0), ur(0, 0, 0) { }
         Rect3D(Point3D<T> LL, Point3D<T> UR): ll(LL), ur(UR) { }
         Rect3D(T llx, T lly, T llz, T urx, T ury, T urz): ll(llx, lly, llz), ur(urx, ury, urz) { }
-       
+
         bool isLegal( ) { //on the same layer is legal
             return (ll.x < ur.x && ll.y < ur.y && ll.z <= ur.z);
         }
@@ -150,7 +156,7 @@ class Range {
 public:
     T begin;
     T end;
-    
+
     Range( ): begin(0), end(0) { }
     Range(T b, T e): begin(b), end(e) {
         assert(b < e);
@@ -158,10 +164,10 @@ public:
 };
 
 class LayerRect {
-public: 
+public:
     string layerName;
     vector<Rect2D<float>> rects;
-    
+
     LayerRect( ): layerName("") { }
     LayerRect(string layerName, vector<Rect2D<float>> rects): layerName(layerName), rects(rects) { }
 };
