@@ -14,7 +14,6 @@ class Pin {
         string _antennaDiffAreaLayer;
         float _antennaDiffArea;
         
-        vector<string> _netExpr;
         vector<LayerRect> _layerRects;
 
     public:

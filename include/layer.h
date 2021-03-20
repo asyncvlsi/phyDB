@@ -58,6 +58,8 @@ class Layer {
             _spacing(spacing)
             { }
 
+        string getName() const;
+        
         void setSpacingTable(SpacingTable& );
         void setEOLSpacing(EOLSpacing& );
         void setCornerSpacing(CornerSpacing& );

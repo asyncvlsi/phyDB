@@ -27,17 +27,36 @@ class Tech {
         Tech( ): _manufacturingGrid(0), _dbuPerMicron(0) { }
 
 
-        int addSite(Site );
-        int addLayer(Layer );
-        int addMacro(Macro );
+        Site& addSite(Site );
+        Layer& addLayer(Layer );
+        Macro& addMacro(Macro );
 
         Macro& getMacro(string name);
-        Macro& getMacro(int id);
 
         friend ostream& operator<< (ostream& , const Tech& );
         
+        friend int getLefMacros(lefrCallbackType_e , lefiMacro* , lefiUserData );
+        friend int getLefString(lefrCallbackType_e , const char* , lefiUserData );
+        friend int getLefUnits(lefrCallbackType_e , lefiUnits* , lefiUserData );
+        friend int getLefManufacturingGrid(lefrCallbackType_e , double , lefiUserData );
+        friend int getLefPins(lefrCallbackType_e , lefiPin* , lefiUserData );
+        friend int getLefObs(lefrCallbackType_e , lefiObstruction* , lefiUserData );
+        friend int getLefLayers(lefrCallbackType_e , lefiLayer* , lefiUserData );
+        friend int getLefVias(lefrCallbackType_e , lefiVia* , lefiUserData );
+        friend int getLefViaGenerateRules(lefrCallbackType_e , lefiViaRule* , lefiUserData );
+
 
 };
+
+int getLefMacros(lefrCallbackType_e , lefiMacro* , lefiUserData );
+int getLefString(lefrCallbackType_e , const char* , lefiUserData );
+int getLefUnits(lefrCallbackType_e , lefiUnits* , lefiUserData );
+int getLefManufacturingGrid(lefrCallbackType_e , double , lefiUserData );
+int getLefPins(lefrCallbackType_e , lefiPin* , lefiUserData );
+int getLefObs(lefrCallbackType_e , lefiObstruction* , lefiUserData );
+int getLefLayers(lefrCallbackType_e , lefiLayer* , lefiUserData );
+int getLefVias(lefrCallbackType_e , lefiVia* , lefiUserData );
+int getLefViaGenerateRules(lefrCallbackType_e , lefiViaRule* , lefiUserData );
 
 ostream& operator<< (ostream& , const Tech& );
 

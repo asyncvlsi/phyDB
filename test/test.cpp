@@ -143,6 +143,12 @@ int main() {
     
     //test_site();
     
-    test_tech( );
+    //test_tech( );
+    
+    string lefFileName, defFileName;
+    PhyDB db;
+    db.readlef(string lefFileName);
+    db.readdef(string defFileName);
+    
     return 1;
 }
