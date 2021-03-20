@@ -8,6 +8,9 @@ namespace phydb {
 class SNet {
     public:
         string _name;
+        string _className;
+        int _width;
+        int _height;
     
         SNet( ): _name(""), _className(""), _width(0), _height(0) { }
         SNet(string name):_name(name) { }

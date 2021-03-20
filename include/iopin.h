@@ -31,11 +31,13 @@ class IOPin {
             _rect(rect),
             _location(location),
             _orient(orient),
-            _status(status)
-    { }
+            _status(status) { }
 
 
-}
+    string getName() {return _name;}
+
+
+};
 
 ostream& operator<< (ostream& , const IOPin& );
 

@@ -6,6 +6,7 @@
 namespace phydb {
 
 class OBS {
+    friend class Macro;
     private:
        vector<LayerRect> _layerRects;
 

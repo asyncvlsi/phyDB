@@ -1,5 +1,9 @@
 #ifndef DESIGN_H
-#define DESIGN_h
+#define DESIGN_H
+
+#include <defrReader.hpp>
+#include <defwWriter.hpp>
+#include <defwWriterCalls.hpp>
 
 #include "header.h"
 #include "row.h"
@@ -47,6 +51,8 @@ class Design {
         Component& addComponent(Component );
         IOPin& addIOPin(IOPin );
         Net& addNet(Net );
+        Row& addRow(Row &row);
+        Track& addTrack(Track &track);
         
         
         friend int getDefVersion(defrCallbackType_e , double , defiUserData );

@@ -1,6 +1,7 @@
 #include "DataType.h"
 #include "spacingtable.h"
 #include "layer.h"
+#include "phydb.h"
 #include "site.h"
 #include "tech.h"
 
@@ -147,8 +148,8 @@ int main() {
     
     string lefFileName, defFileName;
     PhyDB db;
-    db.readlef(string lefFileName);
-    db.readdef(string defFileName);
+    db.readLef(lefFileName);
+    db.readDef(defFileName);
     
     return 1;
 }

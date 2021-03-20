@@ -1,6 +1,8 @@
 #ifndef TECH_H
 #define TECH_H
 
+#include <lefrReader.hpp>
+
 #include "layer.h"
 #include "site.h"
 #include "macro.h"
@@ -48,7 +50,9 @@ class Tech {
 
 };
 
+int getLefMacrosBegin(lefrCallbackType_e type, const char *str, lefiUserData data);
 int getLefMacros(lefrCallbackType_e , lefiMacro* , lefiUserData );
+int getLefMacrosEnd(lefrCallbackType_e type, const char *str, lefiUserData data);
 int getLefString(lefrCallbackType_e , const char* , lefiUserData );
 int getLefUnits(lefrCallbackType_e , lefiUnits* , lefiUserData );
 int getLefManufacturingGrid(lefrCallbackType_e , double , lefiUserData );

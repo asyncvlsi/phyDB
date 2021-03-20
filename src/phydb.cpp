@@ -8,11 +8,11 @@ void PhyDB::readLef(string lefFileName) {
 
     lefrInitSession(1);
 
-    lefrSetUserData ((lefiUserData)&tech);
+    lefrSetUserData ((lefiUserData)&_tech);
 
     lefrSetMacroCbk(getLefMacros);
-    lefrSetMacroBeginCbk(getLefMacroBegin);
-    lefrSetMacroEndCbk(getLefMacroEnd);
+    lefrSetMacroBeginCbk(getLefMacrosBegin);
+    lefrSetMacroEndCbk(getLefMacrosEnd);
     lefrSetUnitsCbk(getLefUnits);
     lefrSetManufacturingCbk(getLefManufacturingGrid);
     lefrSetPinCbk(getLefPins);
@@ -26,7 +26,7 @@ void PhyDB::readLef(string lefFileName) {
         exit(2);
     }
 
-    res = lefrRead(f, lefFileName.c_str(), (lefiUserData)&lefDB);
+    res = lefrRead(f, lefFileName.c_str(), (lefiUserData)&_tech);
     if (res != 0) {
         cout <<"LEF parser returns an error!" <<endl;
         exit(2);

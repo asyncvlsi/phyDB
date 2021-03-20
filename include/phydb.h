@@ -1,6 +1,9 @@
 #ifndef PHYDB_H
 #define PHYDB_H
 
+#include "design.h"
+#include "tech.h"
+
 namespace phydb {
 
 class PhyDB {
@@ -14,7 +17,7 @@ class PhyDB {
         void readLef(string );
         void readDef(string );
 
-}
+};
 
 
 
