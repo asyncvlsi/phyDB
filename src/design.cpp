@@ -2,8 +2,12 @@
 
 namespace phydb {
 
-void Design::readDef(string defFileName) {
+void Design::SetTech(Tech* tech_ptr) {
+    _tech_ptr = tech_ptr;
+}
 
+void Design::GetTech( ) {
+    return _ptech_ptr;
 }
 
 void Design::SetUnitsDistanceMicrons(int distance_microns) {
@@ -18,6 +22,36 @@ void Design::SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
     _dieArea.ll.y = lower_y;
     _dieArea.ur.x = upper_x;
     _dieArea.ur.y = upper_y;
+}
+
+Track* Design::AddTrack(string& direction, int start, int numTracks, int step, 
+        vector<string>& v_layer_names) {
+    int id = tracks.size();
+    for(auto layer_Name : layer_names) { 
+        PhyDbExpects(IsLayerExist(layerName), layerName + " Layer name does not exists, cannot add track to it");
+    }
+    _tracks.emplace_back(direction, start, numTracks, step, layerNames);
+}
+
+vector<Track>& Design::GetTrackVec() {
+    return _tracks;
+}
+
+bool Design::IsRowExist(string& row_name) {
+    return (_row_set.find(row_name) != _row_set.end());
+}
+
+
+Row* Design::AddRow(string& name, string& site_name, string& site_orient, int origX, int origY, int numX,
+        int numY, int stepX, int stepY) {
+    int id = _rows.size();
+    PhyDbExpects(!IsRowExist(layerName), name + " row name exists, cannot use it again");
+    _rows.emplace_back(name, site_name, site_orient, origX, origY, numX, numY, stepX, stepY);
+    return &(_rows[id]);
+}
+
+vector<Row>& Design::GetRowVec() {
+    return _rows;
 }
 
 bool Design::IsComponentExist(std::string &comp_name) {
@@ -48,6 +82,26 @@ void Design::ReportComponent() {
     }
     std::cout << "\n";
 }
+
+bool Tech::IsDefViaExist(std::string const &via_name) {
+    return _defVia2id.find(via_name) != _defVia2id.end();
+}
+
+DefVia *Tech::AddDefVia(std::string &via_name) {
+    PhyDbExpects(!IsDefViaExist(via_name), "Macro name exists, cannot use it again");
+    int id = _vias.size();
+    _vias.emplace_back(via_name);
+    return &(_vias[id]);
+}
+
+DefVia *Tech::GetDefViaPtr(std::string const &via_name) {
+    if (!IsDefViaExist(via_name)) {
+        return nullptr;
+    }
+    int id = _via2id[via_name];
+    return &(_vias[id]);
+}
+
 
 bool Design::IsIoPinExist(std::string &iopin_name) {
     return _iopin2idx.find(iopin_name) != _iopin2idx.end();

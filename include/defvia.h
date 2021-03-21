@@ -23,6 +23,7 @@ class defVia {
         string pattern;
 
         defVia( ) { }
+        defVia(string& name): name(name) { }
 
         void Reset() {
             name = "";

@@ -10,7 +10,12 @@ class ViaRuleGenerateLayer {
         Size2D<float> spacing_;
         Size2D<float> enclosureOverhang_;
     
-        ViaRuleGenerateLayer( ) { }
+        ViaRuleGenerateLayer() { }
+        ViaRuleGenerateLayer(string& layerName) : layerName(layerName_) { }
+
+        void SetRect(float lx, float ly, float ux, float uy);
+        void SetSpacing(float x, float y);
+        void SetEnclosure(float x, float y);
 };
 
 class ViaRuleGenerate
@@ -20,10 +25,12 @@ class ViaRuleGenerate
         bool isDefault_;
         ViaRuleGenerateLayer layers_[3];
     
-        ViaRuleGenerate() { 
-            isDefault = true;
-        }
+        ViaRuleGenerate(): isDefault_(false) { }
+        ViaRuleGenerate(string& name): name_(name), isDefault_(false) { }
      
+        void SetDefault();
+        void UnsetDefault();
+        void SetLayers(ViaRuleGenerateLayer&, ViaRuleGenerateLayer&, ViaRuleGenerateLayer&); 
 };
 
 }

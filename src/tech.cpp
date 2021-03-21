@@ -89,6 +89,44 @@ Macro *Tech::getMacroPtr(std::string const &macro_name) {
     return &(_macros[id]);
 }
 
+bool Tech::IsLefViaExist(std::string const &via_name) {
+    return _lefVia2id.find(via_name) != _lefVia2id.end();
+}
+
+LefVia *Tech::AddLefVia(std::string &via_name) {
+    PhyDbExpects(!IsLefViaExist(via_name), "Macro name exists, cannot use it again");
+    int id = _vias.size();
+    _vias.emplace_back(via_name);
+    return &(_vias[id]);
+}
+
+LefVia *Tech::GetLefViaPtr(std::string const &via_name) {
+    if (!IsLefViaExist(via_name)) {
+        return nullptr;
+    }
+    int id = _via2id[via_name];
+    return &(_vias[id]);
+}
+
+bool Tech::IsViaRuleGenerateExist(std::string const &name) {
+    return _via_rule_generate2id.find(name) != _via_rule_generate2id.end();
+}
+
+ViaRuleGenerate *Tech::AddViaRuleGenerate(std::string &name) {
+    PhyDbExpects(!IsViaRuleGenerateExist(via_name), "Macro name exists, cannot use it again");
+    int id = _via_rule_generates.size();
+    _via_rule_generates.emplace_back(name);
+    return &(_via_rule_generates[id]);
+}
+
+ViaRuleGenerate *Tech::GetViaRuleGeneratePtr(std::string const &name) {
+    if (!IsViaRuleGenerateExist(name)) {
+        return nullptr;
+    }
+    int id = _via_rule_generate2id[name];
+    return &(_via_rule_generates[id]);
+}
+
 void Tech::setNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
     if (is_n_well_layer_set_) {
         n_layer_ptr_->set_params(width, spacing, op_spacing, max_plug_dist, overhang);

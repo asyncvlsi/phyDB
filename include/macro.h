@@ -47,7 +47,7 @@ class Macro {
     void setSize(float width, float height);
     void setPins(vector<Pin>);
     void addPin(Pin &pin) { _pins.push_back(pin); }
-    void setOBS(OBS);
+    void setOBS(OBS obs) { _obs = obs; }
     void addObsLayerRect(LayerRect &layer_rect) { _obs._layerRects.push_back(layer_rect); }
     void set_well_ptr(MacroWell *well_ptr) { well_ptr_ = well_ptr; }
 

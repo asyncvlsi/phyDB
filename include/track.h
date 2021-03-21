@@ -9,17 +9,19 @@ class Track {
   public:
     string _direction;
     int _start;
-    int _numTracks;
+    int _nTracks;
     int _step;
 
-    std::vector<string> layerNames;
+    vector<string> layerNames;
 
     Track() {}
-    Track(string direction, int start, int numTracks, int step) :
+    Track(string& direction, int start, int nTracks, int step, vector<string>& layerNames):
         _direction(direction),
         _start(start),
-        _numTracks(numTracks),
-        _step(step) {}
+        _nTracks(nTracks),
+        _step(step),
+        _layerNames(layerNames)
+        {}
 
 };
 

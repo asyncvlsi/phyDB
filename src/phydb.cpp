@@ -46,6 +46,30 @@ Macro *PhyDB::getMacroPtr(std::string const &macro_name) {
     return _tech.getMacroPtr(macro_name);
 }
 
+bool PhyDB::IsLefViaExist(std::string const &via_name) {
+    return _tech.IsLefViaExist(via_name);
+}
+
+LefVia *PhyDB::AddLefVia(std::string &via_name) {
+    return _tech.AddLefVia(via_name);
+}
+
+LefVia *PhyDB::GetLefViaPtr(std::string const &via_name) {
+    return _tech.GetLefViaPtr(via_name);
+}
+
+bool PhyDB::IsViaRuleGenerateExist(std::string const &name) {
+    return _tech.IsViaRuleGenerateExist(name);
+}
+
+ViaRuleGenerate* PhyDB::AddViaRuleGenerate(std::string &name) {
+    return _tech.AddViaRuleGenerate(name);
+}
+
+ViaRuleGenerate* PhyDB::GetViaRuleGeneratePtr(std::string const &name) {
+    return _tech.GetViaRuleGenerate(name);
+}
+
 void PhyDB::setUnitsDistanceMicrons(int distance_microns) {
     _design.SetUnitsDistanceMicrons(distance_microns);
 }
@@ -55,6 +79,23 @@ void PhyDB::setDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
 
 bool PhyDB::isComponentExist(std::string &component_name) {
     return _design.IsComponentExist(component_name);
+}
+
+Track* PhyDB::AddTrack(string& direction, int start, int nTracks, int step, vector<string>& layer_names); {
+    _design.AddTracl(direction, start, nTracks, step, layer_names);
+}
+
+vector<Track>& PhyDB::GetTrackVec() {
+    return _design.GetTrackVec();
+}
+
+Row* PhyDB::AddRow(string& name, string& site_name, string& site_orient, int origX, int origY, int numX, 
+            int numY, int stepX, int stepY) {
+    _design.AddRow(name, site_name, site_orient, origX, origY, numX, numY, stepX, stepY);
+}
+
+vector<Row>& GetRowVec() {
+    return _design.GetRowVec();
 }
 
 Component *PhyDB::addComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
@@ -68,6 +109,18 @@ Component *PhyDB::getComponentPtr(std::string &comp_name) {
 
 bool PhyDB::isIoPinExist(std::string &iopin_name) {
     return _design.IsIoPinExist(iopin_name);
+}
+
+bool PhyDB::IsDefViaExist(std::string const &via_name) {
+    return _design.IsDefViaExist(via_name);
+}
+
+DefVia *PhyDB::AddDefVia(std::string &via_name) {
+    return _design.AddDefVia(via_name);
+}
+
+DefVia *PhyDB::GetDefViaPtr(std::string const &via_name) {
+    return _design.GetDefViaPtr(via_name);
 }
 
 IOPin *PhyDB::addIoPin(std::string &iopin_name, std::string &place_status,

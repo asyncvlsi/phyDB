@@ -27,9 +27,11 @@ class Tech {
     vector<Layer> _layers;
     vector<Macro> _macros;
     vector<LefVia> _vias;
+    vector<ViaRuleGenerate> _via_rule_generates;
 
     map<string, int> _layer2id;
     map<string, int> _macro2id;
+    map<string, int> _via_rule_generate2id;
 
     /****placement grid parameters****/
     bool is_placement_grid_set_ = false;
@@ -56,13 +58,21 @@ class Tech {
     bool isLayerExist(std::string const &layer_name);
     Layer *addLayer(std::string &layer_name);
     Layer *getLayerPtr(std::string const &layer_name);
+    int GetLayerId(const string& layerName);
     void ReportLayers();
 
     bool isMacroExist(std::string const &macro_name);
     Macro *addMacro(std::string &macro_name);
-    Macro &getMacro(string const &macro_name);
     Macro *getMacroPtr(std::string const &macro_name);
 
+    bool IsLefViaExist(std::string const &via_name);
+    LefVia *AddLefVia(std::string &via_name);
+    LefVia *GetLefViaPtr(std::string const &via_name);
+
+    bool IsViaRuleGenerateExist(std::string const &name);
+    ViaRuleGenerate* AddViaRuleGenerate(std::string &name);
+    ViaRuleGenerate* GetViaRuleGeneratePtr(std::string const &name)
+    
     void setNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
     void setPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
     void setNpwellSpacing(double same_diff, double any_diff);

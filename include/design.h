@@ -17,15 +17,14 @@ namespace phydb {
 
 class Design {
   public:
+    Tech* tech_ptr;
+
     double _version;
     string _dividerChar;
     string _busBitChars;
     string _name;
 
     Rect2D<int> _dieArea;
-
-    Point3D<int> _gcellGridDim;
-    Point2D<int> _commonGcell;
 
     int _dbuPerMicro;
     vector<Row> _rows;
@@ -34,34 +33,41 @@ class Design {
     vector<IOPin> _iopins;
     vector<SNet> _snets;
     vector<Net> _nets;
+    vector<DefVia> _vias;
 
-    map<string, int> _component2idx;
-    map<string, int> _iopin2idx;
-    map<string, int> _defVia2idx;
-    map<string, int> _layerName2trackidx;
-    map<string, int> _net2idx;
-    map<string, int> _powerNet2idx;
-    map<string, int> _gndNet2idx;
-
-    map<int, int> layeridx2trackidx;
+    map<string, int> _component2id;
+    map<string, int> _iopin2id;
+    map<string, int> _defVia2id;
+    map<string, int> _layerName2trackid;
+    map<string, int> _net2id;
+    map<string, int> _via2id;
+    set<string> _row_set;
 
     Design() {}
 
-    void readDef(string);
+    void SetTech(Tech* tech_ptr);
+    Tech* GetTech();
 
     void SetUnitsDistanceMicrons(int distance_microns);
     void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
 
-    // TODO: APIs for tracks
-    Track &addTrack(Track &track);
+    Track* AddTrack(string& direction, int start, int nTracks, int step, vector<string>& layer_names);
+    vector<Track>& GetTrackVec();
 
-    //TODO: APIs for rows
-    Row &addRow(Row &row);
+    bool IsRowExist(string& name);
+    Row* AddRow(string& name, string& site_name, string& site_orient, int origX, int origY, int numX, 
+            int numY, int stepX, int stepY);
+    vector<Row>& GetRowVec();
 
     bool IsComponentExist(std::string &comp_name);
     Component *AddComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
                             int llx, int lly, std::string &orient);
     Component *GetComponentPtr(std::string &comp_name);
+    
+    bool IsDefViaExist(std::string &name);
+    Component *AddDefVia(std::string &name);
+    Component *GetDefViaPtr(std::string &name);
+
     void ReportComponent();
 
     bool IsIoPinExist(std::string &iopin_name);
@@ -75,8 +81,6 @@ class Design {
     void AddIoPinToNet(std::string &iopin_name, std::string &net_name);
     void AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name);
     Net *GetNetPtr(std::string &net_name);
-
-    Net &addNet(Net);
 
     friend int getDefVersion(defrCallbackType_e, double, defiUserData);
     friend int getDefBusBit(defrCallbackType_e, const char *, defiUserData);

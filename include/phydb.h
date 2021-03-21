@@ -25,12 +25,14 @@ class PhyDB {
     bool isLayerExist(std::string const &layer_name);
     Layer *addLayer(std::string &layer_name);
     Layer *getLayerPtr(std::string const &layer_name);
-
-    //TODO: APIs for adding VIAs
-
+    
     bool isMacroExist(std::string const &macro_name);
     Macro *addMacro(std::string &macro_name);
     Macro *getMacroPtr(std::string const &macro_name);
+
+    bool isLefViaExist(std::string const &name);
+    LefVia *AddLefVia(std::string &name);
+    LefVia *GetLefViaPtr(std::string const &name);
 
     /************************************************
     * The following APIs are for information in DEF
@@ -38,8 +40,22 @@ class PhyDB {
     void setUnitsDistanceMicrons(int distance_microns);
     void setDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
 
-    // TODO: APIs for adding tracks
+    Track* AddTrack(string& direction, int start, int nTracks, int step, vector<string>& layer_names);
+    vector<Track>& GetTrackVec();
 
+    Row* AddRow(string& name, string& site_name, string& site_orient, int origX, int origY, int numX, 
+            int numY, int stepX, int stepY);
+    vector<Row>& GetRowVec();
+
+    bool IsViaRuleGenerateExist(std::string const &name);
+    ViaRuleGenerate* AddViaRuleGenerate(std::string &name);
+    ViaRuleGenerate* GetViaRuleGeneratePtr(std::string const &name)
+    
+    bool isDefViaExist(std::string const &name);
+    DefVia *AddDefVia(std::string &name);
+    DefVia *GetDefViaPtr(std::string const &name);
+
+    //TODO discuss: maybe IsExist does not need to be here? because it is only used in add?
     bool isComponentExist(std::string &component_name);
     Component *addComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
                             int llx, int lly, std::string &orient);
