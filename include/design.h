@@ -1,6 +1,8 @@
 #ifndef DESIGN_H
 #define DESIGN_H
 
+#include <set>
+
 #include <defrReader.hpp>
 #include <defwWriter.hpp>
 #include <defwWriterCalls.hpp>
@@ -12,61 +14,58 @@
 #include "iopin.h"
 #include "snet.h"
 #include "net.h"
+#include "tech.h"
+#include "defvia.h"
 
 namespace phydb {
 
 class Design {
   public:
-    Tech* tech_ptr;
+    double version_;
+    string divider_char_;
+    string bus_bit_chars_;
+    string name_;
 
-    double _version;
-    string _dividerChar;
-    string _busBitChars;
-    string _name;
+    Rect2D<int> die_area_;
 
-    Rect2D<int> _dieArea;
+    int dbu_per_micro_;
+    vector<Row> rows_;
+    vector<Track> tracks_;
+    vector<Component> components_;
+    vector<IOPin> iopins_;
+    vector<SNet> snets_;
+    vector<Net> nets_;
+    vector<DefVia> vias_;
 
-    int _dbuPerMicro;
-    vector<Row> _rows;
-    vector<Track> _tracks;
-    vector<Component> _components;
-    vector<IOPin> _iopins;
-    vector<SNet> _snets;
-    vector<Net> _nets;
-    vector<DefVia> _vias;
-
-    map<string, int> _component2id;
-    map<string, int> _iopin2id;
-    map<string, int> _defVia2id;
-    map<string, int> _layerName2trackid;
-    map<string, int> _net2id;
-    map<string, int> _via2id;
-    set<string> _row_set;
+    map<string, int> component_2_id_;
+    map<string, int> iopin_2_id_;
+    map<string, int> def_via_2_id_;
+    map<string, int> layer_name_2_trackid_;
+    map<string, int> net_2_id_;
+    map<string, int> via_2_id_;
+    set<string> row_set_;
 
     Design() {}
-
-    void SetTech(Tech* tech_ptr);
-    Tech* GetTech();
 
     void SetUnitsDistanceMicrons(int distance_microns);
     void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
 
-    Track* AddTrack(string& direction, int start, int nTracks, int step, vector<string>& layer_names);
-    vector<Track>& GetTrackVec();
+    Track *AddTrack(string &direction, int start, int num_tracks, int step, vector<string> &layer_names);
+    vector<Track> &GetTrackVec();
 
-    bool IsRowExist(string& name);
-    Row* AddRow(string& name, string& site_name, string& site_orient, int origX, int origY, int numX, 
-            int numY, int stepX, int stepY);
-    vector<Row>& GetRowVec();
+    bool IsRowExist(string &name);
+    Row *AddRow(string &name, string &site_name, string &site_orient, int origX, int origY, int numX,
+                int numY, int stepX, int stepY);
+    vector<Row> &GetRowVec();
 
     bool IsComponentExist(std::string &comp_name);
     Component *AddComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
                             int llx, int lly, std::string &orient);
     Component *GetComponentPtr(std::string &comp_name);
-    
-    bool IsDefViaExist(std::string &name);
-    Component *AddDefVia(std::string &name);
-    Component *GetDefViaPtr(std::string &name);
+
+    bool IsDefViaExist(std::string const &name);
+    DefVia *AddDefVia(std::string &name);
+    DefVia *GetDefViaPtr(std::string const &name);
 
     void ReportComponent();
 

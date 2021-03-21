@@ -6,191 +6,202 @@
 
 namespace phydb {
 
-void PhyDB::setDatabaseMicron(int database_micron) {
-    _tech.setDatabaseMicron(database_micron);
+void PhyDB::SetDatabaseMicron(int database_micron) {
+    tech_.SetDatabaseMicron(database_micron);
 }
 
-void PhyDB::setManufacturingGrid(double manufacture_grid) {
-    _tech.setManufacturingGrid(manufacture_grid);
+void PhyDB::SetManufacturingGrid(double manufacture_grid) {
+    tech_.SetManufacturingGrid(manufacture_grid);
 }
 
-void PhyDB::addSite(std::string const &name, std::string const &class_name, double width, double height) {
-    _tech.addSite(name, class_name, width, height);
+void PhyDB::AddSite(std::string const &name, std::string const &class_name, double width, double height) {
+    tech_.AddSite(name, class_name, width, height);
 }
 
-void PhyDB::setPlacementGrids(double placement_grid_value_x_, double placement_grid_value_y_) {
-    _tech.setPlacementGrids(placement_grid_value_x_, placement_grid_value_y_);
+void PhyDB::SetPlacementGrids(double placement_grid_value_x_, double placement_grid_value_y_) {
+    tech_.SetPlacementGrids(placement_grid_value_x_, placement_grid_value_y_);
 }
 
-bool PhyDB::isLayerExist(std::string const &layer_name) {
-    return _tech.isLayerExist(layer_name);
+bool PhyDB::IsLayerExist(std::string const &layer_name) {
+    return tech_.IsLayerExist(layer_name);
 }
 
-Layer *PhyDB::addLayer(std::string &layer_name) {
-    return _tech.addLayer(layer_name);
+Layer *PhyDB::AddLayer(std::string &layer_name) {
+    return tech_.AddLayer(layer_name);
 }
 
-Layer *PhyDB::getLayerPtr(std::string const &layer_name) {
-    return _tech.getLayerPtr(layer_name);
+Layer *PhyDB::GetLayerPtr(std::string const &layer_name) {
+    return tech_.GetLayerPtr(layer_name);
 }
 
-bool PhyDB::isMacroExist(std::string const &macro_name) {
-    return _tech.isMacroExist(macro_name);
+bool PhyDB::IsMacroExist(std::string const &macro_name) {
+    return tech_.IsMacroExist(macro_name);
 }
 
-Macro *PhyDB::addMacro(std::string &macro_name) {
-    return _tech.addMacro(macro_name);
+Macro *PhyDB::AddMacro(std::string &macro_name) {
+    return tech_.AddMacro(macro_name);
 }
 
-Macro *PhyDB::getMacroPtr(std::string const &macro_name) {
-    return _tech.getMacroPtr(macro_name);
+Macro *PhyDB::GetMacroPtr(std::string const &macro_name) {
+    return tech_.GetMacroPtr(macro_name);
 }
 
-bool PhyDB::IsLefViaExist(std::string const &via_name) {
-    return _tech.IsLefViaExist(via_name);
+bool PhyDB::IsLefViaExist(std::string const &name) {
+    return tech_.IsLefViaExist(name);
 }
 
 LefVia *PhyDB::AddLefVia(std::string &via_name) {
-    return _tech.AddLefVia(via_name);
+    return tech_.AddLefVia(via_name);
 }
 
 LefVia *PhyDB::GetLefViaPtr(std::string const &via_name) {
-    return _tech.GetLefViaPtr(via_name);
+    return tech_.GetLefViaPtr(via_name);
 }
 
 bool PhyDB::IsViaRuleGenerateExist(std::string const &name) {
-    return _tech.IsViaRuleGenerateExist(name);
+    return tech_.IsViaRuleGenerateExist(name);
 }
 
 ViaRuleGenerate* PhyDB::AddViaRuleGenerate(std::string &name) {
-    return _tech.AddViaRuleGenerate(name);
+    return tech_.AddViaRuleGenerate(name);
 }
 
 ViaRuleGenerate* PhyDB::GetViaRuleGeneratePtr(std::string const &name) {
-    return _tech.GetViaRuleGenerate(name);
+    return tech_.GetViaRuleGeneratePtr(name);
 }
 
-void PhyDB::setUnitsDistanceMicrons(int distance_microns) {
-    _design.SetUnitsDistanceMicrons(distance_microns);
+void PhyDB::SetUnitsDistanceMicrons(int distance_microns) {
+    design_.SetUnitsDistanceMicrons(distance_microns);
 }
-void PhyDB::setDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
-    _design.SetDieArea(lower_x, lower_y, upper_x, upper_y);
-}
-
-bool PhyDB::isComponentExist(std::string &component_name) {
-    return _design.IsComponentExist(component_name);
+void PhyDB::SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
+    design_.SetDieArea(lower_x, lower_y, upper_x, upper_y);
 }
 
-Track* PhyDB::AddTrack(string& direction, int start, int nTracks, int step, vector<string>& layer_names); {
-    _design.AddTracl(direction, start, nTracks, step, layer_names);
+bool PhyDB::IsComponentExist(std::string &component_name) {
+    return design_.IsComponentExist(component_name);
+}
+
+Track* PhyDB::AddTrack(string& direction, int start, int nTracks, int step, vector<string>& layer_names) {
+    design_.AddTrack(direction, start, nTracks, step, layer_names);
 }
 
 vector<Track>& PhyDB::GetTrackVec() {
-    return _design.GetTrackVec();
+    return design_.GetTrackVec();
 }
 
 Row* PhyDB::AddRow(string& name, string& site_name, string& site_orient, int origX, int origY, int numX, 
             int numY, int stepX, int stepY) {
-    _design.AddRow(name, site_name, site_orient, origX, origY, numX, numY, stepX, stepY);
+    design_.AddRow(name, site_name, site_orient, origX, origY, numX, numY, stepX, stepY);
 }
 
-vector<Row>& GetRowVec() {
-    return _design.GetRowVec();
+vector<Row>& PhyDB::GetRowVec() {
+    return design_.GetRowVec();
 }
 
-Component *PhyDB::addComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
-                        int llx, int lly, std::string &orient) {
-    return _design.AddComponent(comp_name, macro_name, place_status, llx, lly, orient);
+Component *PhyDB::AddComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
+                               int llx, int lly, std::string &orient) {
+    return design_.AddComponent(comp_name, macro_name, place_status, llx, lly, orient);
 }
 
-Component *PhyDB::getComponentPtr(std::string &comp_name) {
-    return _design.GetComponentPtr(comp_name);
+Component *PhyDB::GetComponentPtr(std::string &comp_name) {
+    return design_.GetComponentPtr(comp_name);
 }
 
-bool PhyDB::isIoPinExist(std::string &iopin_name) {
-    return _design.IsIoPinExist(iopin_name);
+bool PhyDB::IsIoPinExist(std::string &iopin_name) {
+    return design_.IsIoPinExist(iopin_name);
 }
 
-bool PhyDB::IsDefViaExist(std::string const &via_name) {
-    return _design.IsDefViaExist(via_name);
+bool PhyDB::IsDefViaExist(std::string const &name) {
+    return design_.IsDefViaExist(name);
 }
 
 DefVia *PhyDB::AddDefVia(std::string &via_name) {
-    return _design.AddDefVia(via_name);
+    return design_.AddDefVia(via_name);
 }
 
 DefVia *PhyDB::GetDefViaPtr(std::string const &via_name) {
-    return _design.GetDefViaPtr(via_name);
+    return design_.GetDefViaPtr(via_name);
 }
 
-IOPin *PhyDB::addIoPin(std::string &iopin_name, std::string &place_status,
-                std::string &signal_use, std::string &signal_direction,
-                int lx, int ly) {
-    return _design.AddIoPin(iopin_name, place_status, signal_use, signal_direction, lx, ly);
+IOPin *PhyDB::AddIoPin(std::string &iopin_name, std::string &place_status,
+                       std::string &signal_use, std::string &signal_direction,
+                       int lx, int ly) {
+    return design_.AddIoPin(iopin_name, place_status, signal_use, signal_direction, lx, ly);
 }
 
-IOPin *PhyDB::getIoPinPtr(std::string &iopin_name) {
-    return _design.GetIoPinPtr(iopin_name);
+IOPin *PhyDB::GetIoPinPtr(std::string &iopin_name) {
+    return design_.GetIoPinPtr(iopin_name);
 }
 
 bool PhyDB::IsNetExist(std::string &net_name) {
-    return _design.IsNetExist(net_name);
+    return design_.IsNetExist(net_name);
 }
 
 Net *PhyDB::AddNet(std::string &net_name, double weight) {
-    return  _design.AddNet(net_name, weight);
+    return  design_.AddNet(net_name, weight);
 }
 
 void PhyDB::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
-    _design.AddIoPinToNet(iopin_name, net_name);
+    PhyDbExpects(IsIoPinExist(iopin_name), "Cannot add a nonexistent iopin to a net: " + iopin_name);
+    PhyDbExpects(IsNetExist(net_name), "Cannot add iopin to a nonexistent Net: " + net_name);
+    design_.AddIoPinToNet(iopin_name, net_name);
 }
 
 void PhyDB::AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name) {
-    _design.AddCompPinToNet(comp_name, pin_name, net_name);
+    PhyDbExpects(IsNetExist(net_name), "Cannot add a component pin to a nonexistent Net: " + net_name);
+    PhyDbExpects(IsComponentExist(comp_name), "Cannot add a nonexistent component to a net: " + comp_name);
+
+    Component *comp_ptr = GetComponentPtr(comp_name);
+    std::string macro_name = comp_ptr->GetMacroName();
+    PhyDbExpects(IsMacroExist(macro_name), "Macro of this component does not exist: " + comp_name + ", macro name:" + macro_name);
+
+    Macro *macro_ptr = GetMacroPtr(macro_name);
+    PhyDbExpects(macro_ptr->IsPinExist(pin_name), "Macro " + macro_name + " does not contain a pin with name " + pin_name);
+    design_.AddCompPinToNet(comp_name, pin_name, net_name);
 }
 
 Net *PhyDB::GetNetPtr(std::string &net_name) {
-    return _design.GetNetPtr(net_name);
+    return design_.GetNetPtr(net_name);
 }
 
-void PhyDB::setNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
-    _tech.setNwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
+void PhyDB::SetNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
+    tech_.SetNwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
 }
 
-void PhyDB::setPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
-    _tech.setPwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
+void PhyDB::SetPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
+    tech_.SetPwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
 }
 
-void PhyDB::setNpwellSpacing(double same_spacing, double any_spacing) {
-    _tech.setNpwellSpacing(same_spacing, any_spacing);
+void PhyDB::SetNpwellSpacing(double same_spacing, double any_spacing) {
+    tech_.SetNpwellSpacing(same_spacing, any_spacing);
 }
 
-MacroWell *PhyDB::addMacrowell(std::string &macro_name) {
-    Macro *macro_ptr = getMacroPtr(macro_name);
+MacroWell *PhyDB::AddMacrowell(std::string &macro_name) {
+    Macro *macro_ptr = GetMacroPtr(macro_name);
     PhyDbExpects(macro_ptr != nullptr, "Macro does not exist, cannot add well info: " + macro_name);
-    _tech.wells_.emplace_back(macro_ptr);
-    macro_ptr->set_well_ptr(&(_tech.wells_.back()));
-    return macro_ptr->well_ptr();
+    tech_.wells_.emplace_back(macro_ptr);
+    macro_ptr->SetWellPtr(&(tech_.wells_.back()));
+    return macro_ptr->GetWellPtr();
 }
 
-void PhyDB::setMacrowellShape(std::string &macro_name, bool is_N, double lx, double ly, double ux, double uy) {
-    Macro *macro_ptr = getMacroPtr(macro_name);
+void PhyDB::SetMacrowellShape(std::string &macro_name, bool is_N, double lx, double ly, double ux, double uy) {
+    Macro *macro_ptr = GetMacroPtr(macro_name);
     PhyDbExpects(macro_ptr != nullptr, "Macro does not exist, cannot add well info: " + macro_name);
-    MacroWell *well = macro_ptr->well_ptr();
+    MacroWell *well = macro_ptr->GetWellPtr();
 
     if (well == nullptr) {
-        well = addMacrowell(macro_name);
+        well = AddMacrowell(macro_name);
     }
-    well->setWellRect(is_N, lx, ly, ux, uy);
+    well->SetWellRect(is_N, lx, ly, ux, uy);
 }
 
-void PhyDB::readLef(string const &lefFileName) {
+void PhyDB::ReadLef(string const &lefFileName) {
     FILE *f;
     int res;
 
     lefrInitSession(1);
 
-    lefrSetUserData((lefiUserData) &_tech);
+    lefrSetUserData((lefiUserData) &tech_);
 
     lefrSetMacroCbk(getLefMacros);
     lefrSetMacroBeginCbk(getLefMacrosBegin);
@@ -208,7 +219,7 @@ void PhyDB::readLef(string const &lefFileName) {
         exit(2);
     }
 
-    res = lefrRead(f, lefFileName.c_str(), (lefiUserData) &_tech);
+    res = lefrRead(f, lefFileName.c_str(), (lefiUserData) &tech_);
     if (res != 0) {
         cout << "LEF parser returns an error!" << endl;
         exit(2);
@@ -218,7 +229,7 @@ void PhyDB::readLef(string const &lefFileName) {
     lefrClear();
 }
 
-void PhyDB::readDef(string const &defFileName) {
+void PhyDB::ReadDef(string const &defFileName) {
     FILE *f;
     int res;
 
@@ -227,7 +238,7 @@ void PhyDB::readDef(string const &defFileName) {
 
     defrInitSession(1);
 
-    defrSetUserData((defiUserData) &_design);
+    defrSetUserData((defiUserData) &design_);
 
     defrSetVersionCbk(getDefVersion);
     defrSetBusBitCbk(getDefBusBit);
@@ -254,7 +265,7 @@ void PhyDB::readDef(string const &defFileName) {
         exit(2);
     }
 
-    res = defrRead(f, defFileName.c_str(), (defiUserData) &_design, 1);
+    res = defrRead(f, defFileName.c_str(), (defiUserData) &design_, 1);
     if (res != 0) {
         cout << "DEF parser returns an error!" << endl;
         exit(2);
@@ -266,7 +277,7 @@ void PhyDB::readDef(string const &defFileName) {
     defrClear();
 }
 
-void PhyDB::readCell(string const &cellFileName) {
+void PhyDB::ReadCell(string const &cellFileName) {
     std::ifstream ist(cellFileName.c_str());
     if (ist.is_open()) {
         std::cout << "Loading CELL file: " << cellFileName << "\n";
@@ -307,8 +318,8 @@ void PhyDB::readCell(string const &cellFileName) {
                         }
                     }
                 } while (line.find("END LEGALIZER") == std::string::npos && !ist.eof());
-                //BOOST_LOG_TRIVIAL(info)   << "same diff spacing: " << same_diff_spacing << "\n any diff spacing: " << any_diff_spacing << "\n";
-                setNpwellSpacing(same_diff_spacing, any_diff_spacing);
+                //BOOST_LOG_TRIVIAL(info)   << "same diff spacing: " << same_diff_spacing << "\n any diff GetSpacing: " << any_diff_spacing << "\n";
+                SetNpwellSpacing(same_diff_spacing, any_diff_spacing);
             } else {
                 std::vector<std::string> well_fields;
                 StrSplit(line, well_fields);
@@ -370,9 +381,9 @@ void PhyDB::readCell(string const &cellFileName) {
                     getline(ist, line);
                 } while (line.find(end_layer_flag) == std::string::npos && !ist.eof());
                 if (is_n_well) {
-                    setNwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
+                    SetNwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
                 } else {
-                    setPwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
+                    SetPwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
                 }
             }
         }
@@ -382,8 +393,8 @@ void PhyDB::readCell(string const &cellFileName) {
             std::vector<std::string> macro_fields;
             StrSplit(line, macro_fields);
             std::string end_macro_flag = "END " + macro_fields[1];
-            MacroWell *well = addMacrowell(macro_fields[1]);
-            auto blk_type = getMacroPtr(macro_fields[1]);
+            MacroWell *well = AddMacrowell(macro_fields[1]);
+            auto blk_type = GetMacroPtr(macro_fields[1]);
             do {
                 getline(ist, line);
                 bool is_n = false;
@@ -405,7 +416,7 @@ void PhyDB::readCell(string const &cellFileName) {
                                 std::cout << "Invalid stod conversion: " + line << std::endl;
                                 exit(1);
                             }
-                            setMacrowellShape(macro_fields[1], is_n, lx, ly, ux, uy);
+                            SetMacrowellShape(macro_fields[1], is_n, lx, ly, ux, uy);
                         }
                         getline(ist, line);
                     } while (line.find("END VERSION") == std::string::npos && !ist.eof());
@@ -413,11 +424,11 @@ void PhyDB::readCell(string const &cellFileName) {
             } while (line.find(end_macro_flag) == std::string::npos && !ist.eof());
         }
     }
-    if (!_tech.IsWellInfoSet()) {
+    if (!tech_.IsWellInfoSet()) {
         std::cout << "N/P well technology information not found!" << std::endl;
         exit(1);
     }
-    //_tech.ReportWellShape();
+    //tech_.ReportWellShape();
 
     std::cout << "CELL file loading complete: " << cellFileName << "\n";
 }

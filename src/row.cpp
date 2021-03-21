@@ -3,10 +3,10 @@
 namespace phydb {
 
 ostream& operator<< (ostream& os, const Row& r) {
-    os << r._name << " " << r._siteName << " " << r._siteOrient << endl;
-    os << "orig: " << r._origX << ", " << r._origY << endl;
-    os << "num: " << r._numX << ", " << r._numY << endl;
-    os << "step: " << r._stepX << ", " << r._stepY << endl;
+    os << r.name_ << " " << r.site_name_ << " " << r.site_orient_ << endl;
+    os << "orig: " << r.orig_x_ << ", " << r.orig_y_ << endl;
+    os << "num: " << r.num_x_ << ", " << r.num_y_ << endl;
+    os << "step: " << r.step_x_ << ", " << r.step_y_ << endl;
     return os;
 }
 

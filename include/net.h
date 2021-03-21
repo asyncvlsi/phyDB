@@ -7,31 +7,31 @@ namespace phydb {
 
 class Net {
   public:
-    string _name;
-    string _source;
-    string _use;
-    string _direction;
+    string name_;
+    string source_;
+    string use_;
+    string direction_;
 
-    int _start;
-    int _numTracks;
-    int _step;
+    int start_;
+    int num_tracks_;
+    int step_;
 
     double weight_;
 
-    vector<string> componentNames;
-    vector<string> pinNames;
+    vector<string> component_names_;
+    vector<string> pin_names_;
     vector<string> iopin_names_;
 
     Net() {}
-    Net(std::string name, double weight): _name(name), weight_(weight) {}
+    Net(std::string name, double weight) : name_(name), weight_(weight) {}
     Net(string name, string source, string use, string direction, int start, int numTracks, int step) :
-        _name(name),
-        _direction(direction),
-        _start(start),
-        _numTracks(numTracks),
-        _step(step) {}
+        name_(name),
+        direction_(direction),
+        start_(start),
+        num_tracks_(numTracks),
+        step_(step) {}
 
-    string getName();
+    string GetName();
 
     void AddIoPin(std::string const &iopin_name);
     void AddCompPin(std::string const &comp_name, std::string const &pin_name);

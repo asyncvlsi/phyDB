@@ -2,50 +2,167 @@
 
 namespace phydb {
 
-string Macro::getName() const {
-    return _name;
+string Macro::GetName() const {
+    return name_;
 }
 
-void Macro::setName(string &name) {
-    _name = name;
+void Macro::SetName(string &name) {
+    name_ = name;
 }
 
-void Macro::setOrigin(Point2D<float> origin) {
-    _origin = origin;
+void Macro::SetOrigin(Point2D<float> _origin) {
+    origin_ = _origin;
 }
 
-void Macro::setOrigin(float x, float y) {
-    _origin.x = x;
-    _origin.y = y;
+void Macro::SetOrigin(float x, float y) {
+    origin_.x = x;
+    origin_.y = y;
 }
 
-void Macro::setSize(Point2D<float> size) {
-    _size = size;
+void Macro::SetSize(Point2D<float> size) {
+    size_ = size;
 }
 
-void Macro::setSize(float width, float height) {
-    _size.x = width;
-    _size.y = height;
+void Macro::SetSize(float width, float height) {
+    size_.x = width;
+    size_.y = height;
 }
 
-Point2D<float> Macro::getOrigin() const {
-    return _origin;
+void Macro::AddPin(Pin &pin) {
+    pins_.push_back(pin);
 }
 
-Point2D<float> &Macro::getOriginRef() {
-    return _origin;
+void Macro::SetObs(OBS &obs) {
+    obs_ = obs;
+}
+
+void Macro::AddObsLayerRect(LayerRect &layer_rect) {
+    obs_.layer_rects_.push_back(layer_rect);
+}
+
+void Macro::SetWellPtr(MacroWell *well_ptr) {
+    well_ptr_ = well_ptr;
+}
+
+bool Macro::IsPinExist(std::string pin_name) {
+    return pin_2_id_.find(pin_name) != pin_2_id_.end();
+}
+
+Point2D<float> Macro::GetOrigin() const {
+    return origin_;
+}
+
+Point2D<float> &Macro::GetOriginRef() {
+    return origin_;
+}
+
+float Macro::GetWidth() const {
+    return size_.x;
+}
+
+float Macro::GetHeight() const {
+    return size_.y;
+}
+
+MacroWell *Macro::GetWellPtr() {
+    return well_ptr_;
 }
 
 ostream &operator<<(ostream &os, const Macro &macro) {
-    os << macro._name << endl;
-    os << macro._origin << endl;
-    os << macro._size << endl;
+    os << macro.name_ << endl;
+    os << macro.origin_ << endl;
+    os << macro.size_ << endl;
 
-    for (auto p : macro._pins) {
+    for (auto p : macro.pins_) {
         os << p << endl;
     }
-    os << macro._obs << endl;
+    os << macro.obs_ << endl;
     return os;
+
+}
+
+// get the pointer to the BlockType this well belongs to
+Macro *MacroWell::GetMacroPtr() const {
+    return macro_ptr_;
+}
+
+// Set the rect_ of N-well
+void MacroWell::SetNwellRect(double lx, double ly, double ux, double uy) {
+    is_n_set_ = true;
+    n_rect_.Set(lx, ly, ux, uy);
+    if (is_p_set_) {
+        //PhyDbExpects(n_rect_.LLY() == p_rect_.URY(), "N/P-well not abutted");
+    } else {
+        p_n_edge_ = n_rect_.LLY();
+    }
+}
+
+// get the pointer to the rect_ of N-well
+Rect2D<double> *MacroWell::GetNwellRectPtr() {
+    return &(n_rect_);
+}
+
+// Set the rect_ of P-well
+void MacroWell::SetPwellRect(double lx, double ly, double ux, double uy) {
+    is_p_set_ = true;
+    p_rect_.Set(lx, ly, ux, uy);
+    if (is_n_set_) {
+        //PhyDbExpects(n_rect_.LLY() == p_rect_.URY(), "N/P-well not abutted");
+    } else {
+        p_n_edge_ = p_rect_.URY();
+    }
+}
+
+// get the pointer to the rect_ of P-well
+Rect2D<double> *MacroWell::GetPwellRectPtr() {
+    return &(p_rect_);
+}
+
+// get the P/N well boundary
+double MacroWell::GetPnBoundary() const {
+    return p_n_edge_;
+}
+
+// get the height of N-well
+double MacroWell::GetNheight() const {
+    return macro_ptr_->GetHeight() - p_n_edge_;
+}
+
+// get the height of P-well
+double MacroWell::GetPheight() const {
+    return p_n_edge_;
+}
+
+// Set the rect_ of N or P well
+void MacroWell::SetWellRect(bool is_n, double lx, double ly, double ux, double uy) {
+    if (is_n) {
+        SetNwellRect(lx, ly, ux, uy);
+    } else {
+        SetPwellRect(lx, ly, ux, uy);
+    }
+}
+
+// Set the rect_ of N or P well
+void MacroWell::SetWellShape(bool is_n, Rect2D<double> &rect) {
+    SetWellRect(is_n, rect.LLX(), rect.LLY(), rect.URX(), rect.URY());
+}
+
+// check if N-well is abutted with P-well, if both exist
+bool MacroWell::IsNPWellAbutted() const {
+    if (is_p_set_ && is_n_set_) {
+        return p_rect_.URY() == n_rect_.LLY();
+    }
+    return true;
+}
+
+// report the information of N/P-well for debugging purposes
+void MacroWell::Report() const {
+    std::cout
+        << "  Well of BlockType: " << macro_ptr_->GetName() << "\n"
+        << "    Nwell: " << n_rect_.LLX() << "  " << n_rect_.LLY() << "  " << n_rect_.URX() << "  " << n_rect_.URY()
+        << "\n"
+        << "    Pwell: " << p_rect_.LLX() << "  " << p_rect_.LLY() << "  " << p_rect_.URX() << "  " << p_rect_.URY()
+        << "\n";
 
 }
 

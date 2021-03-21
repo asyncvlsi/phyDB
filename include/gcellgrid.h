@@ -6,21 +6,20 @@
 namespace phydb {
 
 class GcellGrid {
-    public:
-        string direction_;
-        int start_;
-        int numBoundaries_;
-        int step;
+  public:
+    string direction_;
+    int start_;
+    int numBoundaries_;
+    int step_;
 
-        GcellGrid(): start_(0), numBoundaries_(0), step_(0) { }
+    GcellGrid() : start_(0), numBoundaries_(0), step_(0) {}
 
-        friend ostream& operator<< (ostream& , const GcellGrid& );
+    friend ostream &operator<<(ostream &, const GcellGrid &);
 
 };
 
-ostream& operator<< (ostream& , const GcellGrid& );
+ostream &operator<<(ostream &, const GcellGrid &);
 
 }
-
 
 #endif

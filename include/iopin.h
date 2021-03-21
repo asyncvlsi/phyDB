@@ -8,38 +8,38 @@ namespace phydb {
 
 class IOPin {
   public:
-    int _id;
-    string _name;
-    string _netName;
-    string _direction;
-    string _use;
+    int id_;
+    string name_;
+    string net_name_;
+    string direction_;
+    string use_;
 
-    string _layerName;
-    Rect2D<int> _rect;
+    string layer_name_;
+    Rect2D<int> rect_;
 
-    Point2D<int> _location;
-    string _orient;
-    string _status;
+    Point2D<int> location_;
+    string orient_;
+    string status_;
 
-    IOPin() : _id(-1) {}
+    IOPin() : id_(-1) {}
     IOPin(std::string &name, std::string &netName, std::string &direction, std::string &use, int lx, int ly) :
-        _name(name), _netName(netName), _direction(direction), _use(use) {
-        _location.x = lx;
-        _location.y = ly;
+        name_(name), net_name_(netName), direction_(direction), use_(use) {
+        location_.x = lx;
+        location_.y = ly;
     }
     IOPin(string name, string netName, string direction, string use, string layerName,
           Rect2D<int> rect, Point2D<int> location, string orient, string status) :
-        _name(name),
-        _netName(netName),
-        _direction(direction),
-        _use(use),
-        _layerName(layerName),
-        _rect(rect),
-        _location(location),
-        _orient(orient),
-        _status(status) {}
+        name_(name),
+        net_name_(netName),
+        direction_(direction),
+        use_(use),
+        layer_name_(layerName),
+        rect_(rect),
+        location_(location),
+        orient_(orient),
+        status_(status) {}
 
-    string getName();
+    string GetName();
     void SetNetName(std::string const &net_name);
 
 };

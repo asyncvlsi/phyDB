@@ -4,152 +4,143 @@
 
 namespace phydb {
 
-void Tech::setDatabaseMicron(int database_micron) {
-    PhyDbExpects(database_micron > 0, "Cannot set negative database microns: Tech::setDatabaseMicron()");
-    _dbuPerMicron = database_micron;
+void Tech::SetDatabaseMicron(int database_micron) {
+    PhyDbExpects(database_micron > 0, "Cannot Set negative database microns: Tech::SetDatabaseMicron()");
+    dbu_per_micron_ = database_micron;
 }
 
-void Tech::setManufacturingGrid(double manufacture_grid) {
-    PhyDbExpects(manufacture_grid > 0, "Cannot set negative manufacturing grid: Circuit::setManufacturingGrid()");
-    _manufacturingGrid = manufacture_grid;
+void Tech::SetManufacturingGrid(double manufacture_grid) {
+    PhyDbExpects(manufacture_grid > 0, "Cannot Set negative manufacturing grid: Tech::SetManufacturingGrid()");
+    manufacturing_grid_ = manufacture_grid;
 }
 
-void Tech::addSite(std::string const &name, std::string const &class_name, double width, double height) {
-    _sites.emplace_back(name, class_name, width, height);
+void Tech::AddSite(std::string const &name, std::string const &class_name, double width, double height) {
+    sites_.emplace_back(name, class_name, width, height);
 }
 
-void Tech::setPlacementGrids(double placement_grid_value_x, double placement_grid_value_y) {
-    if (is_placement_grid_set_) {
-        std::cout << "Once set, grid_value cannot be changed!\n";
-        return;
-    }
-    if (placement_grid_value_x_ <= 0 || placement_grid_value_y_ <= 0) {
-        std::cout << "ERROR: negative placement grid value not allowed\n" << std::endl;
-        exit(1);
-    }
+void Tech::SetPlacementGrids(double placement_grid_value_x, double placement_grid_value_y) {
+    PhyDbExpects(placement_grid_value_x > 0 && placement_grid_value_y > 0, "negative placement grid value not allowed");
     placement_grid_value_x_ = placement_grid_value_x;
     placement_grid_value_y_ = placement_grid_value_y;
     is_placement_grid_set_ = true;
 }
 
-bool Tech::isLayerExist(std::string const &layer_name) {
-    return _layer2id.find(layer_name) != _layer2id.end();
+bool Tech::IsLayerExist(std::string const &layer_name) {
+    return layer_2_id_.find(layer_name) != layer_2_id_.end();
 }
 
-Layer *Tech::addLayer(std::string &layer_name) {
-    PhyDbExpects(!isLayerExist(layer_name), "Layer name exists, cannot use again");
-    int id = _layers.size();
-    _layers.emplace_back(layer_name);
-    _layer2id[layer_name] = id;
-    return &(_layers[id]);
+Layer *Tech::AddLayer(std::string &layer_name) {
+    PhyDbExpects(!IsLayerExist(layer_name), "LAYER name_ exists, cannot use again: " + layer_name);
+    int id = layers_.size();
+    layers_.emplace_back(layer_name);
+    layer_2_id_[layer_name] = id;
+    return &(layers_[id]);
 }
 
-Layer *Tech::getLayerPtr(std::string const &layer_name) {
-    if (!isLayerExist(layer_name)) {
+Layer *Tech::GetLayerPtr(std::string const &layer_name) {
+    if (!IsLayerExist(layer_name)) {
         return nullptr;
     }
-    int id = _layer2id[layer_name];
-    return &(_layers[id]);
+    int id = layer_2_id_[layer_name];
+    return &(layers_[id]);
+}
+
+int Tech::GetLayerId(const string& layer_name) {
+    if (!IsLayerExist(layer_name)) {
+        return -1;
+    }
+    int id = layer_2_id_[layer_name];
+    return id;
 }
 
 void Tech::ReportLayers() {
-    std::cout << "Total number of layer: " << _layers.size() << "\n";
-    for (auto &layer: _layers) {
+    std::cout << "Total number of layer: " << layers_.size() << "\n";
+    for (auto &layer: layers_) {
         layer.Report();
     }
     std::cout << "\n";
 }
 
-bool Tech::isMacroExist(std::string const &macro_name) {
-    return _macro2id.find(macro_name) != _macro2id.end();
+bool Tech::IsMacroExist(std::string const &macro_name) {
+    return macro_2_id_.find(macro_name) != macro_2_id_.end();
 }
 
-Macro *Tech::addMacro(std::string &macro_name) {
-    PhyDbExpects(!isMacroExist(macro_name), "Macro name exists, cannot use it again");
-    int id = _macros.size();
-    _macros.emplace_back(macro_name);
-    _macro2id[macro_name] = id;
-    return &(_macros[id]);
+Macro *Tech::AddMacro(std::string &macro_name) {
+    PhyDbExpects(!IsMacroExist(macro_name), "Macro name_ exists, cannot use it again: " + macro_name);
+    int id = macros_.size();
+    macros_.emplace_back(macro_name);
+    macro_2_id_[macro_name] = id;
+    return &(macros_[id]);
 }
 
-Macro &Tech::getMacro(string const &macro_name) {
-    if (!isMacroExist(macro_name)) {
-        std::cout << "Tech::getMacro, ERROR: Macro name does not exist, " + macro_name << std::endl;
-        exit(1);
-    }
-    int id = _macro2id[macro_name];
-    return _macros[id];
-}
-
-Macro *Tech::getMacroPtr(std::string const &macro_name) {
-    if (!isMacroExist(macro_name)) {
+Macro *Tech::GetMacroPtr(std::string const &macro_name) {
+    if (!IsMacroExist(macro_name)) {
         return nullptr;
     }
-    int id = _macro2id[macro_name];
-    return &(_macros[id]);
+    int id = macro_2_id_[macro_name];
+    return &(macros_[id]);
 }
 
 bool Tech::IsLefViaExist(std::string const &via_name) {
-    return _lefVia2id.find(via_name) != _lefVia2id.end();
+    return via_2_id_.find(via_name) != via_2_id_.end();
 }
 
 LefVia *Tech::AddLefVia(std::string &via_name) {
-    PhyDbExpects(!IsLefViaExist(via_name), "Macro name exists, cannot use it again");
-    int id = _vias.size();
-    _vias.emplace_back(via_name);
-    return &(_vias[id]);
+    PhyDbExpects(!IsLefViaExist(via_name), "VIA name_ exists, cannot use it again: " + via_name);
+    int id = vias_.size();
+    vias_.emplace_back(via_name);
+    via_2_id_[via_name] = id;
+    return &(vias_[id]);
 }
 
 LefVia *Tech::GetLefViaPtr(std::string const &via_name) {
     if (!IsLefViaExist(via_name)) {
         return nullptr;
     }
-    int id = _via2id[via_name];
-    return &(_vias[id]);
+    int id = via_2_id_[via_name];
+    return &(vias_[id]);
 }
 
 bool Tech::IsViaRuleGenerateExist(std::string const &name) {
-    return _via_rule_generate2id.find(name) != _via_rule_generate2id.end();
+    return via_rule_generate_2_id_.find(name) != via_rule_generate_2_id_.end();
 }
 
 ViaRuleGenerate *Tech::AddViaRuleGenerate(std::string &name) {
-    PhyDbExpects(!IsViaRuleGenerateExist(via_name), "Macro name exists, cannot use it again");
-    int id = _via_rule_generates.size();
-    _via_rule_generates.emplace_back(name);
-    return &(_via_rule_generates[id]);
+    PhyDbExpects(!IsViaRuleGenerateExist(name), "Macro name_ exists, cannot use it again");
+    int id = via_rule_generates_.size();
+    via_rule_generates_.emplace_back(name);
+    via_rule_generate_2_id_[name] = id;
+    return &(via_rule_generates_[id]);
 }
 
 ViaRuleGenerate *Tech::GetViaRuleGeneratePtr(std::string const &name) {
     if (!IsViaRuleGenerateExist(name)) {
         return nullptr;
     }
-    int id = _via_rule_generate2id[name];
-    return &(_via_rule_generates[id]);
+    int id = via_rule_generate_2_id_[name];
+    return &(via_rule_generates_[id]);
 }
 
-void Tech::setNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
+void Tech::SetNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
     if (is_n_well_layer_set_) {
-        n_layer_ptr_->set_params(width, spacing, op_spacing, max_plug_dist, overhang);
+        n_layer_ptr_->SetParams(width, spacing, op_spacing, max_plug_dist, overhang);
     } else {
         n_layer_ptr_ = new WellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
         is_n_well_layer_set_ = true;
     }
 }
 
-void Tech::setPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
+void Tech::SetPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
     if (is_p_well_layer_set_) {
-        p_layer_ptr_->set_params(width, spacing, op_spacing, max_plug_dist, overhang);
+        p_layer_ptr_->SetParams(width, spacing, op_spacing, max_plug_dist, overhang);
     } else {
         p_layer_ptr_ = new WellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
         is_p_well_layer_set_ = true;
     }
 }
 
-void Tech::setNpwellSpacing(double same_diff, double any_diff) {
-    if (same_diff < 0 || any_diff < 0) {
-        std::cout << "Negative values not allowed: Tech::setNpwellSpacing()" << std::endl;
-        exit(1);
-    }
+void Tech::SetNpwellSpacing(double same_diff, double any_diff) {
+    PhyDbExpects(same_diff >= 0 && any_diff >= 0, "Negative values not allowed: Tech::SetNpwellSpacing()");
     same_diff_spacing_ = same_diff;
     any_diff_spacing_ = any_diff;
 }
@@ -176,7 +167,7 @@ int getLefSite(lefrCallbackType_e type, lefiSite *site, lefiUserData data) {
         if (site->hasClass()) {
             site_class_name = std::string(site->siteClass());
         }
-        tech->addSite(site_name, site_class_name, site->sizeX(), site->sizeY());
+        tech->AddSite(site_name, site_class_name, site->sizeX(), site->sizeY());
     } else {
         PhyDbExpects(false, "SITE SIZE information not provided");
     }
@@ -188,7 +179,7 @@ int getLefMacrosBegin(lefrCallbackType_e type, const char *str, lefiUserData dat
 
     Tech *tech = (Tech *) data;
     string tmpMacroName(str);
-    tech->addMacro(tmpMacroName); //add an empty macro
+    tech->AddMacro(tmpMacroName); //add an empty macro
 
     return 0;
 }
@@ -212,11 +203,11 @@ int getLefMacros(lefrCallbackType_e type, lefiMacro *macro, lefiUserData data) {
              << sizeY << endl;
     }
     Tech *tech = (Tech *) data;
-    int nMacros = tech->_macros.size();
+    int nMacros = tech->macros_.size();
 
-    Macro &m = tech->_macros.back(); //write to the last one
-    m.setOrigin(originX, originY);
-    m.setSize(sizeX, sizeY);
+    Macro &m = tech->macros_.back(); //write to the last one
+    m.SetOrigin(originX, originY);
+    m.SetSize(sizeX, sizeY);
 
     return 0;
 }
@@ -231,9 +222,9 @@ int getLefMacrosEnd(lefrCallbackType_e type, const char *str, lefiUserData data)
 int getLefUnits(lefrCallbackType_e type, lefiUnits *units, lefiUserData data) {
     bool enableOutput = false;
     Tech *tech = (Tech *) data;
-    tech->_dbuPerMicron = units->databaseNumber();
+    tech->dbu_per_micron_ = units->databaseNumber();
     if (enableOutput) {
-        cout << "DATABASE MICRONS " << ((Tech *) data)->_dbuPerMicron << endl;
+        cout << "DATABASE MICRONS " << ((Tech *) data)->dbu_per_micron_ << endl;
     }
     return 0;
 }
@@ -241,7 +232,7 @@ int getLefUnits(lefrCallbackType_e type, lefiUnits *units, lefiUserData data) {
 int getLefManufacturingGrid(lefrCallbackType_e type, double number, lefiUserData data) {
     bool enableOutput = false;
     Tech *tech = (Tech *) data;
-    tech->_manufacturingGrid = number;
+    tech->manufacturing_grid_ = number;
     if (enableOutput) {
         cout << "MANUFACTURINGGRID " << number << endl;
     }
@@ -258,19 +249,19 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
     }
 
     // term
-    int nMacros = tech->_macros.size();
+    int nMacros = tech->macros_.size();
     // TODO: confirm this bug is fixed
-    Macro &tmpMacro = tech->_macros.back(); //write to the last one
+    Macro &tmpMacro = tech->macros_.back(); //write to the last one
 
     Pin tmpPin;
     LayerRect tmpLayerRect;
     Rect2D<float> tmpRect;
 
     string pin_name(pin->name());
-    tmpPin.setName(pin_name);
+    tmpPin.SetName(pin_name);
 
     string pin_use(pin->use());
-    tmpPin.setUse(pin_use);
+    tmpPin.SetUse(pin_use);
 
     if (enableOutput) {
         cout << "  PIN " << pin->name() << endl;
@@ -292,22 +283,22 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
             if (itemType == 1) { //layer
                 if (isNewLayerRect) {
                     isNewLayerRect = false;
-                    tmpLayerRect.reset();
+                    tmpLayerRect.Reset();
                 } else {
-                    tmpPin.addLayerRect(tmpLayerRect);
-                    tmpLayerRect.reset();
+                    tmpPin.AddLayerRect(tmpLayerRect);
+                    tmpLayerRect.Reset();
                 }
-                tmpLayerRect.layerName = pin->port(i)->getLayer(j);
+                tmpLayerRect.layer_name_ = pin->port(i)->getLayer(j);
 
                 if (enableOutput) {
-                    cout << "    LAYER " << tmpLayerRect.layerName << " ;" << endl;
+                    cout << "    LAYER " << tmpLayerRect.layer_name_ << " ;" << endl;
                 }
             } else if (itemType == 8) {
                 float llx = pin->port(i)->getRect(j)->xl;
                 float lly = pin->port(i)->getRect(j)->yl;
                 float urx = pin->port(i)->getRect(j)->xh;
                 float ury = pin->port(i)->getRect(j)->yh;
-                tmpRect.set(llx, lly, urx, ury);
+                tmpRect.Set(llx, lly, urx, ury);
 
                 tmpLayerRect.rects.push_back(tmpRect);
 
@@ -320,9 +311,9 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
                 // exit(2);
             }
         }
-        tmpPin.addLayerRect(tmpLayerRect);
+        tmpPin.AddLayerRect(tmpLayerRect);
     }
-    tmpMacro.addPin(tmpPin);
+    tmpMacro.AddPin(tmpPin);
 
     //tmpPin.print();
     if (enableOutput) {
@@ -343,8 +334,8 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
         exit(1);
     }
     Tech *tech = (Tech *) data;
-    int nMacros = tech->_macros.size();
-    Macro &tmpMacro = tech->_macros.back(); //write to the last one
+    int nMacros = tech->macros_.size();
+    Macro &tmpMacro = tech->macros_.back(); //write to the last one
 
     LayerRect tmpLayerRect;
     Rect2D<float> tmpRect;
@@ -361,15 +352,15 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
         if (geometry->itemType(i) == lefiGeomLayerE) {
             if (isNewLayerRect) {
                 isNewLayerRect = false;
-                tmpLayerRect.reset();
+                tmpLayerRect.Reset();
             } else {
-                tmpMacro.addObsLayerRect(tmpLayerRect);
-                tmpLayerRect.reset();
+                tmpMacro.AddObsLayerRect(tmpLayerRect);
+                tmpLayerRect.Reset();
             }
-            tmpLayerRect.layerName = geometry->getLayer(i);
+            tmpLayerRect.layer_name_ = geometry->getLayer(i);
 
             if (enableOutput) {
-                cout << "    LAYER " << tmpLayerRect.layerName << " ;" << endl;
+                cout << "    LAYER " << tmpLayerRect.layer_name_ << " ;" << endl;
             }
         } else if (geometry->itemType(i) == lefiGeomRectE) {
 
@@ -377,7 +368,7 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
             float lly = geometry->getRect(i)->yl;
             float urx = geometry->getRect(i)->xh;
             float ury = geometry->getRect(i)->yh;
-            tmpRect.set(llx, lly, urx, ury);
+            tmpRect.Set(llx, lly, urx, ury);
 
             tmpLayerRect.rects.push_back(tmpRect);
 
@@ -389,7 +380,7 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
             continue;
         }
     }
-    tmpMacro.addObsLayerRect(tmpLayerRect);
+    tmpMacro.AddObsLayerRect(tmpLayerRect);
 
     return 0;
 }
@@ -405,13 +396,13 @@ int getLefCornerSpacing(void *data, const string &stringProp) {
         if (token == "EXCEPTEOL") {
             istr >> tmpLayer.cornerSpacing.eolWidth;
         } else if (token == "WIDTH") {
-            float width;
-            istr >> width;
-            tmpLayer.cornerSpacing.width.push_back(width);
+            float width_;
+            istr >> width_;
+            tmpLayer.cornerSpacing.width_.push_back(GetWidth);
         } else if (token == "SPACING") {
             float spacing;
             istr >> spacing;
-            tmpLayer.cornerSpacing.spacing.push_back(spacing);
+            tmpLayer.cornerSpacing.spacing.push_back(GetSpacing);
         }
     }
      */
@@ -428,41 +419,41 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
     }
 
     Tech *tech = (Tech *) data;
-    int nLayers = tech->_layers.size();
-    Layer &tmpLayer = tech->_layers.back(); //write to the last one
+    int nLayers = tech->layers_.size();
+    Layer &tmpLayer = tech->layers_.back(); //write to the last one
 
 
     if (strcmp(layer->type(), "ROUTING") == 0) {
         string metal_layer_name(layer->name());
-        tmpLayer.setName(metal_layer_name);
+        tmpLayer.SetName(metal_layer_name);
         string metal_type(layer->type());
-        tmpLayer.setType(metal_type);
-        tmpLayer.setWidth(layer->width());
+        tmpLayer.SetType(metal_type);
+        tmpLayer.SetWidth(layer->width());
         if (layer->hasMinwidth()) {
-            tmpLayer.setMinWidth(layer->minwidth());
+            tmpLayer.SetMinWidth(layer->minwidth());
         } else {
-            tmpLayer.setMinWidth(layer->width());
+            tmpLayer.SetMinWidth(layer->width());
         }
         string layer_direction(layer->direction());
-        tmpLayer.setDirection(layer_direction);
+        tmpLayer.SetDirection(layer_direction);
 
         if (layer->hasXYPitch()) {
-            tmpLayer.setPitch(layer->pitchX(), layer->pitchY());
+            tmpLayer.SetPitch(layer->pitchX(), layer->pitchY());
         } else {
-            tmpLayer.setPitch(layer->pitch(), layer->pitch());
+            tmpLayer.SetPitch(layer->pitch(), layer->pitch());
         }
-        tmpLayer.setOffset(layer->offset());
+        tmpLayer.SetOffset(layer->offset());
 
         // read minArea rule
         if (layer->hasArea()) {
-            tmpLayer.setArea(layer->area());
+            tmpLayer.SetArea(layer->area());
         }
         /*
         double grid = ((parser::lefDataBase *) data)->manufacturingGrid;
         if (grid == 0)
-            tmpLayer.minLength = tmpLayer.area / tmpLayer.width;
+            tmpLayer.minLength = tmpLayer.area / tmpLayer.width_;
         else {
-            float minLength = tmpLayer.area / tmpLayer.width;
+            float minLength = tmpLayer.area / tmpLayer.width_;
             int multiple = (minLength / grid) / 6;
             if (minLength == ((float) multiple) * grid * 6)
                 tmpLayer.minLength = minLength;
@@ -472,9 +463,9 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
         }
 
         if (enableOutput)
-            cout << "Layer" << layer->name() << " number of props " << layer->numProps() << endl;
+            cout << "Layer" << layer->name_() << " number of props " << layer->numProps() << endl;
         if (layer->numProps() > 1) {
-            cout << "Error: enable to handle more than one properties:" << layer->name() << endl;
+            cout << "Error: enable to handle more than one properties:" << layer->name_() << endl;
         }
         for (int i = 0; i < layer->numProps(); i++) {
             if (string(layer->propName(i)) == string("LEF58_CORNERSPACING") && layer->propIsString(i)) {
@@ -516,7 +507,7 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
 
         // read spacingTable
         if (layer->numSpacingTable() > 1)
-            cout << "warning: More than one spacing table: " << tmpLayer.name << endl;
+            cout << "warning: More than one spacing table: " << tmpLayer.name_ << endl;
 
         for (int i = 0; i < layer->numSpacingTable(); ++i) {
             auto spTable = layer->spacingTable(i);
@@ -532,9 +523,9 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
                     tmpLayer.spacingTable.parallelRunLength.push_back(parallel->length(j));
                 }
                 for (int j = 0; j < parallel->numWidth(); ++j) {
-                    tmpLayer.spacingTable.width.push_back(parallel->width(j));
+                    tmpLayer.spacingTable.width_.push_back(parallel->GetWidth(j));
                     for (int k = 0; k < parallel->numLength(); ++k) {
-                        tmpLayer.spacingTable.spacing.push_back(parallel->widthSpacing(j, k));
+                        tmpLayer.spacingTable.GetSpacing.push_back(parallel->widthSpacing(j, k));
                     }
                 }
                 if (enableOutput) {
@@ -547,17 +538,17 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
             }
         }
 
-        int layerIdx = ((parser::lefDataBase *) data)->layers.size();
-        tmpLayer.idx = layerIdx;
-        ((parser::lefDataBase *) data)->layer2idx.insert(pair<string, int>(tmpLayer.name, layerIdx));
-        ((parser::lefDataBase *) data)->layers.push_back(tmpLayer);
+        int layerIdx = ((parser::lefDataBase *) data)->layers_.size();
+        tmpLayer.idx_ = layerIdx;
+        ((parser::lefDataBase *) data)->layer2idx.insert(pair<string, int>(tmpLayer.name_, layerIdx));
+        ((parser::lefDataBase *) data)->layers_.push_back(tmpLayer);
          */
 
     } else if (strcmp(layer->type(), "CUT") == 0) { // cut layer
         /*
-        tmpLayer.name = layer->name();
+        tmpLayer.name_ = layer->name_();
         tmpLayer.type = layer->type();
-        tmpLayer.width = layer->width();
+        tmpLayer.GetWidth = layer->width_();
 
         // read spacing constraint
         for (int i = 0; i < layer->numSpacing(); ++i) {
@@ -569,14 +560,14 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
                 tmpSpacing.cutWithin = layer->spacingAdjacentWithin(i);
                 tmpLayer.spacings.push_back(tmpSpacing);
             } else {
-                tmpLayer.spacing = layer->spacing(i);
+                tmpLayer.spacing = layer->GetSpacing(i);
             }
         }
 
-        int layerIdx = ((parser::lefDataBase *) data)->layers.size();
-        tmpLayer.idx = layerIdx;
-        ((parser::lefDataBase *) data)->layer2idx.insert(pair<string, int>(tmpLayer.name, layerIdx));
-        ((parser::lefDataBase *) data)->layers.push_back(tmpLayer);
+        int layerIdx = ((parser::lefDataBase *) data)->layers_.size();
+        tmpLayer.idx_ = layerIdx;
+        ((parser::lefDataBase *) data)->layer2idx.insert(pair<string, int>(tmpLayer.name_, layerIdx));
+        ((parser::lefDataBase *) data)->layers_.push_back(tmpLayer);
         */
     } else {
         if (string(layer->name()) != "OVERLAP")
@@ -600,37 +591,37 @@ int getLefVias(lefrCallbackType_e type, lefiVia *via, lefiUserData data) {
     }
     parser::lefVia tmpVia;
 
-    tmpVia.name = via->name();
+    tmpVia.name_ = via->name_();
 
     if (enableOutput) {
-        cout <<"VIA " <<via->name();
+        cout <<"VIA " <<via->name_();
         if (via->hasDefault()) {
             cout <<" DEFAULT";
         }
         cout <<endl;
     }
     if (via->numLayers() != 3) {
-        cout <<"Error: unsupported via: " << via->name() << endl;
+        cout <<"Error: unsupported via: " << via->name_() << endl;
         exit(1);
     }
     string topLayerName;
     for (int i = 0; i < via->numLayers(); ++i) {
         parser::LayerRect tmpLayerRect;
-        tmpLayerRect.layerName = via->layerName(i);
+        tmpLayerRect.layer_name_ = via->layer_name_(i);
         for (int j = 0; j < via->numRects(i); ++j)
         {
-            parser::Rect2D<float> rect;
-            rect.set(via->xl(i, j), via->yl(i, j), via->xh(i, j), via->yh(i, j));
-            tmpLayerRect.rects.push_back(rect);
+            parser::Rect2D<float> rect_;
+            rect_.Set(via->xl(i, j), via->yl(i, j), via->xh(i, j), via->yh(i, j));
+            tmpLayerRect.rects.push_back(rect_);
         }
-        tmpVia.layerRects.push_back(tmpLayerRect);
+        tmpVia.layer_rects_.push_back(tmpLayerRect);
         if(i == via->numLayers() - 1)
-            topLayerName = via->layerName(i);
+            topLayerName = via->layer_name_(i);
     }
 
     int viaIdx = ((parser::lefDataBase*) data)->vias.size();
     int topLayerIdx = ((parser::lefDataBase* ) data)->layer2idx[topLayerName];
-    ((parser::lefDataBase*) data)->lefVia2idx.insert( pair<string, int> (tmpVia.name, viaIdx));
+    ((parser::lefDataBase*) data)->lefVia2idx.insert( pair<string, int> (tmpVia.name_, viaIdx));
     ((parser::lefDataBase*) data)->topLayerIdx2ViaIdx.insert( pair<int, int> (topLayerIdx, viaIdx));
     ((parser::lefDataBase*) data)->vias.push_back(tmpVia);
 
@@ -655,14 +646,14 @@ int getLefViaGenerateRules(lefrCallbackType_e type, lefiViaRule *viaRule, lefiUs
         cout <<"Error: unsupported via" <<endl;
         exit(1);
     }
-    tmpViaRule.name = viaRule->name();
+    tmpViaRule.name_ = viaRule->name_();
 
     for (int i = 0; i < viaRule->numLayers(); ++i)
     {
         auto viaRuleLayer = viaRule->layer(i);
-        auto& layer = tmpViaRule.layers[i];
+        auto& layer = tmpViaRule.layers_[i];
 
-        layer.layerName = viaRuleLayer->name();
+        layer.layer_name_ = viaRuleLayer->name_();
         if(viaRuleLayer->hasEnclosure())
         {
             layer.enclosureOverhang.x = viaRuleLayer->enclosureOverhang1();
@@ -671,19 +662,19 @@ int getLefViaGenerateRules(lefrCallbackType_e type, lefiViaRule *viaRule, lefiUs
 
         if(viaRuleLayer->hasRect())
         {
-            layer.rect.set(viaRuleLayer->xl(), viaRuleLayer->yl(), viaRuleLayer->xh(), viaRuleLayer->xh());
+            layer.rect_.Set(viaRuleLayer->xl(), viaRuleLayer->yl(), viaRuleLayer->xh(), viaRuleLayer->xh());
         }
 
         if(viaRuleLayer->hasSpacing())
         {
             layer.spacing.x = viaRuleLayer->spacingStepX();
-            layer.spacing.y = viaRuleLayer->spacingStepY();
+            layer.GetSpacing.y = viaRuleLayer->spacingStepY();
         }
 
     }
 
     int viaRuleIdx = ((parser::lefDataBase*) data)->viaRuleGenerates.size();
-    ((parser::lefDataBase*) data)->viaRuleGenerate2idx.insert( pair<string, int> (tmpViaRule.name, viaRuleIdx));
+    ((parser::lefDataBase*) data)->viaRuleGenerate2idx.insert( pair<string, int> (tmpViaRule.name_, viaRuleIdx));
     ((parser::lefDataBase*) data)->viaRuleGenerates.push_back(tmpViaRule);
 
     if(enableOutput)

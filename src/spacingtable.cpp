@@ -2,101 +2,101 @@
 
 namespace phydb {
 
-void SpacingTable::setSize(int nC, int nR) {
-    reset();
-    _nCol = nC;
-    _nRow = nR;
-    _parallelRunLength.resize(nC);
-    _width.resize(nR);
-    _spacing.resize(nC * nR);
+void SpacingTable::SetSize(int nC, int nR) {
+    Reset();
+    n_col_ = nC;
+    n_row_ = nR;
+    parallel_run_length_.resize(nC);
+    width_.resize(nR);
+    spacing_.resize(nC * nR);
 }
 
-void SpacingTable::reset( ) {
-    _nCol = 0;
-    _nRow = 0;
-    _parallelRunLength.clear();
-    _width.clear();
-    _spacing.clear();
+void SpacingTable::Reset( ) {
+    n_col_ = 0;
+    n_row_ = 0;
+    parallel_run_length_.clear();
+    width_.clear();
+    spacing_.clear();
 }
 
-int SpacingTable::getNCol( ) const {
-    return _nCol;
+int SpacingTable::GetNCol( ) const {
+    return n_col_;
 }
 
-int SpacingTable::getNRow( ) const {
-    return _nRow;
+int SpacingTable::GetNRow( ) const {
+    return n_row_;
 }
 
-void SpacingTable::setParallelRunLengthVec(vector<float> v) {
-    assert(v.size() == _nCol);
-    _parallelRunLength = v;
+void SpacingTable::SetParallelRunLengthVec(vector<float> v) {
+    assert(v.size() == n_col_);
+    parallel_run_length_ = v;
 }
 
-void SpacingTable::setWidthVec(vector<float> v) {
-    assert(v.size() == _nRow);
-    _width = v;
+void SpacingTable::SetWidthVec(vector<float> v) {
+    assert(v.size() == n_row_);
+    width_ = v;
 }
 
-void SpacingTable::setSpacingVec(vector<float> v) {
-    assert(v.size() == _nRow * _nCol);
-    _spacing = v;
+void SpacingTable::SetSpacingVec(vector<float> v) {
+    assert(v.size() == n_row_ * n_col_);
+    spacing_ = v;
 }
 
-vector<float> SpacingTable::getParallelRunLengthVec() const {
-    return _parallelRunLength;
+vector<float> SpacingTable::GetParallelRunLengthVec() const {
+    return parallel_run_length_;
 }
 
-vector<float> SpacingTable::getWidthVec() const {
-    return _width;
+vector<float> SpacingTable::GetWidthVec() const {
+    return width_;
 }
 
-vector<float> SpacingTable::getSpacingVec() const {
-    return _spacing;
+vector<float> SpacingTable::GetSpacingVec() const {
+    return spacing_;
 }
 
-void SpacingTable::setParallelRunLengthAt(int col, float val) {
-    assert(col < _nCol);
-    _parallelRunLength[col] = val;
+void SpacingTable::SetParallelRunLengthAt(int col, float val) {
+    assert(col < n_col_);
+    parallel_run_length_[col] = val;
 }
 
-void SpacingTable::setWidthAt(int row, float val) {
-    assert(row < _nRow);
-    _width[row] = val;
+void SpacingTable::SetWidthAt(int row, float val) {
+    assert(row < n_row_);
+    width_[row] = val;
 }
 
-void SpacingTable::setSpacingAt(int col, int row, float val) {
-    assert(col + _nCol * row < _nCol * _nRow);
-    _spacing[col + _nCol * row] = val;
+void SpacingTable::SetSpacingAt(int col, int row, float val) {
+    assert(col + n_col_ * row < n_col_ * n_row_);
+    spacing_[col + n_col_ * row] = val;
 }
 
-float SpacingTable::getParallelRunLengthAt(int col) const {
-    assert(col < _nCol);
-    return _parallelRunLength[col];
+float SpacingTable::GetParallelRunLengthAt(int col) const {
+    assert(col < n_col_);
+    return parallel_run_length_[col];
 }
 
-float SpacingTable::getWidthAt(int row) const {
-    assert(row < _nRow);
-    return _width[row];
+float SpacingTable::GetWidthAt(int row) const {
+    assert(row < n_row_);
+    return width_[row];
 }
 
-float SpacingTable::getSpacingAt(int col, int row) const {
-    assert(col + _nCol * row < _nCol * _nRow);
-    return _spacing[col + _nCol * row];
+float SpacingTable::GetSpacingAt(int col, int row) const {
+    assert(col + n_col_ * row < n_col_ * n_row_);
+    return spacing_[col + n_col_ * row];
 }
 
 ostream& operator<< (ostream& os, const SpacingTable& st) {
-    int nCol = st.getNCol();
-    int nRow = st.getNRow();
+    int nCol = st.GetNCol();
+    int nRow = st.GetNRow();
     os << "nCol: " << nCol << " nRow: " << nRow << endl;
     
     os << "\t";
-    for(auto l : st.getParallelRunLengthVec( ))
+    for(auto l : st.GetParallelRunLengthVec())
         os << l << "\t";
     os << endl;
     for(int r = 0; r < nRow; r++) {
-        os << st.getWidthAt(r) << "\t";
+        os << st.GetWidthAt(r) << "\t";
         for(int c = 0; c < nCol; c++) {
-            os << st.getSpacingAt(c, r) << "\t";
+            os << st.GetSpacingAt(c, r) << "\t";
         }
         os << endl;
     }

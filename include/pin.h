@@ -7,38 +7,38 @@ namespace phydb {
 
 class Pin {
   private:
-    string _name;
-    string _direction;
-    string _use;
-    string _shape;
-    string _antennaDiffAreaLayer;
-    float _antennaDiffArea;
+    string name_;
+    string direction_;
+    string use_;
+    string shape_;
+    string antenna_diff_area_layer_;
+    float antenna_diff_area_;
 
-    vector<LayerRect> _layerRects;
+    vector<LayerRect> layer_rects_;
 
   public:
-    Pin() : _name(""), _direction(""), _use(""), _shape(""),
-            _antennaDiffAreaLayer(""), _antennaDiffArea(0) {}
+    Pin() : name_(""), direction_(""), use_(""), shape_(""),
+            antenna_diff_area_layer_(""), antenna_diff_area_(0) {}
     Pin(string name, string direction, string use, string shape,
         string antennaDiffAreaLayer, float antennaDiffArea,
         vector<string> netExpr, vector<LayerRect> layerRects) :
-        _name(name),
-        _direction(direction),
-        _use(use),
-        _shape(shape),
-        _antennaDiffAreaLayer(antennaDiffAreaLayer),
-        _antennaDiffArea(antennaDiffArea),
-        _layerRects(layerRects) {}
+        name_(name),
+        direction_(direction),
+        use_(use),
+        shape_(shape),
+        antenna_diff_area_layer_(antennaDiffAreaLayer),
+        antenna_diff_area_(antennaDiffArea),
+        layer_rects_(layerRects) {}
 
-    void setName(string &name) { _name = name; }
-    void setUse(string &use) { _use = use; }
-    void setNetExpr(vector<string>);
-    void setLayerRect(vector<LayerRect>);
+    void SetName(string &name) { name_ = name; }
+    void SetUse(string &use) { use_ = use; }
+    void SetNetExpr(vector<string>);
+    void SetLayerRect(vector<LayerRect>);
 
-    void addLayerRect(LayerRect &layer_rect) {_layerRects.push_back(layer_rect);}
+    void AddLayerRect(LayerRect &layer_rect) { layer_rects_.push_back(layer_rect); }
 
-    vector<string> getNetExpr() const;
-    vector<LayerRect> getLayerRect() const;
+    vector<string> GetNetExpr() const;
+    vector<LayerRect> GetLayerRect() const;
 
     friend ostream &operator<<(ostream &, const Pin &);
 };

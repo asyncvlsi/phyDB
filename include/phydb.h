@@ -7,38 +7,34 @@
 namespace phydb {
 
 class PhyDB {
-  private:
-    Tech _tech;
-    Design _design;
-
   public:
     PhyDB() {}
 
     /************************************************
     * The following APIs are for information in LEF
     * ************************************************/
-    void setDatabaseMicron(int database_micron);
-    void setManufacturingGrid(double manufacture_grid);
-    void addSite(std::string const &name, std::string const &class_name, double width, double height);
-    void setPlacementGrids(double placement_grid_value_x_, double placement_grid_value_y_);
+    void SetDatabaseMicron(int database_micron);
+    void SetManufacturingGrid(double manufacture_grid);
+    void AddSite(std::string const &name, std::string const &class_name, double width, double height);
+    void SetPlacementGrids(double placement_grid_value_x_, double placement_grid_value_y_);
 
-    bool isLayerExist(std::string const &layer_name);
-    Layer *addLayer(std::string &layer_name);
-    Layer *getLayerPtr(std::string const &layer_name);
+    bool IsLayerExist(std::string const &layer_name);
+    Layer *AddLayer(std::string &layer_name);
+    Layer *GetLayerPtr(std::string const &layer_name);
     
-    bool isMacroExist(std::string const &macro_name);
-    Macro *addMacro(std::string &macro_name);
-    Macro *getMacroPtr(std::string const &macro_name);
+    bool IsMacroExist(std::string const &macro_name);
+    Macro *AddMacro(std::string &macro_name);
+    Macro *GetMacroPtr(std::string const &macro_name);
 
-    bool isLefViaExist(std::string const &name);
+    bool IsLefViaExist(std::string const &name);
     LefVia *AddLefVia(std::string &name);
     LefVia *GetLefViaPtr(std::string const &name);
 
     /************************************************
     * The following APIs are for information in DEF
     * ************************************************/
-    void setUnitsDistanceMicrons(int distance_microns);
-    void setDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
+    void SetUnitsDistanceMicrons(int distance_microns);
+    void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
 
     Track* AddTrack(string& direction, int start, int nTracks, int step, vector<string>& layer_names);
     vector<Track>& GetTrackVec();
@@ -49,23 +45,23 @@ class PhyDB {
 
     bool IsViaRuleGenerateExist(std::string const &name);
     ViaRuleGenerate* AddViaRuleGenerate(std::string &name);
-    ViaRuleGenerate* GetViaRuleGeneratePtr(std::string const &name)
+    ViaRuleGenerate* GetViaRuleGeneratePtr(std::string const &name);
     
-    bool isDefViaExist(std::string const &name);
+    bool IsDefViaExist(std::string const &name);
     DefVia *AddDefVia(std::string &name);
     DefVia *GetDefViaPtr(std::string const &name);
 
     //TODO discuss: maybe IsExist does not need to be here? because it is only used in add?
-    bool isComponentExist(std::string &component_name);
-    Component *addComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
+    bool IsComponentExist(std::string &component_name);
+    Component *AddComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
                             int llx, int lly, std::string &orient);
-    Component *getComponentPtr(std::string &comp_name);
+    Component *GetComponentPtr(std::string &comp_name);
 
-    bool isIoPinExist(std::string &iopin_name);
-    IOPin *addIoPin(std::string &iopin_name, std::string &place_status,
+    bool IsIoPinExist(std::string &iopin_name);
+    IOPin *AddIoPin(std::string &iopin_name, std::string &place_status,
                     std::string &signal_use, std::string &signal_direction,
                     int lx = 0, int ly = 0);
-    IOPin *getIoPinPtr(std::string &iopin_name);
+    IOPin *GetIoPinPtr(std::string &iopin_name);
 
     bool IsNetExist(std::string &net_name);
     Net *AddNet(std::string &net_name, double weight = 1);
@@ -76,19 +72,24 @@ class PhyDB {
     /************************************************
     * The following APIs are for information in CELL
     * ************************************************/
-    void setNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
-    void setPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
-    void setNpwellSpacing(double same_spacing, double any_spacing);
-    MacroWell *addMacrowell(std::string &macro_name);
-    void setMacrowellShape(std::string &macro_name, bool is_N, double lx, double ly, double ux, double uy);
+    void SetNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
+    void SetPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
+    void SetNpwellSpacing(double same_spacing, double any_spacing);
+    MacroWell *AddMacrowell(std::string &macro_name);
+    void SetMacrowellShape(std::string &macro_name, bool is_N, double lx, double ly, double ux, double uy);
 
     /************************************************
     * The following APIs are for file IO
     * ************************************************/
 
-    void readLef(string const &lefFileName);
-    void readDef(string const &defFileName);
-    void readCell(string const &cellFileName);
+    void ReadLef(string const &lefFileName);
+    void ReadDef(string const &defFileName);
+    void ReadCell(string const &cellFileName);
+
+
+  private:
+    Tech tech_;
+    Design design_;
 
     /****helper functions****/
     // splits a line into many word tokens

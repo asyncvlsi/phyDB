@@ -5,60 +5,57 @@
 
 namespace phydb {
 
-
 class Path {
-    public:
-        string layerName;
-        int width;
-        string shape;
-        string viaName;
+  private:
+    string layer_name_;
+    int width_;
+    string shape_;
+    string via_name_;
 
-        int beginExt;
-        int endExt;
-        Rect2D<int> rect;
-        Point2D<int> begin;
-        Point2D<int> end;
-        
-        Path( )  {
-            layerName = "";
-            width = 0;
-            shape = "";
-            viaName = "";
-            beginExt = 0;
-            endExt = 0;
-        }
-        void Report() {
-            cout << " NEW " << layerName << " " << width << " + SHAPE " << shape;
-            if(!rect.empty())
-                cout << " (" << rect.lowerLeft.x << " " << rect.lowerLeft.y << " " << rect.upperRight.x << " " << rect.upperRight.y << ")";
-            if(!begin.empty())
-                cout << " (" << begin.x << " " << begin.y << " ) ";
-            if(!end.empty())
-                cout << " (" << end.x << " " << end.y << " ) ";
-            if(beginExt != 0 || endExt != 0)
-                cout << " EXT " << beginExt << " " << endExt;
-            if(viaName != "")
-                cout << viaName;
-            cout << endl;
-        }
+    int begin_ext_;
+    int end_ext_;
+    Rect2D<int> rect_;
+    Point2D<int> begin_;
+    Point2D<int> end_;
+  public:
+    Path() {
+        layer_name_ = "";
+        width_ = 0;
+        shape_ = "";
+        via_name_ = "";
+        begin_ext_ = 0;
+        end_ext_ = 0;
+    }
+    void Report() {
+        cout << " NEW " << layer_name_ << " " << width_ << " + SHAPE " << shape_;
+        if (!rect_.IsEmpty())
+            cout << " (" << rect_.ll.x << " " << rect_.ll.y << " " << rect_.ur.x << " " << rect_.ur.y << ")";
+        if (!begin_.IsEmpty())
+            cout << " (" << begin_.x << " " << begin_.y << " ) ";
+        if (!end_.IsEmpty())
+            cout << " (" << end_.x << " " << end_.y << " ) ";
+        if (begin_ext_ != 0 || end_ext_ != 0)
+            cout << " EXT " << begin_ext_ << " " << end_ext_;
+        if (via_name_ != "")
+            cout << via_name_;
+        cout << endl;
+    }
 };
 
 class SNet {
-    public:
-        string _name;
-        vector<Path> _paths;
+  private:
+    string name_;
+    vector<Path> paths_;
+  public:
+    SNet() {}
 
-        SNet( ): { }
+    void SetName(string);
 
-        void setName(string );
-
-        string getName( ) const;
+    string GetName() const;
 };
 
-ostream& operator<< (ostream& , const SNet& );
+ostream &operator<<(ostream &, const SNet &);
 
 }
 
-
-
-#endif 
+#endif

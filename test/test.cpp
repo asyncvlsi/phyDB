@@ -14,42 +14,42 @@ void test_datatype( ) {
 
     //Point2D
         Point2D<int> a1;
-        assert(a1.isEmpty());
+        assert(a1.IsEmpty());
         a1.x = 1;
         a1.y = 2;
         Point2D<int> b1(3, 0), c1;
-        c1.set(2, 6);
+    c1.Set(2, 6);
         assert(a1 > b1 && b1 < c1);
-        c1.reset( );
-        assert(c1.isEmpty( ));
+    c1.Reset();
+        assert(c1.IsEmpty());
         cout << b1 << endl;
         cout << "Point2D test passes!" << endl;
     //Point3D
     {
         Point3D<float> a2;
-        assert(a2.isEmpty());
+        assert(a2.IsEmpty());
         a2.x = 1.0;
         a2.y = 2.0;
         a2.z = 3.0;
         Point3D<float> b2(3.0, 0.0, 2.0), c2;
-        c2.set(2.0, 1.5, 3.0);
+        c2.Set(2.0, 1.5, 3.0);
         assert(a2 > b2 && a2 > c2);
-        c2.reset( );
-        assert(c2.isEmpty( ));
+        c2.Reset();
+        assert(c2.IsEmpty());
         cout << b2 << endl;
         cout << "Point3D test passes!" << endl;
     }
     //Rect2D 
     {
         Rect2D<float> a3;
-        a3.set(1.0, 2.0, 3.0, 4.0);
+        a3.Set(1.0, 2.0, 3.0, 4.0);
         Point2D<float> p3(1.0, 4.0);
         Point2D<float> q3(1.5, 2.5);
-        assert(!a3.boundaryExclusiveCover(p3) && a3.cover(p3));
-        assert(a3.boundaryExclusiveCover(q3));
+        assert(!a3.BoundaryExclusiveCover(p3) && a3.Cover(p3));
+        assert(a3.BoundaryExclusiveCover(q3));
         cout << a3 << endl;
         a3.ur.x = 0.5;
-        assert(!a3.isLegal());
+        assert(!a3.IsLegal());
         cout << "Rect2D test passes!" << endl;
     }
     //Rect3D
@@ -100,7 +100,7 @@ void test_spacingtable( ) {
     cout << st << endl;
     cout << "here?" << endl;
 
-    st.setSpacingAt(4, 3, 100.0);
+    st.SetSpacingAt(4, 3, 100.0);
     cout << st << endl;
 }
 
@@ -124,12 +124,12 @@ void test_tech( ) {
     Macro macro1("testMacro", Point2D<float>(1.0, 2.0), Point2D<float>(3.0, 4.0), pins, obs);
 
     std::string macro_name = "testMacro";
-    tech.addMacro(macro_name);
-    auto& macro2 = tech.getMacro("testMacro");
+    tech.AddMacro(macro_name);
+    auto *macro2 = tech.GetMacroPtr("testMacro");
 
-    cout << macro2.getOrigin() << endl;
-    macro2.getOriginRef().x = 2.0;
-    cout << macro2.getOriginRef() << endl;
+    cout << macro2->GetOrigin() << endl;
+    macro2->GetOriginRef().x = 2.0;
+    cout << macro2->GetOriginRef() << endl;
     
 
 }
@@ -149,11 +149,11 @@ int main() {
     
     string lefFileName, defFileName;
     PhyDB db;
-    db.readLef(lefFileName);
-    db.readDef(defFileName);
+    db.ReadLef(lefFileName);
+    db.ReadDef(defFileName);
 
     string cellFileName;
-    db.readCell(cellFileName);
+    db.ReadCell(cellFileName);
     
     return 1;
 }

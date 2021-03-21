@@ -6,33 +6,31 @@
 namespace phydb {
 
 class Site {
-    private:
-        string _name;
-        string _className;
-        float _width;
-        float _height;
-        
-    public:
-        Site( ): _name(""), _className(""), _width(0), _height(0) { }
-        Site(string name, string className, float width, float height):
-            _name(name), _className(className), _width(width), _height(height) { }
+  private:
+    string name_;
+    string class_name_;
+    float width_;
+    float height_;
 
-        void setName(string );
-        void setClassName(string );
-        void setWidth(float );
-        void setHeight(float );
+  public:
+    Site() : name_(""), class_name_(""), width_(0), height_(0) {}
+    Site(string name, string className, float width, float height) :
+        name_(name), class_name_(className), width_(width), height_(height) {}
 
-        string getName( ) const;
-        string getClassName( ) const;
-        float getWidth( ) const;
-        float getHeight( ) const;
+    void SetName(string);
+    void SetClassName(string);
+    void SetWidth(float);
+    void SetHeight(float);
+
+    string GetName() const;
+    string GetClassName() const;
+    float GetWidth() const;
+    float GetHeight() const;
 
 };
 
-ostream& operator<< (ostream& , const Site& );
+ostream &operator<<(ostream &, const Site &);
 
 }
 
-
-
-#endif 
+#endif

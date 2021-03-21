@@ -6,38 +6,35 @@
 namespace phydb {
 
 class Row {
-    public: 
-        string _name;
-        string _siteName;
-        string _siteOrient;
-        int _origX;
-        int _origY;
-        int _numX;
-        int _numY;
-        int _stepX;
-        int _stepY;
-    
-        Row() { }
-        Row(string name, string siteName, string siteOrient,
-                int origX, int origY, int numX, int numY, int stepX, int stepY):
-            _name(name),
-            _siteName(siteName),
-            _siteOrient(siteOrient),
-            _origX(origX),
-            _origY(origY),
-            _numX(numX),
-            _numY(numY),
-            _stepX(stepX),
-            _stepY(stepY)
-            { }
+  public:
+    string name_;
+    string site_name_;
+    string site_orient_;
+    int orig_x_;
+    int orig_y_;
+    int num_x_;
+    int num_y_;
+    int step_x_;
+    int step_y_;
+
+    Row() {}
+    Row(string name, string siteName, string siteOrient,
+        int origX, int origY, int numX, int numY, int stepX, int stepY) :
+        name_(name),
+        site_name_(siteName),
+        site_orient_(siteOrient),
+        orig_x_(origX),
+        orig_y_(origY),
+        num_x_(numX),
+        num_y_(numY),
+        step_x_(stepX),
+        step_y_(stepY) {}
 
 };
 
-ostream& operator<< (ostream& , const Row &);
-
+ostream &operator<<(ostream &, const Row &);
 
 }
-
 
 #endif
 

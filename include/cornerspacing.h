@@ -7,18 +7,18 @@ namespace phydb {
     
 class CornerSpacing {
     private: 
-        float _eolWidth;
-        vector<float> _width;
-        vector<float> _spacing;
+        float eol_width_;
+        vector<float> width_;
+        vector<float> spacing_;
 
     public:
-        CornerSpacing( ) : _eolWidth(0) {}
+        CornerSpacing( ) : eol_width_(0) {}
         
         //constructor for metal layer
-        CornerSpacing(float eolWidth, vector<float> width, vector<float> spacing) : 
-            _eolWidth(eolWidth), _width(width), _spacing(spacing) { }
+        CornerSpacing(float eolWidth, vector<float> width, vector<float> spacing) :
+            eol_width_(eolWidth), width_(width), spacing_(spacing) { }
 
-        void reset();
+        void Reset();
 };
 
 ostream& operator<< (ostream& , const CornerSpacing& );

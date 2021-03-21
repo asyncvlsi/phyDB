@@ -2,8 +2,8 @@
 
 namespace phydb {
 
-string Net::getName() {
-    return _name;
+string Net::GetName() {
+    return name_;
 }
 
 void Net::AddIoPin(std::string const &iopin_name) {
@@ -11,8 +11,8 @@ void Net::AddIoPin(std::string const &iopin_name) {
 }
 
 void Net::AddCompPin(std::string const &comp_name, std::string const &pin_name) {
-    componentNames.push_back(comp_name);
-    pinNames.push_back(pin_name);
+    component_names_.push_back(comp_name);
+    pin_names_.push_back(pin_name);
 }
 
 }

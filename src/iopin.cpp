@@ -2,12 +2,12 @@
 
 namespace phydb {
 
-string IOPin::getName() {
-    return _name;
+string IOPin::GetName() {
+    return name_;
 }
 
 void IOPin::SetNetName(std::string const &net_name) {
-    _netName = net_name;
+    net_name_ = net_name;
 }
 
 }

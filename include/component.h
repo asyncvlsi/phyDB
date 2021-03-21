@@ -8,34 +8,35 @@ namespace phydb {
 
 class Component {
   public:
-    int _id;
-    string _name;
-    string _macroName;
-    string _source;
-    string _locationType;
-    string _orient;
+    int id_;
+    string name_;
+    string macro_name_;
+    string source_;
+    string location_type_;
+    string orient_;
 
-    int _weight;
-    Point2D<int> _location;
+    int weight_;
+    Point2D<int> location_;
 
     Component() {}
     Component(string name, string macroName, string source, string locationType,
               string orient, int weight, Point2D<int> location) :
-        _name(name),
-        _macroName(macroName),
-        _source(source),
-        _locationType(locationType),
-        _orient(orient),
-        _weight(weight),
-        _location(location) {}
+        name_(name),
+        macro_name_(macroName),
+        source_(source),
+        location_type_(locationType),
+        orient_(orient),
+        weight_(weight),
+        location_(location) {}
     Component(std::string &comp_name, std::string &macro_name, std::string &place_status,
               int llx, int lly, std::string &orient)
-        : _name(comp_name), _macroName(macro_name), _locationType(place_status), _orient(orient) {
-        _location.x = llx;
-        _location.y = lly;
+        : name_(comp_name), macro_name_(macro_name), location_type_(place_status), orient_(orient) {
+        location_.x = llx;
+        location_.y = lly;
     }
 
-    string getName() { return _name; }
+    string GetName();
+    string GetMacroName();
 
 };
 

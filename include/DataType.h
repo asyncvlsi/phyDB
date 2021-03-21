@@ -1,6 +1,8 @@
 #ifndef DATATYPES_H
 #define DATATYPES_H
 
+#include <string>
+
 #include "header.h"
 
 namespace phydb {
@@ -13,18 +15,25 @@ class Point2D {
 
     Point2D() : x(0), y(0) {}
     Point2D(T xx, T yy) : x(xx), y(yy) {}
-    void set(T xx, T yy) {
+    void Set(T xx, T yy) {
         x = xx;
         y = yy;
     }
-    void reset() {
+    void Clear() {
         x = 0;
         y = 0;
     }
-    bool isEmpty() {
+    void Reset() {
+        x = 0;
+        y = 0;
+    }
+    bool IsEmpty() {
         return (x == 0 && y == 0);
     }
-    //define '<' and '>' for comparison in std set and map
+    std::string Str() const {
+        return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
+    }
+    //define '<' and '>' for comparison in std Set and map
     bool operator<(const Point2D<T> p) const {
         if (y < p.y) return true;
         else if (y > p.y) return false;
@@ -48,21 +57,24 @@ class Point3D {
     T z;
     Point3D() : x(0), y(0), z(0) {}
     Point3D(T xx, T yy, T zz) : x(xx), y(yy), z(zz) {}
-    void set(T xx, T yy, T zz) {
+    void Set(T xx, T yy, T zz) {
         x = xx;
         y = yy;
         z = zz;
     }
-    void reset() {
+    void Reset() {
         x = 0;
         y = 0;
         z = 0;
     }
-    bool isEmpty() {
+    bool IsEmpty() {
         return (x == 0 && y == 0 && z == 0);
     }
+    std::string Str() const {
+        return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
+    }
 
-    //define '<' and '>' for comparison in set amd map
+    //define '<' and '>' for comparison in Set amd map
     bool operator<(const Point3D<T> p) const {
         if (z < p.z) return true;
         else if (z > p.z) return false;
@@ -86,35 +98,30 @@ class Rect2D {
     Point2D<T> ur; //upper right
 
     Rect2D() : ll(0, 0), ur(0, 0) {}
-    Rect2D(Point2D<T> LL, Point2D<T> UR) : ll(LL), ur(UR) {
-        assert(this->isLegal());
-    }
-    Rect2D(T llx, T lly, T urx, T ury) : ll(llx, lly), ur(urx, ury) {
-        assert(this->isLegal());
-    }
-    bool isLegal() {
-        return (ll.x < ur.x && ll.y < ur.y);
-    }
-    void set(Point2D<T> LL, Point2D<T> UR) {
+    Rect2D(Point2D<T> LL, Point2D<T> UR) : ll(LL), ur(UR) { SanityCheck(); }
+    Rect2D(T llx, T lly, T urx, T ury) : ll(llx, lly), ur(urx, ury) { SanityCheck(); }
+
+    bool IsLegal() { return (ll.x < ur.x && ll.y < ur.y); }
+    void SanityCheck() { PhyDbExpects(this->IsLegal(), "Illegal Rect2D: ll, ur, " + ll.Str() + ur.Str()); }
+    bool IsEmpty() { return ll.IsEmpty() && ur.IsEmpty(); }
+
+    void Set(Point2D<T> LL, Point2D<T> UR) {
         ll = LL;
         ur = UR;
-        assert(this->isLegal());
+        SanityCheck();
     }
-    void set(T llx, T lly, T urx, T ury) {
+    void Set(T llx, T lly, T urx, T ury) {
         ll.x = llx;
         ll.y = lly;
         ur.x = urx;
         ur.y = ury;
-        assert(this->isLegal());
-    }
-    bool isEmpty() {
-        return ll.isEmpty() && ur.isEmpty();
+        SanityCheck();
     }
 
-    bool boundaryExclusiveCover(Point2D<T> p) {
+    bool BoundaryExclusiveCover(Point2D<T> p) {
         return (ll.x < p.x && ll.y < p.y && ur.x > p.x && ur.y > p.y);
     }
-    bool cover(Point2D<T> p) {
+    bool Cover(Point2D<T> p) {
         return (ll.x <= p.x && ll.y <= p.y && ur.x >= p.x && ur.y >= p.y);
     }
 
@@ -122,8 +129,20 @@ class Rect2D {
     T LLY() const { return ll.y; }
     T URX() const { return ur.x; }
     T URY() const { return ur.y; }
-    T getHeight() const { return ur.y - ll.y; }
-    T getWidth() const { return ur.x - ll.x; }
+    T GetHeight() const { return ur.y - ll.y; }
+    T GetWidth() const { return ur.x - ll.x; }
+};
+
+template<typename T>
+class Rect2DLayer : public Rect2D<T> {
+  public:
+    string layer;
+    Rect2DLayer() : Rect2D<T>() {}
+    void Set(string &layer_init, T llx, T lly, T urx, T ury) {
+        this->layer = layer_init;
+        this->lowerLeft.Set(llx, lly);
+        this->upperRight.Set(urx, ury);
+    }
 };
 
 template<typename T>
@@ -136,18 +155,20 @@ class Rect3D {
     Rect3D(Point3D<T> LL, Point3D<T> UR) : ll(LL), ur(UR) {}
     Rect3D(T llx, T lly, T llz, T urx, T ury, T urz) : ll(llx, lly, llz), ur(urx, ury, urz) {}
 
-    bool isLegal() { //on the same layer is legal
+    bool IsLegal() { //on the same layer is legal
         return (ll.x < ur.x && ll.y < ur.y && ll.z <= ur.z);
     }
+    void SanityCheck() { PhyDbExpects(this->IsLegal(), "Illegal Rect2D: ll, ur, " + ll.Str() + ur.Str()); }
+
     void set(Point3D<T> LL, Point3D<T> UR) {
         ll = LL;
         ur = UR;
-        assert(this->isLegal());
+        SanityCheck();
     }
     void set(T llx, T lly, T llz, T urx, T ury, T urz) {
-        ll.set(llx, lly, llz);
-        ur.set(urx, ury, urz);
-        assert(this->isLegal());
+        ll.Set(llx, lly, llz);
+        ur.Set(urx, ury, urz);
+        SanityCheck();
     }
 };
 
@@ -159,20 +180,23 @@ class Range {
 
     Range() : begin(0), end(0) {}
     Range(T b, T e) : begin(b), end(e) {
-        assert(b < e);
+        PhyDbExpects(b < e, "Illegal Range, " + Str());
+    }
+    std::string Str() {
+        return "(" + std::to_string(begin) + ", " + std::to_string(end) + ")";
     }
 };
 
 class LayerRect {
   public:
-    string layerName;
+    string layer_name_;
     vector<Rect2D<float>> rects;
 
-    LayerRect() : layerName("") {}
-    LayerRect(string layerName, vector<Rect2D<float>> rects) : layerName(layerName), rects(rects) {}
+    LayerRect() : layer_name_("") {}
+    LayerRect(string layerName, vector<Rect2D<float>> rects) : layer_name_(layerName), rects(rects) {}
 
-    void reset() {
-        layerName = "";
+    void Reset() {
+        layer_name_ = "";
         rects.clear();
     }
 };
@@ -209,7 +233,7 @@ ostream &operator<<(ostream &os, const Range<T> &r) {
 
 ostream &operator<<(ostream &os, const LayerRect &lr);
 
-} //end of namespace phydb
+} //end_ of namespace phydb
 
 #endif
 

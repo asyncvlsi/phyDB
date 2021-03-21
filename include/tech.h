@@ -8,37 +8,39 @@
 #include "layer.h"
 #include "site.h"
 #include "macro.h"
-#include "lefVia.h"
+#include "lefvia.h"
+#include "viarulegenerate.h"
 
 namespace phydb {
 
 class Tech {
     friend class PhyDB;
   private:
-    string _version;
-    string _busBitChar;
-    string _divierChar;
-    string _clearanceMeasure;
-    double _manufacturingGrid;
+    string version_;
+    string bus_bit_char_;
+    string divier_char_;
+    string clearance_measure_;
+    double manufacturing_grid_;
 
-    int _dbuPerMicron;
+    int dbu_per_micron_;
 
-    vector<Site> _sites;
-    vector<Layer> _layers;
-    vector<Macro> _macros;
-    vector<LefVia> _vias;
-    vector<ViaRuleGenerate> _via_rule_generates;
+    vector<Site> sites_;
+    vector<Layer> layers_;
+    vector<Macro> macros_;
+    vector<LefVia> vias_;
+    vector<ViaRuleGenerate> via_rule_generates_;
 
-    map<string, int> _layer2id;
-    map<string, int> _macro2id;
-    map<string, int> _via_rule_generate2id;
+    map<string, int> layer_2_id_;
+    map<string, int> macro_2_id_;
+    map<string, int> via_2_id_;
+    map<string, int> via_rule_generate_2_id_;
 
     /****placement grid parameters****/
     bool is_placement_grid_set_ = false;
     double placement_grid_value_x_ = 0;
     double placement_grid_value_y_ = 0;
 
-    /****N/P-well layers****/
+    /****N/P-well layers_****/
     bool is_n_well_layer_set_ = false;
     bool is_p_well_layer_set_ = false;
     WellLayer *n_layer_ptr_ = nullptr;
@@ -48,22 +50,22 @@ class Tech {
     std::list<MacroWell> wells_;
 
   public:
-    Tech() : _manufacturingGrid(0), _dbuPerMicron(0) {}
+    Tech() : manufacturing_grid_(0), dbu_per_micron_(0) {}
 
-    void setDatabaseMicron(int database_micron);
-    void setManufacturingGrid(double manufacture_grid);
-    void addSite(std::string const &name, std::string const &class_name, double width, double height);
-    void setPlacementGrids(double placement_grid_value_x, double placement_grid_value_y);
+    void SetDatabaseMicron(int database_micron);
+    void SetManufacturingGrid(double manufacture_grid);
+    void AddSite(std::string const &name, std::string const &class_name, double width, double height);
+    void SetPlacementGrids(double placement_grid_value_x, double placement_grid_value_y);
 
-    bool isLayerExist(std::string const &layer_name);
-    Layer *addLayer(std::string &layer_name);
-    Layer *getLayerPtr(std::string const &layer_name);
-    int GetLayerId(const string& layerName);
+    bool IsLayerExist(std::string const &layer_name);
+    Layer *AddLayer(std::string &layer_name);
+    Layer *GetLayerPtr(std::string const &layer_name);
+    int GetLayerId(const string& layer_name);
     void ReportLayers();
 
-    bool isMacroExist(std::string const &macro_name);
-    Macro *addMacro(std::string &macro_name);
-    Macro *getMacroPtr(std::string const &macro_name);
+    bool IsMacroExist(std::string const &macro_name);
+    Macro *AddMacro(std::string &macro_name);
+    Macro *GetMacroPtr(std::string const &macro_name);
 
     bool IsLefViaExist(std::string const &via_name);
     LefVia *AddLefVia(std::string &via_name);
@@ -71,13 +73,13 @@ class Tech {
 
     bool IsViaRuleGenerateExist(std::string const &name);
     ViaRuleGenerate* AddViaRuleGenerate(std::string &name);
-    ViaRuleGenerate* GetViaRuleGeneratePtr(std::string const &name)
+    ViaRuleGenerate* GetViaRuleGeneratePtr(std::string const &name);
     
-    void setNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
-    void setPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
-    void setNpwellSpacing(double same_diff, double any_diff);
+    void SetNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
+    void SetPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
+    void SetNpwellSpacing(double same_diff, double any_diff);
     bool IsWellInfoSet() const;
-    void ReportWellShape(); // report the well shape for each BlockType for debugging purposes.
+    void ReportWellShape(); // report the well shape_ for each BlockType for debugging purposes.
 
 
     friend ostream &operator<<(ostream &, const Tech &);

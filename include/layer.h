@@ -10,74 +10,71 @@ namespace phydb {
 
 class Layer {
   private:
-    string _name;
-    string _type;
-    int _idx;
+    string name_;
+    string type_;
+    int idx_;
 
     //metal layer
-    string _direction;
-    float _pitchx;
-    float _pitchy;
-    float _width;
-    float _area;
-    float _minWidth;
-    float _offset;
-    float _minLength; //derived by minarea/width
+    string direction_;
+    float pitchx_;
+    float pitchy_;
+    float width_;
+    float area_;
+    float min_width_;
+    float offset_;
+    float min_length_; //derived by minarea/GetWidth
 
-    SpacingTable _spacingTable;
-    EOLSpacing _eolSpacing;
-    CornerSpacing _cornerSpacing;
+    SpacingTable spacing_table_;
+    EOLSpacing eol_spacing_;
+    CornerSpacing corner_spacing_;
 
     //cut layer
-    float _spacing;
+    float spacing_;
 
   public:
-    Layer() : _name(""), _type(""), _idx(-1), _direction(""), _pitchx(0),
-              _pitchy(0), _width(0), _area(0), _minWidth(0), _offset(0), _spacing(0) {}
-    explicit Layer(std::string &name) : _name(name) {}
+    Layer() : name_(""), type_(""), idx_(-1), direction_(""), pitchx_(0),
+              pitchy_(0), width_(0), area_(0), min_width_(0), offset_(0), spacing_(0) {}
+    explicit Layer(std::string &name) : name_(name) {}
 
     //constructor for metal layer
     Layer(string name, string type, string direction, float pitchx, float pitchy,
           float width, float area, float minWidth, float offset) :
-        _name(name),
-        _type(type),
-        _idx(-1),
-        _direction(direction),
-        _pitchx(pitchx),
-        _pitchy(pitchy),
-        _width(width),
-        _area(area),
-        _minWidth(minWidth),
-        _offset(offset) {}
+        name_(name),
+        type_(type),
+        idx_(-1),
+        direction_(direction),
+        pitchx_(pitchx),
+        pitchy_(pitchy),
+        width_(width),
+        area_(area),
+        min_width_(minWidth),
+        offset_(offset) {}
 
     //constructor for cut layer
     Layer(string name, string type, float spacing) :
-        _name(name),
-        _type(type),
-        _idx(-1),
-        _spacing(spacing) {}
+        name_(name),
+        type_(type),
+        idx_(-1),
+        spacing_(spacing) {}
 
-    string getName() const { return _name; }
+    string GetName() const;
 
-    void setName(string &name) { _name = name; }
-    void setType(string &type) { _type = type; }
-    void setDirection(string direction) { _direction = direction; }
-    void setWidth(float width) { _width = width; }
-    void setMinWidth(float min_width) { _minWidth = min_width; }
-    void setPitch(float pitch_x, float pitch_y) {
-        _pitchx = pitch_x;
-        _pitchy = pitch_y;
-    }
-    void setOffset(float offset) { _offset = offset; }
-    void setArea(float area) { _area = area; }
+    void SetName(string &name);
+    void SetType(string &type);
+    void SetDirection(string &direction);
+    void SetWidth(float width);
+    void SetMinWidth(float min_width);
+    void SetPitch(float pitch_x, float pitch_y);
+    void SetOffset(float offset);
+    void SetArea(float area);
 
-    void setSpacingTable(SpacingTable &);
-    void setEOLSpacing(EOLSpacing &);
-    void setCornerSpacing(CornerSpacing &);
+    void SetSpacingTable(SpacingTable &);
+    void SetEOLSpacing(EOLSpacing &);
+    void SetCornerSpacing(CornerSpacing &);
 
-    SpacingTable getSpacingTable();
-    EOLSpacing getEOLSpacing();
-    CornerSpacing getCornerSpacing();
+    SpacingTable GetSpacingTable();
+    EOLSpacing GetEOLSpacing();
+    CornerSpacing GetCornerSpacing();
 
     friend ostream &operator<<(ostream &, const Layer &);
 
@@ -95,61 +92,25 @@ class WellLayer {
     double overhang_;
   public:
     WellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
-        set_width(width);
-        set_spacing(spacing);
-        set_op_spacing(op_spacing);
-        set_max_plug_dist(max_plug_dist);
-        set_overhang(overhang);
+        SetWidth(width);
+        SetSpacing(spacing);
+        SetOpSpacing(op_spacing);
+        SetMaxPlugDist(max_plug_dist);
+        SetOverhang(overhang);
     }
 
-    double width() const { return width_; }
-    double spacing() const { return spacing_; }
-    double op_spacing() const { return op_spacing_; }
-    double max_plug_dist() const { return max_plug_dist_; }
-    double overhang() const { return overhang_; }
+    double GetWidth() const;
+    double GetSpacing() const;
+    double GetOpSpacing() const;
+    double GetMaxPlugDist() const;
+    double GetOverhang() const;
 
-    void set_width(double width) {
-        if (width < 0) {
-            std::cout << "Negative width not allowed: WellLayer::set_width()" << std::endl;
-            exit(1);
-        }
-        width_ = width;
-    }
-    void set_spacing(double spacing) {
-        if (spacing < 0) {
-            std::cout << "Negative spacing not allowed: WellLayer::set_spacing()" << std::endl;
-            exit(1);
-        }
-        spacing_ = spacing;
-    }
-    void set_op_spacing(double op_spacing) {
-        if (op_spacing < 0) {
-            std::cout << "Negative opposite spacing not allowed: Layer::set_op_spacing()" << std::endl;
-            exit(1);
-        }
-        op_spacing_ = op_spacing;
-    }
-    void set_max_plug_dist(double max_plug_dist) {
-        if (max_plug_dist < 0) {
-            std::cout << "Negative max plug distance not allowed: WellLayer::set_max_plug_dist()" << std::endl;
-            exit(1);
-        }
-        max_plug_dist_ = max_plug_dist;
-    }
-    void set_overhang(double overhang) {
-        if (overhang < 0) {
-            std::cout << "Negative well/diffusion overhang not allowed: WellLayer::set_overhang()" << std::endl;
-            exit(1);
-        }
-        overhang_ = overhang;
-    }
-    void set_params(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
-        set_width(width);
-        set_spacing(spacing);
-        set_op_spacing(op_spacing);
-        set_max_plug_dist(max_plug_dist);
-        set_overhang(overhang);
-    }
+    void SetWidth(double width);
+    void SetSpacing(double spacing);
+    void SetOpSpacing(double op_spacing);
+    void SetMaxPlugDist(double max_plug_dist);
+    void SetOverhang(double overhang);
+    void SetParams(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
     void Report();
 };
 

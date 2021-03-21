@@ -7,21 +7,20 @@ namespace phydb {
 
 class Track {
   public:
-    string _direction;
-    int _start;
-    int _nTracks;
-    int _step;
+    string direction_;
+    int start_;
+    int n_tracks_;
+    int step_;
 
-    vector<string> layerNames;
+    vector<string> layer_names_;
 
     Track() {}
-    Track(string& direction, int start, int nTracks, int step, vector<string>& layerNames):
-        _direction(direction),
-        _start(start),
-        _nTracks(nTracks),
-        _step(step),
-        _layerNames(layerNames)
-        {}
+    Track(string &direction, int start, int nTracks, int step, vector<string> &layerNames) :
+        direction_(direction),
+        start_(start),
+        n_tracks_(nTracks),
+        step_(step),
+        layer_names_(layerNames) {}
 
 };
 

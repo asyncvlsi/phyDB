@@ -7,26 +7,23 @@ namespace phydb {
 
 class OBS {
     friend class Macro;
-    private:
-       vector<LayerRect> _layerRects;
+  private:
+    vector<LayerRect> layer_rects_;
 
-    public:
-        OBS( ) { }
-        OBS(vector<LayerRect> layerRects): _layerRects(layerRects) { }
+  public:
+    OBS() {}
+    OBS(vector<LayerRect> layerRects) : layer_rects_(layerRects) {}
 
-        void setLayerRect(vector<LayerRect> );
+    void SetLayerRect(vector<LayerRect>);
 
-        vector<LayerRect> getLayerRect( ) const;
+    vector<LayerRect> GetLayerRect() const;
 
-        friend ostream& operator<< (ostream&, const OBS& );
+    friend ostream &operator<<(ostream &, const OBS &);
 };
 
-
-ostream& operator<< (ostream&, const OBS& );
-
+ostream &operator<<(ostream &, const OBS &);
 
 }
-
 
 #endif
 

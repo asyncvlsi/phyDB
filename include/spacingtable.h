@@ -6,55 +6,54 @@
 namespace phydb {
 
 class SpacingTable {
-    private: 
-        int _nCol;
-        int _nRow;
-        vector<float> _parallelRunLength;
-        vector<float> _width;
-        vector<float> _spacing;
+  private:
+    int n_col_;
+    int n_row_;
+    vector<float> parallel_run_length_;
+    vector<float> width_;
+    vector<float> spacing_;
 
-    public: 
-        SpacingTable( ): _nCol(0), _nRow(0) { }
-        SpacingTable(int nC, int nR): _nCol(nC), _nRow(nR) { 
-            _parallelRunLength.resize(nC);
-            _width.resize(nR);
-            _spacing.resize(nC * nR);
-        }
-        SpacingTable(int nC, int nR, vector<float> parallelRunLengthVec,
-                vector<float> widthVec, vector<float> spacingVec) {
-            setSize(nC, nR);
-            setParallelRunLengthVec(parallelRunLengthVec);
-            setWidthVec(widthVec);
-            setSpacingVec(spacingVec);
-        }
+  public:
+    SpacingTable() : n_col_(0), n_row_(0) {}
+    SpacingTable(int nC, int nR) : n_col_(nC), n_row_(nR) {
+        parallel_run_length_.resize(nC);
+        width_.resize(nR);
+        spacing_.resize(nC * nR);
+    }
+    SpacingTable(int nC, int nR, vector<float> parallelRunLengthVec,
+                 vector<float> widthVec, vector<float> spacingVec) {
+        SetSize(nC, nR);
+        SetParallelRunLengthVec(parallelRunLengthVec);
+        SetWidthVec(widthVec);
+        SetSpacingVec(spacingVec);
+    }
 
-        void setSize(int nC,int nR);
-        void reset( );
-        int getNCol( ) const;
-        int getNRow( ) const;
+    void SetSize(int nC, int nR);
+    void Reset();
+    int GetNCol() const;
+    int GetNRow() const;
 
-        void setParallelRunLengthVec(vector<float> v);
-        void setWidthVec(vector<float> v);
-        void setSpacingVec(vector<float> v);
-        
-        vector<float> getParallelRunLengthVec() const;
-        vector<float> getWidthVec() const;
-        vector<float> getSpacingVec() const;
+    void SetParallelRunLengthVec(vector<float> v);
+    void SetWidthVec(vector<float> v);
+    void SetSpacingVec(vector<float> v);
 
-        void setParallelRunLengthAt(int col, float val);
-        void setWidthAt(int row, float val);
-        void setSpacingAt(int col, int row, float val); // (0, 0) is at top left
-        
-        float getParallelRunLengthAt(int col) const;
-        float getWidthAt(int row) const;
-        float getSpacingAt(int col, int row) const;
+    vector<float> GetParallelRunLengthVec() const;
+    vector<float> GetWidthVec() const;
+    vector<float> GetSpacingVec() const;
+
+    void SetParallelRunLengthAt(int col, float val);
+    void SetWidthAt(int row, float val);
+    void SetSpacingAt(int col, int row, float val); // (0, 0) is at top left
+
+    float GetParallelRunLengthAt(int col) const;
+    float GetWidthAt(int row) const;
+    float GetSpacingAt(int col, int row) const;
 
 };
 
-ostream& operator<< (ostream& , const SpacingTable& );
+ostream &operator<<(ostream &, const SpacingTable &);
 
 }
-
 
 #endif
 
