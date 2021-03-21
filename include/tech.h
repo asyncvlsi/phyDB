@@ -8,6 +8,8 @@
 #include "layer.h"
 #include "site.h"
 #include "macro.h"
+#include "lefVia.h"
+
 namespace phydb {
 
 class Tech {
@@ -24,6 +26,7 @@ class Tech {
     vector<Site> _sites;
     vector<Layer> _layers;
     vector<Macro> _macros;
+    vector<LefVia> _vias;
 
     map<string, int> _layer2id;
     map<string, int> _macro2id;

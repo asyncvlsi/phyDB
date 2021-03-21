@@ -93,7 +93,6 @@ class Design {
     friend int getDefVias(defrCallbackType_e, defiVia *, defiUserData);
     friend int getDefGcell(defrCallbackType_e, defiGcellGrid *, defiUserData);
     friend int getDefRow(defrCallbackType_e, defiRow *, defiUserData);
-
 };
 
 int getDefVersion(defrCallbackType_e, double, defiUserData);

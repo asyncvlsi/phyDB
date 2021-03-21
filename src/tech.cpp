@@ -33,7 +33,7 @@ void Tech::setPlacementGrids(double placement_grid_value_x, double placement_gri
 }
 
 bool Tech::isLayerExist(std::string const &layer_name) {
-    return _layer2id.find(layer_name) != _macro2id.end();
+    return _layer2id.find(layer_name) != _layer2id.end();
 }
 
 Layer *Tech::addLayer(std::string &layer_name) {
