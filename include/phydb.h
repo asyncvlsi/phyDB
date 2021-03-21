@@ -35,6 +35,27 @@ class PhyDB {
     /************************************************
     * The following APIs are for information in DEF
     * ************************************************/
+    void setUnitsDistanceMicrons(int distance_microns);
+    void setDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
+
+    // TODO: APIs for adding tracks
+
+    bool isComponentExist(std::string &component_name);
+    Component *addComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
+                            int llx, int lly, std::string &orient);
+    Component *getComponentPtr(std::string &comp_name);
+
+    bool isIoPinExist(std::string &iopin_name);
+    IOPin *addIoPin(std::string &iopin_name, std::string &place_status,
+                    std::string &signal_use, std::string &signal_direction,
+                    int lx = 0, int ly = 0);
+    IOPin *getIoPinPtr(std::string &iopin_name);
+
+    bool IsNetExist(std::string &net_name);
+    Net *AddNet(std::string &net_name, double weight = 1);
+    void AddIoPinToNet(std::string &iopin_name, std::string &net_name);
+    void AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name);
+    Net *GetNetPtr(std::string &net_name);
 
     /************************************************
     * The following APIs are for information in CELL

@@ -18,18 +18,6 @@ void PhyDB::addSite(std::string const &name, std::string const &class_name, doub
     _tech.addSite(name, class_name, width, height);
 }
 
-bool PhyDB::isMacroExist(std::string const &macro_name) {
-    return _tech.isMacroExist(macro_name);
-}
-
-Macro *PhyDB::addMacro(std::string &macro_name) {
-    return _tech.addMacro(macro_name);
-}
-
-Macro *PhyDB::getMacroPtr(std::string const &macro_name) {
-    return _tech.getMacroPtr(macro_name);
-}
-
 void PhyDB::setPlacementGrids(double placement_grid_value_x_, double placement_grid_value_y_) {
     _tech.setPlacementGrids(placement_grid_value_x_, placement_grid_value_y_);
 }
@@ -44,6 +32,72 @@ Layer *PhyDB::addLayer(std::string &layer_name) {
 
 Layer *PhyDB::getLayerPtr(std::string const &layer_name) {
     return _tech.getLayerPtr(layer_name);
+}
+
+bool PhyDB::isMacroExist(std::string const &macro_name) {
+    return _tech.isMacroExist(macro_name);
+}
+
+Macro *PhyDB::addMacro(std::string &macro_name) {
+    return _tech.addMacro(macro_name);
+}
+
+Macro *PhyDB::getMacroPtr(std::string const &macro_name) {
+    return _tech.getMacroPtr(macro_name);
+}
+
+void PhyDB::setUnitsDistanceMicrons(int distance_microns) {
+    _design.SetUnitsDistanceMicrons(distance_microns);
+}
+void PhyDB::setDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
+    _design.SetDieArea(lower_x, lower_y, upper_x, upper_y);
+}
+
+bool PhyDB::isComponentExist(std::string &component_name) {
+    return _design.IsComponentExist(component_name);
+}
+
+Component *PhyDB::addComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
+                        int llx, int lly, std::string &orient) {
+    return _design.AddComponent(comp_name, macro_name, place_status, llx, lly, orient);
+}
+
+Component *PhyDB::getComponentPtr(std::string &comp_name) {
+    return _design.GetComponentPtr(comp_name);
+}
+
+bool PhyDB::isIoPinExist(std::string &iopin_name) {
+    return _design.IsIoPinExist(iopin_name);
+}
+
+IOPin *PhyDB::addIoPin(std::string &iopin_name, std::string &place_status,
+                std::string &signal_use, std::string &signal_direction,
+                int lx, int ly) {
+    return _design.AddIoPin(iopin_name, place_status, signal_use, signal_direction, lx, ly);
+}
+
+IOPin *PhyDB::getIoPinPtr(std::string &iopin_name) {
+    return _design.GetIoPinPtr(iopin_name);
+}
+
+bool PhyDB::IsNetExist(std::string &net_name) {
+    return _design.IsNetExist(net_name);
+}
+
+Net *PhyDB::AddNet(std::string &net_name, double weight) {
+    return  _design.AddNet(net_name, weight);
+}
+
+void PhyDB::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
+    _design.AddIoPinToNet(iopin_name, net_name);
+}
+
+void PhyDB::AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name) {
+    _design.AddCompPinToNet(comp_name, pin_name, net_name);
+}
+
+Net *PhyDB::GetNetPtr(std::string &net_name) {
+    return _design.GetNetPtr(net_name);
 }
 
 void PhyDB::setNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {

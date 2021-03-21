@@ -63,7 +63,7 @@ class Tech {
     void setNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
     void setPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
     void setNpwellSpacing(double same_diff, double any_diff);
-    bool IsWellInfoSet() const { return (n_layer_ptr_ == nullptr) && (p_layer_ptr_ == nullptr); }
+    bool IsWellInfoSet() const;
     void ReportWellShape(); // report the well shape for each BlockType for debugging purposes.
 
 

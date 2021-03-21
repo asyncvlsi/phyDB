@@ -116,6 +116,10 @@ void Tech::setNpwellSpacing(double same_diff, double any_diff) {
     any_diff_spacing_ = any_diff;
 }
 
+bool Tech::IsWellInfoSet() const {
+    return (n_layer_ptr_ == nullptr) && (p_layer_ptr_ == nullptr);
+}
+
 void Tech::ReportWellShape() {
     for (auto &well: wells_) {
         well.Report();

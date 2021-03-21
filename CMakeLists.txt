@@ -79,3 +79,30 @@ add_executable(PhyDB_test
 target_link_libraries(PhyDB_test
 		PRIVATE phydb
 		)
+
+######################################
+# Change FALSE to TRUE if you want to change the installation directory to ${ACT_HOME}
+######################################
+
+message(STATUS "Detecting environment variable ACT_HOME...")
+if (DEFINED ENV{ACT_HOME})
+	message(STATUS "Environment variable ACT_HOME detected: " $ENV{ACT_HOME})
+else ()
+	message(FATAL_ERROR "Environment variable ACT_HOME not found")
+endif ()
+message(STATUS "Changing Installation directory to ACT_HOME")
+set(CMAKE_INSTALL_PREFIX $ENV{ACT_HOME} CACHE PATH "installation path" FORCE)
+message(STATUS "Current installation directory: " ${CMAKE_INSTALL_PREFIX})
+
+
+######################################
+# Install header files
+######################################
+install(DIRECTORY include/ DESTINATION include/phydb COMPONENT Development FILES_MATCHING PATTERN "*.h")
+
+######################################
+# Install library
+######################################
+install(TARGETS phydb
+		DESTINATION lib)
+

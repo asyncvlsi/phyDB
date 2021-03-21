@@ -28,8 +28,15 @@ class Component {
         _orient(orient),
         _weight(weight),
         _location(location) {}
+    Component(std::string &comp_name, std::string &macro_name, std::string &place_status,
+              int llx, int lly, std::string &orient)
+        : _name(comp_name), _macroName(macro_name), _locationType(place_status), _orient(orient) {
+        _location.x = llx;
+        _location.y = lly;
+    }
 
     string getName() { return _name; }
+
 };
 
 ostream &operator<<(ostream &, const Component &);

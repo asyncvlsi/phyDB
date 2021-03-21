@@ -6,20 +6,106 @@ void Design::readDef(string defFileName) {
 
 }
 
-Component &Design::addComponent(Component c) {
-    int id = _components.size();
-    _components.push_back(c);
-    string name = c.getName();
-    _component2idx[name] = id;
-    return _components[id];
+void Design::SetUnitsDistanceMicrons(int distance_microns) {
+    PhyDbExpects(distance_microns > 0, "Negative distance micron?");
+    _dbuPerMicro = distance_microns;
 }
 
-IOPin &Design::addIOPin(IOPin p) {
+void Design::SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
+    PhyDbExpects(upper_x > lower_x, "Right boundary is not larger than Left boundary?");
+    PhyDbExpects(upper_y > lower_y, "Top boundary is not larger than Bottom boundary?");
+    _dieArea.ll.x = lower_x;
+    _dieArea.ll.y = lower_y;
+    _dieArea.ur.x = upper_x;
+    _dieArea.ur.y = upper_y;
+}
+
+bool Design::IsComponentExist(std::string &comp_name) {
+    return _component2idx.find(comp_name) != _component2idx.end();
+}
+
+Component *Design::AddComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
+                                int llx, int lly, std::string &orient) {
+    PhyDbExpects(!IsComponentExist(comp_name), "Component name exists, cannot use it again");
+    int id = _components.size();
+    _components.emplace_back(comp_name, macro_name, place_status, llx, lly, orient);
+    _component2idx[comp_name] = id;
+    return &(_components[id]);
+}
+
+Component *Design::GetComponentPtr(std::string &comp_name) {
+    if (!IsComponentExist(comp_name)) {
+        return nullptr;
+    }
+    int id = _component2idx[comp_name];
+    return &(_components[id]);
+}
+
+void Design::ReportComponent() {
+    std::cout << "Total components: " << _components.size() << "\n";
+    for (auto &component: _components) {
+        std::cout << component << "\n";
+    }
+    std::cout << "\n";
+}
+
+bool Design::IsIoPinExist(std::string &iopin_name) {
+    return _iopin2idx.find(iopin_name) != _iopin2idx.end();
+}
+
+IOPin *Design::AddIoPin(std::string &iopin_name, std::string &place_status,
+                        std::string &signal_use, std::string &signal_direction,
+                        int lx, int ly) {
+    PhyDbExpects(!IsIoPinExist(iopin_name), "IOPin name exists, cannot use it again");
     int id = _iopins.size();
-    _iopins.push_back(p);
-    string name = p.getName();
-    _iopin2idx[name] = id;
-    return _iopins[id];
+    _iopins.emplace_back(iopin_name, place_status, signal_use, signal_direction, lx, ly);
+    _iopin2idx[iopin_name] = id;
+    return &(_iopins[id]);
+}
+
+IOPin *Design::GetIoPinPtr(std::string &iopin_name) {
+    if (!IsIoPinExist(iopin_name)) {
+        return nullptr;
+    }
+    int id = _iopin2idx[iopin_name];
+    return &(_iopins[id]);
+}
+
+bool Design::IsNetExist(std::string &net_name) {
+    return _net2idx.find(net_name) != _net2idx.end();
+}
+
+Net *Design::AddNet(std::string &net_name, double weight) {
+    PhyDbExpects(!IsNetExist(net_name), "Net name exists, cannot use it again");
+    _nets.emplace_back(net_name, weight);
+    int id = _nets.size();
+    _net2idx[net_name] = id;
+    return &(_nets[id]);
+}
+
+void Design::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
+    IOPin *iopin_ptr = GetIoPinPtr(iopin_name);
+    PhyDbExpects(iopin_ptr != nullptr, "Cannot add a nonexistent IOPIN to a net");
+    Net *net_ptr = GetNetPtr(net_name);
+    PhyDbExpects(net_ptr != nullptr, "Cannot add to a nonexistent net");
+
+    iopin_ptr->SetNetName(net_name);
+    net_ptr->AddIoPin(iopin_name);
+}
+
+void Design::AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name) {
+    Net *net_ptr = GetNetPtr(net_name);
+    PhyDbExpects(net_ptr != nullptr, "Cannot add to a nonexistent net");
+
+    net_ptr->AddCompPin(comp_name, pin_name);
+}
+
+Net *Design::GetNetPtr(std::string &net_name) {
+    if (!IsNetExist(net_name)) {
+        return nullptr;
+    }
+    int id = _net2idx[net_name];
+    return &(_nets[id]);
 }
 
 Net &Design::addNet(Net n) {
@@ -72,26 +158,26 @@ int getDefRow(defrCallbackType_e type, defiRow *row, defiUserData data) {
     return 0;
 }
 
-int getDefString(defrCallbackType_e type, const char* str, defiUserData data) {
+int getDefString(defrCallbackType_e type, const char *str, defiUserData data) {
     //bool enableOutput = true;
     bool enableOutput = true;
     if ((type == defrDesignStartCbkType)) {
         ((Design *) data)->_name = string(str);
 
         if (enableOutput) {
-            cout <<"reading def: DESIGN " << string(str) <<endl;
+            cout << "reading def: DESIGN " << string(str) << endl;
         }
     }
     return 0;
 }
 
-int getDefVoid(defrCallbackType_e type, void* variable, defiUserData data) {
+int getDefVoid(defrCallbackType_e type, void *variable, defiUserData data) {
     //bool enableOutput = true;
     bool enableOutput = true;
     if ((type == defrDesignEndCbkType)) {
 
         if (enableOutput) {
-            cout <<"reading def done" <<endl;
+            cout << "reading def done" << endl;
         }
     }
     return 0;
@@ -154,23 +240,23 @@ int getDefComponents(defrCallbackType_e type, defiComponent *comp, defiUserData 
         exit(1);
     }
 
-    Component tmpComp;
-    tmpComp._name = comp->id();
-    tmpComp._macroName = comp->name();
+    std::string comp_name(comp->id());
+    std::string macro_name(comp->name());
+    std::string place_status = "UNPLACED";
     if (comp->isPlaced())
-        tmpComp._locationType = "PLACED";
+        place_status = "PLACED";
     else if (comp->isFixed())
-        tmpComp._locationType = "FIXED";
+        place_status = "FIXED";
     else if (comp->isUnplaced())
-        tmpComp._locationType = "UNPLACED";
+        place_status = "UNPLACED";
     else
-        tmpComp._locationType = "COVER";
+        place_status = "COVER";
 
-    tmpComp._location.x = comp->placementX();
-    tmpComp._location.y = comp->placementY();
-    tmpComp._orient = string(comp->placementOrientStr());
+    int llx = comp->placementX();
+    int lly = comp->placementY();
+    std::string orient(comp->placementOrientStr());
 
-    ((Design *) data)->addComponent(tmpComp);
+    ((Design *) data)->AddComponent(comp_name, macro_name, place_status, llx, lly, orient);
 
     return 0;
 }
@@ -183,47 +269,47 @@ int getDefIOPins(defrCallbackType_e type, defiPin *pin, defiUserData data) {
         exit(1);
     }
 
-    IOPin tmpPin;
-    tmpPin._name = pin->pinName();
-    tmpPin._netName = pin->netName();
+    std::string iopin_name(pin->pinName());
+    std::string signal_direction;
     if (pin->hasDirection())
-        tmpPin._direction = pin->direction();
+        signal_direction = std::string(pin->direction());
+    std::string signal_use;
     if (pin->hasUse())
-        tmpPin._use = pin->use();
+        signal_use = std::string(pin->use());
+
+    std::string place_status;
+    if (pin->isPlaced())
+        place_status = "PLACED";
+    else if (pin->isUnplaced())
+        place_status = "UNPLACED";
+    else if (pin->isFixed())
+        place_status = "FIXED";
+    else if (pin->isCover())
+        place_status = "COVER";
+
+    IOPin *io_pin_ptr = ((Design *) data)->AddIoPin(iopin_name, place_status, signal_use, signal_direction);
 
     int llx, lly, urx, ury;
     llx = 0;
     lly = 0;
     urx = 0;
     ury = 0;
-
-    if (pin->isPlaced())
-        tmpPin._status = "PLACED";
-    else if (pin->isUnplaced())
-        tmpPin._status = "UNPLACED";
-    else if (pin->isFixed())
-        tmpPin._status = "FIXED";
-    else if (pin->isCover())
-        tmpPin._status = "COVER";
-
     if (pin->hasPort()) {
         cout << "Error: multiple pin ports existing in DEF" << endl;
         exit(1);
     } else {
 
         for (int i = 0; i < pin->numLayer(); ++i) {
-            tmpPin._layerName = pin->layer(i);
+            io_pin_ptr->_layerName = pin->layer(i);
 
-            tmpPin._location.x = pin->placementX();
-            tmpPin._location.y = pin->placementY();
-            tmpPin._orient = string(pin->orientStr());
+            io_pin_ptr->_location.x = pin->placementX();
+            io_pin_ptr->_location.y = pin->placementY();
+            io_pin_ptr->_orient = string(pin->orientStr());
 
             pin->bounds(i, &llx, &lly, &urx, &ury);
-            tmpPin._rect.set(llx, lly, urx, ury);
+            io_pin_ptr->_rect.set(llx, lly, urx, ury);
         }
     }
-
-    ((Design *) data)->addIOPin(tmpPin);
 
     return 0;
 
@@ -253,7 +339,7 @@ int getDefNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
     return 0;
 }
 
-int getDefSNets(defrCallbackType_e type, defiNet* net, defiUserData data) {
+int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
     /*
     bool enableOutput = false;
     //bool enableOutput = true;
@@ -428,8 +514,7 @@ int getDefSNets(defrCallbackType_e type, defiNet* net, defiUserData data) {
     return 0;
 }
 
-
-int getDefVias(defrCallbackType_e type, defiVia* via, defiUserData data) {
+int getDefVias(defrCallbackType_e type, defiVia *via, defiUserData data) {
     /*
     //bool enableOutput = true;
     bool enableOutput = false;
@@ -518,8 +603,7 @@ int getDefVias(defrCallbackType_e type, defiVia* via, defiUserData data) {
     return 0;
 }
 
-
-int getDefGcell(defrCallbackType_e type, defiGcellGrid* gcellGrid, defiUserData data) {
+int getDefGcell(defrCallbackType_e type, defiGcellGrid *gcellGrid, defiUserData data) {
     /*
     bool enableOutput = false;
 

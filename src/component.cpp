@@ -9,6 +9,5 @@ ostream& operator<< (ostream& os, const Component& c) {
     return os;
 }
 
-
 }
 
