@@ -103,6 +103,10 @@ void PhyDB::SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
     design_.SetDieArea(lower_x, lower_y, upper_x, upper_y);
 }
 
+void PhyDB::SetComponentCount(int count) {
+    design_.SetComponentCount(count);
+}
+
 bool PhyDB::IsComponentExist(std::string &component_name) {
     return design_.IsComponentExist(component_name);
 }
@@ -133,6 +137,10 @@ Component *PhyDB::GetComponentPtr(std::string &comp_name) {
     return design_.GetComponentPtr(comp_name);
 }
 
+void PhyDB::SetIoPinCount(int count) {
+    design_.SetIoPinCount(count);
+}
+
 bool PhyDB::IsIoPinExist(std::string &iopin_name) {
     return design_.IsIoPinExist(iopin_name);
 }
@@ -157,6 +165,10 @@ IOPin *PhyDB::AddIoPin(std::string &iopin_name, std::string &place_status,
 
 IOPin *PhyDB::GetIoPinPtr(std::string &iopin_name) {
     return design_.GetIoPinPtr(iopin_name);
+}
+
+void PhyDB::SetNetCount(int count) {
+    design_.SetNetCount(count);
 }
 
 bool PhyDB::IsNetExist(std::string &net_name) {

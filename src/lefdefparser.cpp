@@ -635,6 +635,33 @@ int getDefTracks(defrCallbackType_e type, defiTrack *track, defiUserData data) {
     return 0;
 }
 
+int getDefCountNumber(defrCallbackType_e type, int num, defiUserData data) {
+    std::string name;
+    auto *phy_db_ptr = (PhyDB *) data;
+    switch (type) {
+        case defrComponentStartCbkType : {
+            name = "COMPONENTS";
+            phy_db_ptr->SetComponentCount(num);
+            break;
+        }
+        case defrStartPinsCbkType : {
+            name = "PINS";
+            phy_db_ptr->SetIoPinCount(num);
+            break;
+        }
+        case defrNetStartCbkType : {
+            name = "NETS";
+            phy_db_ptr->SetNetCount(num);
+            break;
+        }
+        default : {
+            name = "BOGUS";
+            PhyDbExpects(false, "Unsupported count types: BOGUS");
+        }
+    }
+    return 0;
+}
+
 int getDefComponents(defrCallbackType_e type, defiComponent *comp, defiUserData data) {
     //bool enableOutput = true;
     bool enableOutput = false;
@@ -736,11 +763,15 @@ int getDefNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
     if (enableOutput) {
         cout << "- " << net->name();
     }
-    // TODO: IOPINs are missing? Cannot check sanity if call AddCompPinToNet at phy_db_ptr level, should do it at PhyDB level
+
     for (int i = 0; i < net->numConnections(); i++) {
         std::string comp_name(net->instance(i));
         std::string pin_name(net->pin(i));
-        phy_db_ptr->AddCompPinToNet(comp_name, pin_name, net_name);
+        if (comp_name == "PIN") {
+            phy_db_ptr->AddIoPinToNet(pin_name, net_name);
+        } else {
+            phy_db_ptr->AddCompPinToNet(comp_name, pin_name, net_name);
+        }
     }
 
     return 0;

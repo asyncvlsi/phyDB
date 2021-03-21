@@ -56,6 +56,10 @@ vector<Row> &Design::GetRowVec() {
     return rows_;
 }
 
+void Design::SetComponentCount(int count) {
+    components_.reserve(count);
+}
+
 bool Design::IsComponentExist(std::string &comp_name) {
     return component_2_id_.find(comp_name) != component_2_id_.end();
 }
@@ -105,6 +109,10 @@ DefVia *Design::GetDefViaPtr(std::string const &via_name) {
     return &(vias_[id]);
 }
 
+void Design::SetIoPinCount(int count) {
+    iopins_.reserve(count);
+}
+
 bool Design::IsIoPinExist(std::string &iopin_name) {
     return iopin_2_id_.find(iopin_name) != iopin_2_id_.end();
 }
@@ -125,6 +133,10 @@ IOPin *Design::GetIoPinPtr(std::string &iopin_name) {
     }
     int id = iopin_2_id_[iopin_name];
     return &(iopins_[id]);
+}
+
+void Design::SetNetCount(int count) {
+    nets_.reserve(count);
 }
 
 bool Design::IsNetExist(std::string &net_name) {
