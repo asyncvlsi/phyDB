@@ -27,6 +27,12 @@ class Macro {
 
   public:
     Macro() : _name("") {}
+    explicit Macro(string &name) : _name(name) {
+        _size.x = 0;
+        _size.y = 0;
+        _origin.x = 0;
+        _origin.y = 0;
+    }
     Macro(string name, Point2D<float> origin, Point2D<float> size, vector<Pin> pins, OBS obs) :
         _name(name),
         _origin(origin),
@@ -43,6 +49,7 @@ class Macro {
     void addPin(Pin &pin) { _pins.push_back(pin); }
     void setOBS(OBS);
     void addObsLayerRect(LayerRect &layer_rect) { _obs._layerRects.push_back(layer_rect); }
+    void set_well_ptr(MacroWell *well_ptr) { well_ptr_ = well_ptr; }
 
     string getName() const;
     Point2D<float> getOrigin() const;
@@ -56,6 +63,7 @@ class Macro {
     vector<Pin> &getPinVecRef() const;
     bool getPin(string pinName, Pin &pin) const;
     bool getOBS(OBS &) const;
+    MacroWell *well_ptr() { return well_ptr_; }
 
     friend ostream &operator<<(ostream &, const Macro &);
 };
@@ -63,57 +71,57 @@ class Macro {
 ostream &operator<<(ostream &, const Macro &);
 
 struct MacroWell {
-    Macro *type_ptr_; // pointer to BlockType
+    Macro *macro_ptr_; // pointer to BlockType
     bool is_n_set_ = false; // whether N-well shape is set or not
     bool is_p_set_ = false; // whether P-well shape is set or not
-    Rect2D<int> n_rect_; // N-well rect
-    Rect2D<int> p_rect_; // P-well rect
-    int p_n_edge_ = 0; // cached N/P-well boundary
+    Rect2D<double> n_rect_; // N-well rect
+    Rect2D<double> p_rect_; // P-well rect
+    double p_n_edge_ = 0; // cached N/P-well boundary
 
-    explicit MacroWell(Macro *type_ptr) : type_ptr_(type_ptr) {}
+    explicit MacroWell(Macro *type_ptr) : macro_ptr_(type_ptr) {}
 
     // get the pointer to the BlockType this well belongs to
-    Macro *BlkTypePtr() const { return type_ptr_; }
+    Macro *BlkTypePtr() const { return macro_ptr_; }
 
     // set the rect of N-well
-    void setNWellRect(int lx, int ly, int ux, int uy) {
+    void setNWellRect(double lx, double ly, double ux, double uy) {
         is_n_set_ = true;
         n_rect_.set(lx, ly, ux, uy);
         if (is_p_set_) {
-            //DaliExpects(n_rect_.LLY() == p_rect_.URY(), "N/P-well not abutted");
+            //PhyDbExpects(n_rect_.LLY() == p_rect_.URY(), "N/P-well not abutted");
         } else {
             p_n_edge_ = n_rect_.LLY();
         }
     }
 
     // get the pointer to the rect of N-well
-    Rect2D<int> *NWellRectPtr() { return &(n_rect_); }
+    Rect2D<double> *NWellRectPtr() { return &(n_rect_); }
 
     // set the rect of P-well
-    void setPWellRect(int lx, int ly, int ux, int uy) {
+    void setPWellRect(double lx, double ly, double ux, double uy) {
         is_p_set_ = true;
         p_rect_.set(lx, ly, ux, uy);
         if (is_n_set_) {
-            //DaliExpects(n_rect_.LLY() == p_rect_.URY(), "N/P-well not abutted");
+            //PhyDbExpects(n_rect_.LLY() == p_rect_.URY(), "N/P-well not abutted");
         } else {
             p_n_edge_ = p_rect_.URY();
         }
     }
 
     // get the pointer to the rect of P-well
-    Rect2D<int> *PWellRectPtr() { return &(p_rect_); }
+    Rect2D<double> *PWellRectPtr() { return &(p_rect_); }
 
     // get the P/N well boundary
-    int PNBoundary() const { return p_n_edge_; }
+    double PNBoundary() const { return p_n_edge_; }
 
     // get the height of N-well
-    int NHeight() const { return type_ptr_->getHeight() - p_n_edge_; }
+    double NHeight() const { return macro_ptr_->getHeight() - p_n_edge_; }
 
     // get the height of P-well
-    int PHeight() const { return p_n_edge_; }
+    double PHeight() const { return p_n_edge_; }
 
     // set the rect of N or P well
-    void setWellRect(bool is_n, int lx, int ly, int ux, int uy) {
+    void setWellRect(bool is_n, double lx, double ly, double ux, double uy) {
         if (is_n) {
             setNWellRect(lx, ly, ux, uy);
         } else {
@@ -122,7 +130,7 @@ struct MacroWell {
     }
 
     // set the rect of N or P well
-    void SetWellShape(bool is_n, Rect2D<int> &rect) {
+    void SetWellShape(bool is_n, Rect2D<double> &rect) {
         setWellRect(is_n, rect.LLX(), rect.LLY(), rect.URX(), rect.URY());
     }
 
@@ -136,13 +144,13 @@ struct MacroWell {
 
     // report the information of N/P-well for debugging purposes
     void Report() const {
-        /*BOOST_LOG_TRIVIAL(info)
-            << "  Well of BlockType: " << *(type_ptr_->NamePtr()) << "\n"
+        std::cout
+            << "  Well of BlockType: " << macro_ptr_->getName() << "\n"
             << "    Nwell: " << n_rect_.LLX() << "  " << n_rect_.LLY() << "  " << n_rect_.URX() << "  " << n_rect_.URY()
             << "\n"
             << "    Pwell: " << p_rect_.LLX() << "  " << p_rect_.LLY() << "  " << p_rect_.URX() << "  " << p_rect_.URY()
             << "\n";
-            */
+
     }
 };
 

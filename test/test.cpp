@@ -123,7 +123,8 @@ void test_tech( ) {
     OBS obs;
     Macro macro1("testMacro", Point2D<float>(1.0, 2.0), Point2D<float>(3.0, 4.0), pins, obs);
 
-    tech.addMacro(macro1);
+    std::string macro_name = "testMacro";
+    tech.addMacro(macro_name);
     auto& macro2 = tech.getMacro("testMacro");
 
     cout << macro2.getOrigin() << endl;
@@ -150,6 +151,9 @@ int main() {
     PhyDB db;
     db.readLef(lefFileName);
     db.readDef(defFileName);
+
+    string cellFileName;
+    db.readCell(cellFileName);
     
     return 1;
 }

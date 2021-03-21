@@ -34,6 +34,7 @@ class Layer {
   public:
     Layer() : _name(""), _type(""), _idx(-1), _direction(""), _pitchx(0),
               _pitchy(0), _width(0), _area(0), _minWidth(0), _offset(0), _spacing(0) {}
+    explicit Layer(std::string &name) : _name(name) {}
 
     //constructor for metal layer
     Layer(string name, string type, string direction, float pitchx, float pitchy,
@@ -80,10 +81,77 @@ class Layer {
 
     friend ostream &operator<<(ostream &, const Layer &);
 
-    void print();
+    void Report();
 };
 
 ostream &operator<<(ostream &, const Layer &);
+
+class WellLayer {
+  private:
+    double width_;
+    double spacing_;
+    double op_spacing_;
+    double max_plug_dist_;
+    double overhang_;
+  public:
+    WellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
+        set_width(width);
+        set_spacing(spacing);
+        set_op_spacing(op_spacing);
+        set_max_plug_dist(max_plug_dist);
+        set_overhang(overhang);
+    }
+
+    double width() const { return width_; }
+    double spacing() const { return spacing_; }
+    double op_spacing() const { return op_spacing_; }
+    double max_plug_dist() const { return max_plug_dist_; }
+    double overhang() const { return overhang_; }
+
+    void set_width(double width) {
+        if (width < 0) {
+            std::cout << "Negative width not allowed: WellLayer::set_width()" << std::endl;
+            exit(1);
+        }
+        width_ = width;
+    }
+    void set_spacing(double spacing) {
+        if (spacing < 0) {
+            std::cout << "Negative spacing not allowed: WellLayer::set_spacing()" << std::endl;
+            exit(1);
+        }
+        spacing_ = spacing;
+    }
+    void set_op_spacing(double op_spacing) {
+        if (op_spacing < 0) {
+            std::cout << "Negative opposite spacing not allowed: Layer::set_op_spacing()" << std::endl;
+            exit(1);
+        }
+        op_spacing_ = op_spacing;
+    }
+    void set_max_plug_dist(double max_plug_dist) {
+        if (max_plug_dist < 0) {
+            std::cout << "Negative max plug distance not allowed: WellLayer::set_max_plug_dist()" << std::endl;
+            exit(1);
+        }
+        max_plug_dist_ = max_plug_dist;
+    }
+    void set_overhang(double overhang) {
+        if (overhang < 0) {
+            std::cout << "Negative well/diffusion overhang not allowed: WellLayer::set_overhang()" << std::endl;
+            exit(1);
+        }
+        overhang_ = overhang;
+    }
+    void set_params(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
+        set_width(width);
+        set_spacing(spacing);
+        set_op_spacing(op_spacing);
+        set_max_plug_dist(max_plug_dist);
+        set_overhang(overhang);
+    }
+    void Report();
+};
 
 }
 

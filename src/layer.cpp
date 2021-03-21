@@ -34,7 +34,7 @@ ostream &operator<<(ostream &os, const Layer &l) {
     return os;
 }
 
-void Layer::print() {
+void Layer::Report() {
     cout << "------------------------------" << endl;
     cout << "Layer: " << _name << " type: " << _type << " direction: " << _direction << " idx: " << _idx << endl;
     cout << "pitch: " << _pitchx << " " << _pitchy << " width:" << _width << " area: " << _area << endl;
@@ -48,6 +48,14 @@ void Layer::print() {
     if (cornerSpacing.width.size())
         cornerSpacing.print();
     */
+}
+
+void WellLayer::Report() {
+    std::cout << "    Width:       " << width() << " um\n"
+              << "    Spacing:     " << spacing() << " um\n"
+              << "    OpSpacing:   " << op_spacing() << " um\n"
+              << "    MaxPlugDist: " << max_plug_dist() << " um\n"
+              << "    Overhang:    " << overhang() << "um\n";
 }
 
 }

@@ -42,7 +42,7 @@ int getDefDesign(defrCallbackType_e type, const char *str, defiUserData data) {
     //bool enableOutput = true;
     bool enableOutput = true;
     Design *design = (Design *) data;
-    if ((type == defrDesignStartCbkType)) {
+    if (type == defrDesignStartCbkType) {
         design->_name = string(str);
 
         if (enableOutput) {

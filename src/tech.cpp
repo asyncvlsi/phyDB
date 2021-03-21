@@ -4,43 +4,150 @@
 
 namespace phydb {
 
-Macro &Tech::addMacro(Macro m) {
-    int id = _macros.size();
-    //m._id = id;
-    _macros.push_back(m);
-    string name = m.getName();
-    _macro2id[name] = id;
-    return _macros[id];
+void Tech::setDatabaseMicron(int database_micron) {
+    PhyDbExpects(database_micron > 0, "Cannot set negative database microns: Tech::setDatabaseMicron()");
+    _dbuPerMicron = database_micron;
 }
 
-Macro &Tech::getMacro(string name) {
-    int id = _macro2id[name];
-
-    return _macros[id];
+void Tech::setManufacturingGrid(double manufacture_grid) {
+    PhyDbExpects(manufacture_grid > 0, "Cannot set negative manufacturing grid: Circuit::setManufacturingGrid()");
+    _manufacturingGrid = manufacture_grid;
 }
 
-Site &Tech::addSite(Site s) {
-    int id = _sites.size();
-    _sites.push_back(s);
-    return _sites[id];
+void Tech::addSite(std::string const &name, std::string const &class_name, double width, double height) {
+    _sites.emplace_back(name, class_name, width, height);
 }
 
-Layer &Tech::addLayer(Layer l) {
+void Tech::setPlacementGrids(double placement_grid_value_x, double placement_grid_value_y) {
+    if (is_placement_grid_set_) {
+        std::cout << "Once set, grid_value cannot be changed!\n";
+        return;
+    }
+    if (placement_grid_value_x_ <= 0 || placement_grid_value_y_ <= 0) {
+        std::cout << "ERROR: negative placement grid value not allowed\n" << std::endl;
+        exit(1);
+    }
+    placement_grid_value_x_ = placement_grid_value_x;
+    placement_grid_value_y_ = placement_grid_value_y;
+    is_placement_grid_set_ = true;
+}
 
+bool Tech::isLayerExist(std::string const &layer_name) {
+    return _layer2id.find(layer_name) != _macro2id.end();
+}
+
+Layer *Tech::addLayer(std::string &layer_name) {
+    PhyDbExpects(!isLayerExist(layer_name), "Layer name exists, cannot use again");
     int id = _layers.size();
-    _layers.push_back(l);
-    string name = l.getName();
-    _layer2id[name] = id;
-    return _layers[id];
+    _layers.emplace_back(layer_name);
+    _layer2id[layer_name] = id;
+    return &(_layers[id]);
+}
+
+Layer *Tech::getLayerPtr(std::string const &layer_name) {
+    if (!isLayerExist(layer_name)) {
+        return nullptr;
+    }
+    int id = _layer2id[layer_name];
+    return &(_layers[id]);
+}
+
+void Tech::ReportLayers() {
+    std::cout << "Total number of layer: " << _layers.size() << "\n";
+    for (auto &layer: _layers) {
+        layer.Report();
+    }
+    std::cout << "\n";
+}
+
+bool Tech::isMacroExist(std::string const &macro_name) {
+    return _macro2id.find(macro_name) != _macro2id.end();
+}
+
+Macro *Tech::addMacro(std::string &macro_name) {
+    PhyDbExpects(!isMacroExist(macro_name), "Macro name exists, cannot use it again");
+    int id = _macros.size();
+    _macros.emplace_back(macro_name);
+    _macro2id[macro_name] = id;
+    return &(_macros[id]);
+}
+
+Macro &Tech::getMacro(string const &macro_name) {
+    if (!isMacroExist(macro_name)) {
+        std::cout << "Tech::getMacro, ERROR: Macro name does not exist, " + macro_name << std::endl;
+        exit(1);
+    }
+    int id = _macro2id[macro_name];
+    return _macros[id];
+}
+
+Macro *Tech::getMacroPtr(std::string const &macro_name) {
+    if (!isMacroExist(macro_name)) {
+        return nullptr;
+    }
+    int id = _macro2id[macro_name];
+    return &(_macros[id]);
+}
+
+void Tech::setNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
+    if (is_n_well_layer_set_) {
+        n_layer_ptr_->set_params(width, spacing, op_spacing, max_plug_dist, overhang);
+    } else {
+        n_layer_ptr_ = new WellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
+        is_n_well_layer_set_ = true;
+    }
+}
+
+void Tech::setPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
+    if (is_p_well_layer_set_) {
+        p_layer_ptr_->set_params(width, spacing, op_spacing, max_plug_dist, overhang);
+    } else {
+        p_layer_ptr_ = new WellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
+        is_p_well_layer_set_ = true;
+    }
+}
+
+void Tech::setNpwellSpacing(double same_diff, double any_diff) {
+    if (same_diff < 0 || any_diff < 0) {
+        std::cout << "Negative values not allowed: Tech::setNpwellSpacing()" << std::endl;
+        exit(1);
+    }
+    same_diff_spacing_ = same_diff;
+    any_diff_spacing_ = any_diff;
+}
+
+void Tech::ReportWellShape() {
+    for (auto &well: wells_) {
+        well.Report();
+    }
+}
+
+int getLefSite(lefrCallbackType_e type, lefiSite *site, lefiUserData data) {
+    if (type != lefrSiteCbkType) {
+        std::cout << "Type is not lefrSiteCbkType!" << std::endl;
+        exit(2);
+    }
+    if (site->lefiSite::hasSize()) {
+        Tech *tech = (Tech *) data;
+        std::string site_name(site->name());
+        std::string site_class_name;
+        if (site->hasClass()) {
+            site_class_name = std::string(site->siteClass());
+        }
+        tech->addSite(site_name, site_class_name, site->sizeX(), site->sizeY());
+    } else {
+        PhyDbExpects(false, "SITE SIZE information not provided");
+    }
+    return 0;
 }
 
 int getLefMacrosBegin(lefrCallbackType_e type, const char *str, lefiUserData data) {
     assert(type == lefrMacroBeginCbkType);
 
     Tech *tech = (Tech *) data;
-    Macro &m = tech->addMacro(Macro()); //add an empty macro
     string tmpMacroName(str);
-    m.setName(tmpMacroName);
+    tech->addMacro(tmpMacroName); //add an empty macro
+
     return 0;
 }
 
@@ -64,7 +171,7 @@ int getLefMacros(lefrCallbackType_e type, lefiMacro *macro, lefiUserData data) {
     }
     Tech *tech = (Tech *) data;
     int nMacros = tech->_macros.size();
-    // TODO: confirm this bug is fixed
+
     Macro &m = tech->_macros.back(); //write to the last one
     m.setOrigin(originX, originY);
     m.setSize(sizeX, sizeY);
@@ -436,12 +543,12 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
     }
 
     if (enableOutput)
-        tmpLayer.print();
+        tmpLayer.Report();
 
     return 0;
 }
 
-int getLefVias(lefrCallbackType_e type, lefiVia* via, lefiUserData data) {
+int getLefVias(lefrCallbackType_e type, lefiVia *via, lefiUserData data) {
     /*
     bool enableOutput = false;
     //bool enableOutput = true;
@@ -491,8 +598,7 @@ int getLefVias(lefrCallbackType_e type, lefiVia* via, lefiUserData data) {
     return 0;
 }
 
-
-int getLefViaGenerateRules(lefrCallbackType_e type, lefiViaRule* viaRule, lefiUserData data) {
+int getLefViaGenerateRules(lefrCallbackType_e type, lefiViaRule *viaRule, lefiUserData data) {
     /*
     bool enableOutput = false;
     //bool enableOutput = true;
