@@ -21,10 +21,10 @@ namespace phydb {
 
 class Design {
   public:
+    string name_;
     double version_;
     string divider_char_;
     string bus_bit_chars_;
-    string name_;
 
     Rect2D<int> die_area_;
 
@@ -46,6 +46,11 @@ class Design {
     set<string> row_set_;
 
     Design() {}
+
+    void SetName(std::string &name);
+    void SetVersion(double version);
+    void SetDividerChar(std::string &divider_char);
+    void SetBusBitChars(std::string &bus_bit_chars);
 
     void SetUnitsDistanceMicrons(int distance_microns);
     void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
@@ -80,54 +85,7 @@ class Design {
     void AddIoPinToNet(std::string &iopin_name, std::string &net_name);
     void AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name);
     Net *GetNetPtr(std::string &net_name);
-
-    friend int getDefVersion(defrCallbackType_e, double, defiUserData);
-    friend int getDefBusBit(defrCallbackType_e, const char *, defiUserData);
-    friend int getDefDivider(defrCallbackType_e, const char *, defiUserData);
-    friend int getDefString(defrCallbackType_e, const char *, defiUserData);
-    friend int getDefVoid(defrCallbackType_e, void *, defiUserData);
-    friend int getDefDieArea(defrCallbackType_e, defiBox *, defiUserData);
-    friend int getDefUnits(defrCallbackType_e, double, defiUserData);
-    friend int getDefTracks(defrCallbackType_e, defiTrack *, defiUserData);
-    friend int getDefComponents(defrCallbackType_e, defiComponent *, defiUserData);
-    friend int getDefIOPins(defrCallbackType_e, defiPin *, defiUserData);
-    friend int getDefNets(defrCallbackType_e, defiNet *, defiUserData);
-    friend int getDefSNets(defrCallbackType_e, defiNet *, defiUserData);
-    friend int getDefVias(defrCallbackType_e, defiVia *, defiUserData);
-    friend int getDefGcell(defrCallbackType_e, defiGcellGrid *, defiUserData);
-    friend int getDefRow(defrCallbackType_e, defiRow *, defiUserData);
 };
-
-int getDefVersion(defrCallbackType_e, double, defiUserData);
-int getDefBusBit(defrCallbackType_e, const char *, defiUserData);
-int getDefDivider(defrCallbackType_e, const char *, defiUserData);
-int getDefString(defrCallbackType_e, const char *, defiUserData);
-int getDefVoid(defrCallbackType_e, void *, defiUserData);
-int getDefDieArea(defrCallbackType_e, defiBox *, defiUserData);
-int getDefUnits(defrCallbackType_e, double, defiUserData);
-int getDefTracks(defrCallbackType_e, defiTrack *, defiUserData);
-int getDefComponents(defrCallbackType_e, defiComponent *, defiUserData);
-int getDefIOPins(defrCallbackType_e, defiPin *, defiUserData);
-int getDefNets(defrCallbackType_e, defiNet *, defiUserData);
-int getDefSNets(defrCallbackType_e, defiNet *, defiUserData);
-int getDefVias(defrCallbackType_e, defiVia *, defiUserData);
-int getDefGcell(defrCallbackType_e, defiGcellGrid *, defiUserData);
-int getDefRow(defrCallbackType_e, defiRow *, defiUserData);
-
-int writeVersion(defwCallbackType_e c, defiUserData ud);
-int writeBusBit(defwCallbackType_e c, defiUserData ud);
-int writeDivider(defwCallbackType_e c, defiUserData ud);
-int writeUnits(defwCallbackType_e c, defiUserData ud);
-int writeRows(defwCallbackType_e c, defiUserData ud);
-int writeTracks(defwCallbackType_e c, defiUserData ud);
-int writeComponents(defwCallbackType_e c, defiUserData ud);
-int writeDieArea(defwCallbackType_e c, defiUserData ud);
-int writeDesignName(defwCallbackType_e c, defiUserData ud);
-int writeDesignEnd(defwCallbackType_e c, defiUserData ud);
-int writeSNet(defwCallbackType_e c, defiUserData ud);
-int writeIOPins(defwCallbackType_e c, defiUserData ud);
-int writeNets(defwCallbackType_e c, defiUserData ud);
-int clusterWriteSNet(defwCallbackType_e c, defiUserData ud);
 
 }
 

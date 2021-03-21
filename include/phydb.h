@@ -10,6 +10,9 @@ class PhyDB {
   public:
     PhyDB() {}
 
+    Tech *GetTechPtr();
+    Design *GetDesignPtr();
+
     /************************************************
     * The following APIs are for information in LEF
     * ************************************************/
@@ -33,6 +36,10 @@ class PhyDB {
     /************************************************
     * The following APIs are for information in DEF
     * ************************************************/
+    void SetDefName(std::string &name);
+    void SetDefVersion(double version);
+    void SetDefDividerChar(std::string &divider_char);
+    void SetDefBusBitChars(std::string &bus_bit_chars);
     void SetUnitsDistanceMicrons(int distance_microns);
     void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
 

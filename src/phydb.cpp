@@ -4,7 +4,17 @@
 
 #include <fstream>
 
+#include "si2parser.h"
+
 namespace phydb {
+
+Tech *PhyDB::GetTechPtr() {
+    return &tech_;
+}
+
+Design *PhyDB::GetDesignPtr() {
+    return &design_;
+}
 
 void PhyDB::SetDatabaseMicron(int database_micron) {
     tech_.SetDatabaseMicron(database_micron);
@@ -68,6 +78,22 @@ ViaRuleGenerate* PhyDB::AddViaRuleGenerate(std::string &name) {
 
 ViaRuleGenerate* PhyDB::GetViaRuleGeneratePtr(std::string const &name) {
     return tech_.GetViaRuleGeneratePtr(name);
+}
+
+void PhyDB::SetDefName(std::string &name) {
+    design_.SetName(name);
+}
+
+void PhyDB::SetDefVersion(double version) {
+    design_.SetVersion(version);
+}
+
+void PhyDB::SetDefDividerChar(std::string &divider_char) {
+    design_.SetDividerChar(divider_char);
+}
+
+void PhyDB::SetDefBusBitChars(std::string &bus_bit_chars) {
+    design_.SetBusBitChars(bus_bit_chars);
 }
 
 void PhyDB::SetUnitsDistanceMicrons(int distance_microns) {
@@ -196,85 +222,11 @@ void PhyDB::SetMacrowellShape(std::string &macro_name, bool is_N, double lx, dou
 }
 
 void PhyDB::ReadLef(string const &lefFileName) {
-    FILE *f;
-    int res;
-
-    lefrInitSession(1);
-
-    lefrSetUserData((lefiUserData) &tech_);
-
-    lefrSetMacroCbk(getLefMacros);
-    lefrSetMacroBeginCbk(getLefMacrosBegin);
-    lefrSetMacroEndCbk(getLefMacrosEnd);
-    lefrSetUnitsCbk(getLefUnits);
-    lefrSetManufacturingCbk(getLefManufacturingGrid);
-    lefrSetPinCbk(getLefPins);
-    lefrSetObstructionCbk(getLefObs);
-    lefrSetLayerCbk(getLefLayers);
-    lefrSetViaCbk(getLefVias);
-    lefrSetViaRuleCbk(getLefViaGenerateRules);
-
-    if ((f = fopen(lefFileName.c_str(), "r")) == 0) {
-        cout << "Couldn't open lef file" << endl;
-        exit(2);
-    }
-
-    res = lefrRead(f, lefFileName.c_str(), (lefiUserData) &tech_);
-    if (res != 0) {
-        cout << "LEF parser returns an error!" << endl;
-        exit(2);
-    }
-    fclose(f);
-
-    lefrClear();
+    Si2ReadLef(this, lefFileName);
 }
 
 void PhyDB::ReadDef(string const &defFileName) {
-    FILE *f;
-    int res;
-
-    defrInit();
-    defrReset();
-
-    defrInitSession(1);
-
-    defrSetUserData((defiUserData) &design_);
-
-    defrSetVersionCbk(getDefVersion);
-    defrSetBusBitCbk(getDefBusBit);
-    defrSetDividerCbk(getDefDivider);
-
-    defrSetDesignCbk(getDefString);
-    defrSetDesignEndCbk(getDefVoid);
-    defrSetDieAreaCbk(getDefDieArea);
-    defrSetUnitsCbk(getDefUnits);
-    defrSetRowCbk(getDefRow);
-    defrSetTrackCbk(getDefTracks);
-    defrSetComponentCbk(getDefComponents);
-    defrSetPinCbk(getDefIOPins);
-
-    defrSetSNetCbk(getDefSNets);
-    defrSetAddPathToNet();
-    defrSetNetCbk(getDefNets);
-
-    defrSetViaCbk(getDefVias);
-    defrSetGcellGridCbk(getDefGcell);
-
-    if ((f = fopen(defFileName.c_str(), "r")) == 0) {
-        cout << "Couldn't open def file" << endl;
-        exit(2);
-    }
-
-    res = defrRead(f, defFileName.c_str(), (defiUserData) &design_, 1);
-    if (res != 0) {
-        cout << "DEF parser returns an error!" << endl;
-        exit(2);
-    }
-    fclose(f);
-
-    //numPins = readPinCnt;
-
-    defrClear();
+    Si2ReadDef(this, defFileName);
 }
 
 void PhyDB::ReadCell(string const &cellFileName) {
