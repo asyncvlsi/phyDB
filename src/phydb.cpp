@@ -36,8 +36,8 @@ bool PhyDB::IsLayerExist(std::string const &layer_name) {
     return tech_.IsLayerExist(layer_name);
 }
 
-Layer *PhyDB::AddLayer(std::string &layer_name) {
-    return tech_.AddLayer(layer_name);
+Layer *PhyDB::AddLayer(std::string &layer_name, LayerType type, MetalDirection direction) {
+    return tech_.AddLayer(layer_name, type, direction);
 }
 
 Layer *PhyDB::GetLayerPtr(std::string const &layer_name) {
@@ -128,8 +128,8 @@ vector<Row>& PhyDB::GetRowVec() {
     return design_.GetRowVec();
 }
 
-Component *PhyDB::AddComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
-                               int llx, int lly, std::string &orient) {
+Component *PhyDB::AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
+                               int llx, int lly, CompOrient orient) {
     return design_.AddComponent(comp_name, macro_name, place_status, llx, lly, orient);
 }
 
@@ -157,10 +157,8 @@ DefVia *PhyDB::GetDefViaPtr(std::string const &via_name) {
     return design_.GetDefViaPtr(via_name);
 }
 
-IOPin *PhyDB::AddIoPin(std::string &iopin_name, std::string &place_status,
-                       std::string &signal_use, std::string &signal_direction,
-                       int lx, int ly) {
-    return design_.AddIoPin(iopin_name, place_status, signal_use, signal_direction, lx, ly);
+IOPin *PhyDB::AddIoPin(std::string &iopin_name, SignalDirection signal_direction, SignalUse signal_use) {
+    return design_.AddIoPin(iopin_name, signal_direction, signal_use);
 }
 
 IOPin *PhyDB::GetIoPinPtr(std::string &iopin_name) {

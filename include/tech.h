@@ -58,7 +58,7 @@ class Tech {
     void SetPlacementGrids(double placement_grid_value_x, double placement_grid_value_y);
 
     bool IsLayerExist(std::string const &layer_name);
-    Layer *AddLayer(std::string &layer_name);
+    Layer *AddLayer(std::string &layer_name, LayerType type, MetalDirection direction=HORIZONTAL);
     Layer *GetLayerPtr(std::string const &layer_name);
     int GetLayerId(const string& layer_name);
     std::vector<Layer> &GetLayersRef();

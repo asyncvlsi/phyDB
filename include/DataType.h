@@ -125,6 +125,10 @@ class Rect2D {
         return (ll.x <= p.x && ll.y <= p.y && ur.x >= p.x && ur.y >= p.y);
     }
 
+    string Str() {
+        return ll.Str() + ur.Str();
+    }
+
     T LLX() const { return ll.x; }
     T LLY() const { return ll.y; }
     T URX() const { return ur.x; }

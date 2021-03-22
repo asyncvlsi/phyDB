@@ -36,6 +36,7 @@ class Net {
     void AddIoPin(std::string const &iopin_name);
     void AddCompPin(std::string const &comp_name, std::string const &pin_name);
 
+    void Report();
 };
 
 ostream &operator<<(ostream &, const Net &);

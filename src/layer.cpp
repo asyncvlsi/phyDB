@@ -10,11 +10,11 @@ void Layer::SetName(string &name) {
     name_ = name;
 }
 
-void Layer::SetType(string &type) {
+void Layer::SetType(LayerType type) {
     type_ = type;
 }
 
-void Layer::SetDirection(string &direction) {
+void Layer::SetDirection(MetalDirection direction) {
     direction_ = direction;
 }
 
@@ -43,33 +43,33 @@ void Layer::SetSpacing(float spacing) {
     spacing_ = spacing;
 }
 
-SpacingTable* Layer::SetSpacingTable(SpacingTable &st) {
+SpacingTable *Layer::SetSpacingTable(SpacingTable &st) {
     spacing_table_ = st;
     return &spacing_table_;
 }
 
-SpacingTable* Layer::SetSpacingTable(int n_col, int n_row, const vector<float>& v_parallel_run_length,
-        const vector<float>& v_width, const vector<float>& v_spacing) {
+SpacingTable *Layer::SetSpacingTable(int n_col, int n_row, const vector<float> &v_parallel_run_length,
+                                     const vector<float> &v_width, const vector<float> &v_spacing) {
     spacing_table_ = SpacingTable(n_col, n_row, v_parallel_run_length, v_width, v_spacing);
     return &spacing_table_;
 }
 
-SpacingTableInfluence* Layer::AddSpacingTableInfluence(float width, float within, float spacing) {
+SpacingTableInfluence *Layer::AddSpacingTableInfluence(float width, float within, float spacing) {
     spacing_table_influences_.emplace_back(width, within, spacing);
     return &spacing_table_influences_.back();
 }
 
-EolSpacing* Layer::AddEolSpacing(float spacing, float width, float within, float par_edge, float par_within) {
+EolSpacing *Layer::AddEolSpacing(float spacing, float width, float within, float par_edge, float par_within) {
     eol_spacings_.emplace_back(spacing, width, within, par_edge, par_within);
     return &eol_spacings_.back();
 }
 
-CornerSpacing* Layer::SetCornerSpacing(CornerSpacing &cornerSpacing) {
+CornerSpacing *Layer::SetCornerSpacing(CornerSpacing &cornerSpacing) {
     corner_spacing_ = cornerSpacing;
     return &corner_spacing_;
 }
 
-AdjacentCutSpacing* Layer::SetAdjCutSpacing(float spacing, int adjacent_cuts, int cut_within) {
+AdjacentCutSpacing *Layer::SetAdjCutSpacing(float spacing, int adjacent_cuts, int cut_within) {
     adjacent_cut_spacing_ = AdjacentCutSpacing(spacing, adjacent_cuts, cut_within);
     return &adjacent_cut_spacing_;
 }
@@ -78,28 +78,29 @@ float Layer::GetSpacing() const {
     return spacing_;
 }
 
-SpacingTable* Layer::GetSpacingTable() {
+SpacingTable *Layer::GetSpacingTable() {
     return &spacing_table_;
 }
 
-vector<EolSpacing>* Layer::GetEolSpacings() {
+vector<EolSpacing> *Layer::GetEolSpacings() {
     return &eol_spacings_;
 }
 
-vector<SpacingTableInfluence>* Layer::GetSpacingTableInfluences() {
+vector<SpacingTableInfluence> *Layer::GetSpacingTableInfluences() {
     return &spacing_table_influences_;
 }
 
-CornerSpacing* Layer::GetCornerSpacing() {
+CornerSpacing *Layer::GetCornerSpacing() {
     return &corner_spacing_;
 }
 
-AdjacentCutSpacing* Layer::GetAdjCutSpacing() {
+AdjacentCutSpacing *Layer::GetAdjCutSpacing() {
     return &adjacent_cut_spacing_;
 }
 
 ostream &operator<<(ostream &os, const Layer &l) {
-    os << l.name_ << " " << l.type_ << " " << l.idx_ << " " << l.direction_ << endl;
+    os << l.name_ << " " << LayerTypeStr(l.type_) << " "
+       << l.idx_ << " " << MetalDirectionStr(l.direction_) << endl;
     os << l.pitchx_ << " " << l.pitchy_ << " " << l.width_ << " " << l.area_ << endl;
     os << l.min_width_ << " " << l.offset_ << endl;
     os << l.spacing_ << endl;
@@ -108,7 +109,8 @@ ostream &operator<<(ostream &os, const Layer &l) {
 
 void Layer::Report() {
     cout << "------------------------------" << endl;
-    cout << "Layer: " << name_ << " type: " << type_ << " direction: " << direction_ << " idx_: " << idx_ << endl;
+    cout << "Layer: " << name_ << " type: " << LayerTypeStr(type_)
+         << " direction: " << MetalDirectionStr(direction_) << " idx_: " << idx_ << endl;
     cout << "pitch: " << pitchx_ << " " << pitchy_ << " GetWidth:" << width_ << " area: " << area_ << endl;
     cout << "minWidth: " << min_width_ << " offset: " << offset_ << " GetSpacing: " << spacing_ << endl;
     /*

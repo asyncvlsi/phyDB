@@ -102,10 +102,8 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
 
     std::string pin_name(pin->name());
     std::string pin_direction(pin->direction());
-    Pin *pin_ptr = last_macro.AddPin(pin_name, StrToSignalDirection(pin_direction));
-
-    string pin_use(pin->use());
-    pin_ptr->SetUse(pin_use);
+    std::string pin_use(pin->use());
+    Pin *pin_ptr = last_macro.AddPin(pin_name, StrToSignalDirection(pin_direction), StrToSignalUse(pin_use));
 
     if (enableOutput) {
         cout << "  PIN " << pin->name() << endl;
@@ -265,17 +263,18 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
 
     if (strcmp(layer->type(), "ROUTING") == 0) {
         string metal_layer_name(layer->name());
-        Layer &last_layer = *(phy_db_ptr->AddLayer(metal_layer_name));
-        string metal_type(layer->type());
-        last_layer.SetType(metal_type);
+        string layer_type(layer->type());
+        string direction(layer->direction());
+
+        Layer &last_layer =
+            *(phy_db_ptr->AddLayer(metal_layer_name, StrToLayerType(layer_type), StrToMetalDirection(direction)));
+
         last_layer.SetWidth(layer->width());
         if (layer->hasMinwidth()) {
             last_layer.SetMinWidth(layer->minwidth());
         } else {
             last_layer.SetMinWidth(layer->width());
         }
-        string layer_direction(layer->direction());
-        last_layer.SetDirection(layer_direction);
 
         if (layer->hasXYPitch()) {
             last_layer.SetPitch(layer->pitchX(), layer->pitchY());
@@ -380,15 +379,15 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
                     v_parallel_run_length,
                     v_width,
                     v_spacing
-                    );
+                );
 
             } else if (spTable->isInfluence()) {
                 auto influence = spTable->influence();
-                for(int i = 0; i < influence->numInfluenceEntry(); i++) {
+                for (int i = 0; i < influence->numInfluenceEntry(); i++) {
                     last_layer.AddSpacingTableInfluence(
-                            influence->width(i), 
-                            influence->distance(i), 
-                            influence->spacing(i));
+                        influence->width(i),
+                        influence->distance(i),
+                        influence->spacing(i));
                 }
             } else {
                 cout << "unsupported spacing table!" << endl;
@@ -397,11 +396,11 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
         }
 
     } else if (strcmp(layer->type(), "CUT") == 0) { // cut layer
-        
         string metal_layer_name(layer->name());
-        Layer &last_layer = *(phy_db_ptr->AddLayer(metal_layer_name));
-         string metal_type(layer->type());
-        last_layer.SetType(metal_type);
+        string layer_type(layer->type());
+
+        Layer &last_layer = *(phy_db_ptr->AddLayer(metal_layer_name, StrToLayerType(layer_type)));
+
         last_layer.SetWidth(layer->width());
         // read spacing constraint
         for (int i = 0; i < layer->numSpacing(); ++i) {
@@ -427,34 +426,33 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
 int getLefVias(lefrCallbackType_e type, lefiVia *via, lefiUserData data) {
     bool enableOutput = false;
     if (type != lefrViaCbkType) {
-        cout <<"Type is not lefrViaCbkType!" <<endl;
+        cout << "Type is not lefrViaCbkType!" << endl;
     }
-    
+
     auto *phy_db_ptr = (PhyDB *) data;
     string via_name = via->name();
-    LefVia& last_via = *(phy_db_ptr->AddLefVia(via_name));
-    if(via->hasDefault()) 
+    LefVia &last_via = *(phy_db_ptr->AddLefVia(via_name));
+    if (via->hasDefault())
         last_via.SetDefault();
     else
         last_via.UnsetDefault();
 
-
     if (enableOutput) {
-        cout <<"VIA " <<via->name();
+        cout << "VIA " << via->name();
         if (via->hasDefault()) {
-            cout <<" DEFAULT";
+            cout << " DEFAULT";
         }
-        cout <<endl;
+        cout << endl;
     }
     if (via->numLayers() != 3) {
-        cout <<"Error: unsupported via (via layers != 3) " << via->name() << endl;
+        cout << "Error: unsupported via (via layers != 3) " << via->name() << endl;
         exit(1);
     }
     string layer_name[3];
     vector<Rect2D<float>> rects[3];
     for (int i = 0; i < via->numLayers(); ++i) {
         layer_name[i] = via->layerName(i);
-        for (int j = 0; j < via->numRects(i); ++j){
+        for (int j = 0; j < via->numRects(i); ++j) {
             rects[i].emplace_back(via->xl(i, j), via->yl(i, j), via->xh(i, j), via->yh(i, j));
         }
     }
@@ -467,41 +465,38 @@ int getLefViaRuleGenerates(lefrCallbackType_e type, lefiViaRule *viaRule, lefiUs
     bool enableOutput = false;
     //bool enableOutput = true;
     if (type != lefrViaRuleCbkType) {
-        cout <<"Type is not lefrViaRuleCbkType!" <<endl;
+        cout << "Type is not lefrViaRuleCbkType!" << endl;
     }
-    
+
     string name = viaRule->name();
 
     auto *phy_db_ptr = (PhyDB *) data;
-    ViaRuleGenerate& last_viarule_generate = *(phy_db_ptr->AddViaRuleGenerate(name));
+    ViaRuleGenerate &last_viarule_generate = *(phy_db_ptr->AddViaRuleGenerate(name));
 
-    if(viaRule->hasDefault()) 
+    if (viaRule->hasDefault())
         last_viarule_generate.SetDefault();
     else
         last_viarule_generate.UnsetDefault();
 
-    if (viaRule->numLayers() != 3)
-    {
-        cout <<"Error: unsupported via" <<endl;
+    if (viaRule->numLayers() != 3) {
+        cout << "Error: unsupported via" << endl;
         exit(1);
     }
     ViaRuleGenerateLayer layer[3];
 
-
-    for (int i = 0; i < viaRule->numLayers(); ++i)
-    {
+    for (int i = 0; i < viaRule->numLayers(); ++i) {
         auto viaRuleLayer = viaRule->layer(i);
-        string layer_name  = viaRuleLayer->name();
+        string layer_name = viaRuleLayer->name();
         layer[i].SetLayerName(layer_name);
-        if(viaRuleLayer->hasEnclosure()) {
+        if (viaRuleLayer->hasEnclosure()) {
             layer[i].SetEnclosure(viaRuleLayer->enclosureOverhang1(), viaRuleLayer->enclosureOverhang2());
         }
 
-        if(viaRuleLayer->hasRect()) {
+        if (viaRuleLayer->hasRect()) {
             layer[i].SetRect(viaRuleLayer->xl(), viaRuleLayer->yl(), viaRuleLayer->xh(), viaRuleLayer->xh());
         }
 
-        if(viaRuleLayer->hasSpacing()) {
+        if (viaRuleLayer->hasSpacing()) {
             layer[i].SetSpacing(viaRuleLayer->spacingStepX(), viaRuleLayer->spacingStepY());
         }
     }
@@ -672,7 +667,9 @@ int getDefComponents(defrCallbackType_e type, defiComponent *comp, defiUserData 
     std::string orient(comp->placementOrientStr());
 
     auto *phy_db_ptr = (PhyDB *) data;
-    phy_db_ptr->AddComponent(comp_name, macro_name, place_status, llx, lly, orient);
+    phy_db_ptr->AddComponent(comp_name, macro_name,
+                             StrToPlaceStatus(place_status), llx, lly,
+                             StrToCompOrient(orient));
 
     return 0;
 }
@@ -693,38 +690,47 @@ int getDefIOPins(defrCallbackType_e type, defiPin *pin, defiUserData data) {
     if (pin->hasUse())
         signal_use = std::string(pin->use());
 
-    std::string place_status;
-    if (pin->isPlaced())
-        place_status = "PLACED";
-    else if (pin->isUnplaced())
-        place_status = "UNPLACED";
-    else if (pin->isFixed())
-        place_status = "FIXED";
-    else if (pin->isCover())
-        place_status = "COVER";
-
     auto *phy_db_ptr = (PhyDB *) data;
-    IOPin *io_pin_ptr = phy_db_ptr->AddIoPin(iopin_name, place_status, signal_use, signal_direction);
+    IOPin *io_pin_ptr = phy_db_ptr->AddIoPin(iopin_name,
+                                             StrToSignalDirection(signal_direction),
+                                             StrToSignalUse(signal_use));
 
-    int llx, lly, urx, ury;
-    llx = 0;
-    lly = 0;
-    urx = 0;
-    ury = 0;
+    int iopin_x = 0;
+    int iopin_y = 0;
+    PlaceStatus place_status = UNPLACED;
+    CompOrient orient = N;
+    if (pin->isPlaced()) {
+        place_status = PLACED;
+        iopin_x = pin->placementX();
+        iopin_y = pin->placementY();
+        std::string str_orient(pin->orientStr());
+        orient = StrToCompOrient(str_orient);
+    } else if (pin->isUnplaced()) {
+        place_status = UNPLACED;
+    } else if (pin->isFixed()) {
+        place_status = FIXED;
+        iopin_x = pin->placementX();
+        iopin_y = pin->placementY();
+        std::string str_orient(pin->orientStr());
+        orient = StrToCompOrient(str_orient);
+    } else if (pin->isCover()) {
+        place_status = COVER;
+        iopin_x = pin->placementX();
+        iopin_y = pin->placementY();
+        std::string str_orient(pin->orientStr());
+        orient = StrToCompOrient(str_orient);
+    }
+    io_pin_ptr->SetPlacement(place_status, iopin_x, iopin_y, orient);
+
     if (pin->hasPort()) {
         cout << "Error: multiple pin ports existing in DEF" << endl;
         exit(1);
     } else {
-
         for (int i = 0; i < pin->numLayer(); ++i) {
-            io_pin_ptr->layer_name_ = pin->layer(i);
-
-            io_pin_ptr->location_.x = pin->placementX();
-            io_pin_ptr->location_.y = pin->placementY();
-            io_pin_ptr->orient_ = string(pin->orientStr());
-
+            int llx = 0, lly = 0, urx = 0, ury = 0;
             pin->bounds(i, &llx, &lly, &urx, &ury);
-            io_pin_ptr->rect_.Set(llx, lly, urx, ury);
+            std::string layer_name(pin->layer(i));
+            io_pin_ptr->SetShape(layer_name, llx, lly, urx, ury);
         }
     }
 

@@ -24,11 +24,11 @@ class Design {
     string name_;
     double version_;
     string divider_char_;
-    string bus_bit_chars_;
+    string bus_bit_char_;
 
     Rect2D<int> die_area_;
 
-    int dbu_per_micro_;
+    int unit_distance_micron_;
     vector<Row> rows_;
     vector<Track> tracks_;
     vector<Component> components_;
@@ -65,10 +65,9 @@ class Design {
 
     void SetComponentCount(int count);
     bool IsComponentExist(std::string &comp_name);
-    Component *AddComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
-                            int llx, int lly, std::string &orient);
+    Component *AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
+                            int llx, int lly, CompOrient orient);
     Component *GetComponentPtr(std::string &comp_name);
-    void ReportComponent();
 
     bool IsDefViaExist(std::string const &name);
     DefVia *AddDefVia(std::string &name);
@@ -76,9 +75,7 @@ class Design {
 
     void SetIoPinCount(int count);
     bool IsIoPinExist(std::string &iopin_name);
-    IOPin *AddIoPin(std::string &iopin_name, std::string &place_status,
-                    std::string &signal_use, std::string &signal_direction,
-                    int lx = 0, int ly = 0);
+    IOPin *AddIoPin(std::string &iopin_name, SignalDirection signal_direction, SignalUse signal_use);
     IOPin *GetIoPinPtr(std::string &iopin_name);
 
     void SetNetCount(int count);
@@ -87,6 +84,13 @@ class Design {
     void AddIoPinToNet(std::string &iopin_name, std::string &net_name);
     void AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name);
     Net *GetNetPtr(std::string &net_name);
+
+    void ReportTracks();
+    void ReportRows();
+    void ReportComponents();
+    void ReportIoPins();
+    void ReportNets();
+    void Report();
 };
 
 }

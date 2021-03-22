@@ -46,7 +46,7 @@ class Macro {
     void SetOrigin(float x, float y);
     void SetSize(Point2D<float> size);
     void SetSize(float width, float height);
-    Pin *AddPin(std::string &pin_name, SignalDirection direction);
+    Pin *AddPin(std::string &pin_name, SignalDirection direction, SignalUse use);
     void SetObs(OBS &obs); // TODO: change this API to return a pointer
     void AddObsLayerRect(LayerRect &layer_rect);
     void SetWellPtr(MacroWell *well_ptr);

@@ -29,11 +29,11 @@ float SpacingTableInfluence::GetSpacing() const {
     return spacing_;
 }
 
-float SpacingTableInfluence::Report() const {
+void SpacingTableInfluence::Report() const {
     std::cout << "width: " << width_;
     std::cout << "within: " << within_;
     std::cout << "spacing: " << spacing_;
-    std::cout << endl;
+    std::cout << std::endl;
     
 }
 

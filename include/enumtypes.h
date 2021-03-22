@@ -5,6 +5,14 @@
 
 namespace phydb {
 
+enum LayerType {
+    ROUTING = 0,
+    CUT = 1
+};
+
+LayerType StrToLayerType(std::string &str_layer_type);
+std::string LayerTypeStr(LayerType layer_type);
+
 enum MetalDirection {
     HORIZONTAL = 0,
     VERTICAL = 1,
@@ -15,7 +23,7 @@ enum MetalDirection {
 MetalDirection StrToMetalDirection(std::string &str_metal_direction);
 std::string MetalDirectionStr(MetalDirection metal_direction);
 
-enum BlockOrient {
+enum CompOrient {
     N = 0,
     S = 1,
     W = 2,
@@ -26,9 +34,9 @@ enum BlockOrient {
     FE = 7
 };
 
-BlockOrient StrToOrient(std::string &str_orient);
-BlockOrient StrToOrient(const char *str_orient);
-std::string OrientStr(BlockOrient orient);
+CompOrient StrToCompOrient(std::string &str_orient);
+CompOrient StrToCompOrient(const char *str_orient);
+std::string CompOrientStr(CompOrient orient);
 
 enum PlaceStatus {
     COVER = 0,

@@ -22,7 +22,7 @@ class PhyDB {
     void SetPlacementGrids(double placement_grid_value_x_, double placement_grid_value_y_);
 
     bool IsLayerExist(std::string const &layer_name);
-    Layer *AddLayer(std::string &layer_name);
+    Layer *AddLayer(std::string &layer_name, LayerType type, MetalDirection direction=HORIZONTAL);
     Layer *GetLayerPtr(std::string const &layer_name);
     
     bool IsMacroExist(std::string const &macro_name);
@@ -61,15 +61,13 @@ class PhyDB {
     //TODO discuss: maybe IsExist does not need to be here? because it is only used in add?
     void SetComponentCount(int count);
     bool IsComponentExist(std::string &component_name);
-    Component *AddComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
-                            int llx, int lly, std::string &orient);
+    Component *AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
+                            int llx, int lly, CompOrient orient);
     Component *GetComponentPtr(std::string &comp_name);
 
     void SetIoPinCount(int count);
     bool IsIoPinExist(std::string &iopin_name);
-    IOPin *AddIoPin(std::string &iopin_name, std::string &place_status,
-                    std::string &signal_use, std::string &signal_direction,
-                    int lx = 0, int ly = 0);
+    IOPin *AddIoPin(std::string &iopin_name, SignalDirection signal_direction, SignalUse signal_use);
     IOPin *GetIoPinPtr(std::string &iopin_name);
 
     void SetNetCount(int count);

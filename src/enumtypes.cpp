@@ -4,6 +4,34 @@
 
 namespace phydb {
 
+LayerType StrToLayerType(std::string &str_layer_type) {
+    LayerType layer_type = ROUTING;
+    if (str_layer_type == "ROUTING") {
+        layer_type = ROUTING;
+    } else if (str_layer_type == "CUT") {
+        layer_type = CUT;
+    } else {
+        std::cout << "Unknown LayerType: " << str_layer_type << std::endl;
+        exit(1);
+    }
+    return layer_type;
+}
+
+std::string LayerTypeStr(LayerType layer_type) {
+    std::string s;
+    switch (layer_type) {
+        case 0: { s = "ROUTING"; }
+            break;
+        case 1: { s = "CUT"; }
+            break;
+        default: {
+            std::cout << "LayerType error! This should never happen!" << std::endl;
+            exit(1);
+        }
+    }
+    return s;
+}
+
 MetalDirection StrToMetalDirection(std::string &str_metal_direction) {
     MetalDirection metal_direction = HORIZONTAL;
     if (str_metal_direction == "HORIZONTAL") {
@@ -40,8 +68,8 @@ std::string MetalDirectionStr(MetalDirection metal_direction) {
     return s;
 }
 
-BlockOrient StrToOrient(std::string &str_orient) {
-    BlockOrient orient = N;
+CompOrient StrToCompOrient(std::string &str_orient) {
+    CompOrient orient = N;
     if (str_orient == "N" || str_orient == "R0") {
         orient = N;
     } else if (str_orient == "S" || str_orient == "R180") {
@@ -65,7 +93,7 @@ BlockOrient StrToOrient(std::string &str_orient) {
     return orient;
 }
 
-std::string OrientStr(BlockOrient orient) {
+std::string CompOrientStr(CompOrient orient) {
     std::string s;
     switch (orient) {
         case 0: { s = "N"; }

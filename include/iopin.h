@@ -3,6 +3,7 @@
 
 #include "DataType.h"
 #include "header.h"
+#include "enumtypes.h"
 
 namespace phydb {
 
@@ -11,24 +12,21 @@ class IOPin {
     int id_;
     string name_;
     string net_name_;
-    string direction_;
-    string use_;
+    SignalDirection direction_;
+    SignalUse use_;
 
     string layer_name_;
     Rect2D<int> rect_;
 
     Point2D<int> location_;
-    string orient_;
-    string status_;
+    CompOrient orient_;
+    PlaceStatus place_status_;
 
     IOPin() : id_(-1) {}
-    IOPin(std::string &name, std::string &netName, std::string &direction, std::string &use, int lx, int ly) :
-        name_(name), net_name_(netName), direction_(direction), use_(use) {
-        location_.x = lx;
-        location_.y = ly;
-    }
-    IOPin(string name, string netName, string direction, string use, string layerName,
-          Rect2D<int> rect, Point2D<int> location, string orient, string status) :
+    IOPin(std::string &name, SignalDirection direction, SignalUse use) :
+        name_(name), direction_(direction), use_(use) {}
+    IOPin(string name, string netName, SignalDirection direction, SignalUse use, string layerName,
+          Rect2D<int> rect, Point2D<int> location, CompOrient orient, PlaceStatus status) :
         name_(name),
         net_name_(netName),
         direction_(direction),
@@ -37,11 +35,15 @@ class IOPin {
         rect_(rect),
         location_(location),
         orient_(orient),
-        status_(status) {}
+        place_status_(status) {}
 
     string GetName();
     void SetNetName(std::string const &net_name);
 
+    void SetShape(std::string &layer_name, int lx, int ly, int ux, int uy);
+    void SetPlacement(PlaceStatus place_status, int x, int y, CompOrient orient);
+
+    void Report();
 };
 
 ostream &operator<<(ostream &, const IOPin &);

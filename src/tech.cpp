@@ -29,10 +29,10 @@ bool Tech::IsLayerExist(std::string const &layer_name) {
     return layer_2_id_.find(layer_name) != layer_2_id_.end();
 }
 
-Layer *Tech::AddLayer(std::string &layer_name) {
+Layer *Tech::AddLayer(std::string &layer_name, LayerType type, MetalDirection direction) {
     PhyDbExpects(!IsLayerExist(layer_name), "LAYER name_ exists, cannot use again: " + layer_name);
     int id = layers_.size();
-    layers_.emplace_back(layer_name);
+    layers_.emplace_back(layer_name, type, direction);
     layer_2_id_[layer_name] = id;
     return &(layers_[id]);
 }
@@ -189,7 +189,6 @@ void Tech::Report() {
     std::cout << "VERSION " << version_ << ";\n";
     std::cout << "BUSBITCHARS " << bus_bit_char_ << ";\n";
     std::cout << "DIVIDERCHAR " << divier_char_ << ";\n";
-    std::cout << "DATABASE MICRONS " << dbu_per_micron_ << ";\n";
     std::cout << "DATABASE MICRONS " << dbu_per_micron_ << ";\n";
     std::cout << "MANUFACTURINGGRID " << manufacturing_grid_ << ";\n";
     std::cout << "CLEARANCEMEASURE " << clearance_measure_ << ";\n\n";

@@ -105,7 +105,7 @@ void test_spacingtable( ) {
 }
 
 void test_layer( ) {
-    Layer l("metal1", "ROUTING", "VERTICAL", 0.1, 0.2, 0.3, 0.4, 0.5, 0.6);
+    Layer l("metal1", ROUTING, VERTICAL, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6);
     cout << l << endl;
 
 }
@@ -154,7 +154,8 @@ int main() {
     db.ReadLef(lefFileName);
     db.ReadDef(defFileName);
 
-    db.GetTechPtr()->Report();
+    //db.GetTechPtr()->Report();
+    db.GetDesignPtr()->Report();
 
     //string cellFileName;
     //db.ReadCell(cellFileName);

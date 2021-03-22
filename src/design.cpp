@@ -14,12 +14,12 @@ void Design::SetDividerChar(std::string &divider_char) {
 }
 
 void Design::SetBusBitChars(std::string &bus_bit_chars) {
-    bus_bit_chars_ = bus_bit_chars;
+    bus_bit_char_ = bus_bit_chars;
 }
 
 void Design::SetUnitsDistanceMicrons(int distance_microns) {
     PhyDbExpects(distance_microns > 0, "Negative distance micron?");
-    dbu_per_micro_ = distance_microns;
+    unit_distance_micron_ = distance_microns;
 }
 
 void Design::SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
@@ -65,8 +65,8 @@ bool Design::IsComponentExist(std::string &comp_name) {
     return component_2_id_.find(comp_name) != component_2_id_.end();
 }
 
-Component *Design::AddComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
-                                int llx, int lly, std::string &orient) {
+Component *Design::AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
+                                int llx, int lly, CompOrient orient) {
     PhyDbExpects(!IsComponentExist(comp_name), "Component name_ exists, cannot use it again");
     int id = components_.size();
     components_.emplace_back(comp_name, macro_name, place_status, llx, lly, orient);
@@ -80,14 +80,6 @@ Component *Design::GetComponentPtr(std::string &comp_name) {
     }
     int id = component_2_id_[comp_name];
     return &(components_[id]);
-}
-
-void Design::ReportComponent() {
-    std::cout << "Total components: " << components_.size() << "\n";
-    for (auto &component: components_) {
-        std::cout << component << "\n";
-    }
-    std::cout << "\n";
 }
 
 bool Design::IsDefViaExist(std::string const &via_name) {
@@ -118,12 +110,10 @@ bool Design::IsIoPinExist(std::string &iopin_name) {
     return iopin_2_id_.find(iopin_name) != iopin_2_id_.end();
 }
 
-IOPin *Design::AddIoPin(std::string &iopin_name, std::string &place_status,
-                        std::string &signal_use, std::string &signal_direction,
-                        int lx, int ly) {
+IOPin *Design::AddIoPin(std::string &iopin_name, SignalDirection signal_direction, SignalUse signal_use) {
     PhyDbExpects(!IsIoPinExist(iopin_name), "IOPin name_ exists, cannot use it again");
     int id = iopins_.size();
-    iopins_.emplace_back(iopin_name, place_status, signal_use, signal_direction, lx, ly);
+    iopins_.emplace_back(iopin_name, signal_direction, signal_use);
     iopin_2_id_[iopin_name] = id;
     return &(iopins_[id]);
 }
@@ -145,9 +135,9 @@ bool Design::IsNetExist(std::string &net_name) {
 }
 
 Net *Design::AddNet(std::string &net_name, double weight) {
-    PhyDbExpects(!IsNetExist(net_name), "Net name_ exists, cannot use it again");
-    nets_.emplace_back(net_name, weight);
+    PhyDbExpects(!IsNetExist(net_name), "Net name exists, cannot use it again");
     int id = nets_.size();
+    nets_.emplace_back(net_name, weight);
     net_2_id_[net_name] = id;
     return &(nets_[id]);
 }
@@ -175,6 +165,60 @@ Net *Design::GetNetPtr(std::string &net_name) {
     }
     int id = net_2_id_[net_name];
     return &(nets_[id]);
+}
+
+void Design::ReportTracks() {
+    std::cout << "Total number of track: " << tracks_.size() << "\n";
+    for (auto &track: tracks_) {
+        std::cout << track << "\n";
+    }
+    std::cout << "\n";
+}
+
+void Design::ReportRows() {
+    std::cout << "Total number of row: " << rows_.size() << "\n";
+    for (auto &row: rows_) {
+        std::cout << row << "\n";
+    }
+    std::cout << "\n";
+}
+
+void Design::ReportComponents() {
+    std::cout << "Total component: " << components_.size() << "\n";
+    for (auto &component: components_) {
+        std::cout << component << "\n";
+    }
+    std::cout << "\n";
+}
+
+void Design::ReportIoPins() {
+    std::cout << "Total iopin: " << iopins_.size() << "\n";
+    for (auto &iopin: iopins_) {
+        iopin.Report();
+    }
+    std::cout << "\n";
+}
+
+void Design::ReportNets() {
+    std::cout << "Total net: " << nets_.size() << "\n";
+    for (auto &net: nets_) {
+        net.Report();
+    }
+    std::cout << "\n";
+}
+
+void Design::Report() {
+    std::cout << "VERSION " << version_ << ";\n";
+    std::cout << "BUSBITCHARS " << bus_bit_char_ << ";\n";
+    std::cout << "DIVIDERCHAR " << divider_char_ << ";\n";
+    std::cout << "UNITS DISTANCE MICRONS " << unit_distance_micron_ << ";\n";
+    std::cout << "DIE AREA " << die_area_.Str() << "\n";
+
+    ReportTracks();
+    ReportRows(); // TODO : rows not loaded
+    ReportComponents();
+    ReportIoPins();
+    ReportNets();
 }
 
 }
