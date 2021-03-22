@@ -1,7 +1,7 @@
 # PhyDB
 
 ### Build tools
-* CMake, version >= 3.10
+* CMake, version >= 3.16
 * GNU Compiler Collection (GCC), version >= 4.8.5
 
 ### Pre-requisite libraries
