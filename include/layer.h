@@ -6,6 +6,8 @@
 #include "eolspacing.h"
 #include "cornerspacing.h"
 #include "adjacentcutspacing.h"
+#include "spacingtableinfluence.h"
+
 
 namespace phydb {
 
@@ -25,6 +27,7 @@ class Layer {
     float offset_;
 
     SpacingTable spacing_table_;
+    vector<SpacingTableInfluence> spacing_table_influences_; 
     vector<EolSpacing> eol_spacings_;
     CornerSpacing corner_spacing_;
 
@@ -74,6 +77,8 @@ class Layer {
     SpacingTable* SetSpacingTable(SpacingTable &);
     SpacingTable* SetSpacingTable(int n_col, int n_row, const vector<float>& v_parallel_run_length,
             const vector<float>& v_width, const vector<float>& v_spacing);
+    SpacingTableInfluence* AddSpacingTableInfluence(float width, float within, float spacing);
+    
     EolSpacing* AddEolSpacing(float spacing, float eol_width, float eol_within, 
             float par_edge, float par_within);
     CornerSpacing* SetCornerSpacing(CornerSpacing &);
@@ -81,9 +86,11 @@ class Layer {
 
     float GetSpacing() const;
     SpacingTable* GetSpacingTable();
-    vector<EolSpacing>* GetEOLSpacings();
+    vector<SpacingTableInfluence>* GetSpacingTableInfluences();
+    vector<EolSpacing>* GetEolSpacings();
     CornerSpacing* GetCornerSpacing();
     AdjacentCutSpacing* GetAdjCutSpacing();
+    
 
     friend ostream &operator<<(ostream &, const Layer &);
 

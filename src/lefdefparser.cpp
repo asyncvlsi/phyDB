@@ -349,8 +349,6 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
         }
 
         // read spacingTable
-        if (layer->numSpacingTable() > 1)
-            cout << "warning: More than one spacing table: " << last_layer.GetName() << endl;
 
         for (int i = 0; i < layer->numSpacingTable(); ++i) {
             auto spTable = layer->spacingTable(i);
@@ -385,7 +383,13 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
                     );
 
             } else if (spTable->isInfluence()) {
-                cout << "warning: spacing influence not supported yet!" << endl;
+                auto influence = spTable->influence();
+                for(int i = 0; i < influence->numInfluenceEntry(); i++) {
+                    last_layer.AddSpacingTableInfluence(
+                            influence->width(i), 
+                            influence->distance(i), 
+                            influence->spacing(i));
+                }
             } else {
                 cout << "unsupported spacing table!" << endl;
                 exit(1);
@@ -759,7 +763,7 @@ int getDefNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
 }
 
 int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
-    /*
+    /* TODO: This can be handle layer since ACT will not provide VDD/GND
     bool enableOutput = false;
     //bool enableOutput = true;
 
@@ -934,7 +938,7 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
 }
 
 int getDefVias(defrCallbackType_e type, defiVia *via, defiUserData data) {
-    /*
+    /* TODO: This can be handle layer since ACT does not provide defVia
     //bool enableOutput = true;
     bool enableOutput = false;
     if ((type != defrViaCbkType)) {
@@ -1023,7 +1027,7 @@ int getDefVias(defrCallbackType_e type, defiVia *via, defiUserData data) {
 }
 
 int getDefGcellGrid(defrCallbackType_e type, defiGcellGrid *gcellGrid, defiUserData data) {
-    /*
+    /* TODO: This can be handle layer since ACT does not provide GCELLGRID
     bool enableOutput = false;
 
     parser::GcellGrid tmpGcellGrid;

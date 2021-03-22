@@ -54,6 +54,11 @@ SpacingTable* Layer::SetSpacingTable(int n_col, int n_row, const vector<float>& 
     return &spacing_table_;
 }
 
+SpacingTableInfluence* Layer::AddSpacingTableInfluence(float width, float within, float spacing) {
+    spacing_table_influences_.emplace_back(width, within, spacing);
+    return &spacing_table_influences_.back();
+}
+
 EolSpacing* Layer::AddEolSpacing(float spacing, float width, float within, float par_edge, float par_within) {
     eol_spacings_.emplace_back(spacing, width, within, par_edge, par_within);
     return &eol_spacings_.back();
@@ -77,8 +82,12 @@ SpacingTable* Layer::GetSpacingTable() {
     return &spacing_table_;
 }
 
-vector<EolSpacing>* Layer::GetEOLSpacings() {
+vector<EolSpacing>* Layer::GetEolSpacings() {
     return &eol_spacings_;
+}
+
+vector<SpacingTableInfluence>* Layer::GetSpacingTableInfluences() {
+    return &spacing_table_influences_;
 }
 
 CornerSpacing* Layer::GetCornerSpacing() {
