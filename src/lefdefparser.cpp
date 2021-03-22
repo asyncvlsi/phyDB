@@ -291,7 +291,7 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
         }
 
 
-        /* The following code might be useful for PWRoute
+        /* TODO: The following code might be useful for PWRoute
         double grid = ((parser::lefDataBase *) data)->manufacturingGrid;
         if (grid == 0)
             last_layer.minLength = last_layer.area / last_layer.width_;
