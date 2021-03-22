@@ -68,12 +68,11 @@ class Design {
     Component *AddComponent(std::string &comp_name, std::string &macro_name, std::string &place_status,
                             int llx, int lly, std::string &orient);
     Component *GetComponentPtr(std::string &comp_name);
+    void ReportComponent();
 
     bool IsDefViaExist(std::string const &name);
     DefVia *AddDefVia(std::string &name);
     DefVia *GetDefViaPtr(std::string const &name);
-
-    void ReportComponent();
 
     void SetIoPinCount(int count);
     bool IsIoPinExist(std::string &iopin_name);

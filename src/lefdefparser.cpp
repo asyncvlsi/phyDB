@@ -289,7 +289,9 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
         if (layer->hasArea()) {
             last_layer.SetArea(layer->area());
         }
-        /*
+
+
+        /* The following code might be useful for PWRoute
         double grid = ((parser::lefDataBase *) data)->manufacturingGrid;
         if (grid == 0)
             last_layer.minLength = last_layer.area / last_layer.width_;
@@ -302,7 +304,7 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
                 last_layer.minLength = (multiple + 1) * grid * 6;
             }
         }
-
+        */
         if (enableOutput)
             cout << "Layer" << layer->name_() << " number of props " << layer->numProps() << endl;
         if (layer->numProps() > 1) {

@@ -22,7 +22,6 @@ class Layer {
     float area_;
     float min_width_;
     float offset_;
-    float min_length_; //derived by minarea/GetWidth
 
     SpacingTable spacing_table_;
     EOLSpacing eol_spacing_;
