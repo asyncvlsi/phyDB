@@ -148,12 +148,16 @@ int main() {
     //test_tech( );
     
     string lefFileName, defFileName;
+    lefFileName = "processor.lef";
+    defFileName = "processor.def";
     PhyDB db;
     db.ReadLef(lefFileName);
     db.ReadDef(defFileName);
 
-    string cellFileName;
-    db.ReadCell(cellFileName);
+    db.GetTechPtr()->Report();
+
+    //string cellFileName;
+    //db.ReadCell(cellFileName);
     
-    return 1;
+    return 0;
 }

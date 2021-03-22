@@ -1,6 +1,10 @@
 #ifndef LEFVIA_H
 #define LEFVIA_H
 
+#include <string>
+
+#include "DataType.h"
+
 namespace phydb {
 
 class LefVia {
@@ -11,6 +15,8 @@ class LefVia {
   public:
     LefVia() {}
     explicit LefVia(std::string &name) : name_(name) {}
+
+    void Report();
 };
 
 }

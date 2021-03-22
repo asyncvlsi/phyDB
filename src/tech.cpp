@@ -57,14 +57,6 @@ std::vector<Layer> &Tech::GetLayersRef() {
     return layers_;
 }
 
-void Tech::ReportLayers() {
-    std::cout << "Total number of layer: " << layers_.size() << "\n";
-    for (auto &layer: layers_) {
-        layer.Report();
-    }
-    std::cout << "\n";
-}
-
 bool Tech::IsMacroExist(std::string const &macro_name) {
     return macro_2_id_.find(macro_name) != macro_2_id_.end();
 }
@@ -161,6 +153,51 @@ void Tech::ReportWellShape() {
     for (auto &well: wells_) {
         well.Report();
     }
+}
+
+void Tech::ReportSites() {
+    for (auto &site: sites_) {
+        std::cout << site << "\n";
+    }
+}
+
+void Tech::ReportLayers() {
+    std::cout << "Total number of layer: " << layers_.size() << "\n";
+    for (auto &layer: layers_) {
+        layer.Report();
+    }
+    std::cout << "\n";
+}
+
+void Tech::ReportVias() {
+    std::cout << "Total number of via: " << vias_.size() << "\n";
+    for (auto &via: vias_) {
+        via.Report();
+    }
+    std::cout << "\n";
+}
+
+void Tech::ReportMacros() {
+    std::cout << "Total number of macro: " << macros_.size() << "\n";
+    for (auto &macro: macros_) {
+        std::cout << macro << "\n";
+    }
+    std::cout << "\n";
+}
+
+void Tech::Report() {
+    std::cout << "VERSION " << version_ << ";\n";
+    std::cout << "BUSBITCHARS " << bus_bit_char_ << ";\n";
+    std::cout << "DIVIDERCHAR " << divier_char_ << ";\n";
+    std::cout << "DATABASE MICRONS " << dbu_per_micron_ << ";\n";
+    std::cout << "DATABASE MICRONS " << dbu_per_micron_ << ";\n";
+    std::cout << "MANUFACTURINGGRID " << manufacturing_grid_ << ";\n";
+    std::cout << "CLEARANCEMEASURE " << clearance_measure_ << ";\n\n";
+
+    ReportSites();
+    ReportLayers();
+    ReportVias(); // TODO : Vias not reported, maybe they are not added using callback functions
+    ReportMacros();
 }
 
 }

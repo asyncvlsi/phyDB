@@ -112,7 +112,7 @@ bool PhyDB::IsComponentExist(std::string &component_name) {
 }
 
 Track* PhyDB::AddTrack(string& direction, int start, int nTracks, int step, vector<string>& layer_names) {
-    design_.AddTrack(direction, start, nTracks, step, layer_names);
+    return design_.AddTrack(direction, start, nTracks, step, layer_names);
 }
 
 vector<Track>& PhyDB::GetTrackVec() {
@@ -121,7 +121,7 @@ vector<Track>& PhyDB::GetTrackVec() {
 
 Row* PhyDB::AddRow(string& name, string& site_name, string& site_orient, int origX, int origY, int numX, 
             int numY, int stepX, int stepY) {
-    design_.AddRow(name, site_name, site_orient, origX, origY, numX, numY, stepX, stepY);
+    return design_.AddRow(name, site_name, site_orient, origX, origY, numX, numY, stepX, stepY);
 }
 
 vector<Row>& PhyDB::GetRowVec() {

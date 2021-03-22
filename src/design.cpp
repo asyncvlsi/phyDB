@@ -34,6 +34,7 @@ void Design::SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
 
 Track *Design::AddTrack(string &direction, int start, int num_tracks, int step, vector<string> &layer_names) {
     tracks_.emplace_back(direction, start, num_tracks, step, layer_names);
+    return &(tracks_.back());
 }
 
 vector<Track> &Design::GetTrackVec() {

@@ -28,8 +28,12 @@ void Macro::SetSize(float width, float height) {
     size_.y = height;
 }
 
-void Macro::AddPin(Pin &pin) {
-    pins_.push_back(pin);
+Pin *Macro::AddPin(std::string &pin_name, SignalDirection direction) {
+    PhyDbExpects(!IsPinExist(pin_name), "Pin " + pin_name + " exists in Macro "+ GetName() + ", cannot add it again");
+    int id = pins_.size();
+    pin_2_id_[pin_name] = id;
+    pins_.emplace_back(pin_name, direction);
+    return &(pins_.back());
 }
 
 void Macro::SetObs(OBS &obs) {

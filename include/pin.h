@@ -2,13 +2,14 @@
 #define PIN_H
 
 #include "DataType.h"
+#include "enumtypes.h"
 
 namespace phydb {
 
 class Pin {
   private:
     string name_;
-    string direction_;
+    SignalDirection direction_;
     string use_;
     string shape_;
     string antenna_diff_area_layer_;
@@ -17,9 +18,10 @@ class Pin {
     vector<LayerRect> layer_rects_;
 
   public:
-    Pin() : name_(""), direction_(""), use_(""), shape_(""),
+    Pin() : name_(""), direction_(INPUT), use_(""), shape_(""),
             antenna_diff_area_layer_(""), antenna_diff_area_(0) {}
-    Pin(string name, string direction, string use, string shape,
+    Pin(std::string &name, SignalDirection direction) : name_(name), direction_(direction) {}
+    Pin(string name, SignalDirection direction, string use, string shape,
         string antennaDiffAreaLayer, float antennaDiffArea,
         vector<string> netExpr, vector<LayerRect> layerRects) :
         name_(name),

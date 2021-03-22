@@ -199,6 +199,12 @@ class LayerRect {
         layer_name_ = "";
         rects.clear();
     }
+    void Report() {
+        std::cout << "Name: " << layer_name_ << "\n";
+        for (auto &rect_2d: rects) {
+            std::cout << "  " << rect_2d.ll.Str() << " " << rect_2d.ur.Str() << "\n";
+        }
+    }
 };
 
 template<typename T>

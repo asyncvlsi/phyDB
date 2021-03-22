@@ -61,7 +61,6 @@ class Tech {
     Layer *AddLayer(std::string &layer_name);
     Layer *GetLayerPtr(std::string const &layer_name);
     int GetLayerId(const string& layer_name);
-    void ReportLayers();
     std::vector<Layer> &GetLayersRef();
 
     bool IsMacroExist(std::string const &macro_name);
@@ -82,6 +81,12 @@ class Tech {
     void SetNpwellSpacing(double same_diff, double any_diff);
     bool IsWellInfoSet() const;
     void ReportWellShape(); // report the well shape_ for each BlockType for debugging purposes.
+
+    void ReportSites();
+    void ReportLayers();
+    void ReportVias();
+    void ReportMacros();
+    void Report(); // for debugging purposes
 
     friend ostream &operator<<(ostream &, const Tech &);
 };

@@ -1,6 +1,6 @@
 #include "lefdefparser.h"
 
-namespace phydb{
+namespace phydb {
 
 int getLefSite(lefrCallbackType_e type, lefiSite *site, lefiUserData data) {
     if (type != lefrSiteCbkType) {
@@ -94,24 +94,25 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
         exit(1);
     }
 
-    Macro &m = phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); // last macro
+    Macro &last_macro = phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); // last macro
     // TODO, this Callback function need to use API to add PIN to MACRO
 
-    Pin tmpPin;
     LayerRect tmpLayerRect;
     Rect2D<float> tmpRect;
 
-    string pin_name(pin->name());
-    tmpPin.SetName(pin_name);
+    std::string pin_name(pin->name());
+    std::string pin_direction(pin->direction());
+    Pin *pin_ptr = last_macro.AddPin(pin_name, StrToSignalDirection(pin_direction));
 
     string pin_use(pin->use());
-    tmpPin.SetUse(pin_use);
+    pin_ptr->SetUse(pin_use);
 
     if (enableOutput) {
         cout << "  PIN " << pin->name() << endl;
     }
 
     int numPorts = pin->numPorts();
+    PhyDbExpects(numPorts > 0, "No physical pins, Macro: " + last_macro.GetName() + ", pin: " + pin_name);
 
     for (int i = 0; i < numPorts; ++i) {
         int numItems = pin->port(i)->numItems();
@@ -129,7 +130,7 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
                     isNewLayerRect = false;
                     tmpLayerRect.Reset();
                 } else {
-                    tmpPin.AddLayerRect(tmpLayerRect);
+                    pin_ptr->AddLayerRect(tmpLayerRect);
                     tmpLayerRect.Reset();
                 }
                 tmpLayerRect.layer_name_ = pin->port(i)->getLayer(j);
@@ -155,9 +156,8 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
                 // exit(2);
             }
         }
-        tmpPin.AddLayerRect(tmpLayerRect);
+        pin_ptr->AddLayerRect(tmpLayerRect);
     }
-    m.AddPin(tmpPin);
 
     //tmpPin.print();
     if (enableOutput) {
@@ -262,12 +262,11 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
     }
 
     auto *phy_db_ptr = (PhyDB *) data;
-    Layer &last_layer = phy_db_ptr->GetTechPtr()->GetLayersRef().back(); //write to the last one
-
+    //Layer &last_layer = phy_db_ptr->GetTechPtr()->GetLayersRef().back(); //write to the last one
 
     if (strcmp(layer->type(), "ROUTING") == 0) {
         string metal_layer_name(layer->name());
-        last_layer.SetName(metal_layer_name);
+        Layer &last_layer = *(phy_db_ptr->AddLayer(metal_layer_name));
         string metal_type(layer->type());
         last_layer.SetType(metal_type);
         last_layer.SetWidth(layer->width());
@@ -416,9 +415,6 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
             cout << "unsupported layer type: " << layer->name() << ": " << layer->type() << endl;
 
     }
-
-    if (enableOutput)
-        last_layer.Report();
 
     return 0;
 }
@@ -1089,6 +1085,7 @@ void Si2ReadLef(PhyDB *phy_db_ptr, string const &lefFileName) {
     lefrSetMacroEndCbk(getLefMacrosEnd);
     lefrSetUnitsCbk(getLefUnits);
     lefrSetManufacturingCbk(getLefManufacturingGrid);
+    lefrSetSiteCbk(getLefSite);
     lefrSetPinCbk(getLefPins);
     lefrSetObstructionCbk(getLefObs);
     lefrSetLayerCbk(getLefLayers);
@@ -1131,9 +1128,14 @@ void Si2ReadDef(PhyDB *phy_db_ptr, string const &defFileName) {
     defrSetUnitsCbk(getDefUnits);
     defrSetRowCbk(getDefRow);
     defrSetTrackCbk(getDefTracks);
+
+    defrSetComponentStartCbk(getDefCountNumber);
     defrSetComponentCbk(getDefComponents);
+
+    defrSetStartPinsCbk(getDefCountNumber);
     defrSetPinCbk(getDefIOPins);
 
+    defrSetNetStartCbk(getDefCountNumber);
     defrSetSNetCbk(getDefSNets);
     defrSetAddPathToNet();
     defrSetNetCbk(getDefNets);
