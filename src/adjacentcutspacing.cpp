@@ -1,10 +1,12 @@
+#include <iostream>
+
 #include "adjacentcutspacing.h"
 
 namespace phydb {
 void AdjacentCutSpacing::Report() {
-    cout << "spacing: " << spacing_;
-    cout << " adj cuts: " << adjacent_cut_;
-    cout << " cut within: " << cut_within_ << endl;
+    std::cout << "spacing: " << spacing_;
+    std::cout << " adj cuts: " << adjacent_cuts_;
+    std::cout << " cut within: " << cut_within_ << std::endl;
 }
 
 

@@ -14,7 +14,7 @@ class AdjacentCutSpacing {
     AdjacentCutSpacing(float spacing, int adjacent_cuts, int cut_within): 
         spacing_(spacing), adjacent_cuts_(adjacent_cuts), cut_within_(cut_within) {}
 
-    void report();
+    void Report();
 };
 
 }

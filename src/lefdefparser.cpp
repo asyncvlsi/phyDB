@@ -460,54 +460,49 @@ int getLefVias(lefrCallbackType_e type, lefiVia *via, lefiUserData data) {
 }
 
 int getLefViaRuleGenerates(lefrCallbackType_e type, lefiViaRule *viaRule, lefiUserData data) {
-    /*
     bool enableOutput = false;
     //bool enableOutput = true;
     if (type != lefrViaRuleCbkType) {
         cout <<"Type is not lefrViaRuleCbkType!" <<endl;
-        // exit(1);
     }
-    parser::ViaRuleGenerate tmpViaRule;
+    
+    string name = viaRule->name();
+
+    auto *phy_db_ptr = (PhyDB *) data;
+    ViaRuleGenerate& last_viarule_generate = *(phy_db_ptr->AddViaRuleGenerate(name));
+
+    if(viaRule->hasDefault()) 
+        last_viarule_generate.SetDefault();
+    else
+        last_viarule_generate.UnsetDefault();
 
     if (viaRule->numLayers() != 3)
     {
         cout <<"Error: unsupported via" <<endl;
         exit(1);
     }
-    tmpViaRule.name_ = viaRule->name_();
+    ViaRuleGenerateLayer layer[3];
+
 
     for (int i = 0; i < viaRule->numLayers(); ++i)
     {
         auto viaRuleLayer = viaRule->layer(i);
-        auto& layer = tmpViaRule.layers_[i];
-
-        layer.layer_name_ = viaRuleLayer->name_();
-        if(viaRuleLayer->hasEnclosure())
-        {
-            layer.enclosureOverhang.x = viaRuleLayer->enclosureOverhang1();
-            layer.enclosureOverhang.y = viaRuleLayer->enclosureOverhang2();
+        string layer_name  = viaRuleLayer->name();
+        layer[i].SetLayerName(layer_name);
+        if(viaRuleLayer->hasEnclosure()) {
+            layer[i].SetEnclosure(viaRuleLayer->enclosureOverhang1(), viaRuleLayer->enclosureOverhang2());
         }
 
-        if(viaRuleLayer->hasRect())
-        {
-            layer.rect_.Set(viaRuleLayer->xl(), viaRuleLayer->yl(), viaRuleLayer->xh(), viaRuleLayer->xh());
+        if(viaRuleLayer->hasRect()) {
+            layer[i].SetRect(viaRuleLayer->xl(), viaRuleLayer->yl(), viaRuleLayer->xh(), viaRuleLayer->xh());
         }
 
-        if(viaRuleLayer->hasSpacing())
-        {
-            layer.spacing.x = viaRuleLayer->spacingStepX();
-            layer.GetSpacing.y = viaRuleLayer->spacingStepY();
+        if(viaRuleLayer->hasSpacing()) {
+            layer[i].SetSpacing(viaRuleLayer->spacingStepX(), viaRuleLayer->spacingStepY());
         }
-
     }
+    last_viarule_generate.SetLayers(layer[0], layer[1], layer[2]);
 
-    int viaRuleIdx = ((parser::lefDataBase*) data)->viaRuleGenerates.size();
-    ((parser::lefDataBase*) data)->viaRuleGenerate2idx.insert( pair<string, int> (tmpViaRule.name_, viaRuleIdx));
-    ((parser::lefDataBase*) data)->viaRuleGenerates.push_back(tmpViaRule);
-
-    if(enableOutput)
-        tmpViaRule.print();
-    */
     return 0;
 }
 
