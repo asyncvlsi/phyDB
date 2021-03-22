@@ -145,7 +145,7 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
                 float ury = pin->port(i)->getRect(j)->yh;
                 tmpRect.Set(llx, lly, urx, ury);
 
-                tmpLayerRect.rects.push_back(tmpRect);
+                tmpLayerRect.rects_.push_back(tmpRect);
 
                 if (enableOutput) {
                     cout << "      RECT " << llx << " " << lly << " " << urx << " " << ury << " ;" << endl;
@@ -213,7 +213,7 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
             float ury = geometry->getRect(i)->yh;
             tmpRect.Set(llx, lly, urx, ury);
 
-            tmpLayerRect.rects.push_back(tmpRect);
+            tmpLayerRect.rects_.push_back(tmpRect);
 
             if (enableOutput) {
                 cout << "      RECT " << llx << " " << lly << " " << urx << " " << ury << " ;" << endl;
@@ -229,10 +229,10 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
 }
 
 int getLefCornerSpacing(void *data, const string &stringProp) {
-    /*
-    istringstream istr(stringProp);
+//TODO: This function is for the ISPD2018/19 benchmarks, we can handle this later
+    /*istringstream istr(stringProp);
     string token;
-    auto &tmpLayer = ((parser::lefDataBase *) data)->tmpLayer;
+    Layer &last_layer = phy_db_ptr->GetTechPtr()->GetLayersRef().back(); //write to the last one
 
     while (!istr.eof()) {
         istr >> token;
@@ -247,8 +247,7 @@ int getLefCornerSpacing(void *data, const string &stringProp) {
             istr >> spacing;
             tmpLayer.cornerSpacing.spacing.push_back(GetSpacing);
         }
-    }
-     */
+    }*/
     return 0;
 }
 
@@ -306,56 +305,59 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
         }
         */
         if (enableOutput)
-            cout << "Layer" << layer->name_() << " number of props " << layer->numProps() << endl;
+            cout << "Layer" << layer->name() << " number of props " << layer->numProps() << endl;
         if (layer->numProps() > 1) {
-            cout << "Error: enable to handle more than one properties:" << layer->name_() << endl;
+            cout << "Error: enable to handle more than one properties:" << layer->name() << endl;
+            exit(1);
         }
         for (int i = 0; i < layer->numProps(); i++) {
             if (string(layer->propName(i)) == string("LEF58_CORNERSPACING") && layer->propIsString(i)) {
                 getLefCornerSpacing(data, layer->propValue(i));
             } else {
-                cout << "UNSUPPORTED PROPERTY: " << layer->propName(i) << endl;
+                cout << "WARNING: UNSUPPORTED PROPERTY: " << layer->propName(i) << endl;
             }
         }
 
         // read spacing rule
         for (int i = 0; i < layer->numSpacing(); ++i) {
-            parser::Spacing tmpSpacing;
-            tmpSpacing.spacing = layer->spacing(i);
-
+            EolSpacing tmpSpacing;
+            float spacing = layer->spacing(i);
+            float eol_width = 0, eol_within = 0, par_edge = 0, par_within = 0;
             if (layer->hasSpacingEndOfLine(i)) {
 
                 if (enableOutput) {
                     cout << "  SPACING " << layer->spacing(i) << " ENDOFLINE " << layer->spacingEolWidth(i)
                          << " WITHIN " << layer->spacingEolWithin(i);
                 }
-                tmpSpacing.eolWidth = layer->spacingEolWidth(i);
-                tmpSpacing.eolWithin = layer->spacingEolWithin(i);
+                eol_width = layer->spacingEolWidth(i);
+                eol_within = layer->spacingEolWithin(i);
 
                 if (layer->hasSpacingParellelEdge(i)) {
                     if (enableOutput) {
                         cout << " PARALLELEDGE " << layer->spacingParSpace(i) << " WITHIN "
                              << layer->spacingParWithin(i);
                     }
-                    tmpSpacing.parEdge = layer->spacingParSpace(i);
-                    tmpSpacing.parWithin = layer->spacingParWithin(i);
+                    par_edge = layer->spacingParSpace(i);
+                    par_within = layer->spacingParWithin(i);
                 }
 
-                last_layer.spacings.push_back(tmpSpacing);
+                last_layer.AddEolSpacing(spacing, eol_width, eol_within, par_edge, par_within);
 
             } else {
-                cout << "no eol spacing!" << endl;
+                cout << "warning: no eol spacing!" << endl;
             }
         }
 
         // read spacingTable
         if (layer->numSpacingTable() > 1)
-            cout << "warning: More than one spacing table: " << last_layer.name_ << endl;
+            cout << "warning: More than one spacing table: " << last_layer.GetName() << endl;
 
         for (int i = 0; i < layer->numSpacingTable(); ++i) {
             auto spTable = layer->spacingTable(i);
+            vector<float> v_parallel_run_length;
+            vector<float> v_width;
+            vector<float> v_spacing;
             if (spTable->isParallel() == 1) {
-                //if (spTable->parallel()) {
                 auto parallel = spTable->parallel();
 
                 if (enableOutput) {
@@ -363,115 +365,101 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
                     cout << "  PARALLELRUNLENGTH";
                 }
                 for (int j = 0; j < parallel->numLength(); ++j) {
-                    last_layer.spacingTable.parallelRunLength.push_back(parallel->length(j));
+                    v_parallel_run_length.push_back(parallel->length(j));
                 }
                 for (int j = 0; j < parallel->numWidth(); ++j) {
-                    last_layer.spacingTable.width_.push_back(parallel->GetWidth(j));
+                    v_width.push_back(parallel->width(j));
                     for (int k = 0; k < parallel->numLength(); ++k) {
-                        last_layer.spacingTable.GetSpacing.push_back(parallel->widthSpacing(j, k));
+                        v_spacing.push_back(parallel->widthSpacing(j, k));
                     }
                 }
                 if (enableOutput) {
                     cout << " ;" << endl;
                 }
-            } else if (spTable->isInfluence()) {
+                last_layer.SetSpacingTable(
+                    parallel->numLength(),
+                    parallel->numWidth(),
+                    v_parallel_run_length,
+                    v_width,
+                    v_spacing
+                    );
 
+            } else if (spTable->isInfluence()) {
+                cout << "warning: spacing influence not supported yet!" << endl;
             } else {
                 cout << "unsupported spacing table!" << endl;
+                exit(1);
             }
         }
 
-        int layerIdx = ((parser::lefDataBase *) data)->layers_.size();
-        last_layer.idx_ = layerIdx;
-        ((parser::lefDataBase *) data)->layer2idx.insert(pair<string, int>(last_layer.name_, layerIdx));
-        ((parser::lefDataBase *) data)->layers_.push_back(last_layer);
-         */
-
     } else if (strcmp(layer->type(), "CUT") == 0) { // cut layer
-        /*
-        last_layer.name_ = layer->name_();
-        last_layer.type = layer->type();
-        last_layer.GetWidth = layer->width_();
-
+        
+        string metal_layer_name(layer->name());
+        Layer &last_layer = *(phy_db_ptr->AddLayer(metal_layer_name));
+         string metal_type(layer->type());
+        last_layer.SetType(metal_type);
+        last_layer.SetWidth(layer->width());
         // read spacing constraint
         for (int i = 0; i < layer->numSpacing(); ++i) {
 
             if (layer->hasSpacingAdjacent(i)) {
-                parser::Spacing tmpSpacing;
-                tmpSpacing.spacing = layer->spacing(i);
-                tmpSpacing.adjacentCuts = layer->spacingAdjacentCuts(i);
-                tmpSpacing.cutWithin = layer->spacingAdjacentWithin(i);
-                last_layer.spacings.push_back(tmpSpacing);
+                float spacing = layer->spacing(i);
+                int adjacent_cuts = layer->spacingAdjacentCuts(i);
+                int cut_within = layer->spacingAdjacentWithin(i);
+                last_layer.SetAdjCutSpacing(spacing, adjacent_cuts, cut_within);
             } else {
-                last_layer.spacing = layer->GetSpacing(i);
+                last_layer.SetSpacing(layer->spacing(i));
             }
         }
 
-        int layerIdx = ((parser::lefDataBase *) data)->layers_.size();
-        last_layer.idx_ = layerIdx;
-        ((parser::lefDataBase *) data)->layer2idx.insert(pair<string, int>(last_layer.name_, layerIdx));
-        ((parser::lefDataBase *) data)->layers_.push_back(last_layer);
-        */
     } else {
         if (string(layer->name()) != "OVERLAP")
             cout << "unsupported layer type: " << layer->name() << ": " << layer->type() << endl;
-
     }
 
     return 0;
 }
 
 int getLefVias(lefrCallbackType_e type, lefiVia *via, lefiUserData data) {
-    /*
     bool enableOutput = false;
-    //bool enableOutput = true;
     if (type != lefrViaCbkType) {
         cout <<"Type is not lefrViaCbkType!" <<endl;
-        // exit(1);
     }
-    parser::lefVia tmpVia;
+    
+    auto *phy_db_ptr = (PhyDB *) data;
+    string via_name = via->name();
+    LefVia& last_via = *(phy_db_ptr->AddLefVia(via_name));
+    if(via->hasDefault()) 
+        last_via.SetDefault();
+    else
+        last_via.UnsetDefault();
 
-    tmpVia.name_ = via->name_();
 
     if (enableOutput) {
-        cout <<"VIA " <<via->name_();
+        cout <<"VIA " <<via->name();
         if (via->hasDefault()) {
             cout <<" DEFAULT";
         }
         cout <<endl;
     }
     if (via->numLayers() != 3) {
-        cout <<"Error: unsupported via: " << via->name_() << endl;
+        cout <<"Error: unsupported via (via layers != 3) " << via->name() << endl;
         exit(1);
     }
-    string topLayerName;
+    string layer_name[3];
+    vector<Rect2D<float>> rects[3];
     for (int i = 0; i < via->numLayers(); ++i) {
-        parser::LayerRect tmpLayerRect;
-        tmpLayerRect.layer_name_ = via->layer_name_(i);
-        for (int j = 0; j < via->numRects(i); ++j)
-        {
-            parser::Rect2D<float> rect_;
-            rect_.Set(via->xl(i, j), via->yl(i, j), via->xh(i, j), via->yh(i, j));
-            tmpLayerRect.rects.push_back(rect_);
+        layer_name[i] = via->layerName(i);
+        for (int j = 0; j < via->numRects(i); ++j){
+            rects[i].emplace_back(via->xl(i, j), via->yl(i, j), via->xh(i, j), via->yh(i, j));
         }
-        tmpVia.layer_rects_.push_back(tmpLayerRect);
-        if(i == via->numLayers() - 1)
-            topLayerName = via->layer_name_(i);
     }
+    last_via.SetLayerRect(layer_name[0], rects[0], layer_name[1], rects[1], layer_name[2], rects[2]);
 
-    int viaIdx = ((parser::lefDataBase*) data)->vias.size();
-    int topLayerIdx = ((parser::lefDataBase* ) data)->layer2idx[topLayerName];
-    ((parser::lefDataBase*) data)->lefVia2idx.insert( pair<string, int> (tmpVia.name_, viaIdx));
-    ((parser::lefDataBase*) data)->topLayerIdx2ViaIdx.insert( pair<int, int> (topLayerIdx, viaIdx));
-    ((parser::lefDataBase*) data)->vias.push_back(tmpVia);
-
-    if(enableOutput)
-        tmpVia.print();
-        */
     return 0;
 }
 
-int getLefViaGenerateRules(lefrCallbackType_e type, lefiViaRule *viaRule, lefiUserData data) {
+int getLefViaRuleGenerates(lefrCallbackType_e type, lefiViaRule *viaRule, lefiUserData data) {
     /*
     bool enableOutput = false;
     //bool enableOutput = true;
@@ -1039,7 +1027,7 @@ int getDefVias(defrCallbackType_e type, defiVia *via, defiUserData data) {
     return 0;
 }
 
-int getDefGcell(defrCallbackType_e type, defiGcellGrid *gcellGrid, defiUserData data) {
+int getDefGcellGrid(defrCallbackType_e type, defiGcellGrid *gcellGrid, defiUserData data) {
     /*
     bool enableOutput = false;
 
@@ -1092,7 +1080,7 @@ void Si2ReadLef(PhyDB *phy_db_ptr, string const &lefFileName) {
     lefrSetObstructionCbk(getLefObs);
     lefrSetLayerCbk(getLefLayers);
     lefrSetViaCbk(getLefVias);
-    lefrSetViaRuleCbk(getLefViaGenerateRules);
+    lefrSetViaRuleCbk(getLefViaRuleGenerates);
 
     if ((f = fopen(lefFileName.c_str(), "r")) == 0) {
         cout << "Couldn't open lef file" << endl;
@@ -1143,7 +1131,7 @@ void Si2ReadDef(PhyDB *phy_db_ptr, string const &defFileName) {
     defrSetNetCbk(getDefNets);
 
     defrSetViaCbk(getDefVias);
-    defrSetGcellGridCbk(getDefGcell);
+    defrSetGcellGridCbk(getDefGcellGrid);
 
     if ((f = fopen(defFileName.c_str(), "r")) == 0) {
         cout << "Couldn't open def file" << endl;

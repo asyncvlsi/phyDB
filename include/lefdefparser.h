@@ -16,7 +16,7 @@ int getLefPins(lefrCallbackType_e, lefiPin *, lefiUserData);
 int getLefObs(lefrCallbackType_e, lefiObstruction *, lefiUserData);
 int getLefLayers(lefrCallbackType_e, lefiLayer *, lefiUserData);
 int getLefVias(lefrCallbackType_e, lefiVia *, lefiUserData);
-int getLefViaGenerateRules(lefrCallbackType_e, lefiViaRule *, lefiUserData);
+int getLefViaRuleGenerates(lefrCallbackType_e, lefiViaRule *, lefiUserData);
 
 int getDefVersion(defrCallbackType_e, double, defiUserData);
 int getDefBusBit(defrCallbackType_e, const char *, defiUserData);
@@ -31,7 +31,7 @@ int getDefIOPins(defrCallbackType_e, defiPin *, defiUserData);
 int getDefNets(defrCallbackType_e, defiNet *, defiUserData);
 int getDefSNets(defrCallbackType_e, defiNet *, defiUserData);
 int getDefVias(defrCallbackType_e, defiVia *, defiUserData);
-int getDefGcell(defrCallbackType_e, defiGcellGrid *, defiUserData);
+int getDefGcellGrid(defrCallbackType_e, defiGcellGrid *, defiUserData);
 int getDefRow(defrCallbackType_e, defiRow *, defiUserData);
 
 int writeVersion(defwCallbackType_e c, defiUserData ud);

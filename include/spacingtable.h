@@ -20,12 +20,12 @@ class SpacingTable {
         width_.resize(nR);
         spacing_.resize(nC * nR);
     }
-    SpacingTable(int nC, int nR, vector<float> parallelRunLengthVec,
-                 vector<float> widthVec, vector<float> spacingVec) {
+    SpacingTable(int nC, int nR, const vector<float>& v_parallel_run_length,
+                 const vector<float>& v_width, const vector<float>& v_spacing) {
         SetSize(nC, nR);
-        SetParallelRunLengthVec(parallelRunLengthVec);
-        SetWidthVec(widthVec);
-        SetSpacingVec(spacingVec);
+        SetParallelRunLengthVec(v_parallel_run_length);
+        SetWidthVec(v_width);
+        SetSpacingVec(v_spacing);
     }
 
     void SetSize(int nC, int nR);
@@ -33,13 +33,13 @@ class SpacingTable {
     int GetNCol() const;
     int GetNRow() const;
 
-    void SetParallelRunLengthVec(vector<float> v);
-    void SetWidthVec(vector<float> v);
-    void SetSpacingVec(vector<float> v);
+    void SetParallelRunLengthVec(const vector<float>& v);
+    void SetWidthVec(const vector<float>& v);
+    void SetSpacingVec(const vector<float>& v);
 
-    vector<float> GetParallelRunLengthVec() const;
-    vector<float> GetWidthVec() const;
-    vector<float> GetSpacingVec() const;
+    vector<float>& GetParallelRunLengthVec();
+    vector<float>& GetWidthVec();
+    vector<float>& GetSpacingVec();
 
     void SetParallelRunLengthAt(int col, float val);
     void SetWidthAt(int row, float val);

@@ -39,28 +39,54 @@ void Layer::SetArea(float area) {
     area_ = area;
 }
 
-void Layer::SetSpacingTable(SpacingTable &st) {
+void Layer::SetSpacing(float spacing) {
+    spacing_ = spacing;
+}
+
+SpacingTable* Layer::SetSpacingTable(SpacingTable &st) {
     spacing_table_ = st;
+    return &spacing_table_;
 }
 
-void Layer::SetEOLSpacing(EOLSpacing &eolSpacing) {
-    eol_spacing_ = eolSpacing;
+SpacingTable* Layer::SetSpacingTable(int n_col, int n_row, const vector<float>& v_parallel_run_length,
+        const vector<float>& v_width, const vector<float>& v_spacing) {
+    spacing_table_ = SpacingTable(n_col, n_row, v_parallel_run_length, v_width, v_spacing);
+    return &spacing_table_;
 }
 
-void Layer::SetCornerSpacing(CornerSpacing &cornerSpacing) {
+EolSpacing* Layer::AddEolSpacing(float spacing, float width, float within, float par_edge, float par_within) {
+    eol_spacings_.emplace_back(spacing, width, within, par_edge, par_within);
+    return &eol_spacings_.back();
+}
+
+CornerSpacing* Layer::SetCornerSpacing(CornerSpacing &cornerSpacing) {
     corner_spacing_ = cornerSpacing;
+    return &corner_spacing_;
 }
 
-SpacingTable Layer::GetSpacingTable() {
-    return spacing_table_;
+AdjacentCutSpacing* Layer::SetAdjCutSpacing(float spacing, int adjacent_cuts, int cut_within) {
+    adjacent_cut_spacing_ = AdjacentCutSpacing(spacing, adjacent_cuts, cut_within);
+    return &adjacent_cut_spacing_;
 }
 
-EOLSpacing Layer::GetEOLSpacing() {
-    return eol_spacing_;
+float Layer::GetSpacing() const {
+    return spacing_;
 }
 
-CornerSpacing Layer::GetCornerSpacing() {
-    return corner_spacing_;
+SpacingTable* Layer::GetSpacingTable() {
+    return &spacing_table_;
+}
+
+vector<EolSpacing>* Layer::GetEOLSpacings() {
+    return &eol_spacings_;
+}
+
+CornerSpacing* Layer::GetCornerSpacing() {
+    return &corner_spacing_;
+}
+
+AdjacentCutSpacing* Layer::GetAdjCutSpacing() {
+    return &adjacent_cut_spacing_;
 }
 
 ostream &operator<<(ostream &os, const Layer &l) {

@@ -190,18 +190,20 @@ class Range {
 class LayerRect {
   public:
     string layer_name_;
-    vector<Rect2D<float>> rects;
+    vector<Rect2D<float>> rects_;
 
     LayerRect() : layer_name_("") {}
-    LayerRect(string layerName, vector<Rect2D<float>> rects) : layer_name_(layerName), rects(rects) {}
+    LayerRect(const string& layerName, const vector<Rect2D<float>>& rects) : 
+        layer_name_(layerName), 
+        rects_(rects) {}
 
     void Reset() {
         layer_name_ = "";
-        rects.clear();
+        rects_.clear();
     }
     void Report() {
         std::cout << "Name: " << layer_name_ << "\n";
-        for (auto &rect_2d: rects) {
+        for (auto &rect_2d: rects_) {
             std::cout << "  " << rect_2d.ll.Str() << " " << rect_2d.ur.Str() << "\n";
         }
     }

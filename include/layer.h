@@ -5,6 +5,7 @@
 #include "spacingtable.h"
 #include "eolspacing.h"
 #include "cornerspacing.h"
+#include "adjacentcutspacing.h"
 
 namespace phydb {
 
@@ -24,11 +25,12 @@ class Layer {
     float offset_;
 
     SpacingTable spacing_table_;
-    EOLSpacing eol_spacing_;
+    vector<EolSpacing> eol_spacings_;
     CornerSpacing corner_spacing_;
 
     //cut layer
     float spacing_;
+    AdjacentCutSpacing adjacent_cut_spacing_;
 
   public:
     Layer() : name_(""), type_(""), idx_(-1), direction_(""), pitchx_(0),
@@ -66,14 +68,22 @@ class Layer {
     void SetPitch(float pitch_x, float pitch_y);
     void SetOffset(float offset);
     void SetArea(float area);
+    void SetSpacing(float spacing);
+    
 
-    void SetSpacingTable(SpacingTable &);
-    void SetEOLSpacing(EOLSpacing &);
-    void SetCornerSpacing(CornerSpacing &);
+    SpacingTable* SetSpacingTable(SpacingTable &);
+    SpacingTable* SetSpacingTable(int n_col, int n_row, const vector<float>& v_parallel_run_length,
+            const vector<float>& v_width, const vector<float>& v_spacing);
+    EolSpacing* AddEolSpacing(float spacing, float eol_width, float eol_within, 
+            float par_edge, float par_within);
+    CornerSpacing* SetCornerSpacing(CornerSpacing &);
+    AdjacentCutSpacing* SetAdjCutSpacing(float spacing, int adjacent_cuts, int cut_within);
 
-    SpacingTable GetSpacingTable();
-    EOLSpacing GetEOLSpacing();
-    CornerSpacing GetCornerSpacing();
+    float GetSpacing() const;
+    SpacingTable* GetSpacingTable();
+    vector<EolSpacing>* GetEOLSpacings();
+    CornerSpacing* GetCornerSpacing();
+    AdjacentCutSpacing* GetAdjCutSpacing();
 
     friend ostream &operator<<(ostream &, const Layer &);
 

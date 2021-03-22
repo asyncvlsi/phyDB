@@ -27,30 +27,30 @@ int SpacingTable::GetNRow( ) const {
     return n_row_;
 }
 
-void SpacingTable::SetParallelRunLengthVec(vector<float> v) {
+void SpacingTable::SetParallelRunLengthVec(const vector<float>& v) {
     assert(v.size() == n_col_);
     parallel_run_length_ = v;
 }
 
-void SpacingTable::SetWidthVec(vector<float> v) {
+void SpacingTable::SetWidthVec(const vector<float>& v) {
     assert(v.size() == n_row_);
     width_ = v;
 }
 
-void SpacingTable::SetSpacingVec(vector<float> v) {
+void SpacingTable::SetSpacingVec(const vector<float>& v) {
     assert(v.size() == n_row_ * n_col_);
     spacing_ = v;
 }
 
-vector<float> SpacingTable::GetParallelRunLengthVec() const {
+vector<float>& SpacingTable::GetParallelRunLengthVec() {
     return parallel_run_length_;
 }
 
-vector<float> SpacingTable::GetWidthVec() const {
+vector<float>& SpacingTable::GetWidthVec() {
     return width_;
 }
 
-vector<float> SpacingTable::GetSpacingVec() const {
+vector<float>& SpacingTable::GetSpacingVec() {
     return spacing_;
 }
 
@@ -90,8 +90,8 @@ ostream& operator<< (ostream& os, const SpacingTable& st) {
     os << "nCol: " << nCol << " nRow: " << nRow << endl;
     
     os << "\t";
-    for(auto l : st.GetParallelRunLengthVec())
-        os << l << "\t";
+    for(int c = 0; c < nCol; c++)
+        os << st.GetParallelRunLengthAt(c) << "\t";
     os << endl;
     for(int r = 0; r < nRow; r++) {
         os << st.GetWidthAt(r) << "\t";
