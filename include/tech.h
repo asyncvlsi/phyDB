@@ -86,6 +86,7 @@ class Tech {
     void ReportLayers();
     void ReportVias();
     void ReportMacros();
+    void ReportMacroWell();
     void Report(); // for debugging purposes
 
     friend ostream &operator<<(ostream &, const Tech &);

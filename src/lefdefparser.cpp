@@ -95,10 +95,6 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
     }
 
     Macro &last_macro = phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); // last macro
-    // TODO, this Callback function need to use API to add PIN to MACRO
-
-    LayerRect tmpLayerRect;
-    Rect2D<float> tmpRect;
 
     std::string pin_name(pin->name());
     std::string pin_direction(pin->direction());
@@ -119,31 +115,22 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
             cout << "    PORT" << endl;
         }
 
-        int isNewLayerRect = true;
-
+        LayerRect *layer_rect_ptr = nullptr;
         for (int j = 0; j < numItems; ++j) {
             int itemType = pin->port(i)->itemType(j);
             if (itemType == 1) { //layer
-                if (isNewLayerRect) {
-                    isNewLayerRect = false;
-                    tmpLayerRect.Reset();
-                } else {
-                    pin_ptr->AddLayerRect(tmpLayerRect);
-                    tmpLayerRect.Reset();
-                }
-                tmpLayerRect.layer_name_ = pin->port(i)->getLayer(j);
-
+                std::string layer_name(pin->port(i)->getLayer(j));
+                layer_rect_ptr = pin_ptr->AddLayerRect(layer_name);
                 if (enableOutput) {
-                    cout << "    LAYER " << tmpLayerRect.layer_name_ << " ;" << endl;
+                    cout << "    LAYER " << layer_name << " ;" << endl;
                 }
             } else if (itemType == 8) {
                 float llx = pin->port(i)->getRect(j)->xl;
                 float lly = pin->port(i)->getRect(j)->yl;
                 float urx = pin->port(i)->getRect(j)->xh;
                 float ury = pin->port(i)->getRect(j)->yh;
-                tmpRect.Set(llx, lly, urx, ury);
-
-                tmpLayerRect.rects_.push_back(tmpRect);
+                PhyDbExpects(layer_rect_ptr!= nullptr, "unexpected error in getLefPins()");
+                layer_rect_ptr->AddRect(llx, lly, urx, ury);
 
                 if (enableOutput) {
                     cout << "      RECT " << llx << " " << lly << " " << urx << " " << ury << " ;" << endl;
@@ -154,7 +141,6 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
                 // exit(2);
             }
         }
-        pin_ptr->AddLayerRect(tmpLayerRect);
     }
 
     //tmpPin.print();
@@ -176,7 +162,7 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
         exit(1);
     }
     auto *phy_db_ptr = (PhyDB *) data;
-    Macro &m = phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); // last macro
+    Macro &last_macro = phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); // last macro
 
     LayerRect tmpLayerRect;
     Rect2D<float> tmpRect;
@@ -188,31 +174,24 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
     auto geometry = obs->geometries();
     int numItems = geometry->numItems();
 
+    OBS* obs_ptr = last_macro.GetObs();
+
     int isNewLayerRect = true;
+    LayerRect *layer_rect_ptr = nullptr;
     for (int i = 0; i < numItems; ++i) {
         if (geometry->itemType(i) == lefiGeomLayerE) {
-            if (isNewLayerRect) {
-                isNewLayerRect = false;
-                tmpLayerRect.Reset();
-            } else {
-                m.AddObsLayerRect(tmpLayerRect);
-                tmpLayerRect.Reset();
-            }
-            tmpLayerRect.layer_name_ = geometry->getLayer(i);
-
+            std::string layer_name(geometry->getLayer(i));
+            layer_rect_ptr = obs_ptr->AddLayerRect(layer_name);
             if (enableOutput) {
                 cout << "    LAYER " << tmpLayerRect.layer_name_ << " ;" << endl;
             }
         } else if (geometry->itemType(i) == lefiGeomRectE) {
-
             float llx = geometry->getRect(i)->xl;
             float lly = geometry->getRect(i)->yl;
             float urx = geometry->getRect(i)->xh;
             float ury = geometry->getRect(i)->yh;
-            tmpRect.Set(llx, lly, urx, ury);
-
-            tmpLayerRect.rects_.push_back(tmpRect);
-
+            PhyDbExpects(layer_rect_ptr!= nullptr, "unexpected error in getLefObs()");
+            layer_rect_ptr->AddRect(llx, lly, urx, ury);
             if (enableOutput) {
                 cout << "      RECT " << llx << " " << lly << " " << urx << " " << ury << " ;" << endl;
             }
@@ -221,7 +200,6 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
             continue;
         }
     }
-    m.AddObsLayerRect(tmpLayerRect);
 
     return 0;
 }

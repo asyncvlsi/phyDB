@@ -46,12 +46,18 @@ class Macro {
     void SetOrigin(float x, float y);
     void SetSize(Point2D<float> size);
     void SetSize(float width, float height);
-    Pin *AddPin(std::string &pin_name, SignalDirection direction, SignalUse use);
-    void SetObs(OBS &obs); // TODO: change this API to return a pointer
-    void AddObsLayerRect(LayerRect &layer_rect);
-    void SetWellPtr(MacroWell *well_ptr);
 
+    // APIs for adding PINs to this MACRO
     bool IsPinExist(std::string pin_name);
+    Pin *AddPin(std::string &pin_name, SignalDirection direction, SignalUse use);
+
+    // APIs for adding OBS to this MACRO
+    //void SetObs(OBS &obs); // TODO: change this API to return a pointer
+    //void AddObsLayerRect(LayerRect &layer_rect);
+    OBS *GetObs();
+
+
+    void SetWellPtr(MacroWell *well_ptr);
 
     string GetName() const;
     Point2D<float> GetOrigin() const;
@@ -65,7 +71,6 @@ class Macro {
     vector<Pin> &GetPinVecRef() const;
     bool GetPin(string pinName, Pin &pin) const;
     bool GetObs(OBS &) const;
-
     MacroWell *GetWellPtr();
 
     friend ostream &operator<<(ostream &, const Macro &);

@@ -177,12 +177,12 @@ void WellLayer::SetParams(double width, double spacing, double op_spacing, doubl
     SetOverhang(overhang);
 }
 
-void WellLayer::Report() {
-    std::cout << "    GetWidth:       " << GetWidth() << " um\n"
-              << "    GetSpacing:     " << GetSpacing() << " um\n"
-              << "    GetOpSpacing:   " << GetOpSpacing() << " um\n"
-              << "    GetMaxPlugDist: " << GetMaxPlugDist() << " um\n"
-              << "    GetOverhang:    " << GetOverhang() << "um\n";
+void WellLayer::Report() const {
+    std::cout << "    MINWIDTH:    " << width_ << " um\n"
+              << "    SPACING:     " << spacing_ << " um\n"
+              << "    OPPOSPACING: " << op_spacing_ << " um\n"
+              << "    MAXPLUGDIST: " << max_plug_dist_ << " um\n"
+              << "    OVERHANG:    " << overhang_ << " um\n";
 }
 
 }

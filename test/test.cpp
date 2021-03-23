@@ -146,19 +146,20 @@ int main() {
     //test_site();
     
     //test_tech( );
-    
-    string lefFileName, defFileName;
-    lefFileName = "processor.lef";
-    defFileName = "processor.def";
+
     PhyDB db;
+
+    string lefFileName = "processor.lef";
     db.ReadLef(lefFileName);
+
+    string defFileName = "processor.def";
     db.ReadDef(defFileName);
 
-    //db.GetTechPtr()->Report();
-    db.GetDesignPtr()->Report();
-
-    //string cellFileName;
+    string cellFileName = "processor.cell";
     //db.ReadCell(cellFileName);
+
+    db.GetTechPtr()->Report();
+    //db.GetDesignPtr()->Report();
     
     return 0;
 }

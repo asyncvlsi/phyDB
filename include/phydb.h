@@ -73,8 +73,8 @@ class PhyDB {
     void SetNetCount(int count);
     bool IsNetExist(std::string &net_name);
     Net *AddNet(std::string &net_name, double weight = 1);
-    void AddIoPinToNet(std::string &iopin_name, std::string &net_name);
-    void AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name);
+    void AddIoPinToNet(std::string &iopin_name, std::string &net_name); // this API does a sanity check
+    void AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name); // this API does a sanity check
     Net *GetNetPtr(std::string &net_name);
 
     /************************************************
@@ -84,7 +84,6 @@ class PhyDB {
     void SetPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
     void SetNpwellSpacing(double same_spacing, double any_spacing);
     MacroWell *AddMacrowell(std::string &macro_name);
-    void SetMacrowellShape(std::string &macro_name, bool is_N, double lx, double ly, double ux, double uy);
 
     /************************************************
     * The following APIs are for file IO

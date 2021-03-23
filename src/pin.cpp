@@ -2,6 +2,11 @@
 
 namespace phydb {
 
+LayerRect *Pin::AddLayerRect(std::string &layer_name) {
+    layer_rects_.emplace_back(layer_name);
+    return &(layer_rects_.back());
+}
+
 ostream &operator<<(ostream &os, const Pin &p) {
     os << p.name_ << " "
        << SignalDirectionStr(p.direction_) << " "

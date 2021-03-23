@@ -38,7 +38,7 @@ class Pin {
     void SetNetExpr(vector<string>);
     void SetLayerRect(vector<LayerRect>);
 
-    void AddLayerRect(LayerRect &layer_rect) { layer_rects_.push_back(layer_rect); }
+    LayerRect *AddLayerRect(std::string &layer_name);
 
     vector<string> GetNetExpr() const;
     vector<LayerRect> GetLayerRect() const;

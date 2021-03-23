@@ -126,7 +126,7 @@ class WellLayer {
     void SetMaxPlugDist(double max_plug_dist);
     void SetOverhang(double overhang);
     void SetParams(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
-    void Report();
+    void Report() const;
 };
 
 }

@@ -146,7 +146,7 @@ void Tech::SetNpwellSpacing(double same_diff, double any_diff) {
 }
 
 bool Tech::IsWellInfoSet() const {
-    return (n_layer_ptr_ == nullptr) && (p_layer_ptr_ == nullptr);
+    return (n_layer_ptr_ != nullptr) || (p_layer_ptr_ != nullptr);
 }
 
 void Tech::ReportWellShape() {
@@ -185,6 +185,26 @@ void Tech::ReportMacros() {
     std::cout << "\n";
 }
 
+void Tech::ReportMacroWell() {
+    std::cout << "SAME_DIFF_SPACING " << same_diff_spacing_ << "\n";
+    std::cout << "ANY_DIFF_SPACING " << any_diff_spacing_ << "\n";
+
+    if (p_layer_ptr_!= nullptr) {
+        std::cout << "LAYER pwell\n";
+        p_layer_ptr_->Report();
+    }
+    if (n_layer_ptr_ != nullptr) {
+        std::cout << "LAYER nwell\n";
+        n_layer_ptr_->Report();
+    }
+
+    std::cout << "Total number of  macro wells: " << wells_.size() << "\n";
+    for (auto &macro_well: wells_) {
+        macro_well.Report();
+    }
+    std::cout << "\n";
+}
+
 void Tech::Report() {
     std::cout << "VERSION " << version_ << ";\n";
     std::cout << "BUSBITCHARS " << bus_bit_char_ << ";\n";
@@ -193,10 +213,11 @@ void Tech::Report() {
     std::cout << "MANUFACTURINGGRID " << manufacturing_grid_ << ";\n";
     std::cout << "CLEARANCEMEASURE " << clearance_measure_ << ";\n\n";
 
-    ReportSites();
-    ReportLayers();
-    ReportVias(); // TODO : Vias not reported, maybe they are not added using callback functions
+    //ReportSites();
+    //ReportLayers();
+    //ReportVias(); // TODO : Vias not reported, maybe they are not added using callback functions
     ReportMacros();
+    //ReportMacroWell();
 }
 
 }

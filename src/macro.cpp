@@ -28,28 +28,24 @@ void Macro::SetSize(float width, float height) {
     size_.y = height;
 }
 
+bool Macro::IsPinExist(std::string pin_name) {
+    return pin_2_id_.find(pin_name) != pin_2_id_.end();
+}
+
 Pin *Macro::AddPin(std::string &pin_name, SignalDirection direction, SignalUse use) {
-    PhyDbExpects(!IsPinExist(pin_name), "Pin " + pin_name + " exists in Macro "+ GetName() + ", cannot add it again");
+    PhyDbExpects(!IsPinExist(pin_name), "Pin " + pin_name + " exists in Macro " + GetName() + ", cannot add it again");
     int id = pins_.size();
     pin_2_id_[pin_name] = id;
     pins_.emplace_back(pin_name, direction, use);
     return &(pins_.back());
 }
 
-void Macro::SetObs(OBS &obs) {
-    obs_ = obs;
-}
-
-void Macro::AddObsLayerRect(LayerRect &layer_rect) {
-    obs_.layer_rects_.push_back(layer_rect);
+OBS *Macro::GetObs() {
+    return &obs_;
 }
 
 void Macro::SetWellPtr(MacroWell *well_ptr) {
     well_ptr_ = well_ptr;
-}
-
-bool Macro::IsPinExist(std::string pin_name) {
-    return pin_2_id_.find(pin_name) != pin_2_id_.end();
 }
 
 Point2D<float> Macro::GetOrigin() const {
@@ -161,14 +157,12 @@ bool MacroWell::IsNPWellAbutted() const {
 
 // report the information of N/P-well for debugging purposes
 void MacroWell::Report() const {
-    std::cout
-        << "  Well of BlockType: " << macro_ptr_->GetName() << "\n"
-        << "    Nwell: " << n_rect_.LLX() << "  " << n_rect_.LLY() << "  " << n_rect_.URX() << "  " << n_rect_.URY()
-        << "\n"
-        << "    Pwell: " << p_rect_.LLX() << "  " << p_rect_.LLY() << "  " << p_rect_.URX() << "  " << p_rect_.URY()
-        << "\n";
+    std::cout << "Well of BlockType: " << macro_ptr_->GetName() << "\n"
+              << "    Pwell: " << p_rect_.LLX() << "  " << p_rect_.LLY() << "  "
+              << p_rect_.URX() << "  " << p_rect_.URY() << "\n"
+              << "    Nwell: " << n_rect_.LLX() << "  " << n_rect_.LLY() << "  "
+              << n_rect_.URX() << "  " << n_rect_.URY() << "\n";
 
 }
 
 }
-

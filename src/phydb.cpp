@@ -186,11 +186,8 @@ void PhyDB::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
 void PhyDB::AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name) {
     PhyDbExpects(IsNetExist(net_name), "Cannot add a component pin to a nonexistent Net: " + net_name);
     PhyDbExpects(IsComponentExist(comp_name), "Cannot add a nonexistent component to a net: " + comp_name);
-
     Component *comp_ptr = GetComponentPtr(comp_name);
     std::string macro_name = comp_ptr->GetMacroName();
-    PhyDbExpects(IsMacroExist(macro_name), "Macro of this component does not exist: " + comp_name + ", macro name:" + macro_name);
-
     Macro *macro_ptr = GetMacroPtr(macro_name);
     PhyDbExpects(macro_ptr->IsPinExist(pin_name), "Macro " + macro_name + " does not contain a pin with name " + pin_name);
     design_.AddCompPinToNet(comp_name, pin_name, net_name);
@@ -218,17 +215,6 @@ MacroWell *PhyDB::AddMacrowell(std::string &macro_name) {
     tech_.wells_.emplace_back(macro_ptr);
     macro_ptr->SetWellPtr(&(tech_.wells_.back()));
     return macro_ptr->GetWellPtr();
-}
-
-void PhyDB::SetMacrowellShape(std::string &macro_name, bool is_N, double lx, double ly, double ux, double uy) {
-    Macro *macro_ptr = GetMacroPtr(macro_name);
-    PhyDbExpects(macro_ptr != nullptr, "Macro does not exist, cannot add well info: " + macro_name);
-    MacroWell *well = macro_ptr->GetWellPtr();
-
-    if (well == nullptr) {
-        well = AddMacrowell(macro_name);
-    }
-    well->SetWellRect(is_N, lx, ly, ux, uy);
 }
 
 void PhyDB::ReadLef(string const &lefFileName) {
@@ -280,7 +266,6 @@ void PhyDB::ReadCell(string const &cellFileName) {
                         }
                     }
                 } while (line.find("END LEGALIZER") == std::string::npos && !ist.eof());
-                //BOOST_LOG_TRIVIAL(info)   << "same diff spacing: " << same_diff_spacing << "\n any diff GetSpacing: " << any_diff_spacing << "\n";
                 SetNpwellSpacing(same_diff_spacing, any_diff_spacing);
             } else {
                 std::vector<std::string> well_fields;
@@ -351,12 +336,10 @@ void PhyDB::ReadCell(string const &cellFileName) {
         }
 
         if (line.find("MACRO") != std::string::npos) {
-            //BOOST_LOG_TRIVIAL(info)   << line << "\n";
             std::vector<std::string> macro_fields;
             StrSplit(line, macro_fields);
             std::string end_macro_flag = "END " + macro_fields[1];
-            MacroWell *well = AddMacrowell(macro_fields[1]);
-            auto blk_type = GetMacroPtr(macro_fields[1]);
+            MacroWell *well_ptr = AddMacrowell(macro_fields[1]);
             do {
                 getline(ist, line);
                 bool is_n = false;
@@ -378,7 +361,7 @@ void PhyDB::ReadCell(string const &cellFileName) {
                                 std::cout << "Invalid stod conversion: " + line << std::endl;
                                 exit(1);
                             }
-                            SetMacrowellShape(macro_fields[1], is_n, lx, ly, ux, uy);
+                            well_ptr->SetWellRect(is_n, lx, ly, ux, uy);
                         }
                         getline(ist, line);
                     } while (line.find("END VERSION") == std::string::npos && !ist.eof());

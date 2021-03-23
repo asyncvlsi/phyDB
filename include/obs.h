@@ -6,7 +6,6 @@
 namespace phydb {
 
 class OBS {
-    friend class Macro;
   private:
     vector<LayerRect> layer_rects_;
 
@@ -17,6 +16,9 @@ class OBS {
     void SetLayerRect(vector<LayerRect>);
 
     vector<LayerRect> GetLayerRect() const;
+
+    // API to add LayerRect
+    LayerRect *AddLayerRect(std::string &layer_name);
 
     friend ostream &operator<<(ostream &, const OBS &);
 };

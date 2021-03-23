@@ -81,7 +81,7 @@ target_link_libraries(PhyDB_test
 		)
 
 ######################################
-# Change FALSE to TRUE if you want to change the installation directory to ${ACT_HOME}
+# specify the installation directory: ${ACT_HOME}
 ######################################
 
 message(STATUS "Detecting environment variable ACT_HOME...")
