@@ -194,20 +194,20 @@ class Range {
 class LayerRect {
   public:
     string layer_name_;
-    vector<Rect2D<float>> rects_;
+    vector<Rect2D<double>> rects_;
 
     LayerRect() : layer_name_("") {}
     explicit LayerRect(std::string &layer_name) : layer_name_(layer_name) {}
-    LayerRect(const string &layerName, const vector<Rect2D<float>> &rects) :
+    LayerRect(const string &layerName, const vector<Rect2D<double>> &rects) :
         layer_name_(layerName),
         rects_(rects) {}
 
     // API to add LayerRect
-    void AddRect(float llx, float lly, float urx, float ury) {
+    void AddRect(double llx, double lly, double urx, double ury) {
         rects_.emplace_back(llx, lly, urx, ury);
     }
 
-    vector<Rect2D<float>> &GetRects() { return rects_;}
+    vector<Rect2D<double>> &GetRects() { return rects_;}
 
     void Reset() {
         layer_name_ = "";

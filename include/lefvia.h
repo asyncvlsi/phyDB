@@ -18,9 +18,9 @@ class LefVia {
 
     void SetDefault();
     void UnsetDefault();
-    void SetLayerRect(const string& layer_name0, const vector<Rect2D<float>>& rect0,
-            const string& layer_name1, const vector<Rect2D<float>>& rect1,
-            const string& layer_name2, const vector<Rect2D<float>>& rect2);
+    void SetLayerRect(const string& layer_name0, const vector<Rect2D<double>>& rect0,
+            const string& layer_name1, const vector<Rect2D<double>>& rect1,
+            const string& layer_name2, const vector<Rect2D<double>>& rect2);
     
     LayerRect* GetLayerRects();
     

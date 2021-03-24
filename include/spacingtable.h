@@ -9,9 +9,9 @@ class SpacingTable {
   private:
     int n_col_;
     int n_row_;
-    vector<float> parallel_run_length_;
-    vector<float> width_;
-    vector<float> spacing_;
+    vector<double> parallel_run_length_;
+    vector<double> width_;
+    vector<double> spacing_;
 
   public:
     SpacingTable() : n_col_(0), n_row_(0) {}
@@ -20,8 +20,8 @@ class SpacingTable {
         width_.resize(nR);
         spacing_.resize(nC * nR);
     }
-    SpacingTable(int nC, int nR, const vector<float>& v_parallel_run_length,
-                 const vector<float>& v_width, const vector<float>& v_spacing) {
+    SpacingTable(int nC, int nR, const vector<double>& v_parallel_run_length,
+                 const vector<double>& v_width, const vector<double>& v_spacing) {
         SetSize(nC, nR);
         SetParallelRunLengthVec(v_parallel_run_length);
         SetWidthVec(v_width);
@@ -33,21 +33,21 @@ class SpacingTable {
     int GetNCol() const;
     int GetNRow() const;
 
-    void SetParallelRunLengthVec(const vector<float>& v);
-    void SetWidthVec(const vector<float>& v);
-    void SetSpacingVec(const vector<float>& v);
+    void SetParallelRunLengthVec(const vector<double>& v);
+    void SetWidthVec(const vector<double>& v);
+    void SetSpacingVec(const vector<double>& v);
 
-    vector<float>& GetParallelRunLengthVec();
-    vector<float>& GetWidthVec();
-    vector<float>& GetSpacingVec();
+    vector<double>& GetParallelRunLengthVec();
+    vector<double>& GetWidthVec();
+    vector<double>& GetSpacingVec();
 
-    void SetParallelRunLengthAt(int col, float val);
-    void SetWidthAt(int row, float val);
-    void SetSpacingAt(int col, int row, float val); // (0, 0) is at top left
+    void SetParallelRunLengthAt(int col, double val);
+    void SetWidthAt(int row, double val);
+    void SetSpacingAt(int col, int row, double val); // (0, 0) is at top left
 
-    float GetParallelRunLengthAt(int col) const;
-    float GetWidthAt(int row) const;
-    float GetSpacingAt(int col, int row) const;
+    double GetParallelRunLengthAt(int col) const;
+    double GetWidthAt(int row) const;
+    double GetSpacingAt(int col, int row) const;
 
 };
 

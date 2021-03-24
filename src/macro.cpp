@@ -10,20 +10,20 @@ void Macro::SetName(string &name) {
     name_ = name;
 }
 
-void Macro::SetOrigin(Point2D<float> _origin) {
+void Macro::SetOrigin(Point2D<double> _origin) {
     origin_ = _origin;
 }
 
-void Macro::SetOrigin(float x, float y) {
+void Macro::SetOrigin(double x, double y) {
     origin_.x = x;
     origin_.y = y;
 }
 
-void Macro::SetSize(Point2D<float> size) {
+void Macro::SetSize(Point2D<double> size) {
     size_ = size;
 }
 
-void Macro::SetSize(float width, float height) {
+void Macro::SetSize(double width, double height) {
     size_.x = width;
     size_.y = height;
 }
@@ -48,19 +48,19 @@ void Macro::SetWellPtr(MacroWell *well_ptr) {
     well_ptr_ = well_ptr;
 }
 
-Point2D<float> Macro::GetOrigin() const {
+Point2D<double> Macro::GetOrigin() const {
     return origin_;
 }
 
-Point2D<float> &Macro::GetOriginRef() {
+Point2D<double> &Macro::GetOriginRef() {
     return origin_;
 }
 
-float Macro::GetWidth() const {
+double Macro::GetWidth() const {
     return size_.x;
 }
 
-float Macro::GetHeight() const {
+double Macro::GetHeight() const {
     return size_.y;
 }
 
@@ -103,7 +103,8 @@ void MacroWell::SetNwellRect(double lx, double ly, double ux, double uy) {
 
 // get the pointer to the rect_ of N-well
 Rect2D<double> *MacroWell::GetNwellRectPtr() {
-    return &(n_rect_);
+    if (is_n_set_) return &(n_rect_);
+    return nullptr;
 }
 
 // Set the rect_ of P-well
@@ -119,22 +120,8 @@ void MacroWell::SetPwellRect(double lx, double ly, double ux, double uy) {
 
 // get the pointer to the rect_ of P-well
 Rect2D<double> *MacroWell::GetPwellRectPtr() {
-    return &(p_rect_);
-}
-
-// get the P/N well boundary
-double MacroWell::GetPnBoundary() const {
-    return p_n_edge_;
-}
-
-// get the height of N-well
-double MacroWell::GetNheight() const {
-    return macro_ptr_->GetHeight() - p_n_edge_;
-}
-
-// get the height of P-well
-double MacroWell::GetPheight() const {
-    return p_n_edge_;
+    if (is_p_set_) return &(p_rect_);
+    return nullptr;
 }
 
 // Set the rect_ of N or P well

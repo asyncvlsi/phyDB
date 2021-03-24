@@ -14,28 +14,28 @@ void Layer::SetDirection(MetalDirection direction) {
     direction_ = direction;
 }
 
-void Layer::SetWidth(float width) {
+void Layer::SetWidth(double width) {
     width_ = width;
 }
 
-void Layer::SetMinWidth(float min_width) {
+void Layer::SetMinWidth(double min_width) {
     min_width_ = min_width;
 }
 
-void Layer::SetPitch(float pitch_x, float pitch_y) {
+void Layer::SetPitch(double pitch_x, double pitch_y) {
     pitchx_ = pitch_x;
     pitchy_ = pitch_y;
 }
 
-void Layer::SetOffset(float offset) {
+void Layer::SetOffset(double offset) {
     offset_ = offset;
 }
 
-void Layer::SetArea(float area) {
+void Layer::SetArea(double area) {
     area_ = area;
 }
 
-void Layer::SetSpacing(float spacing) {
+void Layer::SetSpacing(double spacing) {
     spacing_ = spacing;
 }
 
@@ -51,28 +51,28 @@ MetalDirection Layer::GetDirection() const {
     return direction_;
 }
 
-float Layer::GetWidth() const {
+double Layer::GetWidth() const {
     return width_;
 }
 
-float Layer::GetMinWidth() const {
+double Layer::GetMinWidth() const {
     return min_width_;
 }
 
-void Layer::GetPitch(float &pitch_x, float &pitch_y) const {
+void Layer::GetPitch(double &pitch_x, double &pitch_y) const {
     pitch_x = pitchx_;
     pitch_y = pitchy_;
 }
 
-float Layer::GetOffset() const {
+double Layer::GetOffset() const {
     return offset_;
 }
 
-float Layer::GetArea() const {
+double Layer::GetArea() const {
     return area_;
 }
 
-float Layer::GetSpacing() const {
+double Layer::GetSpacing() const {
     return spacing_;
 }
 
@@ -81,18 +81,18 @@ SpacingTable *Layer::SetSpacingTable(SpacingTable &st) {
     return &spacing_table_;
 }
 
-SpacingTable *Layer::SetSpacingTable(int n_col, int n_row, const vector<float> &v_parallel_run_length,
-                                     const vector<float> &v_width, const vector<float> &v_spacing) {
+SpacingTable *Layer::SetSpacingTable(int n_col, int n_row, const vector<double> &v_parallel_run_length,
+                                     const vector<double> &v_width, const vector<double> &v_spacing) {
     spacing_table_ = SpacingTable(n_col, n_row, v_parallel_run_length, v_width, v_spacing);
     return &spacing_table_;
 }
 
-SpacingTableInfluence *Layer::AddSpacingTableInfluence(float width, float within, float spacing) {
+SpacingTableInfluence *Layer::AddSpacingTableInfluence(double width, double within, double spacing) {
     spacing_table_influences_.emplace_back(width, within, spacing);
     return &spacing_table_influences_.back();
 }
 
-EolSpacing *Layer::AddEolSpacing(float spacing, float width, float within, float par_edge, float par_within) {
+EolSpacing *Layer::AddEolSpacing(double spacing, double width, double within, double par_edge, double par_within) {
     eol_spacings_.emplace_back(spacing, width, within, par_edge, par_within);
     return &eol_spacings_.back();
 }
@@ -102,7 +102,7 @@ CornerSpacing *Layer::SetCornerSpacing(CornerSpacing &cornerSpacing) {
     return &corner_spacing_;
 }
 
-AdjacentCutSpacing *Layer::SetAdjCutSpacing(float spacing, int adjacent_cuts, int cut_within) {
+AdjacentCutSpacing *Layer::SetAdjCutSpacing(double spacing, int adjacent_cuts, int cut_within) {
     adjacent_cut_spacing_ = AdjacentCutSpacing(spacing, adjacent_cuts, cut_within);
     return &adjacent_cut_spacing_;
 }

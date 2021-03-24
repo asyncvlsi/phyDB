@@ -6,15 +6,15 @@ void ViaRuleGenerateLayer::SetLayerName(const string& layer_name) {
     layer_name_ = layer_name;
 }
 
-void ViaRuleGenerateLayer::SetRect(float lx, float ly, float ux, float uy) {
+void ViaRuleGenerateLayer::SetRect(double lx, double ly, double ux, double uy) {
     rect_.Set(lx, ly, ux, uy);
 }
 
-void ViaRuleGenerateLayer::SetSpacing(float x, float y) {
+void ViaRuleGenerateLayer::SetSpacing(double x, double y) {
     spacing_.Set(x, y);
 }
 
-void ViaRuleGenerateLayer::SetEnclosure(float x, float y) {
+void ViaRuleGenerateLayer::SetEnclosure(double x, double y) {
     enclosure_.Set(x, y);
 }
 
@@ -22,15 +22,15 @@ string ViaRuleGenerateLayer::GetLayerName() const {
     return layer_name_;
 }   
 
-Rect2D<float> ViaRuleGenerateLayer::GetRect() const {
+Rect2D<double> ViaRuleGenerateLayer::GetRect() const {
     return rect_;
 }
 
-Size2D<float> ViaRuleGenerateLayer::GetSpacing() const { 
+Size2D<double> ViaRuleGenerateLayer::GetSpacing() const {
     return spacing_;
 }
 
-Size2D<float> ViaRuleGenerateLayer::GetEnclosure() const {
+Size2D<double> ViaRuleGenerateLayer::GetEnclosure() const {
     return enclosure_;
 }
 

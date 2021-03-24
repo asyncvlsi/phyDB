@@ -19,12 +19,12 @@ class Layer {
 
     //metal layer
     MetalDirection direction_;
-    float pitchx_ = -1;
-    float pitchy_ = -1;
-    float width_ = -1;
-    float area_ = 0;
-    float min_width_ = -1;
-    float offset_ = 0;
+    double pitchx_ = -1;
+    double pitchy_ = -1;
+    double width_ = -1;
+    double area_ = 0;
+    double min_width_ = -1;
+    double offset_ = 0;
 
     SpacingTable spacing_table_;
     vector<SpacingTableInfluence> spacing_table_influences_;
@@ -32,7 +32,7 @@ class Layer {
     CornerSpacing corner_spacing_;
 
     //cut layer
-    float spacing_ = -1;
+    double spacing_ = -1;
     AdjacentCutSpacing adjacent_cut_spacing_;
 
   public:
@@ -40,8 +40,8 @@ class Layer {
         name_(name), type_(type), direction_(direction) {}
 
     //constructor for metal layer
-    Layer(string name, LayerType type, MetalDirection direction, float pitchx, float pitchy,
-          float width, float area, float minWidth, float offset) :
+    Layer(string name, LayerType type, MetalDirection direction, double pitchx, double pitchy,
+          double width, double area, double minWidth, double offset) :
         name_(name),
         type_(type),
         idx_(-1),
@@ -54,7 +54,7 @@ class Layer {
         offset_(offset) {}
 
     //constructor for cut layer
-    Layer(string name, LayerType type, float spacing) :
+    Layer(string name, LayerType type, double spacing) :
         name_(name),
         type_(type),
         idx_(-1),
@@ -63,32 +63,32 @@ class Layer {
     void SetName(string &name);
     void SetType(LayerType type);
     void SetDirection(MetalDirection direction);
-    void SetWidth(float width);
-    void SetMinWidth(float min_width);
-    void SetPitch(float pitch_x, float pitch_y);
-    void SetOffset(float offset);
-    void SetArea(float area);
-    void SetSpacing(float spacing);
+    void SetWidth(double width);
+    void SetMinWidth(double min_width);
+    void SetPitch(double pitch_x, double pitch_y);
+    void SetOffset(double offset);
+    void SetArea(double area);
+    void SetSpacing(double spacing);
 
     const std::string &GetName();
     LayerType GetType() const;
     MetalDirection GetDirection() const;
-    float GetWidth() const;
-    float GetMinWidth() const;
-    void GetPitch(float &pitch_x, float &pitch_y) const;
-    float GetOffset() const;
-    float GetArea() const;
-    float GetSpacing() const;
+    double GetWidth() const;
+    double GetMinWidth() const;
+    void GetPitch(double &pitch_x, double &pitch_y) const;
+    double GetOffset() const;
+    double GetArea() const;
+    double GetSpacing() const;
 
     SpacingTable *SetSpacingTable(SpacingTable &);
-    SpacingTable *SetSpacingTable(int n_col, int n_row, const vector<float> &v_parallel_run_length,
-                                  const vector<float> &v_width, const vector<float> &v_spacing);
-    SpacingTableInfluence *AddSpacingTableInfluence(float width, float within, float spacing);
+    SpacingTable *SetSpacingTable(int n_col, int n_row, const vector<double> &v_parallel_run_length,
+                                  const vector<double> &v_width, const vector<double> &v_spacing);
+    SpacingTableInfluence *AddSpacingTableInfluence(double width, double within, double spacing);
 
-    EolSpacing *AddEolSpacing(float spacing, float eol_width, float eol_within,
-                              float par_edge, float par_within);
+    EolSpacing *AddEolSpacing(double spacing, double eol_width, double eol_within,
+                              double par_edge, double par_within);
     CornerSpacing *SetCornerSpacing(CornerSpacing &);
-    AdjacentCutSpacing *SetAdjCutSpacing(float spacing, int adjacent_cuts, int cut_within);
+    AdjacentCutSpacing *SetAdjCutSpacing(double spacing, int adjacent_cuts, int cut_within);
 
     SpacingTable *GetSpacingTable();
     vector<SpacingTableInfluence> *GetSpacingTableInfluences();

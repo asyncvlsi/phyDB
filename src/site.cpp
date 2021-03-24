@@ -10,11 +10,11 @@ void Site::SetClassName(string className) {
     class_name_ = className;
 }
 
-void Site::SetWidth(float width) {
+void Site::SetWidth(double width) {
     width_ = width;
 }
 
-void Site::SetHeight(float height) {
+void Site::SetHeight(double height) {
     height_ = height;
 }
 
@@ -26,11 +26,11 @@ string Site::GetClassName( ) const {
     return class_name_;
 }
 
-float Site::GetWidth( ) const {
+double Site::GetWidth( ) const {
     return width_;
 }
 
-float Site::GetHeight( ) const {
+double Site::GetHeight( ) const {
     return height_;
 }
 

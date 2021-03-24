@@ -167,6 +167,19 @@ bool Tech::IsWellInfoSet() const {
     return (n_layer_ptr_ != nullptr) || (p_layer_ptr_ != nullptr);
 }
 
+WellLayer *Tech::GetNwellLayerPtr() {
+    return n_layer_ptr_;
+}
+
+WellLayer *Tech::GetPwellLayerPtr() {
+    return p_layer_ptr_;
+}
+
+void Tech::GetDiffWellSpacing(double &same_diff_spacing, double any_diff_spacing) {
+    same_diff_spacing = same_diff_spacing_;
+    any_diff_spacing = any_diff_spacing_;
+}
+
 void Tech::ReportWellShape() {
     for (auto &well: wells_) {
         well.Report();

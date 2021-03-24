@@ -4,28 +4,28 @@
 
 namespace phydb {
 
-void SpacingTableInfluence::SetWidth(float width) {
+void SpacingTableInfluence::SetWidth(double width) {
     width_ = width;
 }
 
-void SpacingTableInfluence::SetWithin(float within) {
+void SpacingTableInfluence::SetWithin(double within) {
     within_ = within;
 }
 
-void SpacingTableInfluence::SetSpacing(float spacing) {
+void SpacingTableInfluence::SetSpacing(double spacing) {
     spacing_ = spacing;
 }
 
 
-float SpacingTableInfluence::GetWidth() const {
+double SpacingTableInfluence::GetWidth() const {
     return width_;
 }
 
-float SpacingTableInfluence::GetWithin() const {
+double SpacingTableInfluence::GetWithin() const {
     return within_;
 }
 
-float SpacingTableInfluence::GetSpacing() const {
+double SpacingTableInfluence::GetSpacing() const {
     return spacing_;
 }
 

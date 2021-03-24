@@ -5,22 +5,22 @@ namespace phydb {
 
 class SpacingTableInfluence {
   private:
-    float width_;
-    float within_;
-    float spacing_;
+    double width_;
+    double within_;
+    double spacing_;
 
   public: 
     SpacingTableInfluence() {}
-    SpacingTableInfluence(float width, float within, float spacing): 
+    SpacingTableInfluence(double width, double within, double spacing):
         width_(width), within_(within), spacing_(spacing) {}
 
-    void SetWidth(float);
-    void SetWithin(float);
-    void SetSpacing(float);
+    void SetWidth(double);
+    void SetWithin(double);
+    void SetSpacing(double);
 
-    float GetWidth() const;
-    float GetWithin() const;
-    float GetSpacing() const;
+    double GetWidth() const;
+    double GetWithin() const;
+    double GetSpacing() const;
     
     void Report() const;
 

@@ -14,8 +14,8 @@ class Macro {
   private:
     string name_;
 
-    Point2D<float> origin_;
-    Point2D<float> size_;
+    Point2D<double> origin_;
+    Point2D<double> size_;
 
     vector<Pin> pins_;
     OBS obs_;
@@ -34,7 +34,7 @@ class Macro {
         origin_.x = 0;
         origin_.y = 0;
     }
-    Macro(string name, Point2D<float> origin, Point2D<float> size, vector<Pin> pins, OBS obs) :
+    Macro(string name, Point2D<double> origin, Point2D<double> size, vector<Pin> pins, OBS obs) :
         name_(name),
         origin_(origin),
         size_(size),
@@ -42,10 +42,10 @@ class Macro {
         obs_(obs) {}
 
     void SetName(string &name);
-    void SetOrigin(Point2D<float> _origin);
-    void SetOrigin(float x, float y);
-    void SetSize(Point2D<float> size);
-    void SetSize(float width, float height);
+    void SetOrigin(Point2D<double> _origin);
+    void SetOrigin(double x, double y);
+    void SetSize(Point2D<double> size);
+    void SetSize(double width, double height);
 
     // APIs for adding PINs to this MACRO
     bool IsPinExist(std::string pin_name);
@@ -60,13 +60,13 @@ class Macro {
     void SetWellPtr(MacroWell *well_ptr);
 
     const string &GetName();
-    Point2D<float> GetOrigin() const;
-    Point2D<float> &GetOriginRef();
-    float GetOriginX() const;
-    float GetOriginY() const;
-    Point2D<float> GetSize() const;
-    float GetWidth() const;
-    float GetHeight() const;
+    Point2D<double> GetOrigin() const;
+    Point2D<double> &GetOriginRef();
+    double GetOriginX() const;
+    double GetOriginY() const;
+    Point2D<double> GetSize() const;
+    double GetWidth() const;
+    double GetHeight() const;
     vector<Pin> GetPinVec() const;
     vector<Pin> &GetPinsRef();
     bool GetPin(string pinName, Pin &pin) const;
@@ -94,9 +94,6 @@ struct MacroWell {
     Rect2D<double> *GetNwellRectPtr();
     void SetPwellRect(double lx, double ly, double ux, double uy);
     Rect2D<double> *GetPwellRectPtr();
-    double GetPnBoundary() const;
-    double GetNheight() const;
-    double GetPheight() const;
     void SetWellRect(bool is_n, double lx, double ly, double ux, double uy);
     void SetWellShape(bool is_n, Rect2D<double> &rect);
     bool IsNPWellAbutted() const;

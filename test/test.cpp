@@ -26,12 +26,12 @@ void test_datatype( ) {
         cout << "Point2D test passes!" << endl;
     //Point3D
     {
-        Point3D<float> a2;
+        Point3D<double> a2;
         assert(a2.IsEmpty());
         a2.x = 1.0;
         a2.y = 2.0;
         a2.z = 3.0;
-        Point3D<float> b2(3.0, 0.0, 2.0), c2;
+        Point3D<double> b2(3.0, 0.0, 2.0), c2;
         c2.Set(2.0, 1.5, 3.0);
         assert(a2 > b2 && a2 > c2);
         c2.Reset();
@@ -41,10 +41,10 @@ void test_datatype( ) {
     }
     //Rect2D 
     {
-        Rect2D<float> a3;
+        Rect2D<double> a3;
         a3.Set(1.0, 2.0, 3.0, 4.0);
-        Point2D<float> p3(1.0, 4.0);
-        Point2D<float> q3(1.5, 2.5);
+        Point2D<double> p3(1.0, 4.0);
+        Point2D<double> q3(1.5, 2.5);
         assert(!a3.BoundaryExclusiveCover(p3) && a3.Cover(p3));
         assert(a3.BoundaryExclusiveCover(q3));
         cout << a3 << endl;
@@ -54,7 +54,7 @@ void test_datatype( ) {
     }
     //Rect3D
     {
-        Rect3D<float> a4;
+        Rect3D<double> a4;
         a4.set(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
         cout << a4 << endl;
 
@@ -67,10 +67,10 @@ void test_datatype( ) {
 
     //LayerRect
     string layerName = "Metal1";
-    Rect2D<float> rect1(1.0, 2.0, 3.0, 4.0);
-    Rect2D<float> rect2(10.0, 20.0, 30.0, 40.0);
+    Rect2D<double> rect1(1.0, 2.0, 3.0, 4.0);
+    Rect2D<double> rect2(10.0, 20.0, 30.0, 40.0);
 
-    vector<Rect2D<float>> v;
+    vector<Rect2D<double>> v;
     v.push_back(rect1);
     v.push_back(rect2);
     LayerRect lr(layerName, v);
@@ -83,16 +83,16 @@ void test_spacingtable( ) {
     int nCol = 5;
     int nRow = 6;
 
-    vector<float> p;
-    vector<float> w;
-    vector<float> s;
+    vector<double> p;
+    vector<double> w;
+    vector<double> s;
 
     for(int i = 0; i < nCol; i++)
-        p.push_back((float)i);
+        p.push_back((double)i);
     for(int j = 0; j < nRow; j++) 
-        w.push_back((float) (j + nCol));
+        w.push_back((double) (j + nCol));
     for(int i = 0; i < nRow * nCol; i++) {
-        float f = (float) i;
+        double f = (double) i;
         s.push_back(f / 10.0);
     }
 
@@ -121,7 +121,7 @@ void test_tech( ) {
     Tech tech;
     vector<Pin> pins;
     OBS obs;
-    Macro macro1("testMacro", Point2D<float>(1.0, 2.0), Point2D<float>(3.0, 4.0), pins, obs);
+    Macro macro1("testMacro", Point2D<double>(1.0, 2.0), Point2D<double>(3.0, 4.0), pins, obs);
 
     std::string macro_name = "testMacro";
     tech.AddMacro(macro_name);

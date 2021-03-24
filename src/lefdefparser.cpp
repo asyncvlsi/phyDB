@@ -39,10 +39,10 @@ int getLefMacros(lefrCallbackType_e type, lefiMacro *macro, lefiUserData data) {
         exit(2);
     }
 
-    float originX = macro->originX();
-    float originY = macro->originY();
-    float sizeX = macro->sizeX();
-    float sizeY = macro->sizeY();
+    double originX = macro->originX();
+    double originY = macro->originY();
+    double sizeX = macro->sizeX();
+    double sizeY = macro->sizeY();
     if (enableOutput) {
         cout << "  ORIGIN " << originX << " "
              << originY << " ;" << endl;
@@ -125,10 +125,10 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
                     cout << "    LAYER " << layer_name << " ;" << endl;
                 }
             } else if (itemType == 8) {
-                float llx = pin->port(i)->getRect(j)->xl;
-                float lly = pin->port(i)->getRect(j)->yl;
-                float urx = pin->port(i)->getRect(j)->xh;
-                float ury = pin->port(i)->getRect(j)->yh;
+                double llx = pin->port(i)->getRect(j)->xl;
+                double lly = pin->port(i)->getRect(j)->yl;
+                double urx = pin->port(i)->getRect(j)->xh;
+                double ury = pin->port(i)->getRect(j)->yh;
                 PhyDbExpects(layer_rect_ptr!= nullptr, "unexpected error in getLefPins()");
                 layer_rect_ptr->AddRect(llx, lly, urx, ury);
 
@@ -165,7 +165,7 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
     Macro &last_macro = phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); // last macro
 
     LayerRect tmpLayerRect;
-    Rect2D<float> tmpRect;
+    Rect2D<double> tmpRect;
 
     if (enableOutput) {
         cout << "  OBS" << endl;
@@ -186,10 +186,10 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
                 cout << "    LAYER " << tmpLayerRect.layer_name_ << " ;" << endl;
             }
         } else if (geometry->itemType(i) == lefiGeomRectE) {
-            float llx = geometry->getRect(i)->xl;
-            float lly = geometry->getRect(i)->yl;
-            float urx = geometry->getRect(i)->xh;
-            float ury = geometry->getRect(i)->yh;
+            double llx = geometry->getRect(i)->xl;
+            double lly = geometry->getRect(i)->yl;
+            double urx = geometry->getRect(i)->xh;
+            double ury = geometry->getRect(i)->yh;
             PhyDbExpects(layer_rect_ptr!= nullptr, "unexpected error in getLefObs()");
             layer_rect_ptr->AddRect(llx, lly, urx, ury);
             if (enableOutput) {
@@ -215,11 +215,11 @@ int getLefCornerSpacing(void *data, const string &stringProp) {
         if (token == "EXCEPTEOL") {
             istr >> tmpLayer.cornerSpacing.eolWidth;
         } else if (token == "WIDTH") {
-            float width_;
+            double width_;
             istr >> width_;
             tmpLayer.cornerSpacing.width_.push_back(GetWidth);
         } else if (token == "SPACING") {
-            float spacing;
+            double spacing;
             istr >> spacing;
             tmpLayer.cornerSpacing.spacing.push_back(GetSpacing);
         }
@@ -272,9 +272,9 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
         if (grid == 0)
             last_layer.minLength = last_layer.area / last_layer.width_;
         else {
-            float minLength = last_layer.area / last_layer.width_;
+            double minLength = last_layer.area / last_layer.width_;
             int multiple = (minLength / grid) / 6;
-            if (minLength == ((float) multiple) * grid * 6)
+            if (minLength == ((double) multiple) * grid * 6)
                 last_layer.minLength = minLength;
             else {
                 last_layer.minLength = (multiple + 1) * grid * 6;
@@ -298,8 +298,8 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
         // read spacing rule
         for (int i = 0; i < layer->numSpacing(); ++i) {
             EolSpacing tmpSpacing;
-            float spacing = layer->spacing(i);
-            float eol_width = 0, eol_within = 0, par_edge = 0, par_within = 0;
+            double spacing = layer->spacing(i);
+            double eol_width = 0, eol_within = 0, par_edge = 0, par_within = 0;
             if (layer->hasSpacingEndOfLine(i)) {
 
                 if (enableOutput) {
@@ -322,7 +322,7 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
 
             } else {
                 cout << "warning: no eol spacing!" << endl;
-                last_layer.AddEolSpacing(spacing, eol_width, eol_within, par_edge, par_within);
+                last_layer.SetSpacing(spacing);
             }
         }
 
@@ -330,9 +330,9 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
 
         for (int i = 0; i < layer->numSpacingTable(); ++i) {
             auto spTable = layer->spacingTable(i);
-            vector<float> v_parallel_run_length;
-            vector<float> v_width;
-            vector<float> v_spacing;
+            vector<double> v_parallel_run_length;
+            vector<double> v_width;
+            vector<double> v_spacing;
             if (spTable->isParallel() == 1) {
                 auto parallel = spTable->parallel();
 
@@ -385,7 +385,7 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
         for (int i = 0; i < layer->numSpacing(); ++i) {
 
             if (layer->hasSpacingAdjacent(i)) {
-                float spacing = layer->spacing(i);
+                double spacing = layer->spacing(i);
                 int adjacent_cuts = layer->spacingAdjacentCuts(i);
                 int cut_within = layer->spacingAdjacentWithin(i);
                 last_layer.SetAdjCutSpacing(spacing, adjacent_cuts, cut_within);
@@ -428,7 +428,7 @@ int getLefVias(lefrCallbackType_e type, lefiVia *via, lefiUserData data) {
         exit(1);
     }
     string layer_name[3];
-    vector<Rect2D<float>> rects[3];
+    vector<Rect2D<double>> rects[3];
     for (int i = 0; i < via->numLayers(); ++i) {
         layer_name[i] = via->layerName(i);
         for (int j = 0; j < via->numRects(i); ++j) {

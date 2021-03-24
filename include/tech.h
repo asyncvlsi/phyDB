@@ -84,6 +84,9 @@ class Tech {
     void SetPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
     void SetNpwellSpacing(double same_diff, double any_diff);
     bool IsWellInfoSet() const;
+    WellLayer *GetNwellLayerPtr();
+    WellLayer *GetPwellLayerPtr();
+    void GetDiffWellSpacing(double &same_diff_spacing, double any_diff_spacing);
     void ReportWellShape(); // report the well shape_ for each BlockType for debugging purposes.
 
     void ReportSites();
