@@ -33,15 +33,18 @@ class Pin {
         antenna_diff_area_(antennaDiffArea),
         layer_rects_(layerRects) {}
 
-    void SetName(string &name) { name_ = name; }
-    void SetUse(SignalUse &use) { use_ = use; }
+    void SetName(string &name);
+    void SetUse(SignalUse &use);
     void SetNetExpr(vector<string>);
     void SetLayerRect(vector<LayerRect>);
 
     LayerRect *AddLayerRect(std::string &layer_name);
 
+    const string &GetName();
+    SignalDirection GetDirection();
+    SignalUse GetUse();
     vector<string> GetNetExpr() const;
-    vector<LayerRect> GetLayerRect() const;
+    vector<LayerRect> &GetLayerRectRef();
 
     friend ostream &operator<<(ostream &, const Pin &);
 };

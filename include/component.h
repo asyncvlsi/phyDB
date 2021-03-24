@@ -36,9 +36,15 @@ class Component {
         location_.y = lly;
     }
 
-    string GetName();
-    string GetMacroName();
+    void SetPlacementStatus(PlaceStatus status);
+    void SetOrientation(CompOrient orient);
+    void SetLocation(int lx, int ly);
 
+    const string &GetName();
+    const string &GetMacroName();
+    PlaceStatus GetPlacementStatus();
+    CompOrient GetOrientation();
+    Point2D<int> GetLocation();
 };
 
 ostream &operator<<(ostream &, const Component &);

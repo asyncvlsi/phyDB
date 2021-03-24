@@ -27,6 +27,8 @@ class EolSpacing {
         par_edge_(parEdge), 
         par_within_(parWithin) {}
     
+    float GetSpacing() {return spacing_;}
+
     void Reset();
 };
 

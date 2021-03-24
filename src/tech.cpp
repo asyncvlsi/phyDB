@@ -9,13 +9,25 @@ void Tech::SetDatabaseMicron(int database_micron) {
     dbu_per_micron_ = database_micron;
 }
 
+int Tech::GetDatabaseMicron() {
+    return dbu_per_micron_;
+}
+
 void Tech::SetManufacturingGrid(double manufacture_grid) {
     PhyDbExpects(manufacture_grid > 0, "Cannot Set negative manufacturing grid: Tech::SetManufacturingGrid()");
     manufacturing_grid_ = manufacture_grid;
 }
 
+double Tech::GetManufacturingGrid() {
+    return manufacturing_grid_;
+}
+
 void Tech::AddSite(std::string const &name, std::string const &class_name, double width, double height) {
     sites_.emplace_back(name, class_name, width, height);
+}
+
+std::vector<Site> &Tech::GetSitesRef() {
+    return sites_;
 }
 
 void Tech::SetPlacementGrids(double placement_grid_value_x, double placement_grid_value_y) {
@@ -23,6 +35,12 @@ void Tech::SetPlacementGrids(double placement_grid_value_x, double placement_gri
     placement_grid_value_x_ = placement_grid_value_x;
     placement_grid_value_y_ = placement_grid_value_y;
     is_placement_grid_set_ = true;
+}
+
+bool Tech::GetPlacementGrids(double &placement_grid_value_x, double &placement_grid_value_y) {
+    placement_grid_value_x = placement_grid_value_x_;
+    placement_grid_value_y = placement_grid_value_y_;
+    return is_placement_grid_set_;
 }
 
 bool Tech::IsLayerExist(std::string const &layer_name) {
@@ -45,7 +63,7 @@ Layer *Tech::GetLayerPtr(std::string const &layer_name) {
     return &(layers_[id]);
 }
 
-int Tech::GetLayerId(const string &layer_name) {
+int Tech::GetLayerId(string const &layer_name) {
     if (!IsLayerExist(layer_name)) {
         return -1;
     }

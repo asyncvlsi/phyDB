@@ -22,13 +22,13 @@ namespace phydb {
 class Design {
   public:
     string name_;
-    double version_;
+    double version_ = -1;
     string divider_char_;
     string bus_bit_char_;
 
     Rect2D<int> die_area_;
 
-    int unit_distance_micron_;
+    int unit_distance_micron_ = -1;
     vector<Row> rows_;
     vector<Track> tracks_;
     vector<Component> components_;
@@ -55,6 +55,9 @@ class Design {
     void SetUnitsDistanceMicrons(int distance_microns);
     void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
 
+    int GetUnitsDistanceMicrons() {return unit_distance_micron_;}
+    Rect2D<int> GetDieArea() {return die_area_;}
+
     Track *AddTrack(string &direction, int start, int num_tracks, int step, vector<string> &layer_names);
     vector<Track> &GetTrackVec();
 
@@ -68,6 +71,7 @@ class Design {
     Component *AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
                             int llx, int lly, CompOrient orient);
     Component *GetComponentPtr(std::string &comp_name);
+    vector<Component> &GetComponentsRef() {return components_;}
 
     bool IsDefViaExist(std::string const &name);
     DefVia *AddDefVia(std::string &name);
@@ -77,6 +81,7 @@ class Design {
     bool IsIoPinExist(std::string &iopin_name);
     IOPin *AddIoPin(std::string &iopin_name, SignalDirection signal_direction, SignalUse signal_use);
     IOPin *GetIoPinPtr(std::string &iopin_name);
+    vector<IOPin> &GetIoPinsRef() {return iopins_;}
 
     void SetNetCount(int count);
     bool IsNetExist(std::string &net_name);
@@ -84,6 +89,7 @@ class Design {
     void AddIoPinToNet(std::string &iopin_name, std::string &net_name);
     void AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name);
     Net *GetNetPtr(std::string &net_name);
+    vector<Net> &GetNetsRef() {return nets_;}
 
     void ReportTracks();
     void ReportRows();

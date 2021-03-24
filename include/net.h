@@ -2,6 +2,7 @@
 #define NET_H
 
 #include "header.h"
+#include "enumtypes.h"
 
 namespace phydb {
 
@@ -9,7 +10,7 @@ class Net {
   public:
     string name_;
     string source_;
-    string use_;
+    SignalUse use_;
     string direction_;
 
     int start_;
@@ -24,17 +25,20 @@ class Net {
 
     Net() {}
     Net(std::string name, double weight) : name_(name), weight_(weight) {}
-    Net(string name, string source, string use, string direction, int start, int numTracks, int step) :
+    Net(string name, string source, SignalUse use, string direction, int start, int numTracks, int step) :
         name_(name),
         direction_(direction),
         start_(start),
         num_tracks_(numTracks),
         step_(step) {}
 
-    string GetName();
-
     void AddIoPin(std::string const &iopin_name);
     void AddCompPin(std::string const &comp_name, std::string const &pin_name);
+
+    const string &GetName();
+    vector<string> &GetComponentNamesRef();
+    vector<string> &GetPinNamesRef();
+    vector<string> &GetIoPinNamesRef();
 
     void Report();
 };

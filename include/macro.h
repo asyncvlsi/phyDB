@@ -59,7 +59,7 @@ class Macro {
 
     void SetWellPtr(MacroWell *well_ptr);
 
-    string GetName() const;
+    const string &GetName();
     Point2D<float> GetOrigin() const;
     Point2D<float> &GetOriginRef();
     float GetOriginX() const;
@@ -68,7 +68,7 @@ class Macro {
     float GetWidth() const;
     float GetHeight() const;
     vector<Pin> GetPinVec() const;
-    vector<Pin> &GetPinVecRef() const;
+    vector<Pin> &GetPinsRef();
     bool GetPin(string pinName, Pin &pin) const;
     bool GetObs(OBS &) const;
     MacroWell *GetWellPtr();

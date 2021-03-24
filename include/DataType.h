@@ -207,6 +207,8 @@ class LayerRect {
         rects_.emplace_back(llx, lly, urx, ury);
     }
 
+    vector<Rect2D<float>> &GetRects() { return rects_;}
+
     void Reset() {
         layer_name_ = "";
         rects_.clear();

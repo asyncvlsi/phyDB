@@ -2,10 +2,6 @@
 
 namespace phydb {
 
-string Layer::GetName() const {
-    return name_;
-}
-
 void Layer::SetName(string &name) {
     name_ = name;
 }
@@ -43,6 +39,43 @@ void Layer::SetSpacing(float spacing) {
     spacing_ = spacing;
 }
 
+const std::string &Layer::GetName() {
+    return name_;
+}
+
+LayerType Layer::GetType() const {
+    return type_;
+}
+
+MetalDirection Layer::GetDirection() const {
+    return direction_;
+}
+
+float Layer::GetWidth() const {
+    return width_;
+}
+
+float Layer::GetMinWidth() const {
+    return min_width_;
+}
+
+void Layer::GetPitch(float &pitch_x, float &pitch_y) const {
+    pitch_x = pitchx_;
+    pitch_y = pitchy_;
+}
+
+float Layer::GetOffset() const {
+    return offset_;
+}
+
+float Layer::GetArea() const {
+    return area_;
+}
+
+float Layer::GetSpacing() const {
+    return spacing_;
+}
+
 SpacingTable *Layer::SetSpacingTable(SpacingTable &st) {
     spacing_table_ = st;
     return &spacing_table_;
@@ -72,10 +105,6 @@ CornerSpacing *Layer::SetCornerSpacing(CornerSpacing &cornerSpacing) {
 AdjacentCutSpacing *Layer::SetAdjCutSpacing(float spacing, int adjacent_cuts, int cut_within) {
     adjacent_cut_spacing_ = AdjacentCutSpacing(spacing, adjacent_cuts, cut_within);
     return &adjacent_cut_spacing_;
-}
-
-float Layer::GetSpacing() const {
-    return spacing_;
 }
 
 SpacingTable *Layer::GetSpacingTable() {

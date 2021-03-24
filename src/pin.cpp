@@ -2,9 +2,33 @@
 
 namespace phydb {
 
+void Pin::SetName(string &name) { 
+  name_ = name; 
+}
+
+void Pin::SetUse(SignalUse &use) { 
+  use_ = use; 
+}
+
 LayerRect *Pin::AddLayerRect(std::string &layer_name) {
     layer_rects_.emplace_back(layer_name);
     return &(layer_rects_.back());
+}
+
+const string &Pin::GetName() {
+    return name_;
+}
+
+SignalDirection Pin::GetDirection() {
+    return direction_;
+}
+
+SignalUse Pin::GetUse() {
+    return use_;
+}
+
+vector<LayerRect> &Pin::GetLayerRectRef() {
+    return layer_rects_;
 }
 
 ostream &operator<<(ostream &os, const Pin &p) {

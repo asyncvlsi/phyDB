@@ -2,7 +2,7 @@
 
 namespace phydb {
 
-string Macro::GetName() const {
+const string &Macro::GetName() {
     return name_;
 }
 
@@ -62,6 +62,10 @@ float Macro::GetWidth() const {
 
 float Macro::GetHeight() const {
     return size_.y;
+}
+
+vector<Pin> &Macro::GetPinsRef() {
+    return pins_;
 }
 
 MacroWell *Macro::GetWellPtr() {

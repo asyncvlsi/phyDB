@@ -37,11 +37,18 @@ class IOPin {
         orient_(orient),
         place_status_(status) {}
 
-    string GetName();
     void SetNetName(std::string const &net_name);
-
     void SetShape(std::string &layer_name, int lx, int ly, int ux, int uy);
     void SetPlacement(PlaceStatus place_status, int x, int y, CompOrient orient);
+
+    const string &GetName();
+    SignalDirection GetDirection();
+    SignalUse GetUse();
+    const string &GetLayerName();
+    Rect2D<int> GetRect();
+    Point2D<int> GetLocation();
+    CompOrient GetOrientation();
+    PlaceStatus GetPlacementStatus();
 
     void Report();
 };

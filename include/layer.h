@@ -15,16 +15,16 @@ class Layer {
   private:
     string name_;
     LayerType type_;
-    int idx_;
+    int idx_ = -1;
 
     //metal layer
     MetalDirection direction_;
-    float pitchx_;
-    float pitchy_;
-    float width_;
-    float area_;
-    float min_width_;
-    float offset_;
+    float pitchx_ = -1;
+    float pitchy_ = -1;
+    float width_ = -1;
+    float area_ = 0;
+    float min_width_ = -1;
+    float offset_ = 0;
 
     SpacingTable spacing_table_;
     vector<SpacingTableInfluence> spacing_table_influences_;
@@ -32,12 +32,10 @@ class Layer {
     CornerSpacing corner_spacing_;
 
     //cut layer
-    float spacing_;
+    float spacing_ = -1;
     AdjacentCutSpacing adjacent_cut_spacing_;
 
   public:
-    Layer() : name_(""), type_(ROUTING ), idx_(-1), direction_(HORIZONTAL), pitchx_(0),
-              pitchy_(0), width_(0), area_(0), min_width_(0), offset_(0), spacing_(0) {}
     Layer(std::string &name, LayerType type, MetalDirection direction) :
         name_(name), type_(type), direction_(direction) {}
 
@@ -62,8 +60,6 @@ class Layer {
         idx_(-1),
         spacing_(spacing) {}
 
-    string GetName() const;
-
     void SetName(string &name);
     void SetType(LayerType type);
     void SetDirection(MetalDirection direction);
@@ -73,6 +69,16 @@ class Layer {
     void SetOffset(float offset);
     void SetArea(float area);
     void SetSpacing(float spacing);
+
+    const std::string &GetName();
+    LayerType GetType() const;
+    MetalDirection GetDirection() const;
+    float GetWidth() const;
+    float GetMinWidth() const;
+    void GetPitch(float &pitch_x, float &pitch_y) const;
+    float GetOffset() const;
+    float GetArea() const;
+    float GetSpacing() const;
 
     SpacingTable *SetSpacingTable(SpacingTable &);
     SpacingTable *SetSpacingTable(int n_col, int n_row, const vector<float> &v_parallel_run_length,
@@ -84,7 +90,6 @@ class Layer {
     CornerSpacing *SetCornerSpacing(CornerSpacing &);
     AdjacentCutSpacing *SetAdjCutSpacing(float spacing, int adjacent_cuts, int cut_within);
 
-    float GetSpacing() const;
     SpacingTable *GetSpacingTable();
     vector<SpacingTableInfluence> *GetSpacingTableInfluences();
     vector<EolSpacing> *GetEolSpacings();

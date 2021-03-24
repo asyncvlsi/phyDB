@@ -20,9 +20,9 @@ class Tech {
     string bus_bit_char_;
     string divier_char_;
     string clearance_measure_;
-    double manufacturing_grid_;
+    double manufacturing_grid_ = -1;
 
-    int dbu_per_micron_;
+    int dbu_per_micron_ = -1;
 
     vector<Site> sites_;
     vector<Layer> layers_;
@@ -37,8 +37,8 @@ class Tech {
 
     /****placement grid parameters****/
     bool is_placement_grid_set_ = false;
-    double placement_grid_value_x_ = 0;
-    double placement_grid_value_y_ = 0;
+    double placement_grid_value_x_ = -1;
+    double placement_grid_value_y_ = -1;
 
     /****N/P-well layers_****/
     bool is_n_well_layer_set_ = false;
@@ -50,17 +50,21 @@ class Tech {
     std::list<MacroWell> wells_;
 
   public:
-    Tech() : manufacturing_grid_(0), dbu_per_micron_(0) {}
+    Tech() : manufacturing_grid_(-1), dbu_per_micron_(-1) {}
 
     void SetDatabaseMicron(int database_micron);
+    int GetDatabaseMicron();
     void SetManufacturingGrid(double manufacture_grid);
+    double GetManufacturingGrid();
     void AddSite(std::string const &name, std::string const &class_name, double width, double height);
+    std::vector<Site> &GetSitesRef();
     void SetPlacementGrids(double placement_grid_value_x, double placement_grid_value_y);
+    bool GetPlacementGrids(double &placement_grid_value_x, double &placement_grid_value_y);
 
     bool IsLayerExist(std::string const &layer_name);
     Layer *AddLayer(std::string &layer_name, LayerType type, MetalDirection direction=HORIZONTAL);
     Layer *GetLayerPtr(std::string const &layer_name);
-    int GetLayerId(const string& layer_name);
+    int GetLayerId(string const &layer_name);
     std::vector<Layer> &GetLayersRef();
 
     bool IsMacroExist(std::string const &macro_name);

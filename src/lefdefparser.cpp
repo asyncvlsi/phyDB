@@ -322,6 +322,7 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
 
             } else {
                 cout << "warning: no eol spacing!" << endl;
+                last_layer.AddEolSpacing(spacing, eol_width, eol_within, par_edge, par_within);
             }
         }
 
@@ -630,18 +631,25 @@ int getDefComponents(defrCallbackType_e type, defiComponent *comp, defiUserData 
 
     std::string comp_name(comp->id());
     std::string macro_name(comp->name());
-    std::string place_status = "UNPLACED";
-    if (comp->isPlaced())
-        place_status = "PLACED";
-    else if (comp->isFixed())
-        place_status = "FIXED";
-    else if (comp->isUnplaced())
-        place_status = "UNPLACED";
-    else
-        place_status = "COVER";
-
     int llx = comp->placementX();
     int lly = comp->placementY();
+
+    std::string place_status = "UNPLACED";
+    if (comp->isPlaced()) {
+        place_status = "PLACED";
+    } else if (comp->isFixed()) {
+        place_status = "FIXED";
+    } else if (comp->isUnplaced()) {
+        place_status = "UNPLACED";
+        llx = 0;
+        lly = 0;
+    } else if (comp->isCover()) {
+        place_status = "COVER";
+    } else {
+        llx = 0;
+        lly = 0;
+    }
+
     std::string orient(comp->placementOrientStr());
 
     auto *phy_db_ptr = (PhyDB *) data;

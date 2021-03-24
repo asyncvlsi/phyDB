@@ -2,12 +2,37 @@
 
 namespace phydb {
 
-string Component::GetName() {
+void Component::SetPlacementStatus(PlaceStatus status) {
+	place_status_ = status;
+}
+
+void Component::SetOrientation(CompOrient orient) {
+	orient_ = orient;
+}
+
+void Component::SetLocation(int lx, int ly) {
+	location_.x = lx;
+	location_.y = ly;
+}
+
+const string &Component::GetName() {
     return name_;
 }
 
-string Component::GetMacroName() {
+const string &Component::GetMacroName() {
     return macro_name_;
+}
+
+PlaceStatus Component::GetPlacementStatus() {
+	return place_status_;
+}
+
+CompOrient Component::GetOrientation() {
+	return orient_;
+}
+
+Point2D<int> Component::GetLocation() {
+	return location_;
 }
 
 ostream &operator<<(ostream &os, const Component &c) {

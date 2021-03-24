@@ -2,10 +2,6 @@
 
 namespace phydb {
 
-string IOPin::GetName() {
-    return name_;
-}
-
 void IOPin::SetNetName(std::string const &net_name) {
     net_name_ = net_name;
 }
@@ -23,6 +19,38 @@ void IOPin::SetPlacement(PlaceStatus place_status, int x, int y, CompOrient orie
     location_.x = x;
     location_.y = y;
     orient_ = orient;
+}
+
+const string &IOPin::GetName() {
+    return name_;   
+}
+
+SignalDirection IOPin::GetDirection() {
+    return direction_;
+}
+
+SignalUse IOPin::GetUse() {
+    return use_;
+}
+
+const string &IOPin::GetLayerName() {
+    return layer_name_;
+}
+
+Rect2D<int> IOPin::GetRect() {
+    return rect_;
+}
+
+Point2D<int> IOPin::GetLocation() {
+    return location_;
+}
+
+CompOrient IOPin::GetOrientation() {
+    return orient_;
+}
+
+PlaceStatus IOPin::GetPlacementStatus() {
+    return place_status_;
 }
 
 void IOPin::Report() {
