@@ -16,6 +16,7 @@
 #include "net.h"
 #include "tech.h"
 #include "defvia.h"
+#include "clustercol.h"
 
 namespace phydb {
 
@@ -36,6 +37,7 @@ class Design {
     vector<SNet> snets_;
     vector<Net> nets_;
     vector<DefVia> vias_;
+    vector<ClusterCol> cluster_cols_;
 
     map<string, int> component_2_id_;
     map<string, int> iopin_2_id_;
@@ -91,11 +93,15 @@ class Design {
     Net *GetNetPtr(std::string &net_name);
     vector<Net> &GetNetsRef() {return nets_;}
 
+    ClusterCol* AddClusterCol(string& name, string& bot_signal);
+    vector<ClusterCol>& GetClusterColsRef();
+
     void ReportTracks();
     void ReportRows();
     void ReportComponents();
     void ReportIoPins();
     void ReportNets();
+    void ReportClusterCols();
     void Report();
 };
 

@@ -149,17 +149,20 @@ int main() {
 
     PhyDB db;
 
-    string lefFileName = "processor.lef";
-    db.ReadLef(lefFileName);
+    string clusterFileName = "circuit_router.cluster";
+    db.ReadCluster(clusterFileName);
 
-    string defFileName = "processor.def";
-    db.ReadDef(defFileName);
+    //string lefFileName = "processor.lef";
+    //db.ReadLef(lefFileName);
 
-    string cellFileName = "processor.cell";
+    //string defFileName = "processor.def";
+    //db.ReadDef(defFileName);
+
+    //string cellFileName = "processor.cell";
     //db.ReadCell(cellFileName);
 
-    db.GetTechPtr()->Report();
-    //db.GetDesignPtr()->Report();
+    //db.GetTechPtr()->Report();
+    db.GetDesignPtr()->Report();
     
     return 0;
 }

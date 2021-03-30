@@ -86,12 +86,20 @@ class PhyDB {
     MacroWell *AddMacrowell(std::string &macro_name);
 
     /************************************************
+    * The following APIs are for information in cluster
+    * ************************************************/
+
+    ClusterCol* AddClusterCol(string& name, string& bot_signal);
+    vector<ClusterCol>& GetClusterColsRef();
+
+    /************************************************
     * The following APIs are for file IO
     * ************************************************/
 
     void ReadLef(string const &lefFileName);
     void ReadDef(string const &defFileName);
     void ReadCell(string const &cellFileName);
+    void ReadCluster(string const &clusterFileName);
 
 
   private:

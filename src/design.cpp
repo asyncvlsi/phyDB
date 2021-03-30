@@ -167,6 +167,17 @@ Net *Design::GetNetPtr(std::string &net_name) {
     return &(nets_[id]);
 }
 
+
+ClusterCol* Design::AddClusterCol(string& name, string& bot_signal) {
+    int id = cluster_cols_.size();
+    cluster_cols_.emplace_back(name, bot_signal);
+    return &cluster_cols_[id];
+}
+    
+vector<ClusterCol>& Design::GetClusterColsRef() {
+    return cluster_cols_;
+}
+
 void Design::ReportTracks() {
     std::cout << "Total number of track: " << tracks_.size() << "\n";
     for (auto &track: tracks_) {
@@ -207,6 +218,14 @@ void Design::ReportNets() {
     std::cout << "\n";
 }
 
+void Design::ReportClusterCols() {
+    std::cout << "Total cluster cols: " << cluster_cols_.size() << "\n";
+    for (auto &c: cluster_cols_) {
+        c.Report();
+    }
+    std::cout << "\n";
+}
+
 void Design::Report() {
     std::cout << "VERSION " << version_ << ";\n";
     std::cout << "BUSBITCHARS " << bus_bit_char_ << ";\n";
@@ -219,6 +238,7 @@ void Design::Report() {
     ReportComponents();
     ReportIoPins();
     ReportNets();
+    ReportClusterCols();
 }
 
 }

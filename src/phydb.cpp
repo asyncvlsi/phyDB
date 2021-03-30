@@ -217,6 +217,14 @@ MacroWell *PhyDB::AddMacrowell(std::string &macro_name) {
     return macro_ptr->GetWellPtr();
 }
 
+ClusterCol* PhyDB::AddClusterCol(string& name, string& bot_signal) {
+    return design_.AddClusterCol(name, bot_signal);
+}
+
+vector<ClusterCol>& PhyDB::GetClusterColsRef() {
+    return design_.GetClusterColsRef();
+}
+
 void PhyDB::ReadLef(string const &lefFileName) {
     Si2ReadLef(this, lefFileName);
 }
@@ -376,6 +384,37 @@ void PhyDB::ReadCell(string const &cellFileName) {
     //tech_.ReportWellShape();
 
     std::cout << "CELL file loading complete: " << cellFileName << "\n";
+}
+
+void PhyDB::ReadCluster(string const &clusterFileName) {
+    std::ifstream infile(clusterFileName.c_str());
+    if (infile.is_open()) {
+        std::cout << "Loading cluster file: " << clusterFileName << "\n";
+    } else {
+        std::cout << "ERROR: cannot open input file " << clusterFileName << std::endl;
+        exit(1);
+    }
+
+    string tmp1, tmp2, tmp3;
+    int lx, ux, ly, uy;
+    int cnt_y = 0, cnt_x = 0;
+    ClusterCol* col;
+    while(!infile.eof()) {
+        infile >> tmp1 >> tmp2;
+        if(tmp1 == "STRIP") {
+            infile >> lx >> ux >> tmp3;
+            col = AddClusterCol(tmp2, tmp3);
+            col->SetXRange(lx, ux);
+        }
+        else if(tmp1 == "END") {
+            assert(tmp2 == col->GetName());
+        }
+        else {
+            ly = atoi(tmp1.c_str());
+            uy = atoi(tmp2.c_str());
+            col->AddRow(ly, uy);
+        }
+    }
 }
 
 void PhyDB::StrSplit(std::string &line, std::vector<std::string> &res) {
