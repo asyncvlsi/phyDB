@@ -77,6 +77,9 @@ class PhyDB {
     void AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name); // this API does a sanity check
     Net *GetNetPtr(std::string &net_name);
 
+    GcellGrid* AddGcellGrid(string& direction, int start, int nBoundaries, int step);
+    vector<GcellGrid>& GetGcellGridsRef();
+
     /************************************************
     * The following APIs are for information in CELL
     * ************************************************/

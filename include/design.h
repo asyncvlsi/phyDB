@@ -17,6 +17,7 @@
 #include "tech.h"
 #include "defvia.h"
 #include "clustercol.h"
+#include "gcellgrid.h"
 
 namespace phydb {
 
@@ -38,6 +39,7 @@ class Design {
     vector<Net> nets_;
     vector<DefVia> vias_;
     vector<ClusterCol> cluster_cols_;
+    vector<GcellGrid> gcell_grids_;
 
     map<string, int> component_2_id_;
     map<string, int> iopin_2_id_;
@@ -96,12 +98,16 @@ class Design {
     ClusterCol* AddClusterCol(string& name, string& bot_signal);
     vector<ClusterCol>& GetClusterColsRef();
 
+    GcellGrid* AddGcellGrid(string& direction, int start, int nBoundaries, int step);
+    vector<GcellGrid>& GetGcellGridsRef();
+
     void ReportTracks();
     void ReportRows();
     void ReportComponents();
     void ReportIoPins();
     void ReportNets();
     void ReportClusterCols();
+    void ReportGcellGrids();
     void Report();
 };
 

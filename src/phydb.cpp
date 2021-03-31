@@ -225,6 +225,14 @@ vector<ClusterCol>& PhyDB::GetClusterColsRef() {
     return design_.GetClusterColsRef();
 }
 
+GcellGrid* PhyDB::AddGcellGrid(string& direction, int start, int nBoundaries, int step) {
+    return design_.AddGcellGrid(direction, start, nBoundaries, step);
+}
+
+vector<GcellGrid>& PhyDB::GetGcellGridsRef() {
+    return design_.GetGcellGridsRef();
+}
+
 void PhyDB::ReadLef(string const &lefFileName) {
     Si2ReadLef(this, lefFileName);
 }

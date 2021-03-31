@@ -178,6 +178,16 @@ vector<ClusterCol>& Design::GetClusterColsRef() {
     return cluster_cols_;
 }
 
+GcellGrid* Design::AddGcellGrid(string& direction, int start, int nBoundaries, int step) {
+    int id = gcell_grids_.size();
+    gcell_grids_.emplace_back(direction, start, nBoundaries, step);
+    return &gcell_grids_[id];
+}
+
+vector<GcellGrid>& Design::GetGcellGridsRef() {
+    return gcell_grids_;
+}
+
 void Design::ReportTracks() {
     std::cout << "Total number of track: " << tracks_.size() << "\n";
     for (auto &track: tracks_) {
@@ -226,6 +236,14 @@ void Design::ReportClusterCols() {
     std::cout << "\n";
 }
 
+void Design::ReportGcellGrids() {
+    std::cout << "Total GcellGrids: " << gcell_grids_.size() << "\n";
+    for (auto &g: gcell_grids_) {
+        g.Report();
+    }
+    std::cout << "\n";
+}
+
 void Design::Report() {
     std::cout << "VERSION " << version_ << ";\n";
     std::cout << "BUSBITCHARS " << bus_bit_char_ << ";\n";
@@ -233,12 +251,13 @@ void Design::Report() {
     std::cout << "UNITS DISTANCE MICRONS " << unit_distance_micron_ << ";\n";
     std::cout << "DIE AREA " << die_area_.Str() << "\n";
 
-    ReportTracks();
+    //ReportTracks();
     ReportRows(); // TODO : rows not loaded
-    ReportComponents();
-    ReportIoPins();
-    ReportNets();
-    ReportClusterCols();
+    //ReportComponents();
+    //ReportIoPins();
+    //ReportNets();
+    //ReportClusterCols();
+    ReportGcellGrids();
 }
 
 }

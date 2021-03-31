@@ -1019,20 +1019,9 @@ int getDefVias(defrCallbackType_e type, defiVia *via, defiUserData data) {
 }
 
 int getDefGcellGrid(defrCallbackType_e type, defiGcellGrid *gcellGrid, defiUserData data) {
-    /* TODO: This can be handle layer since ACT does not provide GCELLGRID
-    bool enableOutput = false;
-
-    parser::GcellGrid tmpGcellGrid;
-    tmpGcellGrid.direction = string(gcellGrid->macro());
-    tmpGcellGrid.start = gcellGrid->x();
-    tmpGcellGrid.numBoundaries = gcellGrid->xNum();
-    tmpGcellGrid.step = gcellGrid->xStep();
-
-    ((parser::defDataBase*) data)->gcellGrids.push_back(tmpGcellGrid);
-
-    if(enableOutput)
-        tmpGcellGrid.print();
-    */
+    auto *phy_db_ptr = (PhyDB *) data;
+    string direction = gcellGrid->macro();
+    phy_db_ptr->AddGcellGrid(direction, gcellGrid->x(), gcellGrid->xNum(), gcellGrid->xStep());
     return 0;
 }
 

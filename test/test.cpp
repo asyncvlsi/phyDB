@@ -149,14 +149,14 @@ int main() {
 
     PhyDB db;
 
-    string clusterFileName = "circuit_router.cluster";
-    db.ReadCluster(clusterFileName);
+    //string clusterFileName = "circuit_router.cluster";
+    //db.ReadCluster(clusterFileName);
 
-    //string lefFileName = "processor.lef";
-    //db.ReadLef(lefFileName);
+    string lefFileName = "processor.lef";
+    db.ReadLef(lefFileName);
 
-    //string defFileName = "processor.def";
-    //db.ReadDef(defFileName);
+    string defFileName = "processor.def";
+    db.ReadDef(defFileName);
 
     //string cellFileName = "processor.cell";
     //db.ReadCell(cellFileName);

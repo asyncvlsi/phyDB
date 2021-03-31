@@ -246,8 +246,8 @@ void Tech::Report() {
 
     //ReportSites();
     //ReportLayers();
-    //ReportVias(); // TODO : Vias not reported, maybe they are not added using callback functions
-    ReportMacros();
+    ReportVias(); // TODO : Vias not reported, maybe they are not added using callback functions
+    //ReportMacros();
     //ReportMacroWell();
 }
 
