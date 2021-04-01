@@ -57,9 +57,9 @@ endif()
 link_libraries(libdef.a)
 
 set(CFLAGS "${CFLAGS} -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -O3 ${EXTRA_FLAGS} -fopenmp ${CFLAGS}")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -std=c++17 -O3 ${EXTRA_FLAGS} -fopenmp ${CFLAGS}")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++17 -O3 ${EXTRA_FLAGS} -fopenmp ${CFLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -O3 ${EXTRA_FLAGS} ${CFLAGS}")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -std=c++17 -O3 ${EXTRA_FLAGS} ${CFLAGS}")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++17 -O3 ${EXTRA_FLAGS} ${CFLAGS}")
 
 # Set the output directory of static libraries
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
