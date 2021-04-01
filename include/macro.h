@@ -1,5 +1,5 @@
 #ifndef MACRO_H
-#define MACRO_h
+#define MACRO_H
 
 #include "DataType.h"
 #include "pin.h"
