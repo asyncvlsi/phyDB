@@ -1,5 +1,7 @@
 #include "design.h"
 
+#include <cmath>
+
 namespace phydb {
 
 void Design::SetName(std::string &name) {
@@ -57,8 +59,10 @@ vector<Row> &Design::GetRowVec() {
     return rows_;
 }
 
-void Design::SetComponentCount(int count) {
-    components_.reserve(count);
+void Design::SetComponentCount(int count, double redundancy_factor) { // redundancy_factor for well tap cells and buffer insertion
+    if (redundancy_factor < 1) redundancy_factor = 1;
+    int actual_count = (int) std::ceil(count * redundancy_factor);
+    components_.reserve(actual_count);
 }
 
 bool Design::IsComponentExist(std::string &comp_name) {
@@ -126,8 +130,10 @@ IOPin *Design::GetIoPinPtr(std::string &iopin_name) {
     return &(iopins_[id]);
 }
 
-void Design::SetNetCount(int count) {
-    nets_.reserve(count);
+void Design::SetNetCount(int count, double redundancy_factor) { // redundancy_factor for buffer insertion
+    if (redundancy_factor < 1) redundancy_factor = 1;
+    int actual_count = (int) std::ceil(count * redundancy_factor);
+    nets_.reserve(actual_count);
 }
 
 bool Design::IsNetExist(std::string &net_name) {

@@ -70,7 +70,7 @@ class Design {
                 int numY, int stepX, int stepY);
     vector<Row> &GetRowVec();
 
-    void SetComponentCount(int count);
+    void SetComponentCount(int count, double redundancy_factor = 1.4);
     bool IsComponentExist(std::string &comp_name);
     Component *AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
                             int llx, int lly, CompOrient orient);
@@ -87,7 +87,7 @@ class Design {
     IOPin *GetIoPinPtr(std::string &iopin_name);
     vector<IOPin> &GetIoPinsRef() {return iopins_;}
 
-    void SetNetCount(int count);
+    void SetNetCount(int count, double redundancy_factor = 1.4);
     bool IsNetExist(std::string &net_name);
     Net *AddNet(std::string &net_name, double weight = 1);
     void AddIoPinToNet(std::string &iopin_name, std::string &net_name);
