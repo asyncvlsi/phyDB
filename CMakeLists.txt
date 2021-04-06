@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.16)
 project(PhyDB
 		LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 17)
+
 ######################################
 # Detect if Boost library exists
 ######################################
@@ -56,10 +58,19 @@ else ()
 endif()
 link_libraries(libdef.a)
 
-set(CFLAGS "${CFLAGS} -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -O3 ${EXTRA_FLAGS} ${CFLAGS}")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -std=c++17 -O3 ${EXTRA_FLAGS} ${CFLAGS}")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++17 -O3 ${EXTRA_FLAGS} ${CFLAGS}")
+# Set a default build type if none was specified
+set(default_build_type "RELEASE")
+if (NOT CMAKE_BUILD_TYPE)
+    message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
+    set(CMAKE_BUILD_TYPE "${default_build_type}")
+    # Set the possible values of build type for cmake-gui
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+            "DEBUG" "RELEASE")
+endif ()
+
+add_compile_options(-Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 
 # Set the output directory of static libraries
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
@@ -67,12 +78,13 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 # Set the output directory of executables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
-link_directories(/usr/lib64)
-
 include_directories(include)
 FILE(GLOB SOURCES "src/*.cpp")
 add_subdirectory(test)
-add_subdirectory(src)
+
+add_library(phydb 
+	STATIC
+	${SOURCES})
 
 add_executable(PhyDB_test
 		test/test.cpp)
