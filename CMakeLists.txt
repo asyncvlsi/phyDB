@@ -1,20 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(PhyDB
-		LANGUAGES CXX)
+    LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
-
-######################################
-# Detect if Boost library exists
-######################################
-set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost 1.61.0 COMPONENTS serialization REQUIRED)
-message(STATUS "Boost library path: ${Boost_LIBRARY_DIRS}")
-message(STATUS "Boost include path: ${Boost_INCLUDE_DIR}")
-message(STATUS "Boost libs: ${Boost_LIBRARIES}")
-include_directories(${Boost_INCLUDE_DIRS})
-link_libraries(${Boost_LIBRARIES})
 
 ######################################
 # detect the installation path of LEF parser and DEF parser,
@@ -22,41 +11,39 @@ link_libraries(${Boost_LIBRARIES})
 ######################################
 message(STATUS "Detecting environment variable LEF_ROOT...")
 if (DEFINED ENV{LEF_ROOT})
-	message(STATUS "Environment variable LEF_ROOT detected: " $ENV{LEF_ROOT})
+    message(STATUS "Environment variable LEF_ROOT detected: " $ENV{LEF_ROOT})
 else ()
-	message(FATAL_ERROR "Environment variable LEF_ROOT not found")
+    message(FATAL_ERROR "Environment variable LEF_ROOT not found")
 endif ()
 include_directories($ENV{LEF_ROOT}/include)
 link_directories($ENV{LEF_ROOT}/lib)
 find_library(LEF_LIBRARY
-		NAMES lef
-		PATHS $ENV{LEF_ROOT}/lib
-		REQUIRED)
+    NAMES lef
+    PATHS $ENV{LEF_ROOT}/lib
+    REQUIRED)
 if (NOT LEF_LIBRARY)
-	message(FATAL_ERROR "liblef.a is not found")
+    message(FATAL_ERROR "liblef.a is not found")
 else ()
-	message(STATUS "liblef.a found")
+    message(STATUS "liblef.a found")
 endif()
-link_libraries(liblef.a)
 
 message(STATUS "Detecting environment variable DEF_ROOT...")
 if (DEFINED ENV{DEF_ROOT})
-	message(STATUS "Environment variable LEF_ROOT detected: " $ENV{DEF_ROOT})
+    message(STATUS "Environment variable LEF_ROOT detected: " $ENV{DEF_ROOT})
 else ()
-	message(FATAL_ERROR "Environment variable DEF_ROOT not found")
+    message(FATAL_ERROR "Environment variable DEF_ROOT not found")
 endif ()
 include_directories($ENV{DEF_ROOT}/include)
 link_directories($ENV{DEF_ROOT}/lib)
 find_library(DEF_LIBRARY
-		NAMES def
-		PATHS $ENV{DEF_ROOT}/lib
-		REQUIRED)
+    NAMES def
+    PATHS $ENV{DEF_ROOT}/lib
+    REQUIRED)
 if (NOT DEF_LIBRARY)
-	message(FATAL_ERROR "libdef.a is not found")
+    message(FATAL_ERROR "libdef.a is not found")
 else ()
-	message(STATUS "libdef.a found")
+    message(STATUS "libdef.a found")
 endif()
-link_libraries(libdef.a)
 
 # Set a default build type if none was specified
 set(default_build_type "RELEASE")
@@ -65,7 +52,7 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "${default_build_type}")
     # Set the possible values of build type for cmake-gui
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
-            "DEBUG" "RELEASE")
+        "DEBUG" "RELEASE")
 endif ()
 
 add_compile_options(-Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic)
@@ -83,14 +70,16 @@ FILE(GLOB SOURCES "src/*.cpp")
 add_subdirectory(test)
 
 add_library(phydb 
-	STATIC
-	${SOURCES})
+    STATIC
+    ${SOURCES})
+target_link_libraries(phydb
+    lef def)
 
 add_executable(PhyDB_test
-		test/test.cpp)
+    test/test.cpp)
 target_link_libraries(PhyDB_test
-		PRIVATE phydb
-		)
+    PRIVATE phydb
+    )
 
 ######################################
 # specify the installation directory: ${ACT_HOME}
@@ -98,9 +87,9 @@ target_link_libraries(PhyDB_test
 
 message(STATUS "Detecting environment variable ACT_HOME...")
 if (DEFINED ENV{ACT_HOME})
-	message(STATUS "Environment variable ACT_HOME detected: " $ENV{ACT_HOME})
+    message(STATUS "Environment variable ACT_HOME detected: " $ENV{ACT_HOME})
 else ()
-	message(FATAL_ERROR "Environment variable ACT_HOME not found")
+    message(FATAL_ERROR "Environment variable ACT_HOME not found")
 endif ()
 message(STATUS "Changing Installation directory to ACT_HOME")
 set(CMAKE_INSTALL_PREFIX $ENV{ACT_HOME} CACHE PATH "installation path" FORCE)
@@ -116,5 +105,5 @@ install(DIRECTORY include/ DESTINATION include/phydb COMPONENT Development FILES
 # Install library
 ######################################
 install(TARGETS phydb
-		DESTINATION lib)
+    DESTINATION lib)
 
