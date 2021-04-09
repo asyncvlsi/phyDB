@@ -486,7 +486,7 @@ int getLefViaRuleGenerates(lefrCallbackType_e type, lefiViaRule *viaRule, lefiUs
 
 int getDefDesign(defrCallbackType_e type, const char *str, defiUserData data) {
     //bool enableOutput = true;
-    bool enableOutput = true;
+    bool enableOutput = false;
     auto *phy_db_ptr = (PhyDB *) data;
     if (type == defrDesignStartCbkType) {
         std::string design_name(str);
@@ -520,7 +520,7 @@ int getDefRow(defrCallbackType_e type, defiRow *row, defiUserData data) {
 
 int getDefString(defrCallbackType_e type, const char *str, defiUserData data) {
     //bool enableOutput = true;
-    bool enableOutput = true;
+    bool enableOutput = false;
     auto *phy_db_ptr = (PhyDB *) data;
     if ((type == defrDesignStartCbkType)) {
         std::string design_name(str);
@@ -535,7 +535,7 @@ int getDefString(defrCallbackType_e type, const char *str, defiUserData data) {
 
 int getDefVoid(defrCallbackType_e type, void *variable, defiUserData data) {
     //bool enableOutput = true;
-    bool enableOutput = true;
+    bool enableOutput = false;
     if ((type == defrDesignEndCbkType)) {
 
         if (enableOutput) {

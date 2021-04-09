@@ -51,6 +51,7 @@ class Tech {
 
   public:
     Tech() : manufacturing_grid_(-1), dbu_per_micron_(-1) {}
+    ~Tech();
 
     void SetDatabaseMicron(int database_micron);
     int GetDatabaseMicron();

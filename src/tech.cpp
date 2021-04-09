@@ -4,6 +4,17 @@
 
 namespace phydb {
 
+Tech::~Tech() {
+    if (n_layer_ptr_ != nullptr) {
+        delete n_layer_ptr_;
+        n_layer_ptr_ = nullptr;
+    }
+    if (p_layer_ptr_ != nullptr) {
+        delete p_layer_ptr_;
+        p_layer_ptr_ = nullptr;
+    }
+}
+
 void Tech::SetDatabaseMicron(int database_micron) {
     PhyDbExpects(database_micron > 0, "Cannot Set negative database microns: Tech::SetDatabaseMicron()");
     dbu_per_micron_ = database_micron;
