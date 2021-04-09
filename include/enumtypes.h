@@ -53,7 +53,8 @@ enum SignalDirection {
     INPUT = 0,
     OUTPUT = 1,
     INOUT = 2,
-    FEEDTHRU = 3
+    FEEDTHRU = 3,
+    OUTPUT_TRISTATE = 4
 };
 
 SignalDirection StrToSignalDirection(std::string &str_signal_direction);

@@ -170,6 +170,8 @@ SignalDirection StrToSignalDirection(std::string &str_signal_direction) {
         signal_direction = INOUT;
     } else if (str_signal_direction == "FEEDTHRU") {
         signal_direction = FEEDTHRU;
+    } else if (str_signal_direction == "OUTPUT TRISTATE") {
+        signal_direction = OUTPUT_TRISTATE;
     } else {
         std::cout << "Unknown SignalDirection: " << str_signal_direction << std::endl;
         exit(0);
@@ -187,6 +189,8 @@ std::string SignalDirectionStr(SignalDirection signal_direction) {
         case 2: { s = "INOUT"; }
             break;
         case 3: { s = "FEEDTHRU"; }
+            break;
+        case 4: { s = "OUTPUT TRISTATE"; }
             break;
         default: {
             std::cout << "IOPIN signal direction error! This should never happen!" << std::endl;
