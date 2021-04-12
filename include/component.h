@@ -1,7 +1,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "header.h"
+#include "phydb_header.h"
 #include "DataType.h"
 #include "enumtypes.h"
 

@@ -579,7 +579,8 @@ int getDefTracks(defrCallbackType_e type, defiTrack *track, defiUserData data) {
 
     auto *phy_db_ptr = (PhyDB *) data;
 
-    std::string direction(track->macro());
+    std::string dir_str(track->macro());
+    XYDirection direction = StrToXYDirection(dir_str);
     int start = track->x();
     int num_tracks = track->xNum();
     int step = track->xStep();
@@ -755,143 +756,109 @@ int getDefNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
 }
 
 int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
-    /* TODO: This can be handle layer since ACT will not provide VDD/GND
+    
     bool enableOutput = false;
     //bool enableOutput = true;
-
     if (type != defrSNetCbkType) {
         cout <<"Type is not defr(S)NetCbkType!" <<endl;
         exit(1);
     }
-    parser::SNet tmpSNet;
-    tmpSNet.name_ = net->name_();
+    cout << "here2:" << type << endl;
+    auto *phy_db_ptr = (PhyDB *) data;
+    string name = net->name();
+    string use_str = net->use();
+    SignalUse use = StrToSignalUse(use_str);
 
+    cout << "here3:" << name << " " << use << endl;
+    auto* phydb_snet = phy_db_ptr->AddSNet(name, use);
 
     // read pre-route
-    //cout << "Net " << net->name_() << " has " << net->numWires() << " wires\n";
-    //cout << "Net " << net->name_() << " has " << net->numPaths() << " paths\n"; // no paths
-    //cout << "Net " << net->name_() << " has " << net->numVpins() << " vpins\n"; // no vpins
 
-    // initialize
-    string layer_name_   = "";
-    string via_name_     = "";
-    string shape_       = "";
-    bool hasBeginPoint = false;
-    bool hasEndPoint   = false;
-    int beginX     = -1;
-    int beginY     = -1;
-    int begin_ext_   = -1;
-    int endX       = -1;
-    int endY       = -1;
-    int end_ext_     = -1;
-    bool hasRect   = false;
-    int llx        = -1;
-    int lly        = -1;
-    int urx        = -1;
-    int ury        = -1;
-    int width_      = 0;
+    cout << "here" << endl;
     for (int i = 0; i < (int)net->numWires(); i++) {
         defiWire* tmpWire = net->wire(i);
-        //cout << "Wire " << i << "\n";
-        //cout << "  Type: " << tmpWire->wireType() << endl;
-        //cout << "  has " << tmpWire->numPaths() << " paths\n";
-
-        if (enableOutput) {
-            cout << "SNET " << tmpSNet.name_ << endl;
-            cout <<"  + " <<tmpWire->wireType();
-            cout << "  has " << net->numWires() << " wires\n";
-            cout << "  has " << tmpWire->numPaths() << " paths\n";
-        }
         // each path is a def line
         for (int j = 0; j < (int)tmpWire->numPaths(); j++) {
-            parser::Path tmpPath;
+            auto* phydb_path = phydb_snet->AddPath();
             defiPath* path     = tmpWire->path(j);
             path->initTraverse();
             // initialize
-            layer_name_     = "";
-            via_name_       = "";
-            shape_         = "";
-            hasBeginPoint = false;
-            hasEndPoint   = false;
-            beginX        = -1;
-            beginY        = -1;
-            begin_ext_      = -1;
-            endX          = -1;
-            endY          = -1;
-            end_ext_        = -1;
-            hasRect       = false;
-            llx           = -1;
-            lly           = -1;
-            urx           = -1;
-            ury           = -1;
-            width_         = 0;
-            //cout <<"path here" <<endl;
 
             int pathId;
             while ((pathId = path->next()) != DEFIPATH_DONE) {
                 //cout << "  pathId = " << pathId << endl;
+                bool hasBeginPoint = false;
                 switch(pathId) {
-                    case DEFIPATH_LAYER:
-                        tmpPath.layer_name_ = string(path->getLayer());
+                    case DEFIPATH_LAYER: {
+                        string layer_name = string(path->getLayer());
+                        phydb_path->SetLayerName(layer_name);
                         break;
-                    case DEFIPATH_VIA:
-                        tmpPath.via_name_ = string(path->getVia());
+                    }
+                    case DEFIPATH_VIA: {
+                        string via_name = string(string(path->getVia()));
+                        phydb_path->SetViaName(via_name);
                         break;
-                    case DEFIPATH_WIDTH:
-                        tmpPath.GetWidth = path->GetWidth();
+                    }
+                    case DEFIPATH_WIDTH: {
+                        phydb_path->SetWidth(path->getWidth());
                         break;
-                    case DEFIPATH_POINT:
+                    }
+                    case DEFIPATH_POINT: {
                         if (!hasBeginPoint) {
+                            int beginX, beginY;
                             path->getPoint(&beginX, &beginY);
+                            phydb_path->SetBegin(beginX, beginY);
                             hasBeginPoint = true;
-                            tmpPath.begin_.x = beginX;
-                            tmpPath.begin_.y = beginY;
                         } else {
+                            int endX, endY;
                             path->getPoint(&endX, &endY);
-                            hasEndPoint = true;
-                            tmpPath.end_.x = endX;
-                            tmpPath.end_.y = endY;
+                            phydb_path->SetEnd(endX, endY);
                         }
                         break;
-                    case DEFIPATH_FLUSHPOINT:
+                    }
+                    case DEFIPATH_FLUSHPOINT: {
                         if (!hasBeginPoint) {
-                            path->getFlushPoint(&beginX, &beginY, &begin_ext_);
+                            int beginX, beginY, begin_ext;
+                            path->getFlushPoint(&beginX, &beginY, &begin_ext);
                             hasBeginPoint = true;
-                            tmpPath.begin_.x = beginX;
-                            tmpPath.begin_.y = beginY;
-                            tmpPath.begin_ext_ = begin_ext_;
+                            phydb_path->SetBegin(beginX, beginY);
+                            phydb_path->SetBeginExt(begin_ext);
                         } else {
-                            path->getFlushPoint(&endX, &endY, &end_ext_);
-                            hasEndPoint = true;
-                            tmpPath.end_.x = endX;
-                            tmpPath.end_.y = endY;
-                            tmpPath.end_ext_ = end_ext_;
+                            int endX, endY, end_ext;
+                            path->getFlushPoint(&endX, &endY, &end_ext);
+                            phydb_path->SetBegin(endX, endY);
+                            phydb_path->SetBeginExt(end_ext);
                         }
                         break;
-                    case DEFIPATH_SHAPE:
-                        tmpPath.shape_ = path->getShape();
+                    }
+                    case DEFIPATH_SHAPE: {
+                        string shape = string(path->getShape());
+                        phydb_path->SetShape(shape);
                         break;
-                    case DEFIPATH_RECT:
-                        path->getViaRect(&llx, &lly, &urx, &ury);
-                        tmpPath.rect_.Set(llx, lly, urx, ury);
-                        hasRect = true;
+                    }
+                    case DEFIPATH_RECT: {
+                        int lx, ly, ux, uy;
+                        path->getViaRect(&lx, &ly, &ux, &uy);
+                        phydb_path->SetRect(lx, ly, ux, uy);
                         break;
-                    case DEFIPATH_VIRTUALPOINT:
+                    }
+                    case DEFIPATH_VIRTUALPOINT: {
                         if (!hasBeginPoint) {
-                            path->getVirtualPoint(&beginX, &beginY);
+                            int beginX, beginY;
+                            path->getPoint(&beginX, &beginY);
+                            phydb_path->SetBegin(beginX, beginY);
                             hasBeginPoint = true;
-
-                            tmpPath.begin_.x = beginX;
-                            tmpPath.begin_.y = beginY;
                         } else {
-                            path->getVirtualPoint(&endX, &endY);
-                            hasEndPoint = true;
-
-                            tmpPath.end_.x = endX;
-                            tmpPath.end_.y = endY;
+                            int endX, endY;
+                            path->getPoint(&endX, &endY);
+                            phydb_path->SetEnd(endX, endY);
                         }
                         break;
-                    default : cout <<" net " <<net->name_() <<" unknown pathId " <<pathId <<endl; break;
+                    }
+                    default : { 
+                        cout <<" net " <<net->name() <<" unknown pathId " <<pathId <<endl; 
+                        break;
+                    }
                 }
             }
 
@@ -916,16 +883,10 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
                 netIn->addVia(tmpP);
               }
             }*/
-    /*
-            tmpSNet.paths.push_back(tmpPath);
         } // end_ path
     } // end_ wire
 
-    ((parser::defDataBase*) data)->snets.push_back(tmpSNet);
 
-    if(enableOutput)
-        tmpSNet.print();
-    */
     return 0;
 }
 
@@ -1020,7 +981,8 @@ int getDefVias(defrCallbackType_e type, defiVia *via, defiUserData data) {
 
 int getDefGcellGrid(defrCallbackType_e type, defiGcellGrid *gcellGrid, defiUserData data) {
     auto *phy_db_ptr = (PhyDB *) data;
-    string direction = gcellGrid->macro();
+    string dir_str = string(gcellGrid->macro());
+    XYDirection direction = StrToXYDirection(dir_str);
     phy_db_ptr->AddGcellGrid(direction, gcellGrid->x(), gcellGrid->xNum(), gcellGrid->xStep());
     return 0;
 }

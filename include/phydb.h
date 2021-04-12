@@ -24,6 +24,7 @@ class PhyDB {
     bool IsLayerExist(std::string const &layer_name);
     Layer *AddLayer(std::string &layer_name, LayerType type, MetalDirection direction=HORIZONTAL);
     Layer *GetLayerPtr(std::string const &layer_name);
+    vector<Layer>& GetLayersRef();
     
     bool IsMacroExist(std::string const &macro_name);
     Macro *AddMacro(std::string &macro_name);
@@ -43,8 +44,8 @@ class PhyDB {
     void SetUnitsDistanceMicrons(int distance_microns);
     void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
 
-    Track* AddTrack(string& direction, int start, int nTracks, int step, vector<string>& layer_names);
-    vector<Track>& GetTrackVec();
+    Track* AddTrack(XYDirection direction, int start, int nTracks, int step, vector<string>& layer_names);
+    vector<Track>& GetTracksRef();
 
     Row* AddRow(string& name, string& site_name, string& site_orient, int origX, int origY, int numX, 
             int numY, int stepX, int stepY);
@@ -77,7 +78,11 @@ class PhyDB {
     void AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name); // this API does a sanity check
     Net *GetNetPtr(std::string &net_name);
 
-    GcellGrid* AddGcellGrid(string& direction, int start, int nBoundaries, int step);
+    SNet* AddSNet(std::string& net_name, SignalUse use);
+    SNet* GetSNet(std::string& net_name);
+    vector<SNet>& GetSNetRef();
+
+    GcellGrid* AddGcellGrid(XYDirection direction, int start, int nBoundaries, int step);
     vector<GcellGrid>& GetGcellGridsRef();
 
     /************************************************

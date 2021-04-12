@@ -154,12 +154,14 @@ int main() {
 
     string lefFileName = "processor.lef";
     db.ReadLef(lefFileName);
+    cout << "lef reading done" << endl;
 
-    string defFileName = "processor.def";
+    string defFileName = "pwroute.def";
     db.ReadDef(defFileName);
+    cout << "def reading done" << endl;
 
-    //string cellFileName = "processor.cell";
-    //db.ReadCell(cellFileName);
+    string cellFileName = "processor.cell";
+    db.ReadCell(cellFileName);
 
     //db.GetTechPtr()->Report();
     db.GetDesignPtr()->Report();

@@ -7,7 +7,7 @@
 #include <defwWriter.hpp>
 #include <defwWriterCalls.hpp>
 
-#include "header.h"
+#include "phydb_header.h"
 #include "row.h"
 #include "track.h"
 #include "component.h"
@@ -46,6 +46,7 @@ class Design {
     map<string, int> def_via_2_id_;
     map<string, int> layer_name_2_trackid_;
     map<string, int> net_2_id_;
+    map<string, int> snet_2_id_;
     map<string, int> via_2_id_;
     set<string> row_set_;
 
@@ -62,8 +63,8 @@ class Design {
     int GetUnitsDistanceMicrons() {return unit_distance_micron_;}
     Rect2D<int> GetDieArea() {return die_area_;}
 
-    Track *AddTrack(string &direction, int start, int num_tracks, int step, vector<string> &layer_names);
-    vector<Track> &GetTrackVec();
+    Track *AddTrack(XYDirection direction, int start, int num_tracks, int step, vector<string> &layer_names);
+    vector<Track> &GetTracksRef();
 
     bool IsRowExist(string &name);
     Row *AddRow(string &name, string &site_name, string &site_orient, int origX, int origY, int numX,
@@ -95,10 +96,14 @@ class Design {
     Net *GetNetPtr(std::string &net_name);
     vector<Net> &GetNetsRef() {return nets_;}
 
+    SNet* AddSNet(string& net_name, SignalUse use);
+    SNet* GetSNet(string& net_name);
+    vector<SNet>& GetSNetRef();
+
     ClusterCol* AddClusterCol(string& name, string& bot_signal);
     vector<ClusterCol>& GetClusterColsRef();
 
-    GcellGrid* AddGcellGrid(string& direction, int start, int nBoundaries, int step);
+    GcellGrid* AddGcellGrid(XYDirection direction, int start, int nBoundaries, int step);
     vector<GcellGrid>& GetGcellGridsRef();
 
     void ReportTracks();
@@ -106,6 +111,7 @@ class Design {
     void ReportComponents();
     void ReportIoPins();
     void ReportNets();
+    void ReportSNets();
     void ReportClusterCols();
     void ReportGcellGrids();
     void Report();

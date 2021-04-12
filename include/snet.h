@@ -1,7 +1,9 @@
 #ifndef SNET_H
 #define SNET_H
 
-#include "header.h"
+#include "phydb_header.h"
+#include "DataType.h"
+#include "enumtypes.h"
 
 namespace phydb {
 
@@ -18,43 +20,57 @@ class Path {
     Point2D<int> begin_;
     Point2D<int> end_;
   public:
-    Path() {
-        layer_name_ = "";
-        width_ = 0;
-        shape_ = "";
-        via_name_ = "";
-        begin_ext_ = 0;
-        end_ext_ = 0;
-    }
-    void Report() {
-        cout << " NEW " << layer_name_ << " " << width_ << " + SHAPE " << shape_;
-        if (!rect_.IsEmpty())
-            cout << " (" << rect_.ll.x << " " << rect_.ll.y << " " << rect_.ur.x << " " << rect_.ur.y << ")";
-        if (!begin_.IsEmpty())
-            cout << " (" << begin_.x << " " << begin_.y << " ) ";
-        if (!end_.IsEmpty())
-            cout << " (" << end_.x << " " << end_.y << " ) ";
-        if (begin_ext_ != 0 || end_ext_ != 0)
-            cout << " EXT " << begin_ext_ << " " << end_ext_;
-        if (via_name_ != "")
-            cout << via_name_;
-        cout << endl;
-    }
+    Path() : width_(0), begin_ext_(0), end_ext_(0) { }
+    Path(string& layer_name, int width, string& shape) :
+        layer_name_(layer_name), width_(width), shape_(shape), begin_ext_(0), end_ext_(0) { }
+    
+    void SetLayerName(string&);
+    void SetWidth(int );
+    void SetShape(string& );
+    void SetViaName(string& );
+    void SetBeginExt(int );
+    void SetEndExt(int );
+    void SetRect(int lx, int ly, int ux, int uy);
+    void SetRect(Rect2D<int> rect);
+    void SetBegin(int x, int y);
+    void SetEnd(int x, int y);
+
+    string GetLayerName() const;
+    int GetWidth() const;
+    string GetShape() const;
+    string GetViaName() const;
+    int GetBeginExt() const;
+    int GetEndExt() const;
+    Rect2D<int> GetRect() const;
+    Point2D<int> GetBegin() const;
+    Point2D<int> GetEnd() const;
+
+    void Report();
 };
 
 class SNet {
   private:
     string name_;
+    SignalUse use_; // "POWER" or "GROUND"
     vector<Path> paths_;
   public:
     SNet() {}
+    SNet(string& name) : name_(name) {}
+    SNet(string& name, SignalUse use) : name_(name), use_(use) {}
 
-    void SetName(string);
+    void SetName(string&);
+    void SetUse(SignalUse);
+    Path* AddPath();
+    Path* AddPath(string& layer_name, int width, string shape);
 
     string GetName() const;
+    SignalUse GetUse() const;
+    vector<Path>& GetPathRef();
+
+    void Report();
 };
 
-ostream &operator<<(ostream &, const SNet &);
+
 
 }
 

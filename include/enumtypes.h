@@ -13,6 +13,14 @@ enum LayerType {
 LayerType StrToLayerType(std::string &str_layer_type);
 std::string LayerTypeStr(LayerType layer_type);
 
+enum XYDirection {
+    X = 0,
+    Y = 1,
+};
+
+XYDirection StrToXYDirection(std::string& direction);
+std::string XYDirectionToStr(XYDirection );
+
 enum MetalDirection {
     HORIZONTAL = 0,
     VERTICAL = 1,

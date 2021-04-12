@@ -8,6 +8,4 @@ include_directories(../include)
 
 link_directories(/usr/lib64)
 link_directories(../src)
-add_executable(phydb_test test.cpp)
-target_link_libraries(phydb_test PUBLIC phydb)
 

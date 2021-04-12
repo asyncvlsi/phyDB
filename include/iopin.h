@@ -2,7 +2,7 @@
 #define IOPIN_H
 
 #include "DataType.h"
-#include "header.h"
+#include "phydb_header.h"
 #include "enumtypes.h"
 
 namespace phydb {

@@ -23,8 +23,7 @@ class Pin {
     Pin(std::string &name, SignalDirection direction, SignalUse use) :
         name_(name), direction_(direction), use_(use) {}
     Pin(string name, SignalDirection direction, SignalUse use, string shape,
-        string antennaDiffAreaLayer, double antennaDiffArea,
-        vector<string> netExpr, vector<LayerRect> layerRects) :
+        string antennaDiffAreaLayer, double antennaDiffArea, vector<LayerRect> layerRects) :
         name_(name),
         direction_(direction),
         use_(use),

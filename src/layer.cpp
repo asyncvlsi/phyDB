@@ -10,6 +10,10 @@ void Layer::SetType(LayerType type) {
     type_ = type;
 }
 
+void Layer::SetID(int id) {
+    id_ = id;
+}
+
 void Layer::SetDirection(MetalDirection direction) {
     direction_ = direction;
 }
@@ -41,6 +45,10 @@ void Layer::SetSpacing(double spacing) {
 
 const std::string &Layer::GetName() {
     return name_;
+}
+
+int Layer::GetID() const {
+    return id_;
 }
 
 LayerType Layer::GetType() const {
@@ -129,7 +137,7 @@ AdjacentCutSpacing *Layer::GetAdjCutSpacing() {
 
 ostream &operator<<(ostream &os, const Layer &l) {
     os << l.name_ << " " << LayerTypeStr(l.type_) << " "
-       << l.idx_ << " " << MetalDirectionStr(l.direction_) << endl;
+       << l.id_ << " " << MetalDirectionStr(l.direction_) << endl;
     os << l.pitchx_ << " " << l.pitchy_ << " " << l.width_ << " " << l.area_ << endl;
     os << l.min_width_ << " " << l.offset_ << endl;
     os << l.spacing_ << endl;
@@ -139,7 +147,7 @@ ostream &operator<<(ostream &os, const Layer &l) {
 void Layer::Report() {
     cout << "------------------------------" << endl;
     cout << "Layer: " << name_ << " type: " << LayerTypeStr(type_)
-         << " direction: " << MetalDirectionStr(direction_) << " idx_: " << idx_ << endl;
+         << " direction: " << MetalDirectionStr(direction_) << " idx_: " << id_ << endl;
     cout << "pitch: " << pitchx_ << " " << pitchy_ << " GetWidth:" << width_ << " area: " << area_ << endl;
     cout << "minWidth: " << min_width_ << " offset: " << offset_ << " GetSpacing: " << spacing_ << endl;
     /*

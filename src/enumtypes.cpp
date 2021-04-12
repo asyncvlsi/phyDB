@@ -68,6 +68,38 @@ std::string MetalDirectionStr(MetalDirection metal_direction) {
     return s;
 }
 
+XYDirection StrToXYDirection(std::string& direction) {
+    XYDirection dir = XYDirection::X;
+    if(direction == "X")
+        dir = XYDirection::X;
+    else if (direction == "Y") 
+        dir = XYDirection::Y;
+    else {
+        std::cout << "unknown XYdirection: " << direction << std::endl;
+        exit(1);
+    }
+    return dir;
+}
+
+std::string XYDirectionToStr(XYDirection dir) {
+    std::string direction = "X";
+    switch(dir) {
+        case 0: {
+            direction = "X";
+            break;
+        }
+        case 1: {
+            direction = "Y";
+            break;
+        }
+        default: {
+            std::cout << "unknown XYdirection " << std::endl;
+            exit(1);
+        }
+    }
+    return direction;
+}
+
 CompOrient StrToCompOrient(std::string &str_orient) {
     CompOrient orient = N;
     if (str_orient == "N" || str_orient == "R0") {

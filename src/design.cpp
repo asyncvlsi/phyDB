@@ -33,13 +33,12 @@ void Design::SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
     die_area_.ur.y = upper_y;
 }
 
-
-Track *Design::AddTrack(string &direction, int start, int num_tracks, int step, vector<string> &layer_names) {
+Track *Design::AddTrack(XYDirection direction, int start, int num_tracks, int step, vector<string> &layer_names) {
     tracks_.emplace_back(direction, start, num_tracks, step, layer_names);
     return &(tracks_.back());
 }
 
-vector<Track> &Design::GetTrackVec() {
+vector<Track> &Design::GetTracksRef() {
     return tracks_;
 }
 
@@ -173,6 +172,24 @@ Net *Design::GetNetPtr(std::string &net_name) {
     return &(nets_[id]);
 }
 
+SNet* Design::AddSNet(string& net_name, SignalUse use) {
+    bool e = (use == GROUND || use == POWER);
+    PhyDbExpects(e, "special net use should be POWER or GROUND");
+    int id = snets_.size();
+    snets_.emplace_back(net_name, use);
+    snet_2_id_[net_name] = id;
+    return &snets_[id];
+}
+
+SNet* Design::GetSNet(string& net_name) {
+    bool e = (snet_2_id_.find(net_name) != snet_2_id_.end());
+    PhyDbExpects(e, "snet is not found");
+    return &snets_[snet_2_id_[net_name]];
+}
+
+vector<SNet>& Design::GetSNetRef() {
+    return snets_;
+}
 
 ClusterCol* Design::AddClusterCol(string& name, string& bot_signal) {
     int id = cluster_cols_.size();
@@ -184,7 +201,7 @@ vector<ClusterCol>& Design::GetClusterColsRef() {
     return cluster_cols_;
 }
 
-GcellGrid* Design::AddGcellGrid(string& direction, int start, int nBoundaries, int step) {
+GcellGrid* Design::AddGcellGrid(XYDirection direction, int start, int nBoundaries, int step) {
     int id = gcell_grids_.size();
     gcell_grids_.emplace_back(direction, start, nBoundaries, step);
     return &gcell_grids_[id];
@@ -250,6 +267,14 @@ void Design::ReportGcellGrids() {
     std::cout << "\n";
 }
 
+void Design::ReportSNets() {
+    std::cout << "Total SNets: " << snets_.size() << "\n";
+    for (auto &n : snets_) {
+        n.Report();
+    }
+    std::cout << "\n";
+}
+
 void Design::Report() {
     std::cout << "VERSION " << version_ << ";\n";
     std::cout << "BUSBITCHARS " << bus_bit_char_ << ";\n";
@@ -258,12 +283,13 @@ void Design::Report() {
     std::cout << "DIE AREA " << die_area_.Str() << "\n";
 
     //ReportTracks();
-    ReportRows(); // TODO : rows not loaded
+    //ReportRows(); // TODO : rows not loaded
     //ReportComponents();
     //ReportIoPins();
     //ReportNets();
     //ReportClusterCols();
-    ReportGcellGrids();
+    //ReportGcellGrids();
+    ReportSNets();
 }
 
 }

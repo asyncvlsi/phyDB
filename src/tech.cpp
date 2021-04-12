@@ -63,6 +63,7 @@ Layer *Tech::AddLayer(std::string &layer_name, LayerType type, MetalDirection di
     int id = layers_.size();
     layers_.emplace_back(layer_name, type, direction);
     layer_2_id_[layer_name] = id;
+    layers_[id].SetID(id);
     return &(layers_[id]);
 }
 

@@ -44,6 +44,10 @@ Layer *PhyDB::GetLayerPtr(std::string const &layer_name) {
     return tech_.GetLayerPtr(layer_name);
 }
 
+vector<Layer>& PhyDB::GetLayersRef() {
+    return tech_.GetLayersRef();
+}
+
 bool PhyDB::IsMacroExist(std::string const &macro_name) {
     return tech_.IsMacroExist(macro_name);
 }
@@ -111,12 +115,12 @@ bool PhyDB::IsComponentExist(std::string &component_name) {
     return design_.IsComponentExist(component_name);
 }
 
-Track* PhyDB::AddTrack(string& direction, int start, int nTracks, int step, vector<string>& layer_names) {
+Track* PhyDB::AddTrack(XYDirection direction, int start, int nTracks, int step, vector<string>& layer_names) {
     return design_.AddTrack(direction, start, nTracks, step, layer_names);
 }
 
-vector<Track>& PhyDB::GetTrackVec() {
-    return design_.GetTrackVec();
+vector<Track>& PhyDB::GetTracksRef() {
+    return design_.GetTracksRef();
 }
 
 Row* PhyDB::AddRow(string& name, string& site_name, string& site_orient, int origX, int origY, int numX, 
@@ -197,6 +201,18 @@ Net *PhyDB::GetNetPtr(std::string &net_name) {
     return design_.GetNetPtr(net_name);
 }
 
+SNet* PhyDB::AddSNet(string& net_name, SignalUse use) {
+    return design_.AddSNet(net_name, use);
+}
+
+SNet* PhyDB::GetSNet(string& net_name) {
+    return design_.GetSNet(net_name);
+}
+
+vector<SNet>& PhyDB::GetSNetRef() {
+    return design_.GetSNetRef();
+}
+
 void PhyDB::SetNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
     tech_.SetNwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
 }
@@ -225,7 +241,7 @@ vector<ClusterCol>& PhyDB::GetClusterColsRef() {
     return design_.GetClusterColsRef();
 }
 
-GcellGrid* PhyDB::AddGcellGrid(string& direction, int start, int nBoundaries, int step) {
+GcellGrid* PhyDB::AddGcellGrid(XYDirection direction, int start, int nBoundaries, int step) {
     return design_.AddGcellGrid(direction, start, nBoundaries, step);
 }
 

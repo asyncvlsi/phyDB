@@ -1,7 +1,7 @@
 #ifndef LAYER_H
 #define LAYER_H
 
-#include "header.h"
+#include "phydb_header.h"
 #include "spacingtable.h"
 #include "eolspacing.h"
 #include "cornerspacing.h"
@@ -15,7 +15,7 @@ class Layer {
   private:
     string name_;
     LayerType type_;
-    int idx_ = -1;
+    int id_ = -1;
 
     //metal layer
     MetalDirection direction_;
@@ -44,7 +44,7 @@ class Layer {
           double width, double area, double minWidth, double offset) :
         name_(name),
         type_(type),
-        idx_(-1),
+        id_(-1),
         direction_(direction),
         pitchx_(pitchx),
         pitchy_(pitchy),
@@ -57,11 +57,12 @@ class Layer {
     Layer(string name, LayerType type, double spacing) :
         name_(name),
         type_(type),
-        idx_(-1),
+        id_(-1),
         spacing_(spacing) {}
 
     void SetName(string &name);
     void SetType(LayerType type);
+    void SetID(int id);
     void SetDirection(MetalDirection direction);
     void SetWidth(double width);
     void SetMinWidth(double min_width);
@@ -71,6 +72,7 @@ class Layer {
     void SetSpacing(double spacing);
 
     const std::string &GetName();
+    int GetID() const;
     LayerType GetType() const;
     MetalDirection GetDirection() const;
     double GetWidth() const;

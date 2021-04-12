@@ -1,5 +1,5 @@
-#ifndef HEADER_H
-#define HEADER_H
+#ifndef PHYDB_HEADER_H
+#define PHYDB_HEADER_H
 
 #include <assert.h>
 #include <iostream>
