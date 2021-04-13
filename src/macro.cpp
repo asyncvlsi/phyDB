@@ -34,10 +34,17 @@ bool Macro::IsPinExist(std::string pin_name) {
 
 Pin *Macro::AddPin(std::string &pin_name, SignalDirection direction, SignalUse use) {
     PhyDbExpects(!IsPinExist(pin_name), "Pin " + pin_name + " exists in Macro " + GetName() + ", cannot add it again");
-    int id = pins_.size();
+    int id = (int) pins_.size();
     pin_2_id_[pin_name] = id;
     pins_.emplace_back(pin_name, direction, use);
     return &(pins_.back());
+}
+
+int Macro::GetPinId(std::string &pin_name) {
+    if (pin_2_id_.find(pin_name) != pin_2_id_.end()) {
+        return pin_2_id_[pin_name];
+    }
+    return -1;
 }
 
 OBS *Macro::GetObs() {

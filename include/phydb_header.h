@@ -1,11 +1,12 @@
 #ifndef PHYDB_HEADER_H
 #define PHYDB_HEADER_H
 
-#include <assert.h>
-#include <iostream>
-#include <vector>
-#include <map>
+#include <cassert>
 #include <cstring>
+
+#include <iostream>
+#include <map>
+#include <vector>
 
 using namespace std;
 

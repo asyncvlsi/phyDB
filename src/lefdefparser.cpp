@@ -96,10 +96,11 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
 
     Macro &last_macro = phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); // last macro
 
+    std::string macro_name = last_macro.GetName();
     std::string pin_name(pin->name());
     std::string pin_direction(pin->direction());
     std::string pin_use(pin->use());
-    Pin *pin_ptr = last_macro.AddPin(pin_name, StrToSignalDirection(pin_direction), StrToSignalUse(pin_use));
+    Pin *pin_ptr = phy_db_ptr->AddMacroPin(macro_name, pin_name, StrToSignalDirection(pin_direction), StrToSignalUse(pin_use));
 
     if (enableOutput) {
         cout << "  PIN " << pin->name() << endl;

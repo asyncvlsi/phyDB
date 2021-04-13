@@ -23,12 +23,9 @@ class Macro {
     map<string, int> pin_2_id_;
     MacroWell *well_ptr_ = nullptr;
 
-    // ACT pointer
-    // ACTMacro *act_ptr_ = nullptr;
-
   public:
     Macro() : name_("") {}
-    explicit Macro(string &name) : name_(name) {
+    Macro(string &name) : name_(name){
         size_.x = 0;
         size_.y = 0;
         origin_.x = 0;
@@ -50,6 +47,7 @@ class Macro {
     // APIs for adding PINs to this MACRO
     bool IsPinExist(std::string pin_name);
     Pin *AddPin(std::string &pin_name, SignalDirection direction, SignalUse use);
+    int GetPinId(std::string &pin_name);
 
     // APIs for adding OBS to this MACRO
     //void SetObs(OBS &obs); // TODO: change this API to return a pointer

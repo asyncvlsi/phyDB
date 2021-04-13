@@ -3,6 +3,7 @@
 
 #include "design.h"
 #include "tech.h"
+#include "acttranslator.h"
 
 namespace phydb {
 
@@ -12,6 +13,7 @@ class PhyDB {
 
     Tech *GetTechPtr();
     Design *GetDesignPtr();
+    ActTranslator *GetTranslatorPtr();
 
     /************************************************
     * The following APIs are for information in LEF
@@ -21,16 +23,21 @@ class PhyDB {
     void AddSite(std::string const &name, std::string const &class_name, double width, double height);
     void SetPlacementGrids(double placement_grid_value_x_, double placement_grid_value_y_);
 
-    bool IsLayerExist(std::string const &layer_name);
-    Layer *AddLayer(std::string &layer_name, LayerType type, MetalDirection direction=HORIZONTAL);
+    bool IsLayerExisting(std::string const &layer_name);
+    Layer *AddLayer(std::string &layer_name, LayerType type, MetalDirection direction = HORIZONTAL);
     Layer *GetLayerPtr(std::string const &layer_name);
-    vector<Layer>& GetLayersRef();
-    
-    bool IsMacroExist(std::string const &macro_name);
-    Macro *AddMacro(std::string &macro_name);
-    Macro *GetMacroPtr(std::string const &macro_name);
+    vector<Layer> &GetLayersRef();
 
-    bool IsLefViaExist(std::string const &name);
+    bool IsMacroExisting(std::string const &macro_name);
+    void AddMacro(std::string &macro_name, void *act_macro_ptr = nullptr);
+    Macro *GetMacroPtr(std::string const &macro_name);
+    Pin *AddMacroPin(std::string &macro_name,
+                     std::string &pin_name,
+                     SignalDirection direction,
+                     SignalUse use,
+                     void *act_macro_pin_ptr = nullptr);
+
+    bool IsLefViaExisting(std::string const &name);
     LefVia *AddLefVia(std::string &name);
     LefVia *GetLefViaPtr(std::string const &name);
 
@@ -44,46 +51,49 @@ class PhyDB {
     void SetUnitsDistanceMicrons(int distance_microns);
     void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
 
-    Track* AddTrack(XYDirection direction, int start, int nTracks, int step, vector<string>& layer_names);
-    vector<Track>& GetTracksRef();
+    Track *AddTrack(XYDirection direction, int start, int nTracks, int step, vector<string> &layer_names);
+    vector<Track> &GetTracksRef();
 
-    Row* AddRow(string& name, string& site_name, string& site_orient, int origX, int origY, int numX, 
-            int numY, int stepX, int stepY);
-    vector<Row>& GetRowVec();
+    Row *AddRow(string &name, string &site_name, string &site_orient, int origX, int origY, int numX,
+                int numY, int stepX, int stepY);
+    vector<Row> &GetRowVec();
 
-    bool IsViaRuleGenerateExist(std::string const &name);
-    ViaRuleGenerate* AddViaRuleGenerate(std::string &name);
-    ViaRuleGenerate* GetViaRuleGeneratePtr(std::string const &name);
-    
-    bool IsDefViaExist(std::string const &name);
+    bool IsViaRuleGenerateExisting(std::string const &name);
+    ViaRuleGenerate *AddViaRuleGenerate(std::string &name);
+    ViaRuleGenerate *GetViaRuleGeneratePtr(std::string const &name);
+
+    bool IsDefViaExisting(std::string const &name);
     DefVia *AddDefVia(std::string &name);
     DefVia *GetDefViaPtr(std::string const &name);
 
     //TODO discuss: maybe IsExist does not need to be here? because it is only used in add?
     void SetComponentCount(int count);
-    bool IsComponentExist(std::string &component_name);
+    bool IsComponentExisting(std::string &component_name);
     Component *AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
-                            int llx, int lly, CompOrient orient);
+                            int llx, int lly, CompOrient orient, void *act_comp_ptr = nullptr);
     Component *GetComponentPtr(std::string &comp_name);
 
     void SetIoPinCount(int count);
-    bool IsIoPinExist(std::string &iopin_name);
+    bool IsIoPinExisting(std::string &iopin_name);
     IOPin *AddIoPin(std::string &iopin_name, SignalDirection signal_direction, SignalUse signal_use);
     IOPin *GetIoPinPtr(std::string &iopin_name);
 
     void SetNetCount(int count);
-    bool IsNetExist(std::string &net_name);
-    Net *AddNet(std::string &net_name, double weight = 1);
+    bool IsNetExisting(std::string &net_name);
+    Net *AddNet(std::string &net_name, double weight = 1, void *act_net_ptr = nullptr);
     void AddIoPinToNet(std::string &iopin_name, std::string &net_name); // this API does a sanity check
-    void AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name); // this API does a sanity check
+    void AddCompPinToNet(std::string &comp_name,
+                         std::string &pin_name,
+                         std::string &net_name,
+                         void *act_comp_pin_ptr = nullptr); // this API does a sanity check
     Net *GetNetPtr(std::string &net_name);
 
-    SNet* AddSNet(std::string& net_name, SignalUse use);
-    SNet* GetSNet(std::string& net_name);
-    vector<SNet>& GetSNetRef();
+    SNet *AddSNet(std::string &net_name, SignalUse use);
+    SNet *GetSNet(std::string &net_name);
+    vector<SNet> &GetSNetRef();
 
-    GcellGrid* AddGcellGrid(XYDirection direction, int start, int nBoundaries, int step);
-    vector<GcellGrid>& GetGcellGridsRef();
+    GcellGrid *AddGcellGrid(XYDirection direction, int start, int nBoundaries, int step);
+    vector<GcellGrid> &GetGcellGridsRef();
 
     /************************************************
     * The following APIs are for information in CELL
@@ -97,8 +107,8 @@ class PhyDB {
     * The following APIs are for information in cluster
     * ************************************************/
 
-    ClusterCol* AddClusterCol(string& name, string& bot_signal);
-    vector<ClusterCol>& GetClusterColsRef();
+    ClusterCol *AddClusterCol(string &name, string &bot_signal);
+    vector<ClusterCol> &GetClusterColsRef();
 
     /************************************************
     * The following APIs are for file IO
@@ -109,10 +119,10 @@ class PhyDB {
     void ReadCell(string const &cellFileName);
     void ReadCluster(string const &clusterFileName);
 
-
   private:
     Tech tech_;
     Design design_;
+    ActTranslator act_translator_;
 
     /****helper functions****/
     // splits a line into many word tokens
