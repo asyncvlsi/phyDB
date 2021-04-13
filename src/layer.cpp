@@ -72,6 +72,15 @@ void Layer::GetPitch(double &pitch_x, double &pitch_y) const {
     pitch_y = pitchy_;
 }
 
+double Layer::GetPitchX() const {
+    return pitchx_;
+}
+
+double Layer::GetPitchY() const {
+    return pitchy_;
+
+}
+
 double Layer::GetOffset() const {
     return offset_;
 }

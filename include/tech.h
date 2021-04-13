@@ -76,6 +76,7 @@ class Tech {
     bool IsLefViaExist(std::string const &via_name);
     LefVia *AddLefVia(std::string &via_name);
     LefVia *GetLefViaPtr(std::string const &via_name);
+    vector<LefVia>& GetLefViasRef();
 
     bool IsViaRuleGenerateExist(std::string const &name);
     ViaRuleGenerate* AddViaRuleGenerate(std::string &name);

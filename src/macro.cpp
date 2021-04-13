@@ -52,6 +52,14 @@ Point2D<double> Macro::GetOrigin() const {
     return origin_;
 }
 
+double Macro::GetOriginX() const {
+    return origin_.x;
+}
+
+double Macro::GetOriginY() const {
+    return origin_.y;
+}
+
 Point2D<double> &Macro::GetOriginRef() {
     return origin_;
 }

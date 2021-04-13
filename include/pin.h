@@ -34,7 +34,6 @@ class Pin {
 
     void SetName(string &name);
     void SetUse(SignalUse &use);
-    void SetNetExpr(vector<string>);
     void SetLayerRect(vector<LayerRect>);
 
     LayerRect *AddLayerRect(std::string &layer_name);
@@ -42,8 +41,8 @@ class Pin {
     const string &GetName();
     SignalDirection GetDirection();
     SignalUse GetUse();
-    vector<string> GetNetExpr() const;
     vector<LayerRect> &GetLayerRectRef();
+    vector<LayerRect> GetLayerRectCpy();
 
     friend ostream &operator<<(ostream &, const Pin &);
 };

@@ -31,6 +31,10 @@ vector<LayerRect> &Pin::GetLayerRectRef() {
     return layer_rects_;
 }
 
+vector<LayerRect> Pin::GetLayerRectCpy() {
+    return layer_rects_;
+}
+
 ostream &operator<<(ostream &os, const Pin &p) {
     os << p.name_ << " "
        << SignalDirectionStr(p.direction_) << " "

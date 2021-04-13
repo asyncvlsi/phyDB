@@ -131,6 +131,10 @@ LefVia *Tech::GetLefViaPtr(std::string const &via_name) {
     return &(vias_[id]);
 }
 
+vector<LefVia>& Tech::GetLefViasRef() {
+    return vias_;
+}
+
 bool Tech::IsViaRuleGenerateExist(std::string const &name) {
     return via_rule_generate_2_id_.find(name) != via_rule_generate_2_id_.end();
 }

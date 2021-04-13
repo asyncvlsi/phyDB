@@ -54,8 +54,7 @@ class Macro {
     // APIs for adding OBS to this MACRO
     //void SetObs(OBS &obs); // TODO: change this API to return a pointer
     //void AddObsLayerRect(LayerRect &layer_rect);
-    OBS *GetObs();
-
+    
 
     void SetWellPtr(MacroWell *well_ptr);
 
@@ -70,7 +69,8 @@ class Macro {
     vector<Pin> GetPinVec() const;
     vector<Pin> &GetPinsRef();
     bool GetPin(string pinName, Pin &pin) const;
-    bool GetObs(OBS &) const;
+    //bool GetObs(OBS &) const;
+    OBS *GetObs();
     MacroWell *GetWellPtr();
 
     friend ostream &operator<<(ostream &, const Macro &);

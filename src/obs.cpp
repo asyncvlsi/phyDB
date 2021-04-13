@@ -16,6 +16,14 @@ ostream &operator<<(ostream &os, const OBS &obs) {
     return os;
 }
 
+vector<LayerRect> OBS::GetLayerRects() const {
+    return layer_rects_;
+}
+
+vector<LayerRect>& OBS::GetLayerRectsRef() {
+    return layer_rects_;
+}
+
 }
 
 

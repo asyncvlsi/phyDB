@@ -13,9 +13,10 @@ class OBS {
     OBS() {}
     OBS(vector<LayerRect> layerRects) : layer_rects_(layerRects) {}
 
-    void SetLayerRect(vector<LayerRect>);
+    void SetLayerRects(vector<LayerRect>);
 
-    vector<LayerRect> GetLayerRect() const;
+    vector<LayerRect> GetLayerRects() const;
+    vector<LayerRect>& GetLayerRectsRef();
 
     // API to add LayerRect
     LayerRect *AddLayerRect(std::string &layer_name);

@@ -77,6 +77,8 @@ class Layer {
     MetalDirection GetDirection() const;
     double GetWidth() const;
     double GetMinWidth() const;
+    double GetPitchX() const;
+    double GetPitchY() const;
     void GetPitch(double &pitch_x, double &pitch_y) const;
     double GetOffset() const;
     double GetArea() const;
