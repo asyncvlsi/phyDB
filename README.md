@@ -20,4 +20,4 @@
 this will create a folder `phydb` under folder `$ACT_HOME/include`, and a static library `libphydb.a` under folder `$ACT_HOME/lib`.
 
 ### Notice
-* The LEF parser has some memory leak issues. This LEF parser is a modified version of the original LEF parser from Si2, and thus some bugs may also be introduced during this process.
+* The LEF parser linked above has a memory leak. This LEF parser is a modified version of the original LEF parser from Si2; the original parser does not have this issue, and you can obtain that from Si2 directly.
