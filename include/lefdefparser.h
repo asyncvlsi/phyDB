@@ -2,6 +2,10 @@
 #define SI2PARSER_H_
 
 #include "phydb.h"
+#include <lefrReader.hpp>
+#include <defrReader.hpp>
+#include <defwWriter.hpp>
+#include <defwWriterCalls.hpp>
 
 namespace phydb {
 

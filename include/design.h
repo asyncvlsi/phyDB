@@ -2,10 +2,7 @@
 #define DESIGN_H
 
 #include <set>
-
-#include <defrReader.hpp>
-#include <defwWriter.hpp>
-#include <defwWriterCalls.hpp>
+#include <unordered_map>
 
 #include "phydb_header.h"
 #include "row.h"
@@ -41,13 +38,13 @@ class Design {
     vector<ClusterCol> cluster_cols_;
     vector<GcellGrid> gcell_grids_;
 
-    map<string, int> component_2_id_;
-    map<string, int> iopin_2_id_;
-    map<string, int> def_via_2_id_;
-    map<string, int> layer_name_2_trackid_;
-    map<string, int> net_2_id_;
-    map<string, int> snet_2_id_;
-    map<string, int> via_2_id_;
+    unordered_map<string, int> component_2_id_;
+    unordered_map<string, int> iopin_2_id_;
+    unordered_map<string, int> def_via_2_id_;
+    unordered_map<string, int> layer_name_2_trackid_;
+    unordered_map<string, int> net_2_id_;
+    unordered_map<string, int> snet_2_id_;
+    unordered_map<string, int> via_2_id_;
     set<string> row_set_;
 
     Design() {}

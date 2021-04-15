@@ -4,6 +4,7 @@
 #include "DataType.h"
 #include "pin.h"
 #include "obs.h"
+#include <unordered_map>
 
 namespace phydb {
 
@@ -20,7 +21,7 @@ class Macro {
     vector<Pin> pins_;
     OBS obs_;
 
-    map<string, int> pin_2_id_;
+    unordered_map<string, int> pin_2_id_;
     MacroWell *well_ptr_ = nullptr;
 
   public:

@@ -2,8 +2,7 @@
 #define TECH_H
 
 #include <list>
-
-#include <lefrReader.hpp>
+#include <unordered_map>
 
 #include "layer.h"
 #include "site.h"
@@ -30,10 +29,10 @@ class Tech {
     vector<LefVia> vias_;
     vector<ViaRuleGenerate> via_rule_generates_;
 
-    map<string, int> layer_2_id_;
-    map<string, int> macro_2_id_;
-    map<string, int> via_2_id_;
-    map<string, int> via_rule_generate_2_id_;
+    unordered_map<string, int> layer_2_id_;
+    unordered_map<string, int> macro_2_id_;
+    unordered_map<string, int> via_2_id_;
+    unordered_map<string, int> via_rule_generate_2_id_;
 
     /****placement grid parameters****/
     bool is_placement_grid_set_ = false;
