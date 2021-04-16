@@ -79,6 +79,10 @@ double Macro::GetHeight() const {
     return size_.y;
 }
 
+Point2D<double> Macro::GetSize() const {
+    return size_;
+}
+
 vector<Pin> &Macro::GetPinsRef() {
     return pins_;
 }
