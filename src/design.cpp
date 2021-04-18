@@ -20,13 +20,13 @@ void Design::SetBusBitChars(std::string &bus_bit_chars) {
 }
 
 void Design::SetUnitsDistanceMicrons(int distance_microns) {
-    PhyDbExpects(distance_microns > 0, "Negative distance micron?");
+    PhyDBExpects(distance_microns > 0, "Negative distance micron?");
     unit_distance_micron_ = distance_microns;
 }
 
 void Design::SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
-    PhyDbExpects(upper_x > lower_x, "Right boundary is not larger than Left boundary?");
-    PhyDbExpects(upper_y > lower_y, "Top boundary is not larger than Bottom boundary?");
+    PhyDBExpects(upper_x > lower_x, "Right boundary is not larger than Left boundary?");
+    PhyDBExpects(upper_y > lower_y, "Top boundary is not larger than Bottom boundary?");
     die_area_.ll.x = lower_x;
     die_area_.ll.y = lower_y;
     die_area_.ur.x = upper_x;
@@ -49,7 +49,7 @@ bool Design::IsRowExist(string &row_name) {
 Row *Design::AddRow(string &name, string &site_name, string &site_orient, int origX, int origY, int numX,
                     int numY, int stepX, int stepY) {
     int id = rows_.size();
-    PhyDbExpects(!IsRowExist(name), name + " row name_ exists, cannot use it again");
+    PhyDBExpects(!IsRowExist(name), name + " row name_ exists, cannot use it again");
     rows_.emplace_back(name, site_name, site_orient, origX, origY, numX, numY, stepX, stepY);
     return &(rows_[id]);
 }
@@ -70,7 +70,7 @@ bool Design::IsComponentExist(std::string &comp_name) {
 
 Component *Design::AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
                                 int llx, int lly, CompOrient orient) {
-    PhyDbExpects(!IsComponentExist(comp_name), "Component name_ exists, cannot use it again");
+    PhyDBExpects(!IsComponentExist(comp_name), "Component name_ exists, cannot use it again");
     int id = components_.size();
     components_.emplace_back(comp_name, macro_name, place_status, llx, lly, orient);
     component_2_id_[comp_name] = id;
@@ -90,7 +90,7 @@ bool Design::IsDefViaExist(std::string const &via_name) {
 }
 
 DefVia *Design::AddDefVia(std::string &via_name) {
-    PhyDbExpects(!IsDefViaExist(via_name), "Macro name_ exists, cannot use it again");
+    PhyDBExpects(!IsDefViaExist(via_name), "Macro name_ exists, cannot use it again");
     int id = vias_.size();
     vias_.emplace_back(via_name);
     via_2_id_[via_name] = id;
@@ -114,7 +114,7 @@ bool Design::IsIoPinExist(std::string &iopin_name) {
 }
 
 IOPin *Design::AddIoPin(std::string &iopin_name, SignalDirection signal_direction, SignalUse signal_use) {
-    PhyDbExpects(!IsIoPinExist(iopin_name), "IOPin name_ exists, cannot use it again");
+    PhyDBExpects(!IsIoPinExist(iopin_name), "IOPin name_ exists, cannot use it again");
     int id = iopins_.size();
     iopins_.emplace_back(iopin_name, signal_direction, signal_use);
     iopin_2_id_[iopin_name] = id;
@@ -140,7 +140,7 @@ bool Design::IsNetExist(std::string &net_name) {
 }
 
 Net *Design::AddNet(std::string &net_name, double weight) {
-    PhyDbExpects(!IsNetExist(net_name), "Net name exists, cannot use it again");
+    PhyDBExpects(!IsNetExist(net_name), "Net name exists, cannot use it again");
     int id = nets_.size();
     nets_.emplace_back(net_name, weight);
     net_2_id_[net_name] = id;
@@ -149,9 +149,9 @@ Net *Design::AddNet(std::string &net_name, double weight) {
 
 void Design::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
     IOPin *iopin_ptr = GetIoPinPtr(iopin_name);
-    PhyDbExpects(iopin_ptr != nullptr, "Cannot add a nonexistent IOPIN to a net");
+    PhyDBExpects(iopin_ptr != nullptr, "Cannot add a nonexistent IOPIN to a net");
     Net *net_ptr = GetNetPtr(net_name);
-    PhyDbExpects(net_ptr != nullptr, "Cannot add to a nonexistent net");
+    PhyDBExpects(net_ptr != nullptr, "Cannot add to a nonexistent net");
 
     iopin_ptr->SetNetName(net_name);
     net_ptr->AddIoPin(iopin_name);
@@ -159,7 +159,7 @@ void Design::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
 
 void Design::AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name) {
     Net *net_ptr = GetNetPtr(net_name);
-    PhyDbExpects(net_ptr != nullptr, "Cannot add to a nonexistent net");
+    PhyDBExpects(net_ptr != nullptr, "Cannot add to a nonexistent net");
 
     net_ptr->AddCompPin(comp_name, pin_name);
 }
@@ -174,7 +174,7 @@ Net *Design::GetNetPtr(std::string &net_name) {
 
 SNet* Design::AddSNet(string& net_name, SignalUse use) {
     bool e = (use == GROUND || use == POWER);
-    PhyDbExpects(e, "special net use should be POWER or GROUND");
+    PhyDBExpects(e, "special net use should be POWER or GROUND");
     int id = snets_.size();
     snets_.emplace_back(net_name, use);
     snet_2_id_[net_name] = id;
@@ -183,7 +183,7 @@ SNet* Design::AddSNet(string& net_name, SignalUse use) {
 
 SNet* Design::GetSNet(string& net_name) {
     bool e = (snet_2_id_.find(net_name) != snet_2_id_.end());
-    PhyDbExpects(e, "snet is not found");
+    PhyDBExpects(e, "snet is not found");
     return &snets_[snet_2_id_[net_name]];
 }
 

@@ -16,7 +16,7 @@ Tech::~Tech() {
 }
 
 void Tech::SetDatabaseMicron(int database_micron) {
-    PhyDbExpects(database_micron > 0, "Cannot Set negative database microns: Tech::SetDatabaseMicron()");
+    PhyDBExpects(database_micron > 0, "Cannot Set negative database microns: Tech::SetDatabaseMicron()");
     dbu_per_micron_ = database_micron;
 }
 
@@ -25,7 +25,7 @@ int Tech::GetDatabaseMicron() {
 }
 
 void Tech::SetManufacturingGrid(double manufacture_grid) {
-    PhyDbExpects(manufacture_grid > 0, "Cannot Set negative manufacturing grid: Tech::SetManufacturingGrid()");
+    PhyDBExpects(manufacture_grid > 0, "Cannot Set negative manufacturing grid: Tech::SetManufacturingGrid()");
     manufacturing_grid_ = manufacture_grid;
 }
 
@@ -42,7 +42,7 @@ std::vector<Site> &Tech::GetSitesRef() {
 }
 
 void Tech::SetPlacementGrids(double placement_grid_value_x, double placement_grid_value_y) {
-    PhyDbExpects(placement_grid_value_x > 0 && placement_grid_value_y > 0, "negative placement grid value not allowed");
+    PhyDBExpects(placement_grid_value_x > 0 && placement_grid_value_y > 0, "negative placement grid value not allowed");
     placement_grid_value_x_ = placement_grid_value_x;
     placement_grid_value_y_ = placement_grid_value_y;
     is_placement_grid_set_ = true;
@@ -59,7 +59,7 @@ bool Tech::IsLayerExist(std::string const &layer_name) {
 }
 
 Layer *Tech::AddLayer(std::string &layer_name, LayerType type, MetalDirection direction) {
-    PhyDbExpects(!IsLayerExist(layer_name), "LAYER name_ exists, cannot use again: " + layer_name);
+    PhyDBExpects(!IsLayerExist(layer_name), "LAYER name_ exists, cannot use again: " + layer_name);
     int id = layers_.size();
     layers_.emplace_back(layer_name, type, direction);
     layer_2_id_[layer_name] = id;
@@ -92,7 +92,7 @@ bool Tech::IsMacroExist(std::string const &macro_name) {
 }
 
 Macro *Tech::AddMacro(std::string &macro_name) {
-    PhyDbExpects(!IsMacroExist(macro_name), "Macro name_ exists, cannot use it again: " + macro_name);
+    PhyDBExpects(!IsMacroExist(macro_name), "Macro name_ exists, cannot use it again: " + macro_name);
     int id = macros_.size();
     macros_.emplace_back(macro_name);
     macro_2_id_[macro_name] = id;
@@ -116,7 +116,7 @@ bool Tech::IsLefViaExist(std::string const &via_name) {
 }
 
 LefVia *Tech::AddLefVia(std::string &via_name) {
-    PhyDbExpects(!IsLefViaExist(via_name), "VIA name_ exists, cannot use it again: " + via_name);
+    PhyDBExpects(!IsLefViaExist(via_name), "VIA name_ exists, cannot use it again: " + via_name);
     int id = vias_.size();
     vias_.emplace_back(via_name);
     via_2_id_[via_name] = id;
@@ -140,7 +140,7 @@ bool Tech::IsViaRuleGenerateExist(std::string const &name) {
 }
 
 ViaRuleGenerate *Tech::AddViaRuleGenerate(std::string &name) {
-    PhyDbExpects(!IsViaRuleGenerateExist(name), "Macro name_ exists, cannot use it again");
+    PhyDBExpects(!IsViaRuleGenerateExist(name), "Macro name_ exists, cannot use it again");
     int id = via_rule_generates_.size();
     via_rule_generates_.emplace_back(name);
     via_rule_generate_2_id_[name] = id;
@@ -174,7 +174,7 @@ void Tech::SetPwellLayer(double width, double spacing, double op_spacing, double
 }
 
 void Tech::SetNpwellSpacing(double same_diff, double any_diff) {
-    PhyDbExpects(same_diff >= 0 && any_diff >= 0, "Negative values not allowed: Tech::SetNpwellSpacing()");
+    PhyDBExpects(same_diff >= 0 && any_diff >= 0, "Negative values not allowed: Tech::SetNpwellSpacing()");
     same_diff_spacing_ = same_diff;
     any_diff_spacing_ = any_diff;
 }

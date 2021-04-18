@@ -33,7 +33,7 @@ bool Macro::IsPinExist(std::string pin_name) {
 }
 
 Pin *Macro::AddPin(std::string &pin_name, SignalDirection direction, SignalUse use) {
-    PhyDbExpects(!IsPinExist(pin_name), "Pin " + pin_name + " exists in Macro " + GetName() + ", cannot add it again");
+    PhyDBExpects(!IsPinExist(pin_name), "Pin " + pin_name + " exists in Macro " + GetName() + ", cannot add it again");
     int id = (int) pins_.size();
     pin_2_id_[pin_name] = id;
     pins_.emplace_back(pin_name, direction, use);
@@ -114,7 +114,7 @@ void MacroWell::SetNwellRect(double lx, double ly, double ux, double uy) {
     is_n_set_ = true;
     n_rect_.Set(lx, ly, ux, uy);
     if (is_p_set_) {
-        //PhyDbExpects(n_rect_.LLY() == p_rect_.URY(), "N/P-well not abutted");
+        //PhyDBExpects(n_rect_.LLY() == p_rect_.URY(), "N/P-well not abutted");
     } else {
         p_n_edge_ = n_rect_.LLY();
     }
@@ -131,7 +131,7 @@ void MacroWell::SetPwellRect(double lx, double ly, double ux, double uy) {
     is_p_set_ = true;
     p_rect_.Set(lx, ly, ux, uy);
     if (is_n_set_) {
-        //PhyDbExpects(n_rect_.LLY() == p_rect_.URY(), "N/P-well not abutted");
+        //PhyDBExpects(n_rect_.LLY() == p_rect_.URY(), "N/P-well not abutted");
     } else {
         p_n_edge_ = p_rect_.URY();
     }

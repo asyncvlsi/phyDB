@@ -4,7 +4,7 @@ namespace phydb {
 
 void GcellGrid::SetDirection(XYDirection direction) {
     bool e = (direction == X) || (direction == Y);
-    PhyDbExpects(e, "gcellgrid direction is not X or Y");
+    PhyDBExpects(e, "gcellgrid direction is not X or Y");
     direction_ = direction;
 }
 

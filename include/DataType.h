@@ -102,7 +102,7 @@ class Rect2D {
     Rect2D(T llx, T lly, T urx, T ury) : ll(llx, lly), ur(urx, ury) { SanityCheck(); }
 
     bool IsLegal() { return (ll.x < ur.x && ll.y < ur.y); }
-    void SanityCheck() { PhyDbExpects(this->IsLegal(), "Illegal Rect2D: ll, ur, " + ll.Str() + ur.Str()); }
+    void SanityCheck() { PhyDBExpects(this->IsLegal(), "Illegal Rect2D: ll, ur, " + ll.Str() + ur.Str()); }
     bool IsEmpty() { return ll.IsEmpty() && ur.IsEmpty(); }
 
     void Set(Point2D<T> LL, Point2D<T> UR) {
@@ -162,7 +162,7 @@ class Rect3D {
     bool IsLegal() { //on the same layer is legal
         return (ll.x < ur.x && ll.y < ur.y && ll.z <= ur.z);
     }
-    void SanityCheck() { PhyDbExpects(this->IsLegal(), "Illegal Rect2D: ll, ur, " + ll.Str() + ur.Str()); }
+    void SanityCheck() { PhyDBExpects(this->IsLegal(), "Illegal Rect2D: ll, ur, " + ll.Str() + ur.Str()); }
 
     void set(Point3D<T> LL, Point3D<T> UR) {
         ll = LL;
@@ -184,7 +184,7 @@ class Range {
 
     Range() : begin(0), end(0) {}
     Range(T b, T e) : begin(b), end(e) {
-        PhyDbExpects(b < e, "Illegal Range, " + Str());
+        PhyDBExpects(b < e, "Illegal Range, " + Str());
     }
     std::string Str() {
         return "(" + std::to_string(begin) + ", " + std::to_string(end) + ")";

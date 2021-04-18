@@ -3,7 +3,7 @@
 
 #include "design.h"
 #include "tech.h"
-#include "acttranslator.h"
+#include "timingconstraints.h"
 
 namespace phydb {
 
@@ -13,7 +13,6 @@ class PhyDB {
 
     Tech *GetTechPtr();
     Design *GetDesignPtr();
-    ActTranslator *GetTranslatorPtr();
 
     /************************************************
     * The following APIs are for information in LEF
@@ -29,13 +28,8 @@ class PhyDB {
     vector<Layer> &GetLayersRef();
 
     bool IsMacroExisting(std::string const &macro_name);
-    void AddMacro(std::string &macro_name, void *act_macro_ptr = nullptr);
+    Macro *AddMacro(std::string &macro_name);
     Macro *GetMacroPtr(std::string const &macro_name);
-    Pin *AddMacroPin(std::string &macro_name,
-                     std::string &pin_name,
-                     SignalDirection direction,
-                     SignalUse use,
-                     void *act_macro_pin_ptr = nullptr);
 
     bool IsLefViaExisting(std::string const &name);
     LefVia *AddLefVia(std::string &name);
@@ -66,11 +60,10 @@ class PhyDB {
     DefVia *AddDefVia(std::string &name);
     DefVia *GetDefViaPtr(std::string const &name);
 
-    //TODO discuss: maybe IsExist does not need to be here? because it is only used in add?
     void SetComponentCount(int count);
     bool IsComponentExisting(std::string &component_name);
     Component *AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
-                            int llx, int lly, CompOrient orient, void *act_comp_ptr = nullptr);
+                            int llx, int lly, CompOrient orient);
     Component *GetComponentPtr(std::string &comp_name);
 
     void SetIoPinCount(int count);
@@ -85,7 +78,7 @@ class PhyDB {
     void AddCompPinToNet(std::string &comp_name,
                          std::string &pin_name,
                          std::string &net_name,
-                         void *act_comp_pin_ptr = nullptr); // this API does a sanity check
+                         void *act_comp_pin_ptr = nullptr); // this API will check sanity
     Net *GetNetPtr(std::string &net_name);
 
     SNet *AddSNet(std::string &net_name, SignalUse use);
@@ -94,6 +87,15 @@ class PhyDB {
 
     GcellGrid *AddGcellGrid(XYDirection direction, int start, int nBoundaries, int step);
     vector<GcellGrid> &GetGcellGridsRef();
+
+    /************************************************
+    * The following APIs are for setting up callback functions for timing-driven flow
+    * ************************************************/
+    void SetGetNumConstraintsCB(int (*callback_function)());
+    void SetGetRequiredMarginCB(double (*callback_function)(int));
+    void SetGetActualMarginCB(double (*callback_function)(int));
+    void SetGetWitnessCB(void (*callback_function)(int, std::vector<ActEdge> &, std::vector<ActEdge> &));
+    void SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<int> &));
 
     /************************************************
     * The following APIs are for information in CELL
@@ -122,7 +124,7 @@ class PhyDB {
   private:
     Tech tech_;
     Design design_;
-    ActTranslator act_translator_;
+    ActPhyDBTimingAPI act_phy_db_timing_api_;
 
     /****helper functions****/
     // splits a line into many word tokens

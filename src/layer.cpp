@@ -191,27 +191,27 @@ double WellLayer::GetOverhang() const {
 }
 
 void WellLayer::SetWidth(double width) {
-    PhyDbExpects(width >= 0, "Negative GetWidth not allowed: WellLayer::SetWidth()");
+    PhyDBExpects(width >= 0, "Negative GetWidth not allowed: WellLayer::SetWidth()");
     width_ = width;
 }
 
 void WellLayer::SetSpacing(double spacing) {
-    PhyDbExpects(spacing >= 0, "Negative GetSpacing not allowed: WellLayer::SetSpacing()");
+    PhyDBExpects(spacing >= 0, "Negative GetSpacing not allowed: WellLayer::SetSpacing()");
     spacing_ = spacing;
 }
 
 void WellLayer::SetOpSpacing(double op_spacing) {
-    PhyDbExpects(op_spacing >= 0, "Negative opposite GetSpacing not allowed: Layer::SetOpSpacing()");
+    PhyDBExpects(op_spacing >= 0, "Negative opposite GetSpacing not allowed: Layer::SetOpSpacing()");
     op_spacing_ = op_spacing;
 }
 
 void WellLayer::SetMaxPlugDist(double max_plug_dist) {
-    PhyDbExpects(max_plug_dist >= 0, "Negative max plug distance not allowed: WellLayer::SetMaxPlugDist()");
+    PhyDBExpects(max_plug_dist >= 0, "Negative max plug distance not allowed: WellLayer::SetMaxPlugDist()");
     max_plug_dist_ = max_plug_dist;
 }
 
 void WellLayer::SetOverhang(double overhang) {
-    PhyDbExpects(overhang >= 0, "Negative well/diffusion GetOverhang not allowed: WellLayer::SetOverhang()");
+    PhyDBExpects(overhang >= 0, "Negative well/diffusion GetOverhang not allowed: WellLayer::SetOverhang()");
     overhang_ = overhang;
 }
 

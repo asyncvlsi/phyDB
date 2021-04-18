@@ -8,11 +8,11 @@ void ClusterCol::SetName(string& name) {
 
 void ClusterCol::SetBotSignal(string& bot_signal) {
     bool e = (bot_signal == "GND") || (bot_signal == "VDD");
-    PhyDbExpects(e, "ERROR: bot signal in cluster col is not GND or VDD");
+    PhyDBExpects(e, "ERROR: bot signal in cluster col is not GND or VDD");
     bot_signal_ = bot_signal;
 }
 void ClusterCol::SetXRange(int lx, int ux) {
-    PhyDbExpects(lx < ux, "ERROR: in cluster col lx >= ux");
+    PhyDBExpects(lx < ux, "ERROR: in cluster col lx >= ux");
     lx_ = lx,
     ux_ = ux;
 }
@@ -23,7 +23,7 @@ void ClusterCol::SetUX(int ux) {
     ux_ = ux;
 }
 void ClusterCol::AddRow(int ly, int uy) {
-    PhyDbExpects(ly < uy, "ERROR: in cluster col lx >= ux");
+    PhyDBExpects(ly < uy, "ERROR: in cluster col lx >= ux");
     ly_.push_back(ly);
     uy_.push_back(uy);
 }

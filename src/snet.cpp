@@ -101,7 +101,7 @@ void SNet::SetName(string& name) {
 
 void SNet::SetUse(SignalUse use) {
     bool e = (use == GROUND || use == POWER);
-    PhyDbExpects(e, "special net use should be POWER or GROUND");
+    PhyDBExpects(e, "special net use should be POWER or GROUND");
     use_ = use;
 }
 

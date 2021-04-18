@@ -16,7 +16,7 @@ int getLefSite(lefrCallbackType_e type, lefiSite *site, lefiUserData data) {
         }
         phy_db_ptr->AddSite(site_name, site_class_name, site->sizeX(), site->sizeY());
     } else {
-        PhyDbExpects(false, "SITE SIZE information not provided");
+        PhyDBExpects(false, "SITE SIZE information not provided");
     }
     return 0;
 }
@@ -100,14 +100,14 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
     std::string pin_name(pin->name());
     std::string pin_direction(pin->direction());
     std::string pin_use(pin->use());
-    Pin *pin_ptr = phy_db_ptr->AddMacroPin(macro_name, pin_name, StrToSignalDirection(pin_direction), StrToSignalUse(pin_use));
+    Pin *pin_ptr = last_macro.AddPin(pin_name, StrToSignalDirection(pin_direction), StrToSignalUse(pin_use));
 
     if (enableOutput) {
         cout << "  PIN " << pin->name() << endl;
     }
 
     int numPorts = pin->numPorts();
-    PhyDbExpects(numPorts > 0, "No physical pins, Macro: " + last_macro.GetName() + ", pin: " + pin_name);
+    PhyDBExpects(numPorts > 0, "No physical pins, Macro: " + last_macro.GetName() + ", pin: " + pin_name);
 
     for (int i = 0; i < numPorts; ++i) {
         int numItems = pin->port(i)->numItems();
@@ -130,7 +130,7 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
                 double lly = pin->port(i)->getRect(j)->yl;
                 double urx = pin->port(i)->getRect(j)->xh;
                 double ury = pin->port(i)->getRect(j)->yh;
-                PhyDbExpects(layer_rect_ptr!= nullptr, "unexpected error in getLefPins()");
+                PhyDBExpects(layer_rect_ptr != nullptr, "unexpected error in getLefPins()");
                 layer_rect_ptr->AddRect(llx, lly, urx, ury);
 
                 if (enableOutput) {
@@ -191,7 +191,7 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
             double lly = geometry->getRect(i)->yl;
             double urx = geometry->getRect(i)->xh;
             double ury = geometry->getRect(i)->yh;
-            PhyDbExpects(layer_rect_ptr!= nullptr, "unexpected error in getLefObs()");
+            PhyDBExpects(layer_rect_ptr != nullptr, "unexpected error in getLefObs()");
             layer_rect_ptr->AddRect(llx, lly, urx, ury);
             if (enableOutput) {
                 cout << "      RECT " << llx << " " << lly << " " << urx << " " << ury << " ;" << endl;
@@ -617,7 +617,7 @@ int getDefCountNumber(defrCallbackType_e type, int num, defiUserData data) {
         }
         default : {
             name = "BOGUS";
-            PhyDbExpects(false, "Unsupported count types: BOGUS");
+            PhyDBExpects(false, "Unsupported count types: BOGUS");
         }
     }
     return 0;

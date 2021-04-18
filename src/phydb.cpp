@@ -16,10 +16,6 @@ Design *PhyDB::GetDesignPtr() {
     return &design_;
 }
 
-ActTranslator *PhyDB::GetTranslatorPtr() {
-    return &act_translator_;
-}
-
 void PhyDB::SetDatabaseMicron(int database_micron) {
     tech_.SetDatabaseMicron(database_micron);
 }
@@ -56,61 +52,12 @@ bool PhyDB::IsMacroExisting(std::string const &macro_name) {
     return tech_.IsMacroExist(macro_name);
 }
 
-void PhyDB::AddMacro(std::string &macro_name, void *act_macro_ptr) {
-    tech_.AddMacro(macro_name);
-
-    if (act_macro_ptr != nullptr) {
-        bool is_act_ptr_existing =
-            act_translator_.macro_act_2_id_.find(act_macro_ptr) != act_translator_.macro_act_2_id_.end();
-        if (is_act_ptr_existing) {
-            int id = act_translator_.macro_act_2_id_[act_macro_ptr];
-            std::string error_msg =
-                "Macro " + tech_.macros_[id].GetName() + " has the same Act pointer as " + macro_name;
-            PhyDbExpects(false, error_msg);
-        }
-        int id = (int) tech_.macros_.size() - 1;
-        std::pair<void *, int> tmp_pair_0(act_macro_ptr, id);
-        std::pair<int, void *> tmp_pair_1(id, act_macro_ptr);
-        act_translator_.macro_act_2_id_.insert(tmp_pair_0);
-        act_translator_.macro_id_2_act_.insert(tmp_pair_1);
-    }
+Macro *PhyDB::AddMacro(std::string &macro_name) {
+    return tech_.AddMacro(macro_name);
 }
 
 Macro *PhyDB::GetMacroPtr(std::string const &macro_name) {
     return tech_.GetMacroPtr(macro_name);
-}
-
-Pin *PhyDB::AddMacroPin(std::string &macro_name,
-                        std::string &pin_name,
-                        SignalDirection direction,
-                        SignalUse use,
-                        void *act_macro_pin_ptr) {
-    Macro *macro_ptr = GetMacroPtr(macro_name);
-    PhyDbExpects(macro_ptr != nullptr, "Cannot find macro, cannot add pin, " + macro_name);
-    auto *ret = macro_ptr->AddPin(pin_name, direction, use);
-
-    if (act_macro_pin_ptr != nullptr) {
-        bool is_act_ptr_existing =
-            act_translator_.macro_pin_act_2_id_.find(act_macro_pin_ptr) != act_translator_.macro_pin_act_2_id_.end();
-        if (is_act_ptr_existing) {
-            auto id_pair = act_translator_.macro_pin_act_2_id_[act_macro_pin_ptr];
-            Macro &macro = tech_.macros_[id_pair.first];
-            Pin &pin = macro.GetPinsRef()[id_pair.second];
-            std::string error_msg =
-                "Macro pin: " + macro.GetName() + " " + pin.GetName()
-                    + " has the same Act pointer as " + macro_name + " " + pin_name;
-            PhyDbExpects(false, error_msg);
-        }
-        int macro_id = tech_.macro_2_id_[macro_name];
-        int pin_id = macro_ptr->GetPinId(pin_name);
-        std::pair<int, int> id_pair(macro_id, pin_id);
-        std::pair<void *, std::pair<int, int>> tmp_pair_0(act_macro_pin_ptr, id_pair);
-        std::pair<std::pair<int, int>, void *> tmp_pair_1(id_pair, act_macro_pin_ptr);
-        act_translator_.macro_pin_act_2_id_.insert(tmp_pair_0);
-        act_translator_.macro_pin_id_2_act_.insert(tmp_pair_1);
-    }
-    
-    return ret;
 }
 
 bool PhyDB::IsLefViaExisting(std::string const &name) {
@@ -186,26 +133,8 @@ vector<Row> &PhyDB::GetRowVec() {
 }
 
 Component *PhyDB::AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
-                               int llx, int lly, CompOrient orient, void *act_comp_ptr) {
-    auto *ret = design_.AddComponent(comp_name, macro_name, place_status, llx, lly, orient);
-
-    if (act_comp_ptr != nullptr) {
-        bool is_act_ptr_existing =
-            act_translator_.component_act_2_id_.find(act_comp_ptr) != act_translator_.component_act_2_id_.end();
-        if (is_act_ptr_existing) {
-            int id = act_translator_.component_act_2_id_[act_comp_ptr];
-            std::string error_msg =
-                "Component " + design_.components_[id].GetName() + " has the same Act pointer as " + comp_name;
-            PhyDbExpects(false, error_msg);
-        }
-        int id = (int) design_.components_.size() - 1;
-        std::pair<void *, int> tmp_pair_0(act_comp_ptr, id);
-        std::pair<int, void *> tmp_pair_1(id, act_comp_ptr);
-        act_translator_.component_act_2_id_.insert(tmp_pair_0);
-        act_translator_.component_id_2_act_.insert(tmp_pair_1);
-    }
-
-    return ret;
+                               int llx, int lly, CompOrient orient) {
+    return design_.AddComponent(comp_name, macro_name, place_status, llx, lly, orient);
 }
 
 Component *PhyDB::GetComponentPtr(std::string &comp_name) {
@@ -252,37 +181,35 @@ Net *PhyDB::AddNet(std::string &net_name, double weight, void *act_net_ptr) {
     auto *ret = design_.AddNet(net_name, weight);
 
     if (act_net_ptr != nullptr) {
-        bool is_act_ptr_existing =
-            act_translator_.net_act_2_id_.find(act_net_ptr) != act_translator_.net_act_2_id_.end();
-        if (is_act_ptr_existing) {
-            int id = act_translator_.net_act_2_id_[act_net_ptr];
+        if (act_phy_db_timing_api_.IsActNetPtrExisting(act_net_ptr)) {
+            int id = act_phy_db_timing_api_.ActNetPtr2Id(act_net_ptr);
             std::string error_msg =
                 "Net " + design_.nets_[id].GetName() + " has the same Act pointer as " + net_name;
-            PhyDbExpects(false, error_msg);
+            PhyDBExpects(false, error_msg);
         }
         int id = (int) design_.nets_.size() - 1;
-        std::pair<void *, int> tmp_pair_0(act_net_ptr, id);
-        std::pair<int, void *> tmp_pair_1(id, act_net_ptr);
-        act_translator_.net_act_2_id_.insert(tmp_pair_0);
-        act_translator_.net_id_2_act_.insert(tmp_pair_1);
+        act_phy_db_timing_api_.AddActNetPtrIdPair(act_net_ptr, id);
     }
 
     return ret;
 }
 
 void PhyDB::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
-    PhyDbExpects(IsIoPinExisting(iopin_name), "Cannot add a nonexistent iopin to a net: " + iopin_name);
-    PhyDbExpects(IsNetExisting(net_name), "Cannot add iopin to a nonexistent Net: " + net_name);
+    PhyDBExpects(IsIoPinExisting(iopin_name), "Cannot add a nonexistent iopin to a net: " + iopin_name);
+    PhyDBExpects(IsNetExisting(net_name), "Cannot add iopin to a nonexistent Net: " + net_name);
     design_.AddIoPinToNet(iopin_name, net_name);
 }
 
-void PhyDB::AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name, void *act_comp_pin_ptr) {
-    PhyDbExpects(IsNetExisting(net_name), "Cannot add a component pin to a nonexistent Net: " + net_name);
-    PhyDbExpects(IsComponentExisting(comp_name), "Cannot add a nonexistent component to a net: " + comp_name);
+void PhyDB::AddCompPinToNet(std::string &comp_name,
+                            std::string &pin_name,
+                            std::string &net_name,
+                            void *act_comp_pin_ptr) {
+    PhyDBExpects(IsNetExisting(net_name), "Cannot add a component pin to a nonexistent Net: " + net_name);
+    PhyDBExpects(IsComponentExisting(comp_name), "Cannot add a nonexistent component to a net: " + comp_name);
     Component *comp_ptr = GetComponentPtr(comp_name);
     std::string macro_name = comp_ptr->GetMacroName();
     Macro *macro_ptr = GetMacroPtr(macro_name);
-    PhyDbExpects(macro_ptr->IsPinExist(pin_name),
+    PhyDBExpects(macro_ptr->IsPinExist(pin_name),
                  "Macro " + macro_name + " does not contain a pin with name " + pin_name);
     design_.AddCompPinToNet(comp_name, pin_name, net_name);
 
@@ -290,24 +217,17 @@ void PhyDB::AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::
         int comp_id = design_.component_2_id_[comp_name];
         int pin_id = macro_ptr->GetPinId(pin_name);
 
-        bool is_act_ptr_existing =
-            act_translator_.component_pin_act_2_id_.find(act_comp_pin_ptr) != act_translator_.component_pin_act_2_id_.end();
-        if (is_act_ptr_existing) {
-            auto id_pair = act_translator_.component_pin_act_2_id_[act_comp_pin_ptr];
+        if (act_phy_db_timing_api_.IsActComPinPtrExisting(act_comp_pin_ptr)) {
+            auto id_pair = act_phy_db_timing_api_.ActCompPinPtr2Id(act_comp_pin_ptr);
             Component &comp = design_.components_[id_pair.first];
             Macro *tmp_macro_ptr = GetMacroPtr(comp.GetMacroName());
             Pin &pin = tmp_macro_ptr->GetPinsRef()[id_pair.second];
             std::string error_msg =
                 "Component pin: " + comp.GetName() + " " + pin.GetName()
                     + " has the same Act pointer as " + comp_name + " " + pin_name;
-            PhyDbExpects(false, error_msg);
+            PhyDBExpects(false, error_msg);
         }
-
-        std::pair<int, int> id_pair(comp_id, pin_id);
-        std::pair<void *, std::pair<int, int>> tmp_pair_0(act_comp_pin_ptr, id_pair);
-        std::pair<std::pair<int, int>, void *> tmp_pair_1(id_pair, act_comp_pin_ptr);
-        act_translator_.component_pin_act_2_id_.insert(tmp_pair_0);
-        act_translator_.component_pin_id_2_act_.insert(tmp_pair_1);
+        act_phy_db_timing_api_.AddActCompPinPtrIdPair(act_comp_pin_ptr, comp_id, pin_id);
     }
 }
 
@@ -341,7 +261,7 @@ void PhyDB::SetNpwellSpacing(double same_spacing, double any_spacing) {
 
 MacroWell *PhyDB::AddMacrowell(std::string &macro_name) {
     Macro *macro_ptr = GetMacroPtr(macro_name);
-    PhyDbExpects(macro_ptr != nullptr, "Macro does not exist, cannot add well info: " + macro_name);
+    PhyDBExpects(macro_ptr != nullptr, "Macro does not exist, cannot add well info: " + macro_name);
     tech_.wells_.emplace_back(macro_ptr);
     macro_ptr->SetWellPtr(&(tech_.wells_.back()));
     return macro_ptr->GetWellPtr();
@@ -361,6 +281,26 @@ GcellGrid *PhyDB::AddGcellGrid(XYDirection direction, int start, int nBoundaries
 
 vector<GcellGrid> &PhyDB::GetGcellGridsRef() {
     return design_.GetGcellGridsRef();
+}
+
+void PhyDB::SetGetNumConstraintsCB(int (*callback_function)()) {
+    act_phy_db_timing_api_.SetGetNumConstraintsCB(callback_function);
+}
+
+void PhyDB::SetGetRequiredMarginCB(double (*callback_function)(int)) {
+    act_phy_db_timing_api_.SetGetRequiredMarginCB(callback_function);
+}
+
+void PhyDB::SetGetActualMarginCB(double (*callback_function)(int)) {
+    act_phy_db_timing_api_.SetGetActualMarginCB(callback_function);
+}
+
+void PhyDB::SetGetWitnessCB(void (*callback_function)(int, std::vector<ActEdge> &, std::vector<ActEdge> &)) {
+    act_phy_db_timing_api_.SetGetWitnessCB(callback_function);
+}
+
+void PhyDB::SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<int> &)) {
+    act_phy_db_timing_api_.SetGetViolatedTimingConstraintsCB(callback_function);
 }
 
 void PhyDB::ReadLef(string const &lefFileName) {
