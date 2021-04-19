@@ -38,21 +38,6 @@ int getDefVias(defrCallbackType_e, defiVia *, defiUserData);
 int getDefGcellGrid(defrCallbackType_e, defiGcellGrid *, defiUserData);
 int getDefRow(defrCallbackType_e, defiRow *, defiUserData);
 
-int writeVersion(defwCallbackType_e c, defiUserData ud);
-int writeBusBit(defwCallbackType_e c, defiUserData ud);
-int writeDivider(defwCallbackType_e c, defiUserData ud);
-int writeUnits(defwCallbackType_e c, defiUserData ud);
-int writeRows(defwCallbackType_e c, defiUserData ud);
-int writeTracks(defwCallbackType_e c, defiUserData ud);
-int writeComponents(defwCallbackType_e c, defiUserData ud);
-int writeDieArea(defwCallbackType_e c, defiUserData ud);
-int writeDesignName(defwCallbackType_e c, defiUserData ud);
-int writeDesignEnd(defwCallbackType_e c, defiUserData ud);
-int writeSNet(defwCallbackType_e c, defiUserData ud);
-int writeIOPins(defwCallbackType_e c, defiUserData ud);
-int writeNets(defwCallbackType_e c, defiUserData ud);
-int clusterWriteSNet(defwCallbackType_e c, defiUserData ud);
-
 void Si2ReadLef(PhyDB *phy_db_ptr, string const &lefFileName);
 void Si2ReadDef(PhyDB *phy_db_ptr, string const &defFileName);
 

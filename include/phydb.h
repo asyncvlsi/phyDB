@@ -121,6 +121,10 @@ class PhyDB {
     void ReadCell(string const &cellFileName);
     void ReadCluster(string const &clusterFileName);
 
+    void WriteLef(string const &lefFileName);
+    void WriteDef(string const &defFileName);
+    void WriteCluster(string const &clusterFileName);
+
   private:
     Tech tech_;
     Design design_;

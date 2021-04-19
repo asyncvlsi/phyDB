@@ -1,4 +1,5 @@
 #include "lefdefparser.h"
+#include "phydb_header.h"
 #include <algorithm>
 namespace phydb {
 
@@ -130,7 +131,7 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
                 double y1 = pin->port(i)->getRect(j)->yl;
                 double x2 = pin->port(i)->getRect(j)->xh;
                 double y2 = pin->port(i)->getRect(j)->yh;
-                PhyDbExpects(layer_rect_ptr!= nullptr, "unexpected error in getLefPins()");
+                PhyDBExpects(layer_rect_ptr!= nullptr, "unexpected error in getLefPins()");
                 layer_rect_ptr->AddRect(min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
 
                 if (enableOutput) {
@@ -191,7 +192,7 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
             double y1 = geometry->getRect(i)->yl;
             double x2 = geometry->getRect(i)->xh;
             double y2 = geometry->getRect(i)->yh;
-            PhyDbExpects(layer_rect_ptr!= nullptr, "unexpected error in getLefObs()");
+            PhyDBExpects(layer_rect_ptr!= nullptr, "unexpected error in getLefObs()");
             layer_rect_ptr->AddRect(min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
             if (enableOutput) {
                 cout << "      RECT " << min(x1, x2) << " " << min(y1, y2) << " " << max(x1, x2) << " " << max(y1, y2) << " ;" << endl;
@@ -1088,10 +1089,9 @@ void Si2ReadDef(PhyDB *phy_db_ptr, string const &defFileName) {
     }
     fclose(f);
 
-    //numPins = readPinCnt;
-
     defrClear();
 }
+
 
 }
 

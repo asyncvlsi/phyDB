@@ -5,6 +5,7 @@
 #include <fstream>
 
 #include "lefdefparser.h"
+#include "lefdefwriter.h"
 
 namespace phydb {
 
@@ -522,4 +523,35 @@ void PhyDB::StrSplit(std::string &line, std::vector<std::string> &res) {
     }
 }
 
+
+void PhyDB::WriteLef(string const &lefFileName) {
+    Si2WriteLef(this, lefFileName);
+}
+
+void PhyDB::WriteDef(string const &defFileName) {
+    Si2WriteDef(this, defFileName);
+}
+
+void PhyDB::WriteCluster(string const & clusterFileName) {
+    std::ofstream outfile(clusterFileName.c_str());
+    if (outfile.is_open()) {
+        std::cout << "writing cluster file: " << clusterFileName << "\n";
+    } else {
+        std::cout << "ERROR: cannot open output cluster file " << clusterFileName << std::endl;
+        exit(1);
+    }
+
+    auto cluster_cols = this->GetClusterColsRef();
+    for(auto cluster_col : cluster_cols) {
+        outfile << "STRIP " << cluster_col.GetName() << std::endl;
+        outfile << cluster_col.GetLX() << " " << cluster_col.GetUX() << " " << cluster_col.GetBotSignal() << std::endl;
+        auto ly = cluster_col.GetLY();
+        auto uy = cluster_col.GetUY();
+        for(int i = 0; i < ly.size(); i++) {
+            outfile << ly[i] << " " << uy[i] << std::endl;
+        }
+        outfile << "END " << cluster_col.GetName() << std::endl;
+        outfile << std::endl;
+    }
+}
 }
