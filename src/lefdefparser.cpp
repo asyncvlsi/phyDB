@@ -1,5 +1,5 @@
 #include "lefdefparser.h"
-
+#include <algorithm>
 namespace phydb {
 
 int getLefSite(lefrCallbackType_e type, lefiSite *site, lefiUserData data) {
@@ -126,15 +126,15 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
                     cout << "    LAYER " << layer_name << " ;" << endl;
                 }
             } else if (itemType == 8) {
-                double llx = pin->port(i)->getRect(j)->xl;
-                double lly = pin->port(i)->getRect(j)->yl;
-                double urx = pin->port(i)->getRect(j)->xh;
-                double ury = pin->port(i)->getRect(j)->yh;
-                PhyDBExpects(layer_rect_ptr != nullptr, "unexpected error in getLefPins()");
-                layer_rect_ptr->AddRect(llx, lly, urx, ury);
+                double x1 = pin->port(i)->getRect(j)->xl;
+                double y1 = pin->port(i)->getRect(j)->yl;
+                double x2 = pin->port(i)->getRect(j)->xh;
+                double y2 = pin->port(i)->getRect(j)->yh;
+                PhyDbExpects(layer_rect_ptr!= nullptr, "unexpected error in getLefPins()");
+                layer_rect_ptr->AddRect(min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
 
                 if (enableOutput) {
-                    cout << "      RECT " << llx << " " << lly << " " << urx << " " << ury << " ;" << endl;
+                    cout << "      RECT " << min(x1, x2) << " " << min(y1, y2) << " " << max(x1, x2) << " " << max(y1, y2) << " ;" << endl;
                 }
             } else {
                 cout << "unsupported lefiGeometries!" << endl;
@@ -187,14 +187,14 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
                 cout << "    LAYER " << tmpLayerRect.layer_name_ << " ;" << endl;
             }
         } else if (geometry->itemType(i) == lefiGeomRectE) {
-            double llx = geometry->getRect(i)->xl;
-            double lly = geometry->getRect(i)->yl;
-            double urx = geometry->getRect(i)->xh;
-            double ury = geometry->getRect(i)->yh;
-            PhyDBExpects(layer_rect_ptr != nullptr, "unexpected error in getLefObs()");
-            layer_rect_ptr->AddRect(llx, lly, urx, ury);
+            double x1 = geometry->getRect(i)->xl;
+            double y1 = geometry->getRect(i)->yl;
+            double x2 = geometry->getRect(i)->xh;
+            double y2 = geometry->getRect(i)->yh;
+            PhyDbExpects(layer_rect_ptr!= nullptr, "unexpected error in getLefObs()");
+            layer_rect_ptr->AddRect(min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
             if (enableOutput) {
-                cout << "      RECT " << llx << " " << lly << " " << urx << " " << ury << " ;" << endl;
+                cout << "      RECT " << min(x1, x2) << " " << min(y1, y2) << " " << max(x1, x2) << " " << max(y1, y2) << " ;" << endl;
             }
         } else {
             cout << "Warning: unsupported OBS" << endl;
@@ -715,10 +715,10 @@ int getDefIOPins(defrCallbackType_e type, defiPin *pin, defiUserData data) {
         exit(1);
     } else {
         for (int i = 0; i < pin->numLayer(); ++i) {
-            int llx = 0, lly = 0, urx = 0, ury = 0;
-            pin->bounds(i, &llx, &lly, &urx, &ury);
+            int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+            pin->bounds(i, &x1, &y1, &x2, &y2);
             std::string layer_name(pin->layer(i));
-            io_pin_ptr->SetShape(layer_name, llx, lly, urx, ury);
+            io_pin_ptr->SetShape(layer_name, min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
         }
     }
 
@@ -838,9 +838,9 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
                         break;
                     }
                     case DEFIPATH_RECT: {
-                        int lx, ly, ux, uy;
-                        path->getViaRect(&lx, &ly, &ux, &uy);
-                        phydb_path->SetRect(lx, ly, ux, uy);
+                        int x1, y1, x2, y2;
+                        path->getViaRect(&x1, &y1, &x2, &y2);
+                        phydb_path->SetRect(min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
                         break;
                     }
                     case DEFIPATH_VIRTUALPOINT: {
