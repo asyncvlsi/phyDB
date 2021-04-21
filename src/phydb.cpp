@@ -201,10 +201,7 @@ void PhyDB::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
     design_.AddIoPinToNet(iopin_name, net_name);
 }
 
-void PhyDB::AddCompPinToNet(std::string &comp_name,
-                            std::string &pin_name,
-                            std::string &net_name,
-                            void *act_comp_pin_ptr) {
+void PhyDB::AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name) {
     PhyDBExpects(IsNetExisting(net_name), "Cannot add a component pin to a nonexistent Net: " + net_name);
     PhyDBExpects(IsComponentExisting(comp_name), "Cannot add a nonexistent component to a net: " + comp_name);
     Component *comp_ptr = GetComponentPtr(comp_name);
@@ -213,23 +210,30 @@ void PhyDB::AddCompPinToNet(std::string &comp_name,
     PhyDBExpects(macro_ptr->IsPinExist(pin_name),
                  "Macro " + macro_name + " does not contain a pin with name " + pin_name);
     design_.AddCompPinToNet(comp_name, pin_name, net_name);
+}
 
-    if (act_comp_pin_ptr != nullptr) {
-        int comp_id = design_.component_2_id_[comp_name];
-        int pin_id = macro_ptr->GetPinId(pin_name);
+void PhyDB::BindPhydbPinToActPin(std::string &comp_name, std::string &pin_name, void *act_comp_pin_ptr) {
+    PhyDBExpects(IsComponentExisting(comp_name), "Cannot find component: " + comp_name);
+    Component *comp_ptr = GetComponentPtr(comp_name);
+    std::string macro_name = comp_ptr->GetMacroName();
+    Macro *macro_ptr = GetMacroPtr(macro_name);
+    PhyDBExpects(macro_ptr->IsPinExist(pin_name),
+                 "Macro " + macro_name + " does not contain a pin with name " + pin_name);
 
-        if (act_phy_db_timing_api_.IsActComPinPtrExisting(act_comp_pin_ptr)) {
-            auto id_pair = act_phy_db_timing_api_.ActCompPinPtr2Id(act_comp_pin_ptr);
-            Component &comp = design_.components_[id_pair.comp_id];
-            Macro *tmp_macro_ptr = GetMacroPtr(comp.GetMacroName());
-            Pin &pin = tmp_macro_ptr->GetPinsRef()[id_pair.pin_id];
-            std::string error_msg =
-                "Component pin: " + comp.GetName() + " " + pin.GetName()
-                    + " has the same Act pointer as " + comp_name + " " + pin_name;
-            PhyDBExpects(false, error_msg);
-        }
-        act_phy_db_timing_api_.AddActCompPinPtrIdPair(act_comp_pin_ptr, comp_id, pin_id);
+    int comp_id = design_.component_2_id_[comp_name];
+    int pin_id = macro_ptr->GetPinId(pin_name);
+
+    if (act_phy_db_timing_api_.IsActComPinPtrExisting(act_comp_pin_ptr)) {
+        auto id_pair = act_phy_db_timing_api_.ActCompPinPtr2Id(act_comp_pin_ptr);
+        Component &comp = design_.components_[id_pair.comp_id];
+        Macro *tmp_macro_ptr = GetMacroPtr(comp.GetMacroName());
+        Pin &pin = tmp_macro_ptr->GetPinsRef()[id_pair.pin_id];
+        std::string error_msg =
+            "Component pin: " + comp.GetName() + " " + pin.GetName()
+                + " has the same Act pointer as " + comp_name + " " + pin_name;
+        PhyDBExpects(false, error_msg);
     }
+    act_phy_db_timing_api_.AddActCompPinPtrIdPair(act_comp_pin_ptr, comp_id, pin_id);
 }
 
 Net *PhyDB::GetNetPtr(std::string &net_name) {
@@ -523,7 +527,6 @@ void PhyDB::StrSplit(std::string &line, std::vector<std::string> &res) {
     }
 }
 
-
 void PhyDB::WriteLef(string const &lefFileName) {
     Si2WriteLef(this, lefFileName);
 }
@@ -532,7 +535,7 @@ void PhyDB::WriteDef(string const &defFileName) {
     Si2WriteDef(this, defFileName);
 }
 
-void PhyDB::WriteCluster(string const & clusterFileName) {
+void PhyDB::WriteCluster(string const &clusterFileName) {
     std::ofstream outfile(clusterFileName.c_str());
     if (outfile.is_open()) {
         std::cout << "writing cluster file: " << clusterFileName << "\n";
@@ -542,12 +545,12 @@ void PhyDB::WriteCluster(string const & clusterFileName) {
     }
 
     auto cluster_cols = this->GetClusterColsRef();
-    for(auto cluster_col : cluster_cols) {
+    for (auto cluster_col : cluster_cols) {
         outfile << "STRIP " << cluster_col.GetName() << std::endl;
         outfile << cluster_col.GetLX() << " " << cluster_col.GetUX() << " " << cluster_col.GetBotSignal() << std::endl;
         auto ly = cluster_col.GetLY();
         auto uy = cluster_col.GetUY();
-        for(int i = 0; i < ly.size(); i++) {
+        for (int i = 0; i < ly.size(); i++) {
             outfile << ly[i] << " " << uy[i] << std::endl;
         }
         outfile << "END " << cluster_col.GetName() << std::endl;

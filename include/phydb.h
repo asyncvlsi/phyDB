@@ -74,11 +74,9 @@ class PhyDB {
     void SetNetCount(int count);
     bool IsNetExisting(std::string &net_name);
     Net *AddNet(std::string &net_name, double weight = 1, void *act_net_ptr = nullptr);
-    void AddIoPinToNet(std::string &iopin_name, std::string &net_name); // this API does a sanity check
-    void AddCompPinToNet(std::string &comp_name,
-                         std::string &pin_name,
-                         std::string &net_name,
-                         void *act_comp_pin_ptr = nullptr); // this API will check sanity
+    void AddIoPinToNet(std::string &iopin_name, std::string &net_name);
+    void AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name);
+    void BindPhydbPinToActPin(std::string &comp_name, std::string &pin_name, void *act_comp_pin_ptr);
     Net *GetNetPtr(std::string &net_name);
 
     SNet *AddSNet(std::string &net_name, SignalUse use);
