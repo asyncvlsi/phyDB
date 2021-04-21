@@ -3,7 +3,7 @@
 
 #include "design.h"
 #include "tech.h"
-#include "timingconstraints.h"
+#include "actphydbtimingapi.h"
 
 namespace phydb {
 
@@ -92,8 +92,8 @@ class PhyDB {
     * The following APIs are for setting up callback functions for timing-driven flow
     * ************************************************/
     void SetGetNumConstraintsCB(int (*callback_function)());
-    void SetGetRequiredMarginCB(double (*callback_function)(int));
-    void SetGetActualMarginCB(double (*callback_function)(int));
+    void SetUpdateTimingIncremental(void (*callback_function)());
+    void SetGetSlackCB(double (*callback_function)(int));
     void SetGetWitnessCB(void (*callback_function)(int, std::vector<ActEdge> &, std::vector<ActEdge> &));
     void SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<int> &));
 

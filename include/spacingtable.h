@@ -1,7 +1,7 @@
 #ifndef SPACINGTABLE_H
 #define SPACINGTABLE_H
 
-#include "phydb_header.h"
+#include "logging.h"
 
 namespace phydb {
 

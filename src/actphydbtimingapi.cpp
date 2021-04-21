@@ -2,9 +2,9 @@
 // Created by yihang on 4/18/21.
 //
 
-#include "timingconstraints.h"
+#include "actphydbtimingapi.h"
 
-#include "phydb_header.h"
+#include "logging.h"
 
 namespace phydb {
 
@@ -30,19 +30,39 @@ bool ActPhyDBTimingAPI::IsActComPinPtrExisting(void *act_comp) {
     return component_pin_act_2_id_.find(act_comp) != component_pin_act_2_id_.end();
 }
 
-std::pair<int, int> ActPhyDBTimingAPI::ActCompPinPtr2Id(void *act_comp) {
+PhydbPin ActPhyDBTimingAPI::ActCompPinPtr2Id(void *act_comp) {
     if (IsActComPinPtrExisting(act_comp)) {
         return component_pin_act_2_id_[act_comp];
     }
-    return std::make_pair<int, int>(-1, -1);
+    return PhydbPin(-1, -1);
 }
 
 void ActPhyDBTimingAPI::AddActCompPinPtrIdPair(void *act_comp, int comp_id, int pin_id) {
-    std::pair<int, int> id_pair(comp_id, pin_id);
-    std::pair<void *, std::pair<int, int>> tmp_pair_0(act_comp, id_pair);
-    std::pair<std::pair<int, int>, void *> tmp_pair_1(id_pair, act_comp);
+    PhydbPin id_pair(comp_id, pin_id);
+    std::pair<void *, PhydbPin> tmp_pair_0(act_comp, id_pair);
+    std::pair<PhydbPin, void *> tmp_pair_1(id_pair, act_comp);
     component_pin_act_2_id_.insert(tmp_pair_0);
     component_pin_id_2_act_.insert(tmp_pair_1);
+}
+
+void ActPhyDBTimingAPI::SetGetNumConstraintsCB(int (*callback_function)()) {
+    GetNumConstraintsCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetUpdateTimingIncrementalCB(void (*callback_function)()) {
+    UpdateTimingIncrementalCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetGetSlackCB(double (*callback_function)(int)) {
+    GetActualMarginCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetGetWitnessCB(void (*callback_function)(int, std::vector<ActEdge> &, std::vector<ActEdge> &)) {
+    GetWitnessCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<int> &)) {
+    GetViolatedTimingConstraintsCB = callback_function;
 }
 
 int ActPhyDBTimingAPI::GetNumConstraints() {
@@ -57,21 +77,15 @@ void ActPhyDBTimingAPI::UpdateTimingIncremental() {
     }
 }
 
-double ActPhyDBTimingAPI::GetRequiredMargin(int tc_num) {
-    if (GetRequiredMarginCB != nullptr) {
-        return GetRequiredMarginCB(tc_num);
-    }
-}
-
-double ActPhyDBTimingAPI::GetActualMargin(int tc_num) {
+double ActPhyDBTimingAPI::GetSlack(int tc_num) {
     if (GetActualMarginCB != nullptr) {
         return GetActualMarginCB(tc_num);
     }
 }
 
 void ActPhyDBTimingAPI::GetWitness(int tc_num,
-                                   std::vector<PhyDBEdge> &phydb_fast_path,
-                                   std::vector<PhyDBEdge> &phydb_slow_path) {
+                                   std::vector<PhydbEdge> &phydb_fast_path,
+                                   std::vector<PhydbEdge> &phydb_slow_path) {
     if (GetWitnessCB != nullptr) {
         std::vector<ActEdge> act_fast_path;
         std::vector<ActEdge> act_slow_path;
@@ -89,20 +103,20 @@ void ActPhyDBTimingAPI::GetViolatedTimingConstraints(std::vector<int> &violated_
     }
 }
 
-void ActPhyDBTimingAPI::Translate(std::vector<ActEdge> &act_path, std::vector<PhyDBEdge> &phydb_path) {
+void ActPhyDBTimingAPI::Translate(std::vector<ActEdge> &act_path, std::vector<PhydbEdge> &phydb_path) {
     phydb_path.clear();
 
     for (auto &act_edge: act_path) {
-        PhyDBEdge &phydb_edge = phydb_path.emplace_back();
-        PhyDBExpects(IsActComPinPtrExisting(act_edge.driv_pin),
-                     "Cannot translate ActEdge to PhyDBEdge, ActEdge not in the database");
-        PhyDBExpects(IsActComPinPtrExisting(act_edge.load_pin),
-                     "Cannot translate ActEdge to PhyDBEdge, ActEdge not in the database");
+        PhydbEdge &phydb_edge = phydb_path.emplace_back();
+        PhyDBExpects(IsActComPinPtrExisting(act_edge.source),
+                     "Cannot translate ActEdge to PhydbEdge, ActEdge not in the database");
+        PhyDBExpects(IsActComPinPtrExisting(act_edge.target),
+                     "Cannot translate ActEdge to PhydbEdge, ActEdge not in the database");
         PhyDBExpects(IsActNetPtrExisting(act_edge.net_ptr),
-                     "Cannot translate ActEdge to PhyDBEdge, ActEdge not in the database");
+                     "Cannot translate ActEdge to PhydbEdge, ActEdge not in the database");
         PhyDBExpects(act_edge.delay >= 0, "Negative delay?");
-        phydb_edge.driv_pin = ActCompPinPtr2Id(act_edge.driv_pin);
-        phydb_edge.load_pin = ActCompPinPtr2Id(act_edge.load_pin);
+        phydb_edge.source = ActCompPinPtr2Id(act_edge.source);
+        phydb_edge.target = ActCompPinPtr2Id(act_edge.target);
         phydb_edge.net_index = ActNetPtr2Id(act_edge.net_ptr);
         phydb_edge.delay = act_edge.delay;
     }

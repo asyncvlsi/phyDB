@@ -1,8 +1,8 @@
 #ifndef IOPIN_H
 #define IOPIN_H
 
-#include "DataType.h"
-#include "phydb_header.h"
+#include "datatype.h"
+#include "logging.h"
 #include "enumtypes.h"
 
 namespace phydb {

@@ -1,7 +1,7 @@
 #ifndef VIARULEGENERATE_H
 #define VIARULEGENERATE_H
 
-#include "DataType.h"
+#include "datatype.h"
 
 namespace phydb {
 

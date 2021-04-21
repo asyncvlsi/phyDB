@@ -1,7 +1,7 @@
 #ifndef ROW_H
 #define ROW_H
 
-#include "phydb_header.h"
+#include "logging.h"
 
 namespace phydb {
 

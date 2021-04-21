@@ -1,7 +1,7 @@
 #ifndef TRACK_H
 #define TRACK_H
 
-#include "phydb_header.h"
+#include "logging.h"
 #include "enumtypes.h"
 
 namespace phydb {

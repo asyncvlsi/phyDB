@@ -1,7 +1,7 @@
 #ifndef PIN_H
 #define PIN_H
 
-#include "DataType.h"
+#include "datatype.h"
 #include "enumtypes.h"
 
 namespace phydb {

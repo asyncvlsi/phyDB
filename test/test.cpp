@@ -1,4 +1,4 @@
-#include "DataType.h"
+#include "datatype.h"
 #include "spacingtable.h"
 #include "layer.h"
 #include "phydb.h"

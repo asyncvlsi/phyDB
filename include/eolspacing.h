@@ -1,7 +1,7 @@
 #ifndef EOLSPACING_H
 #define EOLSPACING_H
 
-#include "phydb_header.h"
+#include "logging.h"
 
 namespace phydb {
 

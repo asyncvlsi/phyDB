@@ -220,9 +220,9 @@ void PhyDB::AddCompPinToNet(std::string &comp_name,
 
         if (act_phy_db_timing_api_.IsActComPinPtrExisting(act_comp_pin_ptr)) {
             auto id_pair = act_phy_db_timing_api_.ActCompPinPtr2Id(act_comp_pin_ptr);
-            Component &comp = design_.components_[id_pair.first];
+            Component &comp = design_.components_[id_pair.comp_id];
             Macro *tmp_macro_ptr = GetMacroPtr(comp.GetMacroName());
-            Pin &pin = tmp_macro_ptr->GetPinsRef()[id_pair.second];
+            Pin &pin = tmp_macro_ptr->GetPinsRef()[id_pair.pin_id];
             std::string error_msg =
                 "Component pin: " + comp.GetName() + " " + pin.GetName()
                     + " has the same Act pointer as " + comp_name + " " + pin_name;
@@ -288,12 +288,12 @@ void PhyDB::SetGetNumConstraintsCB(int (*callback_function)()) {
     act_phy_db_timing_api_.SetGetNumConstraintsCB(callback_function);
 }
 
-void PhyDB::SetGetRequiredMarginCB(double (*callback_function)(int)) {
-    act_phy_db_timing_api_.SetGetRequiredMarginCB(callback_function);
+void PhyDB::SetUpdateTimingIncremental(void (*callback_function)()) {
+    act_phy_db_timing_api_.SetUpdateTimingIncrementalCB(callback_function);
 }
 
-void PhyDB::SetGetActualMarginCB(double (*callback_function)(int)) {
-    act_phy_db_timing_api_.SetGetActualMarginCB(callback_function);
+void PhyDB::SetGetSlackCB(double (*callback_function)(int)) {
+    act_phy_db_timing_api_.SetGetSlackCB(callback_function);
 }
 
 void PhyDB::SetGetWitnessCB(void (*callback_function)(int, std::vector<ActEdge> &, std::vector<ActEdge> &)) {

@@ -1,7 +1,7 @@
 #ifndef SITE_H
 #define SITE_H
 
-#include "phydb_header.h"
+#include "logging.h"
 
 namespace phydb {
 

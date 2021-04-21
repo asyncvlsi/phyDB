@@ -1,8 +1,8 @@
 #ifndef SNET_H
 #define SNET_H
 
-#include "phydb_header.h"
-#include "DataType.h"
+#include "logging.h"
+#include "datatype.h"
 #include "enumtypes.h"
 
 namespace phydb {

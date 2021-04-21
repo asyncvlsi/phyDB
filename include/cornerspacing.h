@@ -1,7 +1,7 @@
 #ifndef CORNERSPACING_H
 #define CORNERSPACING_H
 
-#include "phydb_header.h"
+#include "logging.h"
 
 namespace phydb {
 

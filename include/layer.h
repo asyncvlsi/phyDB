@@ -1,7 +1,7 @@
 #ifndef LAYER_H
 #define LAYER_H
 
-#include "phydb_header.h"
+#include "logging.h"
 #include "spacingtable.h"
 #include "eolspacing.h"
 #include "cornerspacing.h"

@@ -1,7 +1,7 @@
 #ifndef MACRO_H
 #define MACRO_H
 
-#include "DataType.h"
+#include "datatype.h"
 #include "pin.h"
 #include "obs.h"
 #include <unordered_map>

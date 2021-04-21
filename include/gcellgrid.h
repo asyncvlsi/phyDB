@@ -1,7 +1,7 @@
 #ifndef GCELLGRID_H
 #define GCELLGRID_H
 
-#include "phydb_header.h"
+#include "logging.h"
 #include "enumtypes.h"
 
 namespace phydb {

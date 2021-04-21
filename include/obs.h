@@ -1,7 +1,7 @@
 #ifndef OBS_H
 #define OBS_H
 
-#include "DataType.h"
+#include "datatype.h"
 
 namespace phydb {
 
