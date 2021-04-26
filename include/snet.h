@@ -51,7 +51,7 @@ class Path {
 class SNet {
   private:
     string name_;
-    SignalUse use_; // "POWER" or "GROUND"
+    SignalUse use_; // POWER or GROUND
     vector<Path> paths_;
   public:
     SNet() {}
