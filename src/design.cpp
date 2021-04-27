@@ -71,7 +71,7 @@ bool Design::IsComponentExist(std::string &comp_name) {
 Component *Design::AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
                                 int llx, int lly, CompOrient orient) {
     PhyDBExpects(!IsComponentExist(comp_name), "Component name_ exists, cannot use it again");
-    int id = components_.size();
+    int id = (int) components_.size();
     components_.emplace_back(comp_name, macro_name, place_status, llx, lly, orient);
     component_2_id_[comp_name] = id;
     return &(components_[id]);

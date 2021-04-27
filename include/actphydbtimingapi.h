@@ -13,17 +13,26 @@
 namespace phydb {
 
 struct PhydbPin {
-    explicit PhydbPin(int comp=-1, int pin=-1) : comp_id(comp), pin_id(pin) {}
+    explicit PhydbPin(int comp = -1, int pin = -1) : comp_id(comp), pin_id(pin) {}
     int comp_id;
     int pin_id;
 
-    bool operator==(PhydbPin const& rhs) const {
+    bool operator==(PhydbPin const &rhs) const {
         return (comp_id == rhs.comp_id) && (pin_id == rhs.pin_id);
+    }
+
+    std::string Str() const {
+        return "(" + std::to_string(comp_id) + ", " + std::to_string(pin_id) + ")";
+    }
+
+    void Reset() {
+        comp_id = -1;
+        pin_id = -1;
     }
 };
 
 struct PhydbPinHasher {
-    std::size_t operator () (const PhydbPin &phydb_pin) const {
+    std::size_t operator()(const PhydbPin &phydb_pin) const {
         std::size_t seed = 0;
         boost::hash_combine(seed, boost::hash_value(phydb_pin.comp_id));
         boost::hash_combine(seed, boost::hash_value(phydb_pin.pin_id));
@@ -31,27 +40,61 @@ struct PhydbPinHasher {
     }
 };
 
-struct PhydbEdge {
-    PhydbPin source; // (comp, pin) pair
+struct PhydbTimingEdge {
+    explicit PhydbTimingEdge(PhydbPin &tgt) : target(tgt) {}
     PhydbPin target;
     int net_index = -1;
     double delay = -1;
+    int count = 1;
 };
 
-struct PathBundle {
+struct PhydbTimingNode {
+    explicit PhydbTimingNode(PhydbPin &pin) : source(pin) {}
+    PhydbPin source;
+    std::unordered_map<PhydbPin, int, PhydbPinHasher> out_pin2index_;
+    std::vector<PhydbTimingEdge> out_edges;
+
+    bool IsTargetPinExisting(PhydbPin &pin) const {
+        return out_pin2index_.find(pin) != out_pin2index_.end();
+    }
+    PhydbTimingEdge *AddPinToOutEdges(PhydbPin &pin);
+    PhydbTimingEdge *GetOutEdge(PhydbPin &pin);
+    void AddEdge(PhydbTimingEdge &edge);
+};
+
+struct TimingPath {
+    PhydbPin root;
+    std::vector<PhydbTimingEdge> edges;
+    void Clear();
+    void AddEdge(PhydbPin &src, PhydbPin &tgt, int net_id, double dly, int cnt);
+};
+
+struct TimingDAG {
     // bool root_sign;
-    // bool d_sign;
-    // bool ack_sign;
-    std::vector<PhydbEdge> a_path;
-    std::vector<std::vector<PhydbEdge>> d_paths;
+    // bool stb_slow_sign;
+    // bool stb_fast_sign... we may or may not need this
+
+    // this is likely to be a linked-list, and we may not need to store this
+    std::vector<PhydbTimingNode> stb_slow_nodes;
+    std::unordered_map<PhydbPin, int, PhydbPinHasher> fast_pin2index_;
+    std::vector<PhydbTimingNode> stb_fast_nodes;
+
+    bool IsPinInDag(PhydbPin &pin) const {
+        return fast_pin2index_.find(pin) != fast_pin2index_.end();
+    }
+    PhydbTimingNode *AddPinToDag(PhydbPin &pin);
+    PhydbTimingNode *GetPinNode(PhydbPin &pin);
+    void AddFastPath(TimingPath &fast_path);
 };
 
+// TODO : is arc delay independent of load net SPEF? If yes, no need to store arcs using PhydbTimingEdge
 struct ForkConstraint {
     PhydbPin root;
-    std::vector<PhydbPin> d;
-    PhydbPin ack;
+    PhydbPin stb_slow; // supposed to be slow
+    std::vector<PhydbPin> stb_fast; // supposed to be fast
 
-    std::vector<PathBundle> paths;
+    // TODO: for different root sign and stb_slow sign combinations, put them in one or multiple DAGs?
+    TimingDAG timing_dag;
 };
 
 struct ActEdge {
@@ -79,7 +122,7 @@ class ActPhyDBTimingAPI {
     int GetNumConstraints();
     void UpdateTimingIncremental();
     double GetSlack(int tc_num);
-    void GetWitness(int tc_num, std::vector<PhydbEdge> &phydb_fast_path, std::vector<PhydbEdge> &phydb_slow_path);
+    void GetWitness(int tc_num, TimingPath &phydb_fast_path, TimingPath &phydb_slow_path);
     void GetViolatedTimingConstraints(std::vector<int> &violated_tc_nums);
 
   private:
@@ -97,7 +140,7 @@ class ActPhyDBTimingAPI {
     std::unordered_map<void *, PhydbPin> component_pin_act_2_id_;
     std::unordered_map<PhydbPin, void *, PhydbPinHasher> component_pin_id_2_act_;
 
-    void Translate(std::vector<ActEdge> &act_path, std::vector<PhydbEdge> &phydb_path);
+    void Translate(std::vector<ActEdge> &act_path, TimingPath &phydb_path);
 };
 
 }
