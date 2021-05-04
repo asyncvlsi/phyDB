@@ -5,7 +5,7 @@
 #include <fstream>
 
 #include "lefdefparser.h"
-#include "lefdefwriter.h"
+#include "defwriter.h"
 
 namespace phydb {
 
@@ -97,15 +97,36 @@ void PhyDB::SetDefDividerChar(std::string &divider_char) {
     design_.SetDividerChar(divider_char);
 }
 
-void PhyDB::SetDefBusBitChars(std::string &bus_bit_chars) {
-    design_.SetBusBitChars(bus_bit_chars);
+void PhyDB::SetDefBusBitChar(std::string &bus_bit_char) {
+    design_.SetBusBitChar(bus_bit_char);
+}
+
+std::string PhyDB::GetDefName() const {
+    return design_.GetName();
+}
+
+double PhyDB::GetDefVersion() const {
+    return design_.GetVersion();
+}
+
+std::string PhyDB::GetDefDividerChar() const {
+    return design_.GetDividerChar();
+}
+
+std::string PhyDB::GetDefBusBitChar() const {
+    return design_.GetBusBitChar();
 }
 
 void PhyDB::SetUnitsDistanceMicrons(int distance_microns) {
     design_.SetUnitsDistanceMicrons(distance_microns);
 }
+
 void PhyDB::SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
     design_.SetDieArea(lower_x, lower_y, upper_x, upper_y);
+}
+
+Rect2D<int> PhyDB::GetDieArea() const {
+    return design_.GetDieArea();
 }
 
 void PhyDB::SetComponentCount(int count) {
@@ -525,10 +546,6 @@ void PhyDB::StrSplit(std::string &line, std::vector<std::string> &res) {
             old_is_delimiter = is_delimiter;
         }
     }
-}
-
-void PhyDB::WriteLef(string const &lefFileName) {
-    Si2WriteLef(this, lefFileName);
 }
 
 void PhyDB::WriteDef(string const &defFileName) {

@@ -41,9 +41,16 @@ class PhyDB {
     void SetDefName(std::string &name);
     void SetDefVersion(double version);
     void SetDefDividerChar(std::string &divider_char);
-    void SetDefBusBitChars(std::string &bus_bit_chars);
+    void SetDefBusBitChar(std::string &bus_bit_chars);
+
+    std::string GetDefName() const;
+    double GetDefVersion() const;
+    std::string GetDefDividerChar() const;
+    std::string GetDefBusBitChar() const;
+
     void SetUnitsDistanceMicrons(int distance_microns);
     void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
+    Rect2D<int> GetDieArea() const;
 
     Track *AddTrack(XYDirection direction, int start, int nTracks, int step, vector<string> &layer_names);
     vector<Track> &GetTracksRef();
@@ -119,7 +126,6 @@ class PhyDB {
     void ReadCell(string const &cellFileName);
     void ReadCluster(string const &clusterFileName);
 
-    void WriteLef(string const &lefFileName);
     void WriteDef(string const &defFileName);
     void WriteCluster(string const &clusterFileName);
 

@@ -52,13 +52,18 @@ class Design {
     void SetName(std::string &name);
     void SetVersion(double version);
     void SetDividerChar(std::string &divider_char);
-    void SetBusBitChars(std::string &bus_bit_chars);
+    void SetBusBitChar(std::string &bus_bit_chars);
+
+    std::string GetName() const;
+    double GetVersion() const;
+    std::string GetDividerChar() const;
+    std::string GetBusBitChar() const;
 
     void SetUnitsDistanceMicrons(int distance_microns);
     void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
 
     int GetUnitsDistanceMicrons() {return unit_distance_micron_;}
-    Rect2D<int> GetDieArea() {return die_area_;}
+    Rect2D<int> GetDieArea() const {return die_area_;}
 
     Track *AddTrack(XYDirection direction, int start, int num_tracks, int step, vector<string> &layer_names);
     vector<Track> &GetTracksRef();

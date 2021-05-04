@@ -995,8 +995,8 @@ int getDefVersion(defrCallbackType_e type, double version, defiUserData data) {
 }
 
 int getDefBusBit(defrCallbackType_e type, const char *BusBit, defiUserData data) {
-    std::string bus_bit_chars(BusBit);
-    ((PhyDB *) data)->SetDefBusBitChars(bus_bit_chars);
+    std::string bus_bit_char(BusBit);
+    ((PhyDB *) data)->SetDefBusBitChar(bus_bit_char);
     return 0;
 }
 

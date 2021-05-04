@@ -15,8 +15,24 @@ void Design::SetDividerChar(std::string &divider_char) {
     divider_char_ = divider_char;
 }
 
-void Design::SetBusBitChars(std::string &bus_bit_chars) {
+void Design::SetBusBitChar(std::string &bus_bit_chars) {
     bus_bit_char_ = bus_bit_chars;
+}
+
+std::string Design::GetName() const {
+    return name_;
+}
+
+double Design::GetVersion() const {
+    return version_;
+}
+
+std::string Design::GetDividerChar() const {
+    return divider_char_;
+}
+
+std::string Design::GetBusBitChar() const {
+    return bus_bit_char_;
 }
 
 void Design::SetUnitsDistanceMicrons(int distance_microns) {
