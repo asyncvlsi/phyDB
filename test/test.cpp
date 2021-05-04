@@ -165,11 +165,11 @@ int main() {
 
     //db.GetTechPtr()->Report();
     //db.GetDesignPtr()->Report();
-    //string write_lef_file_name = "new.lef";
-    //db.WriteLef(write_lef_file_name);
+    string write_def_file_name = "new.def";
+    db.WriteDef(write_def_file_name);
 
-    string write_cluster_file_name = "new.cluster";
-    db.WriteCluster(write_cluster_file_name);
+    //string write_cluster_file_name = "new.cluster";
+    //db.WriteCluster(write_cluster_file_name);
     
     return 0;
 }

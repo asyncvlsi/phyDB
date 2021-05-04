@@ -42,6 +42,7 @@ class IOPin {
     void SetPlacement(PlaceStatus place_status, int x, int y, CompOrient orient);
 
     const string &GetName();
+    const string &GetNetName();
     SignalDirection GetDirection();
     SignalUse GetUse();
     const string &GetLayerName();

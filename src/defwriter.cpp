@@ -69,18 +69,143 @@ int WriteRows(defwCallbackType_e type, defiUserData data) {
     return 0;
 }
 
-/*int WriteDefString(defwCallbackType_e c, defiUserData ud);
-int WriteDefVoid(defwCallbackType_e c, defiUserData ud);
-int WriteDefDieArea(defwCallbackType_e c, defiUserData ud);
-int WriteDefUnits(defwCallbackType_e c, defiUserData ud);
-int WriteDefTracks(defwCallbackType_e c, defiUserData ud);
-int WriteDefComponents(defwCallbackType_e c, defiUserData ud);
-int WriteDefIOPins(defwCallbackType_e c, defiUserData ud);
-int WriteDefNets(defwCallbackType_e c, defiUserData ud);
-int WriteDefSNets(defwCallbackType_e c, defiUserData ud);
-int WriteDefVias(defwCallbackType_e c, defiUserData ud);
-int WriteDefGcellGrid(defwCallbackType_e c, defiUserData ud);
-int WriteDefRow(defwCallbackType_e c, defiUserData ud);*/
+int WriteTracks(defwCallbackType_e type, defiUserData data) {
+    auto tracks = ((PhyDB*) data)->GetTracksRef();
+    for(auto track : tracks) {
+        int nlayers = track.GetLayerNames().size();
+        const char** layer_names = new const char* [nlayers];
+        for(int i = 0; i < nlayers; i++)
+            layer_names[i] = track.GetLayerNames()[i].c_str();
+        defwTracks(XYDirectionToStr(track.GetDirection()).c_str(), track.GetStart(), track.GetNTracks(), track.GetStep(), nlayers, layer_names); 
+        
+    }
+    defwNewLine();
+    return 0;
+}
+
+int WriteComponents(defwCallbackType_e type, defiUserData data) {
+    auto components = ((PhyDB*) data)->GetDesignPtr()->GetComponentsRef();
+    defwStartComponents(components.size());
+    
+    for(auto comp : components) {
+        defwComponentStr(comp.GetName().c_str(),
+                    comp.GetMacroName().c_str(),
+                    0,
+                    NULL, NULL, NULL, NULL, NULL,
+                    0,
+                    NULL, NULL, NULL, NULL,
+                    PlaceStatusStr(comp.GetPlacementStatus()).c_str(),
+                    comp.GetLocation().x, comp.GetLocation().y,
+                    CompOrientStr(comp.GetOrientation()).c_str(),
+                    0,
+                    NULL,
+                    0, 0, 
+                    0, 0);
+    }
+    defwEndComponents();
+    return 0;
+}
+
+int WriteIOPins(defwCallbackType_e type, defiUserData data) {
+    auto iopins = ((PhyDB*) data)->GetDesignPtr()->GetIoPinsRef();
+    defwStartPins(iopins.size());
+    
+    for(auto pin : iopins) {
+        defwPinStr(pin.GetName().c_str(),
+                pin.GetNetName().c_str(),
+                0,
+                SignalDirectionStr(pin.GetDirection()).c_str(),
+                SignalUseStr(pin.GetUse()).c_str(),
+                PlaceStatusStr(pin.GetPlacementStatus()).c_str(),
+                pin.GetLocation().x,
+                pin.GetLocation().y,
+                CompOrientStr(pin.GetOrientation()).c_str(),
+                pin.GetLayerName().c_str(),
+                pin.GetRect().LLX(),
+                pin.GetRect().LLY(),
+                pin.GetRect().URX(),
+                pin.GetRect().URY()
+               );
+    }
+    defwEndPins();
+
+    return 0;
+
+}
+
+int WriteNets(defwCallbackType_e type, defiUserData data) {
+    auto nets = ((PhyDB*) data)->GetDesignPtr()->GetNetsRef();
+    defwStartNets(nets.size());
+    char* pin_str = "PIN";
+    for(auto net : nets) {
+        defwNet(net.GetName().c_str());
+        auto component_names = net.GetComponentNamesRef();
+        auto pin_names = net.GetPinNamesRef();
+        auto iopin_names = net.GetIoPinNamesRef();
+        for(int i = 0; i < iopin_names.size(); i++) {
+            defwNetConnection(pin_str, iopin_names[i].c_str(), 0);
+        }
+
+        for(int i = 0; i < component_names.size(); i++) {
+            defwNetConnection(component_names[i].c_str(), pin_names[i].c_str(), 0);
+        }
+       defwNetEndOneNet();
+    }
+
+    defwEndNets();
+
+    return 0;
+}
+
+int WriteSNets(defwCallbackType_e c, defiUserData ud) {
+   
+    double coorX[3], coorY[3];
+    auto snet_vec = ((PhyDB*) ud)->GetSNetRef();
+
+    defwStartSpecialNets(2); //Number of special nets
+    
+    for(int snet_id = 0; snet_id < snet_vec.size(); snet_id++) {
+        auto snet = snet_vec[snet_id];
+        defwSpecialNet(snet.GetName().c_str());
+        defwSpecialNetConnection("*", snet.GetName().c_str(), 0);
+        defwSpecialNetUse(SignalUseStr(snet.GetUse()).c_str());
+        
+        auto paths = snet.GetPathRef();
+        for(int i = 0; i < paths.size(); i++) {
+            auto path = paths[i];
+
+            if(i == 0)
+                defwSpecialNetPathStart("ROUTED");
+            else     
+                defwSpecialNetPathStart("NEW");
+
+            defwSpecialNetPathLayer(path.GetLayerName().c_str());
+            defwSpecialNetPathWidth(path.GetWidth());
+            defwSpecialNetPathShape("STRIPE");
+            int num_path_point = (path.HasEndPoint())? 2 : 1;
+            coorX[0] = path.GetBegin().x;
+            coorY[0] = path.GetBegin().y;
+            if(num_path_point == 2) {
+                coorX[1] = path.GetEnd().x;
+                coorY[1] = path.GetEnd().y;
+            }
+            else {
+                coorX[1] = -1;
+                coorY[1] = -1;
+            }
+            defwSpecialNetPathPoint(num_path_point, coorX, coorY);
+            if(num_path_point == 1)
+                defwSpecialNetPathVia(path.GetViaName().c_str());
+        }
+        defwSpecialNetPathEnd();
+        defwSpecialNetEndOneNet();
+    }
+    
+    defwEndSpecialNets();
+
+
+    return 0;
+}
 
 std::string GetCurrentDateTime() {
     time_t     now = time(0);
@@ -115,12 +240,11 @@ void Si2WriteDef(PhyDB *phy_db_ptr, string const &defFileName) {
     defwSetDieAreaCbk (WriteDieArea);
     defwSetRowCbk (WriteRows);
 
-    /*defwSetTrackCbk (WriteTracks);
+    defwSetTrackCbk (WriteTracks);
     defwSetComponentCbk (WriteComponents);
     defwSetPinCbk (WriteIOPins);
     defwSetNetCbk (WriteNets);
-
-    defwSetSNetCbk (WriteSNet);*/
+    defwSetSNetCbk (WriteSNets);
 
 
     fprintf(f, "###########################\n");
@@ -128,7 +252,7 @@ void Si2WriteDef(PhyDB *phy_db_ptr, string const &defFileName) {
     fprintf(f, GetCurrentDateTime().c_str());
     fprintf(f, "\n");
     fprintf(f, "###########################\n");
-
+    
     res = defwWrite(f, defFileName.c_str(), (defiUserData) phy_db_ptr);
     if (res != 0) {
         cout << "DEF Writer returns an error!" << endl;

@@ -19,8 +19,9 @@ class Path {
     Rect2D<int> rect_;
     Point2D<int> begin_;
     Point2D<int> end_;
+    bool has_end_point_ = false;
   public:
-    Path() : width_(0), begin_ext_(0), end_ext_(0) { }
+    Path() : width_(0), begin_ext_(0), end_ext_(0), has_end_point_(false) { }
     Path(string& layer_name, int width, string& shape) :
         layer_name_(layer_name), width_(width), shape_(shape), begin_ext_(0), end_ext_(0) { }
     
@@ -44,6 +45,7 @@ class Path {
     Rect2D<int> GetRect() const;
     Point2D<int> GetBegin() const;
     Point2D<int> GetEnd() const;
+    bool HasEndPoint() const;
 
     void Report();
 };

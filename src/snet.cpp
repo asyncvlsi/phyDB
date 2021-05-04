@@ -40,6 +40,7 @@ void Path::SetBegin(int x, int y) {
 }
 
 void Path::SetEnd(int x, int y) {
+    has_end_point_ = true;
     end_.x = x;
     end_.y = y;
 }
@@ -78,6 +79,10 @@ Point2D<int> Path::GetBegin() const {
 
 Point2D<int> Path::GetEnd() const {
     return end_;
+}
+
+bool Path::HasEndPoint() const {
+    return has_end_point_;
 }
 
 void Path::Report() {

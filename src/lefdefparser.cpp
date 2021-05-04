@@ -787,9 +787,9 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
             // initialize
 
             int pathId;
+            bool hasBeginPoint = false;
             while ((pathId = path->next()) != DEFIPATH_DONE) {
                 //cout << "  pathId = " << pathId << endl;
-                bool hasBeginPoint = false;
                 switch(pathId) {
                     case DEFIPATH_LAYER: {
                         string layer_name = string(path->getLayer());
@@ -828,8 +828,8 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
                         } else {
                             int endX, endY, end_ext;
                             path->getFlushPoint(&endX, &endY, &end_ext);
-                            phydb_path->SetBegin(endX, endY);
-                            phydb_path->SetBeginExt(end_ext);
+                            phydb_path->SetEnd(endX, endY);
+                            phydb_path->SetEndExt(end_ext);
                         }
                         break;
                     }

@@ -22,6 +22,10 @@ const string &IOPin::GetName() {
     return name_;   
 }
 
+const string& IOPin::GetNetName() {
+    return net_name_;
+}
+
 SignalDirection IOPin::GetDirection() {
     return direction_;
 }
