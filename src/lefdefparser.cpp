@@ -765,18 +765,14 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
         cout <<"Type is not defr(S)NetCbkType!" <<endl;
         exit(1);
     }
-    cout << "here2:" << type << endl;
     auto *phy_db_ptr = (PhyDB *) data;
     string name = net->name();
     string use_str = net->use();
     SignalUse use = StrToSignalUse(use_str);
 
-    cout << "here3:" << name << " " << use << endl;
     auto* phydb_snet = phy_db_ptr->AddSNet(name, use);
 
     // read pre-route
-
-    cout << "here" << endl;
     for (int i = 0; i < (int)net->numWires(); i++) {
         defiWire* tmpWire = net->wire(i);
         // each path is a def line
