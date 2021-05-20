@@ -74,7 +74,7 @@ class Design {
     vector<Row> &GetRowVec();
 
     void SetComponentCount(int count, double redundancy_factor = 1.4);
-    bool IsComponentExist(std::string &comp_name);
+    bool IsComponentExisting(std::string &comp_name);
     Component *AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
                             int llx, int lly, CompOrient orient);
     Component *GetComponentPtr(std::string &comp_name);

@@ -21,7 +21,7 @@ class Tech {
     string clearance_measure_;
     double manufacturing_grid_ = -1;
 
-    int dbu_per_micron_ = -1;
+    int database_micron_ = -1;
 
     vector<Site> sites_;
     vector<Layer> layers_;
@@ -49,7 +49,7 @@ class Tech {
     std::list<MacroWell> wells_;
 
   public:
-    Tech() : manufacturing_grid_(-1), dbu_per_micron_(-1) {}
+    Tech() : manufacturing_grid_(-1), database_micron_(-1) {}
     ~Tech();
 
     void SetDatabaseMicron(int database_micron);
@@ -61,23 +61,23 @@ class Tech {
     void SetPlacementGrids(double placement_grid_value_x, double placement_grid_value_y);
     bool GetPlacementGrids(double &placement_grid_value_x, double &placement_grid_value_y);
 
-    bool IsLayerExist(std::string const &layer_name);
+    bool IsLayerExisting(std::string const &layer_name);
     Layer *AddLayer(std::string &layer_name, LayerType type, MetalDirection direction=HORIZONTAL);
     Layer *GetLayerPtr(std::string const &layer_name);
     int GetLayerId(string const &layer_name);
     std::vector<Layer> &GetLayersRef();
 
-    bool IsMacroExist(std::string const &macro_name);
+    bool IsMacroExisting(std::string const &macro_name);
     Macro *AddMacro(std::string &macro_name);
     Macro *GetMacroPtr(std::string const &macro_name);
     std::vector<Macro> &GetMacrosRef();
 
-    bool IsLefViaExist(std::string const &via_name);
+    bool IsLefViaExisting(std::string const &via_name);
     LefVia *AddLefVia(std::string &via_name);
     LefVia *GetLefViaPtr(std::string const &via_name);
     vector<LefVia>& GetLefViasRef();
 
-    bool IsViaRuleGenerateExist(std::string const &name);
+    bool IsViaRuleGenerateExisting(std::string const &name);
     ViaRuleGenerate* AddViaRuleGenerate(std::string &name);
     ViaRuleGenerate* GetViaRuleGeneratePtr(std::string const &name);
     

@@ -34,7 +34,7 @@ void PhyDB::SetPlacementGrids(double placement_grid_value_x_, double placement_g
 }
 
 bool PhyDB::IsLayerExisting(std::string const &layer_name) {
-    return tech_.IsLayerExist(layer_name);
+    return tech_.IsLayerExisting(layer_name);
 }
 
 Layer *PhyDB::AddLayer(std::string &layer_name, LayerType type, MetalDirection direction) {
@@ -50,7 +50,7 @@ vector<Layer> &PhyDB::GetLayersRef() {
 }
 
 bool PhyDB::IsMacroExisting(std::string const &macro_name) {
-    return tech_.IsMacroExist(macro_name);
+    return tech_.IsMacroExisting(macro_name);
 }
 
 Macro *PhyDB::AddMacro(std::string &macro_name) {
@@ -62,7 +62,7 @@ Macro *PhyDB::GetMacroPtr(std::string const &macro_name) {
 }
 
 bool PhyDB::IsLefViaExisting(std::string const &name) {
-    return tech_.IsLefViaExist(name);
+    return tech_.IsLefViaExisting(name);
 }
 
 LefVia *PhyDB::AddLefVia(std::string &via_name) {
@@ -74,7 +74,7 @@ LefVia *PhyDB::GetLefViaPtr(std::string const &via_name) {
 }
 
 bool PhyDB::IsViaRuleGenerateExisting(std::string const &name) {
-    return tech_.IsViaRuleGenerateExist(name);
+    return tech_.IsViaRuleGenerateExisting(name);
 }
 
 ViaRuleGenerate *PhyDB::AddViaRuleGenerate(std::string &name) {
@@ -134,7 +134,7 @@ void PhyDB::SetComponentCount(int count) {
 }
 
 bool PhyDB::IsComponentExisting(std::string &component_name) {
-    return design_.IsComponentExist(component_name);
+    return design_.IsComponentExisting(component_name);
 }
 
 Track *PhyDB::AddTrack(XYDirection direction, int start, int nTracks, int step, vector<string> &layer_names) {
@@ -156,6 +156,7 @@ vector<Row> &PhyDB::GetRowVec() {
 
 Component *PhyDB::AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
                                int llx, int lly, CompOrient orient) {
+    PhyDBExpects(IsMacroExisting(macro_name), "Macro name " + macro_name + " does not exist, cannot add component " + comp_name);
     return design_.AddComponent(comp_name, macro_name, place_status, llx, lly, orient);
 }
 

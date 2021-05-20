@@ -1,6 +1,9 @@
 #include "lefdefparser.h"
-#include "logging.h"
+
 #include <algorithm>
+
+#include "logging.h"
+
 namespace phydb {
 
 int getLefSite(lefrCallbackType_e type, lefiSite *site, lefiUserData data) {
@@ -69,10 +72,15 @@ int getLefMacrosEnd(lefrCallbackType_e type, const char *str, lefiUserData data)
 int getLefUnits(lefrCallbackType_e type, lefiUnits *units, lefiUserData data) {
     bool enableOutput = false;
     auto *phy_db_ptr = (PhyDB *) data;
-    phy_db_ptr->SetDatabaseMicron(units->databaseNumber());
+
+
+    int database_unit = (int) units->databaseNumber();
+    phy_db_ptr->SetDatabaseMicron(database_unit);
+
     if (enableOutput) {
         cout << "DATABASE MICRONS " << units->databaseNumber() << endl;
     }
+
     return 0;
 }
 

@@ -1,6 +1,7 @@
 #include "tech.h"
 
 #include <cstring>
+#include <unordered_set>
 
 namespace phydb {
 
@@ -16,16 +17,32 @@ Tech::~Tech() {
 }
 
 void Tech::SetDatabaseMicron(int database_micron) {
-    PhyDBExpects(database_micron > 0, "Cannot Set negative database microns: Tech::SetDatabaseMicron()");
-    dbu_per_micron_ = database_micron;
+    PhyDBExpects(database_micron > 0, "Cannot Set negative database microns: " + std::to_string(database_micron));
+
+    std::unordered_set<int> legal_database_units({100, 200, 1000, 2000, 10000, 20000});
+    PhyDBExpects(legal_database_units.find(database_micron) != legal_database_units.end(),
+                 "Unsupported DATABASE MICRONS " + std::to_string(database_micron));
+
+    if (database_micron_ > -1 && database_micron != database_micron_) {
+        std::cout << "Warning: changing DATABASE MICRONS from " << database_micron_ << " to " << database_micron
+                  << "\n";
+    }
+
+    database_micron_ = database_micron;
 }
 
 int Tech::GetDatabaseMicron() {
-    return dbu_per_micron_;
+    return database_micron_;
 }
 
 void Tech::SetManufacturingGrid(double manufacture_grid) {
-    PhyDBExpects(manufacture_grid > 0, "Cannot Set negative manufacturing grid: Tech::SetManufacturingGrid()");
+    PhyDBExpects(manufacture_grid > 0, "Cannot Set negative manufacturing grid: " + std::to_string(manufacture_grid));
+
+    if (manufacturing_grid_ > -1 && manufacture_grid != manufacturing_grid_) {
+        std::cout << "Warning: changing MANUFACTURINGGRID from " << manufacturing_grid_ << " to " << manufacture_grid
+                  << "\n";
+    }
+
     manufacturing_grid_ = manufacture_grid;
 }
 
@@ -42,7 +59,8 @@ std::vector<Site> &Tech::GetSitesRef() {
 }
 
 void Tech::SetPlacementGrids(double placement_grid_value_x, double placement_grid_value_y) {
-    PhyDBExpects(placement_grid_value_x > 0 && placement_grid_value_y > 0, "negative placement grid value not allowed");
+    PhyDBExpects(placement_grid_value_x > 0 && placement_grid_value_y > 0,
+                 "negative placement grid value not allowed");
     placement_grid_value_x_ = placement_grid_value_x;
     placement_grid_value_y_ = placement_grid_value_y;
     is_placement_grid_set_ = true;
@@ -54,12 +72,12 @@ bool Tech::GetPlacementGrids(double &placement_grid_value_x, double &placement_g
     return is_placement_grid_set_;
 }
 
-bool Tech::IsLayerExist(std::string const &layer_name) {
+bool Tech::IsLayerExisting(std::string const &layer_name) {
     return layer_2_id_.find(layer_name) != layer_2_id_.end();
 }
 
 Layer *Tech::AddLayer(std::string &layer_name, LayerType type, MetalDirection direction) {
-    PhyDBExpects(!IsLayerExist(layer_name), "LAYER name_ exists, cannot use again: " + layer_name);
+    PhyDBExpects(!IsLayerExisting(layer_name), "LAYER name_ exists, cannot use again: " + layer_name);
     int id = layers_.size();
     layers_.emplace_back(layer_name, type, direction);
     layer_2_id_[layer_name] = id;
@@ -68,7 +86,7 @@ Layer *Tech::AddLayer(std::string &layer_name, LayerType type, MetalDirection di
 }
 
 Layer *Tech::GetLayerPtr(std::string const &layer_name) {
-    if (!IsLayerExist(layer_name)) {
+    if (!IsLayerExisting(layer_name)) {
         return nullptr;
     }
     int id = layer_2_id_[layer_name];
@@ -76,7 +94,7 @@ Layer *Tech::GetLayerPtr(std::string const &layer_name) {
 }
 
 int Tech::GetLayerId(string const &layer_name) {
-    if (!IsLayerExist(layer_name)) {
+    if (!IsLayerExisting(layer_name)) {
         return -1;
     }
     int id = layer_2_id_[layer_name];
@@ -87,20 +105,20 @@ std::vector<Layer> &Tech::GetLayersRef() {
     return layers_;
 }
 
-bool Tech::IsMacroExist(std::string const &macro_name) {
+bool Tech::IsMacroExisting(std::string const &macro_name) {
     return macro_2_id_.find(macro_name) != macro_2_id_.end();
 }
 
 Macro *Tech::AddMacro(std::string &macro_name) {
-    PhyDBExpects(!IsMacroExist(macro_name), "Macro name_ exists, cannot use it again: " + macro_name);
-    int id = macros_.size();
+    PhyDBExpects(!IsMacroExisting(macro_name), "Macro name_ exists, cannot use it again: " + macro_name);
+    int id = (int) macros_.size();
     macros_.emplace_back(macro_name);
     macro_2_id_[macro_name] = id;
     return &(macros_[id]);
 }
 
 Macro *Tech::GetMacroPtr(std::string const &macro_name) {
-    if (!IsMacroExist(macro_name)) {
+    if (!IsMacroExisting(macro_name)) {
         return nullptr;
     }
     int id = macro_2_id_[macro_name];
@@ -111,12 +129,12 @@ std::vector<Macro> &Tech::GetMacrosRef() {
     return macros_;
 }
 
-bool Tech::IsLefViaExist(std::string const &via_name) {
+bool Tech::IsLefViaExisting(std::string const &via_name) {
     return via_2_id_.find(via_name) != via_2_id_.end();
 }
 
 LefVia *Tech::AddLefVia(std::string &via_name) {
-    PhyDBExpects(!IsLefViaExist(via_name), "VIA name_ exists, cannot use it again: " + via_name);
+    PhyDBExpects(!IsLefViaExisting(via_name), "VIA name_ exists, cannot use it again: " + via_name);
     int id = vias_.size();
     vias_.emplace_back(via_name);
     via_2_id_[via_name] = id;
@@ -124,23 +142,23 @@ LefVia *Tech::AddLefVia(std::string &via_name) {
 }
 
 LefVia *Tech::GetLefViaPtr(std::string const &via_name) {
-    if (!IsLefViaExist(via_name)) {
+    if (!IsLefViaExisting(via_name)) {
         return nullptr;
     }
     int id = via_2_id_[via_name];
     return &(vias_[id]);
 }
 
-vector<LefVia>& Tech::GetLefViasRef() {
+vector<LefVia> &Tech::GetLefViasRef() {
     return vias_;
 }
 
-bool Tech::IsViaRuleGenerateExist(std::string const &name) {
+bool Tech::IsViaRuleGenerateExisting(std::string const &name) {
     return via_rule_generate_2_id_.find(name) != via_rule_generate_2_id_.end();
 }
 
 ViaRuleGenerate *Tech::AddViaRuleGenerate(std::string &name) {
-    PhyDBExpects(!IsViaRuleGenerateExist(name), "Macro name_ exists, cannot use it again");
+    PhyDBExpects(!IsViaRuleGenerateExisting(name), "Macro name_ exists, cannot use it again");
     int id = via_rule_generates_.size();
     via_rule_generates_.emplace_back(name);
     via_rule_generate_2_id_[name] = id;
@@ -148,7 +166,7 @@ ViaRuleGenerate *Tech::AddViaRuleGenerate(std::string &name) {
 }
 
 ViaRuleGenerate *Tech::GetViaRuleGeneratePtr(std::string const &name) {
-    if (!IsViaRuleGenerateExist(name)) {
+    if (!IsViaRuleGenerateExisting(name)) {
         return nullptr;
     }
     int id = via_rule_generate_2_id_[name];
@@ -236,7 +254,7 @@ void Tech::ReportMacroWell() {
     std::cout << "SAME_DIFF_SPACING " << same_diff_spacing_ << "\n";
     std::cout << "ANY_DIFF_SPACING " << any_diff_spacing_ << "\n";
 
-    if (p_layer_ptr_!= nullptr) {
+    if (p_layer_ptr_ != nullptr) {
         std::cout << "LAYER pwell\n";
         p_layer_ptr_->Report();
     }
@@ -256,7 +274,7 @@ void Tech::Report() {
     std::cout << "VERSION " << version_ << ";\n";
     std::cout << "BUSBITCHARS " << bus_bit_char_ << ";\n";
     std::cout << "DIVIDERCHAR " << divier_char_ << ";\n";
-    std::cout << "DATABASE MICRONS " << dbu_per_micron_ << ";\n";
+    std::cout << "DATABASE MICRONS " << database_micron_ << ";\n";
     std::cout << "MANUFACTURINGGRID " << manufacturing_grid_ << ";\n";
     std::cout << "CLEARANCEMEASURE " << clearance_measure_ << ";\n\n";
 
