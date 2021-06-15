@@ -73,7 +73,6 @@ int getLefUnits(lefrCallbackType_e type, lefiUnits *units, lefiUserData data) {
     bool enableOutput = false;
     auto *phy_db_ptr = (PhyDB *) data;
 
-
     int database_unit = (int) units->databaseNumber();
     phy_db_ptr->SetDatabaseMicron(database_unit);
 
@@ -139,11 +138,12 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
                 double y1 = pin->port(i)->getRect(j)->yl;
                 double x2 = pin->port(i)->getRect(j)->xh;
                 double y2 = pin->port(i)->getRect(j)->yh;
-                PhyDBExpects(layer_rect_ptr!= nullptr, "unexpected error in getLefPins()");
+                PhyDBExpects(layer_rect_ptr != nullptr, "unexpected error in getLefPins()");
                 layer_rect_ptr->AddRect(min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
 
                 if (enableOutput) {
-                    cout << "      RECT " << min(x1, x2) << " " << min(y1, y2) << " " << max(x1, x2) << " " << max(y1, y2) << " ;" << endl;
+                    cout << "      RECT " << min(x1, x2) << " " << min(y1, y2) << " " << max(x1, x2) << " "
+                         << max(y1, y2) << " ;" << endl;
                 }
             } else {
                 cout << "unsupported lefiGeometries!" << endl;
@@ -184,7 +184,7 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
     auto geometry = obs->geometries();
     int numItems = geometry->numItems();
 
-    OBS* obs_ptr = last_macro.GetObs();
+    OBS *obs_ptr = last_macro.GetObs();
 
     int isNewLayerRect = true;
     LayerRect *layer_rect_ptr = nullptr;
@@ -200,10 +200,11 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
             double y1 = geometry->getRect(i)->yl;
             double x2 = geometry->getRect(i)->xh;
             double y2 = geometry->getRect(i)->yh;
-            PhyDBExpects(layer_rect_ptr!= nullptr, "unexpected error in getLefObs()");
+            PhyDBExpects(layer_rect_ptr != nullptr, "unexpected error in getLefObs()");
             layer_rect_ptr->AddRect(min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
             if (enableOutput) {
-                cout << "      RECT " << min(x1, x2) << " " << min(y1, y2) << " " << max(x1, x2) << " " << max(y1, y2) << " ;" << endl;
+                cout << "      RECT " << min(x1, x2) << " " << min(y1, y2) << " " << max(x1, x2) << " " << max(y1, y2)
+                     << " ;" << endl;
             }
         } else {
             cout << "Warning: unsupported OBS" << endl;
@@ -645,17 +646,17 @@ int getDefComponents(defrCallbackType_e type, defiComponent *comp, defiUserData 
     int llx = comp->placementX();
     int lly = comp->placementY();
 
-    std::string place_status = "UNPLACED";
+    PlaceStatus place_status = UNPLACED;
     if (comp->isPlaced()) {
-        place_status = "PLACED";
+        place_status = PLACED;
     } else if (comp->isFixed()) {
-        place_status = "FIXED";
+        place_status = FIXED;
     } else if (comp->isUnplaced()) {
-        place_status = "UNPLACED";
+        place_status = UNPLACED;
         llx = 0;
         lly = 0;
     } else if (comp->isCover()) {
-        place_status = "COVER";
+        place_status = COVER;
     } else {
         llx = 0;
         lly = 0;
@@ -665,7 +666,7 @@ int getDefComponents(defrCallbackType_e type, defiComponent *comp, defiUserData 
 
     auto *phy_db_ptr = (PhyDB *) data;
     phy_db_ptr->AddComponent(comp_name, macro_name,
-                             StrToPlaceStatus(place_status), llx, lly,
+                             place_status, llx, lly,
                              StrToCompOrient(orient));
 
     return 0;
@@ -766,11 +767,11 @@ int getDefNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
 }
 
 int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
-    
+
     bool enableOutput = false;
     //bool enableOutput = true;
     if (type != defrSNetCbkType) {
-        cout <<"Type is not defr(S)NetCbkType!" <<endl;
+        cout << "Type is not defr(S)NetCbkType!" << endl;
         exit(1);
     }
     auto *phy_db_ptr = (PhyDB *) data;
@@ -778,15 +779,15 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
     string use_str = net->use();
     SignalUse use = StrToSignalUse(use_str);
 
-    auto* phydb_snet = phy_db_ptr->AddSNet(name, use);
+    auto *phydb_snet = phy_db_ptr->AddSNet(name, use);
 
     // read pre-route
-    for (int i = 0; i < (int)net->numWires(); i++) {
-        defiWire* tmpWire = net->wire(i);
+    for (int i = 0; i < (int) net->numWires(); i++) {
+        defiWire *tmpWire = net->wire(i);
         // each path is a def line
-        for (int j = 0; j < (int)tmpWire->numPaths(); j++) {
-            auto* phydb_path = phydb_snet->AddPath();
-            defiPath* path     = tmpWire->path(j);
+        for (int j = 0; j < (int) tmpWire->numPaths(); j++) {
+            auto *phydb_path = phydb_snet->AddPath();
+            defiPath *path = tmpWire->path(j);
             path->initTraverse();
             // initialize
 
@@ -794,7 +795,7 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
             bool hasBeginPoint = false;
             while ((pathId = path->next()) != DEFIPATH_DONE) {
                 //cout << "  pathId = " << pathId << endl;
-                switch(pathId) {
+                switch (pathId) {
                     case DEFIPATH_LAYER: {
                         string layer_name = string(path->getLayer());
                         phydb_path->SetLayerName(layer_name);
@@ -861,8 +862,8 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
                         }
                         break;
                     }
-                    default : { 
-                        cout <<" net " <<net->name() <<" unknown pathId " <<pathId <<endl; 
+                    default : {
+                        cout << " net " << net->name() << " unknown pathId " << pathId << endl;
                         break;
                     }
                 }
@@ -1096,6 +1097,114 @@ void Si2ReadDef(PhyDB *phy_db_ptr, string const &defFileName) {
     defrClear();
 }
 
+/**
+ * Check the unit in the DEF file, and check if they have the same value.
+ * In general, they can be different, but in our flow, they are supposed to be the same.
+ *
+ * @param type, callback type.
+ * @param number, UNITS DISTANCE MICRONS in DEF.
+ * @param data, void pointer to PhyDB.
+ * @return 0 for success.
+ */
+int CheckDefUnits(defrCallbackType_e type, double number, defiUserData data) {
+    auto *phy_db_ptr = (PhyDB *) data;
+
+    int cur_unit = (int) number;
+    int existing_unit = phy_db_ptr->GetDesignPtr()->unit_distance_micron_;
+    PhyDBExpects(cur_unit == existing_unit,
+                 "UNITS DISTANCE MICRONS is not supposed to be changed in the placed DEF file");
+
+    return 0;
+}
+
+/**
+ * For a certain component, check if this component exists in PhyDB.
+ * If yes, override its placement info by the new one.
+ *
+ * @param type, callback type.
+ * @param comp, pointer to the component created by the parser.
+ * @param data, void pointer to PhyDB.
+ * @return 0 for success.
+ */
+int LoadDefComponentLoc(defrCallbackType_e type, defiComponent *comp, defiUserData data) {
+    if ((type != defrComponentCbkType)) {
+        cout << "Type is not defrComponentCbkType!" << endl;
+        exit(1);
+    }
+
+    std::string comp_name(comp->id());
+    std::string macro_name(comp->name());
+    int llx = comp->placementX();
+    int lly = comp->placementY();
+
+    PlaceStatus place_status = UNPLACED;
+    if (comp->isPlaced()) {
+        place_status = PLACED;
+    } else if (comp->isFixed()) {
+        place_status = FIXED;
+    } else if (comp->isUnplaced()) {
+        place_status = UNPLACED;
+        llx = 0;
+        lly = 0;
+    } else if (comp->isCover()) {
+        place_status = COVER;
+    } else {
+        llx = 0;
+        lly = 0;
+    }
+
+    std::string orient(comp->placementOrientStr());
+
+    auto *phy_db_ptr = (PhyDB *) data;
+    PhyDBExpects(phy_db_ptr->IsComponentExisting(comp_name),
+                 "Component " + comp_name + " is not in PhyDB database");
+    Component *comp_ptr = phy_db_ptr->GetComponentPtr(comp_name);
+    comp_ptr->SetLocation(llx, lly);
+    comp_ptr->SetOrientation(StrToCompOrient(orient));
+    comp_ptr->SetPlacementStatus(place_status);
+
+    return 0;
+}
+
+/**
+ * Load a DEF file with placed components, and then override component locations in PhyDB.
+ * This is useful for detailed placement and legalization of (multi-height) standard cell designs,
+ * because Dali does not support detailed placement and legalization for multi-height standard cells.
+ *
+ * @param phy_db_ptr, the pointer to the PhyDB database.
+ * @param defFileName, the DEF file name which contains new component locations.
+ * @return void.
+ */
+void Si2LoadPlacedDef(PhyDB *phy_db_ptr, string const &defFileName) {
+    FILE *f;
+    int res;
+
+    defrInit();
+    defrReset();
+
+    defrInitSession(1);
+
+    defrSetUserData((defiUserData) phy_db_ptr);
+
+    defrSetUnitsCbk(CheckDefUnits);
+
+    defrSetComponentStartCbk(getDefCountNumber);
+    defrSetComponentCbk(LoadDefComponentLoc);
+
+    if ((f = fopen(defFileName.c_str(), "r")) == 0) {
+        cout << "Couldn't open def file" << endl;
+        exit(2);
+    }
+
+    res = defrRead(f, defFileName.c_str(), (defiUserData) phy_db_ptr, 1);
+    if (res != 0) {
+        cout << "DEF parser returns an error!" << endl;
+        exit(2);
+    }
+    fclose(f);
+
+    defrClear();
+}
 
 }
 

@@ -47,6 +47,9 @@ class Design {
     unordered_map<string, int> via_2_id_;
     set<string> row_set_;
 
+    /****DEF file name****/
+    std::string def_name_;
+
     Design() {}
 
     void SetName(std::string &name);
@@ -107,6 +110,9 @@ class Design {
 
     GcellGrid* AddGcellGrid(XYDirection direction, int start, int nBoundaries, int step);
     vector<GcellGrid>& GetGcellGridsRef();
+
+    std::string GetDefName() const;
+    void SetDefName(std::string const &def_file_name);
 
     void ReportTracks();
     void ReportRows();

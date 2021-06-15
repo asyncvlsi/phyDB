@@ -227,6 +227,14 @@ vector<GcellGrid>& Design::GetGcellGridsRef() {
     return gcell_grids_;
 }
 
+std::string Design::GetDefName() const {
+    return def_name_;
+}
+
+void Design::SetDefName(std::string const &def_file_name) {
+    def_name_ = def_file_name;
+}
+
 void Design::ReportTracks() {
     std::cout << "Total number of track: " << tracks_.size() << "\n";
     for (auto &track: tracks_) {

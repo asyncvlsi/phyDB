@@ -123,6 +123,7 @@ class PhyDB {
 
     void ReadLef(string const &lefFileName);
     void ReadDef(string const &defFileName);
+    void OverrideComponentLocsFromDef(string const &defFileName);
     void ReadCell(string const &cellFileName);
     void ReadCluster(string const &clusterFileName);
 

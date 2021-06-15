@@ -331,11 +331,23 @@ void PhyDB::SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vec
 }
 
 void PhyDB::ReadLef(string const &lefFileName) {
+    tech_.SetLefName(lefFileName);
     Si2ReadLef(this, lefFileName);
 }
 
 void PhyDB::ReadDef(string const &defFileName) {
+    design_.SetDefName(defFileName);
     Si2ReadDef(this, defFileName);
+}
+
+/**
+ * Override component locations from a DEF file.
+ *
+ * @param defFileName, the DEF file name which contains new component locations.
+ * @return void.
+ */
+void PhyDB::OverrideComponentLocsFromDef(string const &defFileName) {
+    Si2LoadPlacedDef(this, defFileName);
 }
 
 void PhyDB::ReadCell(string const &cellFileName) {

@@ -48,6 +48,9 @@ class Tech {
     double any_diff_spacing_ = -1;
     std::list<MacroWell> wells_;
 
+    /****LEF file name****/
+    std::string lef_name_;
+
   public:
     Tech() : manufacturing_grid_(-1), database_micron_(-1) {}
     ~Tech();
@@ -89,6 +92,9 @@ class Tech {
     WellLayer *GetPwellLayerPtr();
     void GetDiffWellSpacing(double &same_diff_spacing, double any_diff_spacing);
     void ReportWellShape(); // report the well shape_ for each BlockType for debugging purposes.
+
+    std::string GetLefName() const;
+    void SetLefName(std::string const &lef_file_name);
 
     void ReportSites();
     void ReportLayers();

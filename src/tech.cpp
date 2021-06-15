@@ -220,6 +220,14 @@ void Tech::ReportWellShape() {
     }
 }
 
+std::string Tech::GetLefName() const {
+    return lef_name_;
+}
+
+void Tech::SetLefName(std::string const &lef_file_name) {
+    lef_name_ = lef_file_name;
+}
+
 void Tech::ReportSites() {
     for (auto &site: sites_) {
         std::cout << site << "\n";

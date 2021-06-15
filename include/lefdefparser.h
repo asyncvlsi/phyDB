@@ -40,6 +40,7 @@ int getDefRow(defrCallbackType_e, defiRow *, defiUserData);
 
 void Si2ReadLef(PhyDB *phy_db_ptr, string const &lefFileName);
 void Si2ReadDef(PhyDB *phy_db_ptr, string const &defFileName);
+void Si2LoadPlacedDef(PhyDB *phy_db_ptr, string const &defFileName);
 
 }
 
