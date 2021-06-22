@@ -20,9 +20,9 @@ LayerType StrToLayerType(std::string &str_layer_type) {
 std::string LayerTypeStr(LayerType layer_type) {
     std::string s;
     switch (layer_type) {
-        case 0: { s = "ROUTING"; }
+        case ROUTING: { s = "ROUTING"; }
             break;
-        case 1: { s = "CUT"; }
+        case CUT: { s = "CUT"; }
             break;
         default: {
             std::cout << "LayerType error! This should never happen!" << std::endl;
@@ -52,13 +52,13 @@ MetalDirection StrToMetalDirection(std::string &str_metal_direction) {
 std::string MetalDirectionStr(MetalDirection metal_direction) {
     std::string s;
     switch (metal_direction) {
-        case 0: { s = "HORIZONTAL"; }
+        case HORIZONTAL: { s = "HORIZONTAL"; }
             break;
-        case 1: { s = "VERTICAL"; }
+        case VERTICAL: { s = "VERTICAL"; }
             break;
-        case 2: { s = "DIAG45"; }
+        case DIAG45: { s = "DIAG45"; }
             break;
-        case 3: { s = "DIAG135"; }
+        case DIAG135: { s = "DIAG135"; }
             break;
         default: {
             std::cout << "MetalLayer direction error! This should never happen!" << std::endl;
@@ -68,11 +68,11 @@ std::string MetalDirectionStr(MetalDirection metal_direction) {
     return s;
 }
 
-XYDirection StrToXYDirection(std::string& direction) {
+XYDirection StrToXYDirection(std::string &direction) {
     XYDirection dir = XYDirection::X;
-    if(direction == "X")
+    if (direction == "X")
         dir = XYDirection::X;
-    else if (direction == "Y") 
+    else if (direction == "Y")
         dir = XYDirection::Y;
     else {
         std::cout << "unknown XYdirection: " << direction << std::endl;
@@ -83,12 +83,12 @@ XYDirection StrToXYDirection(std::string& direction) {
 
 std::string XYDirectionToStr(XYDirection dir) {
     std::string direction = "X";
-    switch(dir) {
-        case 0: {
+    switch (dir) {
+        case X: {
             direction = "X";
             break;
         }
-        case 1: {
+        case Y: {
             direction = "Y";
             break;
         }
@@ -128,21 +128,21 @@ CompOrient StrToCompOrient(std::string &str_orient) {
 std::string CompOrientStr(CompOrient orient) {
     std::string s;
     switch (orient) {
-        case 0: { s = "N"; }
+        case N: { s = "N"; }
             break;
-        case 1: { s = "S"; }
+        case S: { s = "S"; }
             break;
-        case 2: { s = "W"; }
+        case W: { s = "W"; }
             break;
-        case 3: { s = "E"; }
+        case E: { s = "E"; }
             break;
-        case 4: { s = "FN"; }
+        case FN: { s = "FN"; }
             break;
-        case 5: { s = "FS"; }
+        case FS: { s = "FS"; }
             break;
-        case 6: { s = "FW"; }
+        case FW: { s = "FW"; }
             break;
-        case 7: { s = "FE"; }
+        case FE: { s = "FE"; }
             break;
         default: {
             std::cout << "Block orientation error! This should never happen!" << std::endl;
@@ -162,8 +162,6 @@ PlaceStatus StrToPlaceStatus(std::string &str_place_status) {
         place_status = PLACED;
     } else if (str_place_status == "UNPLACED" || str_place_status == "NONE") {
         place_status = UNPLACED;
-    } else if (str_place_status == "NULL_STATE") {
-        place_status = NULL_STATE;
     } else {
         std::cout << "Unknown placement status: " << str_place_status << std::endl;
         exit(1);
@@ -174,15 +172,13 @@ PlaceStatus StrToPlaceStatus(std::string &str_place_status) {
 std::string PlaceStatusStr(PlaceStatus place_status) {
     std::string s;
     switch (place_status) {
-        case 0: { s = "COVER"; }
+        case COVER: { s = "COVER"; }
             break;
-        case 1: { s = "FIXED"; }
+        case FIXED: { s = "FIXED"; }
             break;
-        case 2: { s = "PLACED"; }
+        case PLACED: { s = "PLACED"; }
             break;
-        case 3: { s = "UNPLACED"; }
-            break;
-        case 4: { s = "NULL_STATE"; }
+        case UNPLACED: { s = "UNPLACED"; }
             break;
         default: {
             std::cout << "Unit placement state error! This should never happen!" << std::endl;
@@ -214,15 +210,15 @@ SignalDirection StrToSignalDirection(std::string &str_signal_direction) {
 std::string SignalDirectionStr(SignalDirection signal_direction) {
     std::string s;
     switch (signal_direction) {
-        case 0: { s = "INPUT"; }
+        case INPUT: { s = "INPUT"; }
             break;
-        case 1: { s = "OUTPUT"; }
+        case OUTPUT: { s = "OUTPUT"; }
             break;
-        case 2: { s = "INOUT"; }
+        case INOUT: { s = "INOUT"; }
             break;
-        case 3: { s = "FEEDTHRU"; }
+        case FEEDTHRU: { s = "FEEDTHRU"; }
             break;
-        case 4: { s = "OUTPUT TRISTATE"; }
+        case OUTPUT_TRISTATE: { s = "OUTPUT TRISTATE"; }
             break;
         default: {
             std::cout << "IOPIN signal direction error! This should never happen!" << std::endl;
@@ -260,21 +256,145 @@ SignalUse StrToSignalUse(std::string &str_signal_use) {
 std::string SignalUseStr(SignalUse signal_use) {
     std::string s;
     switch (signal_use) {
-        case 0: { s = "SIGNAL"; }
+        case SIGNAL: { s = "SIGNAL"; }
             break;
-        case 1: { s = "POWER"; }
+        case POWER: { s = "POWER"; }
             break;
-        case 2: { s = "GROUND"; }
+        case GROUND: { s = "GROUND"; }
             break;
-        case 3: { s = "CLOCK"; }
+        case CLOCK: { s = "CLOCK"; }
             break;
-        case 4: { s = "TIEOFF"; }
+        case TIEOFF: { s = "TIEOFF"; }
             break;
-        case 5: { s = "ANALOG"; }
+        case ANALOG: { s = "ANALOG"; }
             break;
-        case 6: { s = "SCAN"; }
+        case SCAN: { s = "SCAN"; }
             break;
-        case 7: { s = "RESET"; }
+        case RESET: { s = "RESET"; }
+            break;
+        default: {
+            std::cout << "IOPIN signal use error! This should never happen!" << std::endl;
+            exit(1);
+        }
+    }
+    return s;
+}
+
+MacroClass StrToMacroClass(std::string &str_macro_class) {
+    MacroClass macro_class;
+    if (str_macro_class == "CORE") {
+        macro_class = CORE_;
+    } else if (str_macro_class == "CORE WELLTAP") {
+        macro_class = CORE_WELLTAP;
+    } else if (str_macro_class == "CORE FEEDTHRU") {
+        macro_class = CORE_FEEDTHRU;
+    } else if (str_macro_class == "CORE TIEHIGH") {
+        macro_class = CORE_TIEHIGH;
+    } else if (str_macro_class == "CORE TIELOW") {
+        macro_class = CORE_TIELOW;
+    } else if (str_macro_class == "CORE SPACER") {
+        macro_class = CORE_SPACER;
+    } else if (str_macro_class == "CORE ANTENNACELL") {
+        macro_class = CORE_ANTENNACELL;
+    } else if (str_macro_class == "COVER") {
+        macro_class = COVER_;
+    } else if (str_macro_class == "COVER BUMP") {
+        macro_class = COVER_BUMP;
+    } else if (str_macro_class == "RING") {
+        macro_class = RING_;
+    } else if (str_macro_class == "BLOCK") {
+        macro_class = BLOCK_;
+    } else if (str_macro_class == "BLOCK BLACKBOX") {
+        macro_class = BLOCK_BLACKBOX;
+    } else if (str_macro_class == "BLOCK SOFT") {
+        macro_class = BLOCK_SOFT;
+    } else if (str_macro_class == "PAD") {
+        macro_class = PAD_;
+    } else if (str_macro_class == "PAD INPUT") {
+        macro_class = PAD_INPUT;
+    } else if (str_macro_class == "PAD OUTPUT") {
+        macro_class = PAD_OUTPUT;
+    } else if (str_macro_class == "PAD INOUT") {
+        macro_class = PAD_INOUT;
+    } else if (str_macro_class == "PAD POWER") {
+        macro_class = PAD_POWER;
+    } else if (str_macro_class == "PAD SPACER") {
+        macro_class = PAD_SPACER;
+    } else if (str_macro_class == "PAD AREAIO") {
+        macro_class = PAD_AREAIO;
+    } else if (str_macro_class == "ENDCAP PRE") {
+        macro_class = ENDCAP_PRE;
+    } else if (str_macro_class == "ENDCAP POST") {
+        macro_class = ENDCAP_POST;
+    } else if (str_macro_class == "ENDCAP TOPLEFT") {
+        macro_class = ENDCAP_TOPLEFT;
+    } else if (str_macro_class == "ENDCAP_TOPRIGHT") {
+        macro_class = ENDCAP_TOPRIGHT;
+    } else if (str_macro_class == "ENDCAP_BOTTOMLEFT") {
+        macro_class = ENDCAP_BOTTOMLEFT;
+    } else if (str_macro_class == "ENDCAP_BOTTOMRIGHT") {
+        macro_class = ENDCAP_BOTTOMRIGHT;
+    } else {
+        std::cout << "Unknown MacroClass: " << str_macro_class << std::endl;
+        exit(0);
+    }
+    return macro_class;
+}
+
+std::string MacroClassStr(MacroClass macro_class) {
+    std::string s;
+    switch (macro_class) {
+        case COVER_: { s = "COVER"; }
+            break;
+        case COVER_BUMP: { s = "COVER BUMP"; }
+            break;
+        case RING_: { s = "RING"; }
+            break;
+        case BLOCK_: { s = "BLOCK"; }
+            break;
+        case BLOCK_BLACKBOX: { s = "BLOCK BLACKBOX"; }
+            break;
+        case BLOCK_SOFT: { s = "BLOCK SOFT"; }
+            break;
+        case PAD_: { s = "PAD"; }
+            break;
+        case PAD_INPUT: { s = "PAD INPUT"; }
+            break;
+        case PAD_OUTPUT: { s = "PAD OUTPUT"; }
+            break;
+        case PAD_INOUT: { s = "PAD INOUT"; }
+            break;
+        case PAD_POWER: { s = "PAD POWER"; }
+            break;
+        case PAD_SPACER: { s = "PAD SPACER"; }
+            break;
+        case PAD_AREAIO: { s = "PAD AREAIO"; }
+            break;
+        case CORE_: { s = "CORE"; }
+            break;
+        case CORE_FEEDTHRU: { s = "CORE FEEDTHRU"; }
+            break;
+        case CORE_TIEHIGH: { s = "CORE TIEHIGH"; }
+            break;
+        case CORE_TIELOW: { s = "CORE TIELOW"; }
+            break;
+        case CORE_SPACER: { s = "CORE SPACER"; }
+            break;
+        case CORE_ANTENNACELL: { s = "CORE ANTENNACELL"; }
+            break;
+        case CORE_WELLTAP: { s = "CORE WELLTAP"; }
+            break;
+        case ENDCAP_PRE: { s = "ENDCAP PRE"; }
+            break;
+        case ENDCAP_POST: { s = "ENDCAP POST"; }
+            break;
+        case ENDCAP_TOPLEFT: { s = "ENDCAP TOPLEFT"; }
+            break;
+        case ENDCAP_TOPRIGHT: { s = "ENDCAP TOPRIGHT"; }
+            break;
+        case ENDCAP_BOTTOMLEFT: { s = "ENDCAP BOTTOMLEFT"; }
+            break;
+        case ENDCAP_BOTTOMRIGHT: { s = "ENDCAP BOTTOMRIGHT"; }
             break;
         default: {
             std::cout << "IOPIN signal use error! This should never happen!" << std::endl;

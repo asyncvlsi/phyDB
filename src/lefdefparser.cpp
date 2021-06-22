@@ -47,6 +47,11 @@ int getLefMacros(lefrCallbackType_e type, lefiMacro *macro, lefiUserData data) {
     double originY = macro->originY();
     double sizeX = macro->sizeX();
     double sizeY = macro->sizeY();
+
+    PhyDBExpects(macro->hasClass(), "Macro has no class?" + std::string(macro->name()));
+    std::string str_macro_class (macro->macroClass());
+    MacroClass macro_class = StrToMacroClass(str_macro_class);
+
     if (enableOutput) {
         cout << "  ORIGIN " << originX << " "
              << originY << " ;" << endl;
@@ -58,6 +63,7 @@ int getLefMacros(lefrCallbackType_e type, lefiMacro *macro, lefiUserData data) {
     Macro &m = phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); //write to the last one
     m.SetOrigin(originX, originY);
     m.SetSize(sizeX, sizeY);
+    m.SetClass(macro_class);
 
     return 0;
 }

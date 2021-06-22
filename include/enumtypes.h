@@ -18,8 +18,8 @@ enum XYDirection {
     Y = 1,
 };
 
-XYDirection StrToXYDirection(std::string& direction);
-std::string XYDirectionToStr(XYDirection );
+XYDirection StrToXYDirection(std::string &direction);
+std::string XYDirectionToStr(XYDirection);
 
 enum MetalDirection {
     HORIZONTAL = 0,
@@ -50,8 +50,7 @@ enum PlaceStatus {
     COVER = 0,
     FIXED = 1,
     PLACED = 2,
-    UNPLACED = 3,
-    NULL_STATE = 4
+    UNPLACED = 3
 };
 
 PlaceStatus StrToPlaceStatus(std::string &str_place_status);
@@ -81,6 +80,43 @@ enum SignalUse {
 
 SignalUse StrToSignalUse(std::string &str_signal_use);
 std::string SignalUseStr(SignalUse signal_use);
+
+enum MacroClass {
+    COVER_ = 0,
+    COVER_BUMP = 1,
+
+    RING_ = 2,
+
+    BLOCK_ = 3,
+    BLOCK_BLACKBOX = 4,
+    BLOCK_SOFT = 5,
+
+    PAD_ = 6,
+    PAD_INPUT = 7,
+    PAD_OUTPUT = 8,
+    PAD_INOUT = 9,
+    PAD_POWER = 10,
+    PAD_SPACER = 11,
+    PAD_AREAIO = 12,
+
+    CORE_ = 13,
+    CORE_FEEDTHRU = 14,
+    CORE_TIEHIGH = 15,
+    CORE_TIELOW = 16,
+    CORE_SPACER = 17,
+    CORE_ANTENNACELL = 18,
+    CORE_WELLTAP = 19,
+
+    ENDCAP_PRE = 20,
+    ENDCAP_POST = 21,
+    ENDCAP_TOPLEFT = 22,
+    ENDCAP_TOPRIGHT = 23,
+    ENDCAP_BOTTOMLEFT = 24,
+    ENDCAP_BOTTOMRIGHT = 25
+};
+
+MacroClass StrToMacroClass(std::string &str_macro_class);
+std::string MacroClassStr(MacroClass macro_class);
 
 }
 

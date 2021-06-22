@@ -10,6 +10,10 @@ void Macro::SetName(string &name) {
     name_ = name;
 }
 
+void Macro::SetClass(MacroClass macro_class) {
+    class_ = macro_class;
+}
+
 void Macro::SetOrigin(Point2D<double> _origin) {
     origin_ = _origin;
 }
@@ -53,6 +57,10 @@ OBS *Macro::GetObs() {
 
 void Macro::SetWellPtr(MacroWell *well_ptr) {
     well_ptr_ = well_ptr;
+}
+
+MacroClass Macro::GetClass() const {
+    return class_;
 }
 
 Point2D<double> Macro::GetOrigin() const {

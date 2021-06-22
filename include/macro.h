@@ -1,10 +1,12 @@
 #ifndef MACRO_H
 #define MACRO_H
 
+#include <unordered_map>
+
 #include "datatype.h"
+#include "enumtypes.h"
 #include "pin.h"
 #include "obs.h"
-#include <unordered_map>
 
 namespace phydb {
 
@@ -14,6 +16,8 @@ struct MacroWell;
 class Macro {
   private:
     string name_;
+
+    MacroClass class_ = CORE_;
 
     Point2D<double> origin_;
     Point2D<double> size_;
@@ -40,6 +44,7 @@ class Macro {
         obs_(obs) {}
 
     void SetName(string &name);
+    void SetClass(MacroClass macro_class);
     void SetOrigin(Point2D<double> _origin);
     void SetOrigin(double x, double y);
     void SetSize(Point2D<double> size);
@@ -58,6 +63,7 @@ class Macro {
     void SetWellPtr(MacroWell *well_ptr);
 
     const string &GetName();
+    MacroClass GetClass() const;
     Point2D<double> GetOrigin() const;
     Point2D<double> &GetOriginRef();
     double GetOriginX() const;

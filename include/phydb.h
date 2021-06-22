@@ -1,9 +1,9 @@
 #ifndef PHYDB_H
 #define PHYDB_H
 
+#include "actphydbtimingapi.h"
 #include "design.h"
 #include "tech.h"
-#include "actphydbtimingapi.h"
 
 namespace phydb {
 
