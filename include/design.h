@@ -111,6 +111,7 @@ class Design {
 
     GcellGrid* AddGcellGrid(XYDirection direction, int start, int nBoundaries, int step);
     vector<GcellGrid>& GetGcellGridsRef();
+    void InsertRoutingGuide(int netID, int llx, int lly, int urx, int ury, int layerID);
 
     std::string GetDefName() const;
     void SetDefName(std::string const &def_file_name);

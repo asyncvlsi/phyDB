@@ -129,6 +129,7 @@ class PhyDB {
 
     void WriteDef(string const &defFileName);
     void WriteCluster(string const &clusterFileName);
+    void WriteGuide(string const &guideFileName);
 
   private:
     Tech tech_;

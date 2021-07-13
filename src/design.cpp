@@ -227,6 +227,10 @@ vector<GcellGrid>& Design::GetGcellGridsRef() {
     return gcell_grids_;
 }
 
+void Design::InsertRoutingGuide(int netID, int llx, int lly, int urx, int ury, int layerID) {
+    this->nets_[netID].AddRoutingGuide(llx, lly, urx, ury, layerID);
+}
+
 std::string Design::GetDefName() const {
     return def_name_;
 }

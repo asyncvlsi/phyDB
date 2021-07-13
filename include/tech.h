@@ -68,6 +68,7 @@ class Tech {
     Layer *AddLayer(std::string &layer_name, LayerType type, MetalDirection direction=HORIZONTAL);
     Layer *GetLayerPtr(std::string const &layer_name);
     int GetLayerId(string const &layer_name);
+    const std::string& GetLayerName(int layerID);
     std::vector<Layer> &GetLayersRef();
 
     bool IsMacroExisting(std::string const &macro_name);

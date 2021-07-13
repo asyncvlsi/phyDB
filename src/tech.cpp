@@ -101,6 +101,14 @@ int Tech::GetLayerId(string const &layer_name) {
     return id;
 }
 
+const std::string& Tech::GetLayerName(int layerID) {
+    if(layerID >= layers_.size()) {
+        std::cout << "accessing layerID > num. of layers" << endl;
+        exit(1);
+    }
+    return layers_[layerID].GetName();
+}
+
 std::vector<Layer> &Tech::GetLayersRef() {
     return layers_;
 }

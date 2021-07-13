@@ -587,4 +587,35 @@ void PhyDB::WriteCluster(string const &clusterFileName) {
         outfile << std::endl;
     }
 }
+
+void PhyDB::WriteGuide(string const &guideFileName) {
+    std::ofstream outfile(guideFileName.c_str());
+    if (outfile.is_open()) {
+        std::cout << "writing guide file: " << guideFileName << "\n";
+    } else {
+        std::cout << "ERROR: cannot open output guide file " << guideFileName << std::endl;
+        exit(1);
+    }
+
+    auto design_p = this->GetDesignPtr();
+    auto tech_p = this->GetTechPtr();
+    auto netlist = design_p->GetNetsRef();
+    for(auto net : netlist) {
+        string netName = net.GetName();
+        outfile << netName << endl;
+        outfile << "(" << endl;
+
+        auto routing_guides = net.GetRoutingGuidesRef();
+        for(auto gcell : routing_guides) {
+            string layer_name = tech_p->GetLayerName(gcell.ll.z);
+            outfile << gcell.ll.x << " ";
+            outfile << gcell.ll.y << " ";
+            outfile << gcell.ur.x << " ";
+            outfile << gcell.ur.y << " ";
+            outfile << layer_name << std::endl;
+        }
+        outfile << ")" << endl;
+    }
+}
+
 }

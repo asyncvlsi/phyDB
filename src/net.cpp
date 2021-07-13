@@ -11,6 +11,10 @@ void Net::AddCompPin(std::string const &comp_name, std::string const &pin_name) 
     pin_names_.push_back(pin_name);
 }
 
+void Net::AddRoutingGuide(int llx, int lly, int urx, int ury, int layerID) {
+  guides_.emplace_back(llx, lly, layerID, urx, ury, layerID);
+}
+
 const string &Net::GetName() {
   return name_;
 }
@@ -25,6 +29,10 @@ vector<string> &Net::GetPinNamesRef() {
 
 vector<string> &Net::GetIoPinNamesRef() {
   return iopin_names_;
+}
+
+vector<Rect3D<int>>& Net::GetRoutingGuidesRef() {
+  return guides_;
 }
 
 void Net::Report() {
