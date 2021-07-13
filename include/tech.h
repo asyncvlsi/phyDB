@@ -83,6 +83,7 @@ class Tech {
     bool IsViaRuleGenerateExisting(std::string const &name);
     ViaRuleGenerate* AddViaRuleGenerate(std::string &name);
     ViaRuleGenerate* GetViaRuleGeneratePtr(std::string const &name);
+    vector<ViaRuleGenerate>& GetViaRuleGeneratesRef();
     
     void SetNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
     void SetPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);

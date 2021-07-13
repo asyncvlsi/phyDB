@@ -86,6 +86,7 @@ class Design {
     bool IsDefViaExist(std::string const &name);
     DefVia *AddDefVia(std::string &name);
     DefVia *GetDefViaPtr(std::string const &name);
+    vector<DefVia>& GetDefViasRef() {return vias_;}
 
     void SetIoPinCount(int count);
     bool IsIoPinExist(std::string &iopin_name);

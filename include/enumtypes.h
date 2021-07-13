@@ -18,8 +18,9 @@ enum XYDirection {
     Y = 1,
 };
 
-XYDirection StrToXYDirection(std::string &direction);
-std::string XYDirectionToStr(XYDirection);
+XYDirection StrToXYDirection(std::string& direction);
+std::string XYDirectionToStr(XYDirection );
+std::string XYDirectionStr(XYDirection );
 
 enum MetalDirection {
     HORIZONTAL = 0,

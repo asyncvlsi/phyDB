@@ -91,6 +91,10 @@ Point2D<double> Macro::GetSize() const {
     return size_;
 }
 
+vector<Pin> Macro::GetPinVec() const {
+    return pins_;
+}
+
 vector<Pin> &Macro::GetPinsRef() {
     return pins_;
 }

@@ -45,6 +45,7 @@ class Component {
     PlaceStatus GetPlacementStatus();
     CompOrient GetOrientation();
     Point2D<int> GetLocation();
+    int GetWeight() {return weight_;}
 };
 
 ostream &operator<<(ostream &, const Component &);

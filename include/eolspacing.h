@@ -27,7 +27,11 @@ class EolSpacing {
         par_edge_(parEdge), 
         par_within_(parWithin) {}
     
-    double GetSpacing() {return spacing_;}
+    double GetSpacing()   {return spacing_;}
+    double GetEOLWidth()  {return eol_width_;}
+    double GetEOLWithin() {return eol_within_;}
+    double GetParEdge()   {return par_edge_;}
+    double GetParWithin() {return par_within_;}
 
     void Reset();
 };

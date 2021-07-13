@@ -173,6 +173,10 @@ ViaRuleGenerate *Tech::GetViaRuleGeneratePtr(std::string const &name) {
     return &(via_rule_generates_[id]);
 }
 
+vector<ViaRuleGenerate> &Tech::GetViaRuleGeneratesRef() {
+    return via_rule_generates_;
+}
+
 void Tech::SetNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
     if (is_n_well_layer_set_) {
         n_layer_ptr_->SetParams(width, spacing, op_spacing, max_plug_dist, overhang);

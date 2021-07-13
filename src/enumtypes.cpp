@@ -100,6 +100,10 @@ std::string XYDirectionToStr(XYDirection dir) {
     return direction;
 }
 
+std::string XYDirectionStr(XYDirection dir) {
+    return XYDirectionToStr(dir);
+}
+
 CompOrient StrToCompOrient(std::string &str_orient) {
     CompOrient orient = N;
     if (str_orient == "N" || str_orient == "R0") {
