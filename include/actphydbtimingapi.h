@@ -106,11 +106,8 @@ struct ActEdge {
 
 class ActPhyDBTimingAPI {
   public:
-    bool IsActNetPtrExisting(void *act_net);
-    int ActNetPtr2Id(void *act_net);
+    //APIs for ACT
     void AddActNetPtrIdPair(void *act_net, int net_id);
-    bool IsActComPinPtrExisting(void *act_comp);
-    PhydbPin ActCompPinPtr2Id(void *act_comp);
     void AddActCompPinPtrIdPair(void *act_comp, int comp_id, int pin_id);
 
     void SetGetNumConstraintsCB(int (*callback_function)());
@@ -119,6 +116,12 @@ class ActPhyDBTimingAPI {
     void SetGetWitnessCB(void (*callback_function)(int, std::vector<ActEdge> &, std::vector<ActEdge> &));
     void SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<int> &));
 
+
+    //APIs for Dali and SPRoute
+    bool IsActNetPtrExisting(void *act_net);
+    int ActNetPtr2Id(void *act_net);
+    bool IsActComPinPtrExisting(void *act_comp);
+    PhydbPin ActCompPinPtr2Id(void *act_comp);
     int GetNumConstraints();
     void UpdateTimingIncremental();
     double GetSlack(int tc_num);
@@ -128,7 +131,7 @@ class ActPhyDBTimingAPI {
   private:
     int (*GetNumConstraintsCB)() = nullptr;
     void (*UpdateTimingIncrementalCB)() = nullptr;
-    double (*GetActualMarginCB)(int) = nullptr;
+    double (*GetSlackCB)(int) = nullptr;
     void (*GetWitnessCB)(int, std::vector<ActEdge> &, std::vector<ActEdge> &) = nullptr;
     void (*GetViolatedTimingConstraintsCB)(std::vector<int> &) = nullptr;
 
@@ -139,6 +142,9 @@ class ActPhyDBTimingAPI {
     // act component-pin pointer <=> phydb component-pin index
     std::unordered_map<void *, PhydbPin> component_pin_act_2_id_;
     std::unordered_map<PhydbPin, void *, PhydbPinHasher> component_pin_id_2_act_;
+
+    //Manager paraM; //include galois/eda/parasitics/manager.h
+    //vector<CellLib*> libs; //include galois/eda/liberty/CellLib.h
 
     void Translate(std::vector<ActEdge> &act_path, TimingPath &phydb_path);
 };
