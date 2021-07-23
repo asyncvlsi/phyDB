@@ -62,7 +62,7 @@ struct PhydbTimingNode {
     void AddEdge(PhydbTimingEdge &edge);
 };
 
-struct TimingPath {
+struct PhydbPath {
     PhydbPin root;
     std::vector<PhydbTimingEdge> edges;
     void Clear();
@@ -84,7 +84,7 @@ struct TimingDAG {
     }
     PhydbTimingNode *AddPinToDag(PhydbPin &pin);
     PhydbTimingNode *GetPinNode(PhydbPin &pin);
-    void AddFastPath(TimingPath &fast_path);
+    void AddFastPath(PhydbPath &fast_path);
 };
 
 // TODO : is arc delay independent of load net SPEF? If yes, no need to store arcs using PhydbTimingEdge
@@ -116,6 +116,13 @@ class ActPhyDBTimingAPI {
     void SetGetWitnessCB(void (*callback_function)(int, std::vector<ActEdge> &, std::vector<ActEdge> &));
     void SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<int> &));
 
+    //void SetParaManager(Manager* manager);
+    //void AddCellLib(CellLib* lib);
+    //void SetNetlistAdaptor(ExtNetlistAdaptor* adaptor);
+
+    //Manager* GetParaManager();
+    //std::vector<CellLib*> GetCelllibs();
+    //ExtNetListAdaptor* GetNetlistAdaptor();
 
     //APIs for Dali and SPRoute
     bool IsActNetPtrExisting(void *act_net);
@@ -125,7 +132,7 @@ class ActPhyDBTimingAPI {
     int GetNumConstraints();
     void UpdateTimingIncremental();
     double GetSlack(int tc_num);
-    void GetWitness(int tc_num, TimingPath &phydb_fast_path, TimingPath &phydb_slow_path);
+    void GetWitness(int tc_num, PhydbPath &phydb_fast_path, PhydbPath &phydb_slow_path);
     void GetViolatedTimingConstraints(std::vector<int> &violated_tc_nums);
 
   private:
@@ -143,10 +150,11 @@ class ActPhyDBTimingAPI {
     std::unordered_map<void *, PhydbPin> component_pin_act_2_id_;
     std::unordered_map<PhydbPin, void *, PhydbPinHasher> component_pin_id_2_act_;
 
-    //Manager paraM; //include galois/eda/parasitics/manager.h
+    //Manager* paraM; //include galois/eda/parasitics/manager.h
     //vector<CellLib*> libs; //include galois/eda/liberty/CellLib.h
+    //ExtNetlistAdaptor* adaptor; //include galois/eda/utility/ExtNetlistAdaptor.h
 
-    void Translate(std::vector<ActEdge> &act_path, TimingPath &phydb_path);
+    void Translate(std::vector<ActEdge> &act_path, PhydbPath &phydb_path);
 };
 
 }

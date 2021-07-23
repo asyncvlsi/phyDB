@@ -134,7 +134,7 @@ class PhyDB {
   private:
     Tech tech_;
     Design design_;
-    ActPhyDBTimingAPI act_phy_db_timing_api_;
+    ActPhyDBTimingAPI timing_api_;
 
     /****helper functions****/
     // splits a line into many word tokens
