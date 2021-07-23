@@ -204,14 +204,14 @@ Net *PhyDB::AddNet(std::string &net_name, double weight, void *act_net_ptr) {
     auto *ret = design_.AddNet(net_name, weight);
 
     if (act_net_ptr != nullptr) {
-        if (act_phy_db_timing_api_.IsActNetPtrExisting(act_net_ptr)) {
-            int id = act_phy_db_timing_api_.ActNetPtr2Id(act_net_ptr);
+        if (timing_api_.IsActNetPtrExisting(act_net_ptr)) {
+            int id = timing_api_.ActNetPtr2Id(act_net_ptr);
             std::string error_msg =
                 "Net " + design_.nets_[id].GetName() + " has the same Act pointer as " + net_name;
             PhyDBExpects(false, error_msg);
         }
         int id = (int) design_.nets_.size() - 1;
-        act_phy_db_timing_api_.AddActNetPtrIdPair(act_net_ptr, id);
+        timing_api_.AddActNetPtrIdPair(act_net_ptr, id);
     }
 
     return ret;
@@ -245,8 +245,8 @@ void PhyDB::BindPhydbPinToActPin(std::string &comp_name, std::string &pin_name, 
     int comp_id = design_.component_2_id_[comp_name];
     int pin_id = macro_ptr->GetPinId(pin_name);
 
-    if (act_phy_db_timing_api_.IsActComPinPtrExisting(act_comp_pin_ptr)) {
-        auto id_pair = act_phy_db_timing_api_.ActCompPinPtr2Id(act_comp_pin_ptr);
+    if (timing_api_.IsActComPinPtrExisting(act_comp_pin_ptr)) {
+        auto id_pair = timing_api_.ActCompPinPtr2Id(act_comp_pin_ptr);
         Component &comp = design_.components_[id_pair.comp_id];
         Macro *tmp_macro_ptr = GetMacroPtr(comp.GetMacroName());
         Pin &pin = tmp_macro_ptr->GetPinsRef()[id_pair.pin_id];
@@ -255,7 +255,7 @@ void PhyDB::BindPhydbPinToActPin(std::string &comp_name, std::string &pin_name, 
                 + " has the same Act pointer as " + comp_name + " " + pin_name;
         PhyDBExpects(false, error_msg);
     }
-    act_phy_db_timing_api_.AddActCompPinPtrIdPair(act_comp_pin_ptr, comp_id, pin_id);
+    timing_api_.AddActCompPinPtrIdPair(act_comp_pin_ptr, comp_id, pin_id);
 }
 
 Net *PhyDB::GetNetPtr(std::string &net_name) {
@@ -311,23 +311,23 @@ vector<GcellGrid> &PhyDB::GetGcellGridsRef() {
 }
 
 void PhyDB::SetGetNumConstraintsCB(int (*callback_function)()) {
-    act_phy_db_timing_api_.SetGetNumConstraintsCB(callback_function);
+    timing_api_.SetGetNumConstraintsCB(callback_function);
 }
 
 void PhyDB::SetUpdateTimingIncremental(void (*callback_function)()) {
-    act_phy_db_timing_api_.SetUpdateTimingIncrementalCB(callback_function);
+    timing_api_.SetUpdateTimingIncrementalCB(callback_function);
 }
 
 void PhyDB::SetGetSlackCB(double (*callback_function)(int)) {
-    act_phy_db_timing_api_.SetGetSlackCB(callback_function);
+    timing_api_.SetGetSlackCB(callback_function);
 }
 
 void PhyDB::SetGetWitnessCB(void (*callback_function)(int, std::vector<ActEdge> &, std::vector<ActEdge> &)) {
-    act_phy_db_timing_api_.SetGetWitnessCB(callback_function);
+    timing_api_.SetGetWitnessCB(callback_function);
 }
 
 void PhyDB::SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<int> &)) {
-    act_phy_db_timing_api_.SetGetViolatedTimingConstraintsCB(callback_function);
+    timing_api_.SetGetViolatedTimingConstraintsCB(callback_function);
 }
 
 void PhyDB::ReadLef(string const &lefFileName) {

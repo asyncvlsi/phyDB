@@ -40,12 +40,12 @@ void PhydbTimingNode::AddEdge(PhydbTimingEdge &edge) {
     }
 }
 
-void TimingPath::Clear() {
+void PhydbPath::Clear() {
     edges.clear();
     root.Reset();
 }
 
-void TimingPath::AddEdge(PhydbPin &src, PhydbPin &tgt, int net_id, double dly, int cnt) {
+void PhydbPath::AddEdge(PhydbPin &src, PhydbPin &tgt, int net_id, double dly, int cnt) {
     if (edges.empty()) {
         root = src;
     } else {
@@ -71,7 +71,7 @@ PhydbTimingNode *TimingDAG::GetPinNode(PhydbPin &pin) {
     return &stb_fast_nodes[id];
 }
 
-void TimingDAG::AddFastPath(TimingPath &fast_path) {
+void TimingDAG::AddFastPath(PhydbPath &fast_path) {
     PhydbTimingNode *node = nullptr;
     if (!IsPinInDag(fast_path.root)) {
         node = AddPinToDag(fast_path.root);
@@ -131,7 +131,7 @@ void ActPhyDBTimingAPI::SetUpdateTimingIncrementalCB(void (*callback_function)()
 }
 
 void ActPhyDBTimingAPI::SetGetSlackCB(double (*callback_function)(int)) {
-    GetActualMarginCB = callback_function;
+    GetSlackCB = callback_function;
 }
 
 void ActPhyDBTimingAPI::SetGetWitnessCB(void (*callback_function)(int,
@@ -157,14 +157,14 @@ void ActPhyDBTimingAPI::UpdateTimingIncremental() {
 }
 
 double ActPhyDBTimingAPI::GetSlack(int tc_num) {
-    if (GetActualMarginCB != nullptr) {
-        return GetActualMarginCB(tc_num);
+    if (GetSlackCB != nullptr) {
+        return GetSlackCB(tc_num);
     }
 }
 
 void ActPhyDBTimingAPI::GetWitness(int tc_num,
-                                   TimingPath &phydb_fast_path,
-                                   TimingPath &phydb_slow_path) {
+                                   PhydbPath &phydb_fast_path,
+                                   PhydbPath &phydb_slow_path) {
     if (GetWitnessCB != nullptr) {
         std::vector<ActEdge> act_fast_path;
         std::vector<ActEdge> act_slow_path;
@@ -182,7 +182,7 @@ void ActPhyDBTimingAPI::GetViolatedTimingConstraints(std::vector<int> &violated_
     }
 }
 
-void ActPhyDBTimingAPI::Translate(std::vector<ActEdge> &act_path, TimingPath &phydb_path) {
+void ActPhyDBTimingAPI::Translate(std::vector<ActEdge> &act_path, PhydbPath &phydb_path) {
     phydb_path.Clear();
 
     size_t sz = act_path.size();
