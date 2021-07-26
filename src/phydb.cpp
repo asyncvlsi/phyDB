@@ -353,7 +353,7 @@ void PhyDB::OverrideComponentLocsFromDef(string const &defFileName) {
 void PhyDB::ReadCell(string const &cellFileName) {
     std::ifstream ist(cellFileName.c_str());
     if (ist.is_open()) {
-        std::cout << "Loading CELL file: " << cellFileName << "\n";
+        //std::cout << "Loading CELL file: " << cellFileName << "\n";
     } else {
         std::cout << "ERROR: cannot open input file " << cellFileName << std::endl;
         exit(1);
@@ -500,7 +500,7 @@ void PhyDB::ReadCell(string const &cellFileName) {
     }
     //tech_.ReportWellShape();
 
-    std::cout << "CELL file loading complete: " << cellFileName << "\n";
+    //std::cout << "CELL file loading complete: " << cellFileName << "\n";
 }
 
 void PhyDB::ReadCluster(string const &clusterFileName) {
