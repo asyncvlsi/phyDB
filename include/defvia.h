@@ -8,7 +8,7 @@ namespace phydb {
 class DefVia {
   private:
     string name_;
-    int idx_;
+    //int idx_;
     string via_rule_name_;
     Size2D<int> cut_size_;
     string layers_[3];
