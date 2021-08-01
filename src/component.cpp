@@ -19,8 +19,8 @@ const string &Component::GetName() {
     return name_;
 }
 
-const string &Component::GetMacroName() {
-    return macro_name_;
+Macro *Component::GetMacro() {
+    return macro_ptr_;
 }
 
 PlaceStatus Component::GetPlacementStatus() {
@@ -36,7 +36,7 @@ Point2D<int> Component::GetLocation() {
 }
 
 ostream &operator<<(ostream &os, const Component &c) {
-    os << c.name_ << " " << c.macro_name_ << " "
+    os << c.name_ << " " << c.macro_ptr_ << " "
        << c.source_ << " " << PlaceStatusStr(c.place_status_) << " "
        << CompOrientStr(c.orient_) << endl;
     os << "weight: " << c.weight_ << " location: " << c.location_ << endl;

@@ -69,7 +69,7 @@ class PhyDB {
 
     void SetComponentCount(int count);
     bool IsComponentExisting(std::string &component_name);
-    Component *AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
+    Component *AddComponent(std::string &comp_name, Macro *macro_ptr, PlaceStatus place_status,
                             int llx, int lly, CompOrient orient);
     Component *GetComponentPtr(std::string &comp_name);
 

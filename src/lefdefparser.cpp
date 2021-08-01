@@ -671,7 +671,9 @@ int getDefComponents(defrCallbackType_e type, defiComponent *comp, defiUserData 
     std::string orient(comp->placementOrientStr());
 
     auto *phy_db_ptr = (PhyDB *) data;
-    phy_db_ptr->AddComponent(comp_name, macro_name,
+    Macro *macro_ptr = phy_db_ptr->GetMacroPtr(macro_name);
+    PhyDBExpects(macro_ptr!= nullptr, "Cannot find " + macro_name + " in PhyDB");
+    phy_db_ptr->AddComponent(comp_name, macro_ptr,
                              place_status, llx, lly,
                              StrToCompOrient(orient));
 

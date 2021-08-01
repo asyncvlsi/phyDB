@@ -154,10 +154,9 @@ vector<Row> &PhyDB::GetRowVec() {
     return design_.GetRowVec();
 }
 
-Component *PhyDB::AddComponent(std::string &comp_name, std::string &macro_name, PlaceStatus place_status,
-                               int llx, int lly, CompOrient orient) {
-    PhyDBExpects(IsMacroExisting(macro_name), "Macro name " + macro_name + " does not exist, cannot add component " + comp_name);
-    return design_.AddComponent(comp_name, macro_name, place_status, llx, lly, orient);
+Component *PhyDB::AddComponent(std::string &comp_name, Macro *macro_ptr, PlaceStatus place_status,
+                        int llx, int lly, CompOrient orient) {
+    return design_.AddComponent(comp_name, macro_ptr, place_status, llx, lly, orient);
 }
 
 Component *PhyDB::GetComponentPtr(std::string &comp_name) {
@@ -227,20 +226,18 @@ void PhyDB::AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::
     PhyDBExpects(IsNetExisting(net_name), "Cannot add a component pin to a nonexistent Net: " + net_name);
     PhyDBExpects(IsComponentExisting(comp_name), "Cannot add a nonexistent component to a net: " + comp_name);
     Component *comp_ptr = GetComponentPtr(comp_name);
-    std::string macro_name = comp_ptr->GetMacroName();
-    Macro *macro_ptr = GetMacroPtr(macro_name);
+    Macro *macro_ptr = comp_ptr->GetMacro();
     PhyDBExpects(macro_ptr->IsPinExist(pin_name),
-                 "Macro " + macro_name + " does not contain a pin with name " + pin_name);
+                 "Macro " + macro_ptr->GetName() + " does not contain a pin with name " + pin_name);
     design_.AddCompPinToNet(comp_name, pin_name, net_name);
 }
 
 void PhyDB::BindPhydbPinToActPin(std::string &comp_name, std::string &pin_name, void *act_comp_pin_ptr) {
     PhyDBExpects(IsComponentExisting(comp_name), "Cannot find component: " + comp_name);
     Component *comp_ptr = GetComponentPtr(comp_name);
-    std::string macro_name = comp_ptr->GetMacroName();
-    Macro *macro_ptr = GetMacroPtr(macro_name);
+    Macro *macro_ptr = comp_ptr->GetMacro();
     PhyDBExpects(macro_ptr->IsPinExist(pin_name),
-                 "Macro " + macro_name + " does not contain a pin with name " + pin_name);
+                 "Macro " + macro_ptr->GetName() + " does not contain a pin with name " + pin_name);
 
     int comp_id = design_.component_2_id_[comp_name];
     int pin_id = macro_ptr->GetPinId(pin_name);
@@ -248,7 +245,7 @@ void PhyDB::BindPhydbPinToActPin(std::string &comp_name, std::string &pin_name, 
     if (timing_api_.IsActComPinPtrExisting(act_comp_pin_ptr)) {
         auto id_pair = timing_api_.ActCompPinPtr2Id(act_comp_pin_ptr);
         Component &comp = design_.components_[id_pair.comp_id];
-        Macro *tmp_macro_ptr = GetMacroPtr(comp.GetMacroName());
+        Macro *tmp_macro_ptr = comp.GetMacro();
         Pin &pin = tmp_macro_ptr->GetPinsRef()[id_pair.pin_id];
         std::string error_msg =
             "Component pin: " + comp.GetName() + " " + pin.GetName()
