@@ -36,8 +36,7 @@ int getLefMacrosBegin(lefrCallbackType_e type, const char *str, lefiUserData dat
 }
 
 int getLefMacros(lefrCallbackType_e type, lefiMacro *macro, lefiUserData data) {
-    //bool enableOutput = true;
-    bool enableOutput = false;
+
     if ((type != lefrMacroCbkType)) {
         cout << "Type is not lefrMacroCbkType!" << endl;
         exit(2);
@@ -52,12 +51,6 @@ int getLefMacros(lefrCallbackType_e type, lefiMacro *macro, lefiUserData data) {
     std::string str_macro_class (macro->macroClass());
     MacroClass macro_class = StrToMacroClass(str_macro_class);
 
-    if (enableOutput) {
-        cout << "  ORIGIN " << originX << " "
-             << originY << " ;" << endl;
-        cout << "  SIZE   " << sizeX << " "
-             << sizeY << endl;
-    }
     auto *phy_db_ptr = (PhyDB *) data;
 
     Macro &m = phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); //write to the last one
@@ -76,32 +69,21 @@ int getLefMacrosEnd(lefrCallbackType_e type, const char *str, lefiUserData data)
 }
 
 int getLefUnits(lefrCallbackType_e type, lefiUnits *units, lefiUserData data) {
-    bool enableOutput = false;
     auto *phy_db_ptr = (PhyDB *) data;
 
     int database_unit = (int) units->databaseNumber();
     phy_db_ptr->SetDatabaseMicron(database_unit);
 
-    if (enableOutput) {
-        cout << "DATABASE MICRONS " << units->databaseNumber() << endl;
-    }
-
     return 0;
 }
 
 int getLefManufacturingGrid(lefrCallbackType_e type, double number, lefiUserData data) {
-    bool enableOutput = false;
     auto *phy_db_ptr = (PhyDB *) data;
     phy_db_ptr->SetManufacturingGrid(number);
-    if (enableOutput) {
-        cout << "MANUFACTURINGGRID " << number << endl;
-    }
     return 0;
 }
 
 int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
-    bool enableOutput = false;
-    //bool enableOutput = true;
     auto *phy_db_ptr = (PhyDB *) data;
     if (type != lefrPinCbkType) {
         cout << "Type is not lefrPinCbkType!" << endl;
@@ -116,19 +98,11 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
     std::string pin_use(pin->use());
     Pin *pin_ptr = last_macro.AddPin(pin_name, StrToSignalDirection(pin_direction), StrToSignalUse(pin_use));
 
-    if (enableOutput) {
-        cout << "  PIN " << pin->name() << endl;
-    }
-
     int numPorts = pin->numPorts();
     PhyDBExpects(numPorts > 0, "No physical pins, Macro: " + last_macro.GetName() + ", pin: " + pin_name);
 
     for (int i = 0; i < numPorts; ++i) {
         int numItems = pin->port(i)->numItems();
-
-        if (enableOutput) {
-            cout << "    PORT" << endl;
-        }
 
         LayerRect *layer_rect_ptr = nullptr;
         for (int j = 0; j < numItems; ++j) {
@@ -136,9 +110,6 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
             if (itemType == 1) { //layer
                 std::string layer_name(pin->port(i)->getLayer(j));
                 layer_rect_ptr = pin_ptr->AddLayerRect(layer_name);
-                if (enableOutput) {
-                    cout << "    LAYER " << layer_name << " ;" << endl;
-                }
             } else if (itemType == 8) {
                 double x1 = pin->port(i)->getRect(j)->xl;
                 double y1 = pin->port(i)->getRect(j)->yl;
@@ -147,10 +118,6 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
                 PhyDBExpects(layer_rect_ptr != nullptr, "unexpected error in getLefPins()");
                 layer_rect_ptr->AddRect(min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
 
-                if (enableOutput) {
-                    cout << "      RECT " << min(x1, x2) << " " << min(y1, y2) << " " << max(x1, x2) << " "
-                         << max(y1, y2) << " ;" << endl;
-                }
             } else {
                 cout << "unsupported lefiGeometries!" << endl;
                 continue;
@@ -158,20 +125,10 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
             }
         }
     }
-
-    //tmpPin.print();
-    if (enableOutput) {
-        cout << "  END " << pin->name() << endl;
-    }
-
-    //checkLargePin(tmpPin);
-
     return 0;
 }
 
 int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) {
-    //bool enableOutput = true;
-    bool enableOutput = FALSE;
 
     if (type != lefrObstructionCbkType) {
         cout << "Type is not lefrObstructionCbkType!" << endl;
@@ -182,10 +139,6 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
 
     LayerRect tmpLayerRect;
     Rect2D<double> tmpRect;
-
-    if (enableOutput) {
-        cout << "  OBS" << endl;
-    }
 
     auto geometry = obs->geometries();
     int numItems = geometry->numItems();
@@ -198,9 +151,6 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
         if (geometry->itemType(i) == lefiGeomLayerE) {
             std::string layer_name(geometry->getLayer(i));
             layer_rect_ptr = obs_ptr->AddLayerRect(layer_name);
-            if (enableOutput) {
-                cout << "    LAYER " << tmpLayerRect.layer_name_ << " ;" << endl;
-            }
         } else if (geometry->itemType(i) == lefiGeomRectE) {
             double x1 = geometry->getRect(i)->xl;
             double y1 = geometry->getRect(i)->yl;
@@ -208,10 +158,6 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
             double y2 = geometry->getRect(i)->yh;
             PhyDBExpects(layer_rect_ptr != nullptr, "unexpected error in getLefObs()");
             layer_rect_ptr->AddRect(min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
-            if (enableOutput) {
-                cout << "      RECT " << min(x1, x2) << " " << min(y1, y2) << " " << max(x1, x2) << " " << max(y1, y2)
-                     << " ;" << endl;
-            }
         } else {
             cout << "Warning: unsupported OBS" << endl;
             continue;
@@ -245,8 +191,6 @@ int getLefCornerSpacing(void *data, const string &stringProp) {
 }
 
 int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
-
-    bool enableOutput = false;
 
     if (type != lefrLayerCbkType) {
         cout << "Type is not lefrLayerCbkType!" << endl;
@@ -298,8 +242,6 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
             }
         }
         */
-        if (enableOutput)
-            cout << "Layer" << layer->name() << " number of props " << layer->numProps() << endl;
         if (layer->numProps() > 1) {
             cout << "Error: enable to handle more than one properties:" << layer->name() << endl;
             exit(1);
@@ -319,18 +261,10 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
             double eol_width = 0, eol_within = 0, par_edge = 0, par_within = 0;
             if (layer->hasSpacingEndOfLine(i)) {
 
-                if (enableOutput) {
-                    cout << "  SPACING " << layer->spacing(i) << " ENDOFLINE " << layer->spacingEolWidth(i)
-                         << " WITHIN " << layer->spacingEolWithin(i);
-                }
                 eol_width = layer->spacingEolWidth(i);
                 eol_within = layer->spacingEolWithin(i);
 
                 if (layer->hasSpacingParellelEdge(i)) {
-                    if (enableOutput) {
-                        cout << " PARALLELEDGE " << layer->spacingParSpace(i) << " WITHIN "
-                             << layer->spacingParWithin(i);
-                    }
                     par_edge = layer->spacingParSpace(i);
                     par_within = layer->spacingParWithin(i);
                 }
@@ -353,10 +287,6 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
             if (spTable->isParallel() == 1) {
                 auto parallel = spTable->parallel();
 
-                if (enableOutput) {
-                    cout << "  SPACINGTABLE" << endl;
-                    cout << "  PARALLELRUNLENGTH";
-                }
                 for (int j = 0; j < parallel->numLength(); ++j) {
                     v_parallel_run_length.push_back(parallel->length(j));
                 }
@@ -365,9 +295,6 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
                     for (int k = 0; k < parallel->numLength(); ++k) {
                         v_spacing.push_back(parallel->widthSpacing(j, k));
                     }
-                }
-                if (enableOutput) {
-                    cout << " ;" << endl;
                 }
                 last_layer.SetSpacingTable(
                     parallel->numLength(),
@@ -420,7 +347,6 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
 }
 
 int getLefVias(lefrCallbackType_e type, lefiVia *via, lefiUserData data) {
-    bool enableOutput = false;
     if (type != lefrViaCbkType) {
         cout << "Type is not lefrViaCbkType!" << endl;
     }
@@ -433,13 +359,6 @@ int getLefVias(lefrCallbackType_e type, lefiVia *via, lefiUserData data) {
     else
         last_via.UnsetDefault();
 
-    if (enableOutput) {
-        cout << "VIA " << via->name();
-        if (via->hasDefault()) {
-            cout << " DEFAULT";
-        }
-        cout << endl;
-    }
     if (via->numLayers() != 3) {
         cout << "Error: unsupported via (via layers != 3) " << via->name() << endl;
         exit(1);
@@ -458,8 +377,7 @@ int getLefVias(lefrCallbackType_e type, lefiVia *via, lefiUserData data) {
 }
 
 int getLefViaRuleGenerates(lefrCallbackType_e type, lefiViaRule *viaRule, lefiUserData data) {
-    bool enableOutput = false;
-    //bool enableOutput = true;
+
     if (type != lefrViaRuleCbkType) {
         cout << "Type is not lefrViaRuleCbkType!" << endl;
     }
@@ -502,22 +420,15 @@ int getLefViaRuleGenerates(lefrCallbackType_e type, lefiViaRule *viaRule, lefiUs
 }
 
 int getDefDesign(defrCallbackType_e type, const char *str, defiUserData data) {
-    //bool enableOutput = true;
-    bool enableOutput = false;
     auto *phy_db_ptr = (PhyDB *) data;
     if (type == defrDesignStartCbkType) {
         std::string design_name(str);
         phy_db_ptr->SetDefName(design_name);
-
-        if (enableOutput) {
-            cout << "reading def: DESIGN " << string(str) << endl;
-        }
     }
     return 0;
 }
 
 int getDefRow(defrCallbackType_e type, defiRow *row, defiUserData data) {
-    //bool enableOutput = true;
     auto *phy_db_ptr = (PhyDB *) data;
 
     std::string row_name(row->name());
@@ -536,35 +447,20 @@ int getDefRow(defrCallbackType_e type, defiRow *row, defiUserData data) {
 }
 
 int getDefString(defrCallbackType_e type, const char *str, defiUserData data) {
-    //bool enableOutput = true;
-    bool enableOutput = false;
     auto *phy_db_ptr = (PhyDB *) data;
     if ((type == defrDesignStartCbkType)) {
         std::string design_name(str);
         phy_db_ptr->SetDefName(design_name);
-
-        if (enableOutput) {
-            cout << "reading def: DESIGN " << string(str) << endl;
-        }
     }
     return 0;
 }
 
 int getDefVoid(defrCallbackType_e type, void *variable, defiUserData data) {
-    //bool enableOutput = true;
-    bool enableOutput = false;
-    if ((type == defrDesignEndCbkType)) {
-
-        if (enableOutput) {
-            cout << "reading def done" << endl;
-        }
-    }
     return 0;
 }
 
 int getDefDieArea(defrCallbackType_e type, defiBox *box, defiUserData data) {
-    //bool enableOutput = true;
-    bool enableOutput = false;
+
     auto *phy_db_ptr = (PhyDB *) data;
     if ((type != defrDieAreaCbkType)) {
         cout << "Type is not defrDieAreaCbkType!" << endl;
@@ -576,19 +472,12 @@ int getDefDieArea(defrCallbackType_e type, defiBox *box, defiUserData data) {
 }
 
 int getDefUnits(defrCallbackType_e type, double number, defiUserData data) {
-    //bool enableOutput = true;
-    bool enableOutput = false;
     auto *phy_db_ptr = (PhyDB *) data;
     phy_db_ptr->SetUnitsDistanceMicrons(number);
-    if (enableOutput) {
-        cout << "UNITS DISTANCE MICRONS " << number << " ;" << endl;
-    }
     return 0;
 }
 
 int getDefTracks(defrCallbackType_e type, defiTrack *track, defiUserData data) {
-    bool enableOutput = false;
-    //bool enableOutput = true;
     if ((type != defrTrackCbkType)) {
         cout << "Type is not defrTrackCbkType!" << endl;
         exit(1);
@@ -640,8 +529,6 @@ int getDefCountNumber(defrCallbackType_e type, int num, defiUserData data) {
 }
 
 int getDefComponents(defrCallbackType_e type, defiComponent *comp, defiUserData data) {
-    //bool enableOutput = true;
-    bool enableOutput = false;
     if ((type != defrComponentCbkType)) {
         cout << "Type is not defrComponentCbkType!" << endl;
         exit(1);
@@ -681,8 +568,6 @@ int getDefComponents(defrCallbackType_e type, defiComponent *comp, defiUserData 
 }
 
 int getDefIOPins(defrCallbackType_e type, defiPin *pin, defiUserData data) {
-    bool enableOutput = false;
-    //bool enableOutput = true;
     if (type != defrPinCbkType) {
         cout << "Type is not defrPinCbkType!" << endl;
         exit(1);
@@ -745,9 +630,6 @@ int getDefIOPins(defrCallbackType_e type, defiPin *pin, defiUserData data) {
 }
 
 int getDefNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
-    bool enableOutput = false;
-    //bool enableOutput = true;
-
     if (type != defrNetCbkType) {
         cout << "Type is not defrNetCbkType!" << endl;
         exit(1);
@@ -756,10 +638,6 @@ int getDefNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
 
     std::string net_name(net->name());
     phy_db_ptr->AddNet(net_name);
-
-    if (enableOutput) {
-        cout << "- " << net->name();
-    }
 
     for (int i = 0; i < net->numConnections(); i++) {
         std::string comp_name(net->instance(i));
@@ -776,8 +654,6 @@ int getDefNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
 
 int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
 
-    bool enableOutput = false;
-    //bool enableOutput = true;
     if (type != defrSNetCbkType) {
         cout << "Type is not defr(S)NetCbkType!" << endl;
         exit(1);
@@ -906,7 +782,7 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
 }
 
 int getDefVias(defrCallbackType_e type, defiVia *via, defiUserData data) {
-    /* TODO: This can be handle layer since ACT does not provide defVia
+    /* TODO: This can be handle later since ACT does not provide defVia
     //bool enableOutput = true;
     bool enableOutput = false;
     if ((type != defrViaCbkType)) {

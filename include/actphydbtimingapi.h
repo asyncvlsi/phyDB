@@ -113,6 +113,7 @@ class ActPhyDBTimingAPI {
     void SetGetNumConstraintsCB(int (*callback_function)());
     void SetUpdateTimingIncrementalCB(void (*callback_function)());
     void SetGetSlackCB(double (*callback_function)(int));
+    void SetGetBatchSlackCB(std::vector<double> (*callback_function)(std::vector<int> ));
     void SetGetWitnessCB(void (*callback_function)(int, std::vector<ActEdge> &, std::vector<ActEdge> &));
     void SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<int> &));
 
@@ -139,6 +140,7 @@ class ActPhyDBTimingAPI {
     int (*GetNumConstraintsCB)() = nullptr;
     void (*UpdateTimingIncrementalCB)() = nullptr;
     double (*GetSlackCB)(int) = nullptr;
+    std::vector<double> (*GetBatchSlackCB)(std::vector<int>) = nullptr;
     void (*GetWitnessCB)(int, std::vector<ActEdge> &, std::vector<ActEdge> &) = nullptr;
     void (*GetViolatedTimingConstraintsCB)(std::vector<int> &) = nullptr;
 

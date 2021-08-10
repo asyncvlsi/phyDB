@@ -134,6 +134,10 @@ void ActPhyDBTimingAPI::SetGetSlackCB(double (*callback_function)(int)) {
     GetSlackCB = callback_function;
 }
 
+void ActPhyDBTimingAPI::SetGetBatchSlackCB(std::vector<double> (*callback_function)(std::vector<int>)) {
+    GetBatchSlackCB = callback_function;
+}
+
 void ActPhyDBTimingAPI::SetGetWitnessCB(void (*callback_function)(int,
                                                                   std::vector<ActEdge> &,
                                                                   std::vector<ActEdge> &)) {

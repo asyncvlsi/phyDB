@@ -162,7 +162,10 @@ int WriteSNets(defwCallbackType_e c, defiUserData ud) {
     double coorX[3], coorY[3];
     auto snet_vec = ((PhyDB*) ud)->GetSNetRef();
 
-    defwStartSpecialNets(2); //Number of special nets
+    if(snet_vec.size())
+        defwStartSpecialNets(snet_vec.size()); //Number of special nets
+    else
+        return 0;
     
     for(int snet_id = 0; snet_id < snet_vec.size(); snet_id++) {
         auto snet = snet_vec[snet_id];
