@@ -45,6 +45,24 @@ else ()
     message(STATUS "libdef.a found")
 endif()
 
+message(STATUS "Detecting environment variable ACT_HOME...")
+if (DEFINED ENV{ACT_HOME})
+    message(STATUS "Environment variable LEF_ROOT detected: " $ENV{ACT_HOME})
+else ()
+    message(FATAL_ERROR "Environment variable ACT_HOME not found")
+endif ()
+include_directories($ENV{ACT_HOME}/include)
+link_directories($ENV{ACT_HOME}/lib)
+find_library(GALOIS_EDA
+    NAMES galois_eda
+    PATHS $ENV{ACT_HOME}/lib
+    REQUIRED)
+if (NOT GALOIS_EDA)
+    message(FATAL_ERROR "libgalois_eda.a is not found in " $ENV{ACT_HOME}/lib)
+else ()
+    message(STATUS "libgalois_eda.a found")
+endif()
+
 find_package(Boost 1.71.0)
 message(STATUS "Boost library path: ${Boost_LIBRARY_DIRS}")
 message(STATUS "Boost include path: ${Boost_INCLUDE_DIR}")
