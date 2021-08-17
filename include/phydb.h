@@ -95,12 +95,20 @@ class PhyDB {
 
     /************************************************
     * The following APIs are for setting up callback functions for timing-driven flow
+    * and pointers of parasitic manager, cell libs, adaptor
     * ************************************************/
     void SetGetNumConstraintsCB(int (*callback_function)());
-    void SetUpdateTimingIncremental(void (*callback_function)());
-    void SetGetSlackCB(double (*callback_function)(int));
+    void SetUpdateTimingIncrementalCB(void (*callback_function)());
+    void SetGetSlackCB(std::vector<double> (*callback_function)(const std::vector<int> &));
     void SetGetWitnessCB(void (*callback_function)(int, std::vector<ActEdge> &, std::vector<ActEdge> &));
     void SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<int> &));
+
+    void SetParaManager(galois::eda::parasitics::Manager* manager);
+    void AddCellLib(galois::eda::liberty::CellLib* lib);
+    void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor* adaptor);
+    galois::eda::parasitics::Manager* GetParaManager();
+    std::vector<galois::eda::liberty::CellLib*> GetCellLibs();
+    galois::eda::utility::ExtNetlistAdaptor* GetNetlistAdaptor();
 
     /************************************************
     * The following APIs are for information in CELL

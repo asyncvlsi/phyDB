@@ -311,11 +311,11 @@ void PhyDB::SetGetNumConstraintsCB(int (*callback_function)()) {
     timing_api_.SetGetNumConstraintsCB(callback_function);
 }
 
-void PhyDB::SetUpdateTimingIncremental(void (*callback_function)()) {
+void PhyDB::SetUpdateTimingIncrementalCB(void (*callback_function)()) {
     timing_api_.SetUpdateTimingIncrementalCB(callback_function);
 }
 
-void PhyDB::SetGetSlackCB(double (*callback_function)(int)) {
+void PhyDB::SetGetSlackCB(std::vector<double> (*callback_function)(const std::vector<int> &)) {
     timing_api_.SetGetSlackCB(callback_function);
 }
 
@@ -325,6 +325,30 @@ void PhyDB::SetGetWitnessCB(void (*callback_function)(int, std::vector<ActEdge> 
 
 void PhyDB::SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<int> &)) {
     timing_api_.SetGetViolatedTimingConstraintsCB(callback_function);
+}
+
+void PhyDB::SetParaManager(galois::eda::parasitics::Manager* manager) {
+    timing_api_.SetParaManager(manager);
+}
+
+void PhyDB::AddCellLib(galois::eda::liberty::CellLib* lib) {
+    timing_api_.AddCellLib(lib);
+}
+
+void PhyDB::SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor* adaptor) {
+    timing_api_.SetNetlistAdaptor(adaptor);
+}
+
+galois::eda::parasitics::Manager* PhyDB::GetParaManager() {
+    return timing_api_.GetParaManager();
+}
+
+std::vector<galois::eda::liberty::CellLib*> PhyDB::GetCellLibs() {
+    return timing_api_.GetCellLibs();
+}
+
+galois::eda::utility::ExtNetlistAdaptor* PhyDB::GetNetlistAdaptor() {
+    return timing_api_.GetNetlistAdaptor();
 }
 
 void PhyDB::ReadLef(string const &lefFileName) {

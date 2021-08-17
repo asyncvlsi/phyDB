@@ -116,8 +116,7 @@ class ActPhyDBTimingAPI {
 
     void SetGetNumConstraintsCB(int (*callback_function)());
     void SetUpdateTimingIncrementalCB(void (*callback_function)());
-    void SetGetSlackCB(double (*callback_function)(int));
-    void SetGetBatchSlackCB(std::vector<double> (*callback_function)(std::vector<int> ));
+    void SetGetSlackCB(std::vector<double> (*callback_function)(const std::vector<int> &));
     void SetGetWitnessCB(void (*callback_function)(int, std::vector<ActEdge> &, std::vector<ActEdge> &));
     void SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<int> &));
 
@@ -126,7 +125,7 @@ class ActPhyDBTimingAPI {
     void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor* adaptor);
 
     galois::eda::parasitics::Manager* GetParaManager();
-    std::vector<galois::eda::liberty::CellLib*> GetCelllibs();
+    std::vector<galois::eda::liberty::CellLib*> GetCellLibs();
     galois::eda::utility::ExtNetlistAdaptor* GetNetlistAdaptor();
 
     //APIs for Dali and SPRoute
@@ -143,8 +142,7 @@ class ActPhyDBTimingAPI {
   private:
     int (*GetNumConstraintsCB)() = nullptr;
     void (*UpdateTimingIncrementalCB)() = nullptr;
-    double (*GetSlackCB)(int) = nullptr;
-    std::vector<double> (*GetBatchSlackCB)(std::vector<int>) = nullptr;
+    std::vector<double> (*GetSlackCB)(const std::vector<int> &) = nullptr;
     void (*GetWitnessCB)(int, std::vector<ActEdge> &, std::vector<ActEdge> &) = nullptr;
     void (*GetViolatedTimingConstraintsCB)(std::vector<int> &) = nullptr;
 

@@ -130,12 +130,8 @@ void ActPhyDBTimingAPI::SetUpdateTimingIncrementalCB(void (*callback_function)()
     UpdateTimingIncrementalCB = callback_function;
 }
 
-void ActPhyDBTimingAPI::SetGetSlackCB(double (*callback_function)(int)) {
+void ActPhyDBTimingAPI::SetGetSlackCB(std::vector<double> (*callback_function)(const std::vector<int> &)) {
     GetSlackCB = callback_function;
-}
-
-void ActPhyDBTimingAPI::SetGetBatchSlackCB(std::vector<double> (*callback_function)(std::vector<int>)) {
-    GetBatchSlackCB = callback_function;
 }
 
 void ActPhyDBTimingAPI::SetGetWitnessCB(void (*callback_function)(int,
@@ -161,7 +157,7 @@ void ActPhyDBTimingAPI::SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdapto
 galois::eda::parasitics::Manager* ActPhyDBTimingAPI::GetParaManager() {
     return para_manager_;
 }
-std::vector<galois::eda::liberty::CellLib*> ActPhyDBTimingAPI::GetCelllibs() {
+std::vector<galois::eda::liberty::CellLib*> ActPhyDBTimingAPI::GetCellLibs() {
     return libs_;
 }
 galois::eda::utility::ExtNetlistAdaptor* ActPhyDBTimingAPI::GetNetlistAdaptor() {
@@ -182,7 +178,7 @@ void ActPhyDBTimingAPI::UpdateTimingIncremental() {
 
 double ActPhyDBTimingAPI::GetSlack(int tc_num) {
     if (GetSlackCB != nullptr) {
-        return GetSlackCB(tc_num);
+        return GetSlackCB(std::vector(1, tc_num))[0];
     }
 }
 
