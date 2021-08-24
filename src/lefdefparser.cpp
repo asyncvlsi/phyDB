@@ -291,11 +291,11 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
 
             } else if (spTable->isInfluence()) {
                 auto influence = spTable->influence();
-                for (int i = 0; i < influence->numInfluenceEntry(); i++) {
+                for (int entry = 0; entry < influence->numInfluenceEntry(); entry++) {
                     last_layer.AddSpacingTableInfluence(
-                        influence->width(i),
-                        influence->distance(i),
-                        influence->spacing(i));
+                        influence->width(entry),
+                        influence->distance(entry),
+                        influence->spacing(entry));
                 }
             } else {
                 cout << "unsupported spacing table!" << endl;

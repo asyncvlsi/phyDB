@@ -527,7 +527,8 @@ void PhyDB::ReadCell(string const &cellFileName) {
 void PhyDB::ReadCluster(string const &clusterFileName) {
     std::ifstream infile(clusterFileName.c_str());
     if (infile.is_open()) {
-        std::cout << "Loading cluster file: " << clusterFileName << "\n";
+        if(verbose_ > none)
+            std::cout << "Loading cluster file: " << clusterFileName << "\n";
     } else {
         std::cout << "ERROR: cannot open input file " << clusterFileName << std::endl;
         exit(1);
@@ -589,7 +590,8 @@ void PhyDB::WriteDef(string const &defFileName) {
 void PhyDB::WriteCluster(string const &clusterFileName) {
     std::ofstream outfile(clusterFileName.c_str());
     if (outfile.is_open()) {
-        std::cout << "writing cluster file: " << clusterFileName << "\n";
+        if(verbose_ > none)
+            std::cout << "writing cluster file: " << clusterFileName << "\n";
     } else {
         std::cout << "ERROR: cannot open output cluster file " << clusterFileName << std::endl;
         exit(1);
@@ -612,7 +614,8 @@ void PhyDB::WriteCluster(string const &clusterFileName) {
 void PhyDB::WriteGuide(string const &guideFileName) {
     std::ofstream outfile(guideFileName.c_str());
     if (outfile.is_open()) {
-        std::cout << "writing guide file: " << guideFileName << "\n";
+        if(verbose_ > none)
+            std::cout << "writing guide file: " << guideFileName << "\n";
     } else {
         std::cout << "ERROR: cannot open output guide file " << guideFileName << std::endl;
         exit(1);
@@ -637,6 +640,14 @@ void PhyDB::WriteGuide(string const &guideFileName) {
         }
         outfile << ")" << endl;
     }
+}
+
+void PhyDB::SetVerbose(int v) {
+    verbose_ = v;
+}
+
+int PhyDB::GetVerbose() {
+    return verbose_;
 }
 
 }

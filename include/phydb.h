@@ -4,6 +4,7 @@
 #include "actphydbtimingapi.h"
 #include "design.h"
 #include "tech.h"
+#include "verbose.h"
 
 namespace phydb {
 
@@ -139,10 +140,14 @@ class PhyDB {
     void WriteCluster(string const &clusterFileName);
     void WriteGuide(string const &guideFileName);
 
+    void SetVerbose(int v);
+    int GetVerbose();
+
   private:
     Tech tech_;
     Design design_;
     ActPhyDBTimingAPI timing_api_;
+    int verbose_ = 0;
 
     /****helper functions****/
     // splits a line into many word tokens

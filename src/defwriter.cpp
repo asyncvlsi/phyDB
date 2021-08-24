@@ -229,7 +229,9 @@ void Si2WriteDef(PhyDB *phy_db_ptr, string const &defFileName) {
         cout <<"Couldn't open Write def file" <<endl;
         exit(2);
     }
-    std::cout << "Writing def to " << defFileName << std::endl;
+    if(phy_db_ptr->GetVerbose() > none) {
+        std::cout << "Writing def to " << defFileName << std::endl;
+    }
     int status = defwInitCbk(f);
 
     defwSetVersionCbk (WriteVersion);
@@ -262,7 +264,9 @@ void Si2WriteDef(PhyDB *phy_db_ptr, string const &defFileName) {
         exit(2);
     }
     fclose(f);
-    std::cout << "def writing completes" << std::endl;
+    if(phy_db_ptr->GetVerbose() > none) {
+        std::cout << "def writing completes" << std::endl;
+    }
 }
 
 }
