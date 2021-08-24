@@ -227,21 +227,6 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
             last_layer.SetArea(layer->area());
         }
 
-
-        /* TODO: The following code might be useful for PWRoute
-        double grid = ((parser::lefDataBase *) data)->manufacturingGrid;
-        if (grid == 0)
-            last_layer.minLength = last_layer.area / last_layer.width_;
-        else {
-            double minLength = last_layer.area / last_layer.width_;
-            int multiple = (minLength / grid) / 6;
-            if (minLength == ((double) multiple) * grid * 6)
-                last_layer.minLength = minLength;
-            else {
-                last_layer.minLength = (multiple + 1) * grid * 6;
-            }
-        }
-        */
         if (layer->numProps() > 1) {
             cout << "Error: enable to handle more than one properties:" << layer->name() << endl;
             exit(1);
