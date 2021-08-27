@@ -83,6 +83,15 @@ int WriteTracks(defwCallbackType_e type, defiUserData data) {
     return 0;
 }
 
+int WriteGcellGrids(defwCallbackType_e type, defiUserData data) {
+    auto gcell_grids = ((PhyDB*) data)->GetGcellGridsRef();
+    for(auto gcellgrid : gcell_grids) {
+        defwGcellGrid(XYDirectionToStr(gcellgrid.GetDirection()).c_str(), gcellgrid.GetStart(), gcellgrid.GetNBoundaries(), gcellgrid.GetStep()); 
+    }
+    defwNewLine();
+    return 0;
+}
+
 int WriteComponents(defwCallbackType_e type, defiUserData data) {
     auto components = ((PhyDB*) data)->GetDesignPtr()->GetComponentsRef();
     defwStartComponents(components.size());
@@ -246,6 +255,7 @@ void Si2WriteDef(PhyDB *phy_db_ptr, string const &defFileName) {
     defwSetRowCbk (WriteRows);
 
     defwSetTrackCbk (WriteTracks);
+    defwSetGcellGridCbk (WriteGcellGrids);
     defwSetComponentCbk (WriteComponents);
     defwSetPinCbk (WriteIOPins);
     defwSetNetCbk (WriteNets);
