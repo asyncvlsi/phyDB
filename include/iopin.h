@@ -19,8 +19,8 @@ class IOPin {
     Rect2D<int> rect_;
 
     Point2D<int> location_;
-    CompOrient orient_;
-    PlaceStatus place_status_;
+    CompOrient orient_ = N;
+    PlaceStatus place_status_ = UNPLACED;
 
     IOPin() : id_(-1) {}
     IOPin(std::string &name, SignalDirection direction, SignalUse use) :
@@ -40,6 +40,7 @@ class IOPin {
     void SetNetName(std::string const &net_name);
     void SetShape(std::string &layer_name, int lx, int ly, int ux, int uy);
     void SetPlacement(PlaceStatus place_status, int x, int y, CompOrient orient);
+    void SetPlacementStatus(PlaceStatus place_status);
 
     const string &GetName();
     const string &GetNetName();

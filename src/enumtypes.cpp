@@ -332,11 +332,11 @@ MacroClass StrToMacroClass(std::string &str_macro_class) {
         macro_class = ENDCAP_POST;
     } else if (str_macro_class == "ENDCAP TOPLEFT") {
         macro_class = ENDCAP_TOPLEFT;
-    } else if (str_macro_class == "ENDCAP_TOPRIGHT") {
+    } else if (str_macro_class == "ENDCAP TOPRIGHT") {
         macro_class = ENDCAP_TOPRIGHT;
-    } else if (str_macro_class == "ENDCAP_BOTTOMLEFT") {
+    } else if (str_macro_class == "ENDCAP BOTTOMLEFT") {
         macro_class = ENDCAP_BOTTOMLEFT;
-    } else if (str_macro_class == "ENDCAP_BOTTOMRIGHT") {
+    } else if (str_macro_class == "ENDCAP BOTTOMRIGHT") {
         macro_class = ENDCAP_BOTTOMRIGHT;
     } else {
         std::cout << "Unknown MacroClass: " << str_macro_class << std::endl;

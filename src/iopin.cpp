@@ -18,6 +18,10 @@ void IOPin::SetPlacement(PlaceStatus place_status, int x, int y, CompOrient orie
     orient_ = orient;
 }
 
+void IOPin::SetPlacementStatus(PlaceStatus place_status) {
+    place_status_ = place_status;
+}
+
 const string &IOPin::GetName() {
     return name_;   
 }
