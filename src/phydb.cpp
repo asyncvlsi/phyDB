@@ -25,11 +25,15 @@ void PhyDB::SetManufacturingGrid(double manufacture_grid) {
     tech_.SetManufacturingGrid(manufacture_grid);
 }
 
-void PhyDB::AddSite(std::string const &name, std::string const &class_name, double width, double height) {
+void PhyDB::AddSite(std::string const &name,
+                    std::string const &class_name,
+                    double width,
+                    double height) {
     tech_.AddSite(name, class_name, width, height);
 }
 
-void PhyDB::SetPlacementGrids(double placement_grid_value_x_, double placement_grid_value_y_) {
+void PhyDB::SetPlacementGrids(double placement_grid_value_x_,
+                              double placement_grid_value_y_) {
     tech_.SetPlacementGrids(placement_grid_value_x_, placement_grid_value_y_);
 }
 
@@ -37,7 +41,9 @@ bool PhyDB::IsLayerExisting(std::string const &layer_name) {
     return tech_.IsLayerExisting(layer_name);
 }
 
-Layer *PhyDB::AddLayer(std::string &layer_name, LayerType type, MetalDirection direction) {
+Layer *PhyDB::AddLayer(std::string &layer_name,
+                       LayerType type,
+                       MetalDirection direction) {
     return tech_.AddLayer(layer_name, type, direction);
 }
 
@@ -137,7 +143,11 @@ bool PhyDB::IsComponentExisting(std::string &component_name) {
     return design_.IsComponentExisting(component_name);
 }
 
-Track *PhyDB::AddTrack(XYDirection direction, int start, int nTracks, int step, vector<string> &layer_names) {
+Track *PhyDB::AddTrack(XYDirection direction,
+                       int start,
+                       int nTracks,
+                       int step,
+                       vector<string> &layer_names) {
     return design_.AddTrack(direction, start, nTracks, step, layer_names);
 }
 
@@ -145,18 +155,42 @@ vector<Track> &PhyDB::GetTracksRef() {
     return design_.GetTracksRef();
 }
 
-Row *PhyDB::AddRow(string &name, string &site_name, string &site_orient, int origX, int origY, int numX,
-                   int numY, int stepX, int stepY) {
-    return design_.AddRow(name, site_name, site_orient, origX, origY, numX, numY, stepX, stepY);
+Row *PhyDB::AddRow(string &name,
+                   string &site_name,
+                   string &site_orient,
+                   int origX,
+                   int origY,
+                   int numX,
+                   int numY,
+                   int stepX,
+                   int stepY) {
+    return design_.AddRow(name,
+                          site_name,
+                          site_orient,
+                          origX,
+                          origY,
+                          numX,
+                          numY,
+                          stepX,
+                          stepY);
 }
 
 vector<Row> &PhyDB::GetRowVec() {
     return design_.GetRowVec();
 }
 
-Component *PhyDB::AddComponent(std::string &comp_name, Macro *macro_ptr, PlaceStatus place_status,
-                        int llx, int lly, CompOrient orient) {
-    return design_.AddComponent(comp_name, macro_ptr, place_status, llx, lly, orient);
+Component *PhyDB::AddComponent(std::string &comp_name,
+                               Macro *macro_ptr,
+                               PlaceStatus place_status,
+                               int llx,
+                               int lly,
+                               CompOrient orient) {
+    return design_.AddComponent(comp_name,
+                                macro_ptr,
+                                place_status,
+                                llx,
+                                lly,
+                                orient);
 }
 
 Component *PhyDB::GetComponentPtr(std::string &comp_name) {
@@ -183,7 +217,9 @@ DefVia *PhyDB::GetDefViaPtr(std::string const &via_name) {
     return design_.GetDefViaPtr(via_name);
 }
 
-IOPin *PhyDB::AddIoPin(std::string &iopin_name, SignalDirection signal_direction, SignalUse signal_use) {
+IOPin *PhyDB::AddIoPin(std::string &iopin_name,
+                       SignalDirection signal_direction,
+                       SignalUse signal_use) {
     return design_.AddIoPin(iopin_name, signal_direction, signal_use);
 }
 
@@ -206,7 +242,8 @@ Net *PhyDB::AddNet(std::string &net_name, double weight, void *act_net_ptr) {
         if (timing_api_.IsActNetPtrExisting(act_net_ptr)) {
             int id = timing_api_.ActNetPtr2Id(act_net_ptr);
             std::string error_msg =
-                "Net " + design_.nets_[id].GetName() + " has the same Act pointer as " + net_name;
+                "Net " + design_.nets_[id].GetName()
+                    + " has the same Act pointer as " + net_name;
             PhyDBExpects(false, error_msg);
         }
         int id = (int) design_.nets_.size() - 1;
@@ -217,27 +254,39 @@ Net *PhyDB::AddNet(std::string &net_name, double weight, void *act_net_ptr) {
 }
 
 void PhyDB::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
-    PhyDBExpects(IsIoPinExisting(iopin_name), "Cannot add a nonexistent iopin to a net: " + iopin_name);
-    PhyDBExpects(IsNetExisting(net_name), "Cannot add iopin to a nonexistent Net: " + net_name);
+    PhyDBExpects(IsIoPinExisting(iopin_name),
+                 "Cannot add a nonexistent iopin to a net: " + iopin_name);
+    PhyDBExpects(IsNetExisting(net_name),
+                 "Cannot add iopin to a nonexistent Net: " + net_name);
     design_.AddIoPinToNet(iopin_name, net_name);
 }
 
-void PhyDB::AddCompPinToNet(std::string &comp_name, std::string &pin_name, std::string &net_name) {
-    PhyDBExpects(IsNetExisting(net_name), "Cannot add a component pin to a nonexistent Net: " + net_name);
-    PhyDBExpects(IsComponentExisting(comp_name), "Cannot add a nonexistent component to a net: " + comp_name);
+void PhyDB::AddCompPinToNet(std::string &comp_name,
+                            std::string &pin_name,
+                            std::string &net_name) {
+    PhyDBExpects(IsNetExisting(net_name),
+                 "Cannot add a component pin to a nonexistent Net: "
+                     + net_name);
+    PhyDBExpects(IsComponentExisting(comp_name),
+                 "Cannot add a nonexistent component to a net: " + comp_name);
     Component *comp_ptr = GetComponentPtr(comp_name);
     Macro *macro_ptr = comp_ptr->GetMacro();
     PhyDBExpects(macro_ptr->IsPinExist(pin_name),
-                 "Macro " + macro_ptr->GetName() + " does not contain a pin with name " + pin_name);
+                 "Macro " + macro_ptr->GetName()
+                     + " does not contain a pin with name " + pin_name);
     design_.AddCompPinToNet(comp_name, pin_name, net_name);
 }
 
-void PhyDB::BindPhydbPinToActPin(std::string &comp_name, std::string &pin_name, void *act_comp_pin_ptr) {
-    PhyDBExpects(IsComponentExisting(comp_name), "Cannot find component: " + comp_name);
+void PhyDB::BindPhydbPinToActPin(std::string &comp_name,
+                                 std::string &pin_name,
+                                 void *act_comp_pin_ptr) {
+    PhyDBExpects(IsComponentExisting(comp_name),
+                 "Cannot find component: " + comp_name);
     Component *comp_ptr = GetComponentPtr(comp_name);
     Macro *macro_ptr = comp_ptr->GetMacro();
     PhyDBExpects(macro_ptr->IsPinExist(pin_name),
-                 "Macro " + macro_ptr->GetName() + " does not contain a pin with name " + pin_name);
+                 "Macro " + macro_ptr->GetName()
+                     + " does not contain a pin with name " + pin_name);
 
     int comp_id = design_.component_2_id_[comp_name];
     int pin_id = macro_ptr->GetPinId(pin_name);
@@ -271,11 +320,19 @@ vector<SNet> &PhyDB::GetSNetRef() {
     return design_.GetSNetRef();
 }
 
-void PhyDB::SetNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
+void PhyDB::SetNwellLayer(double width,
+                          double spacing,
+                          double op_spacing,
+                          double max_plug_dist,
+                          double overhang) {
     tech_.SetNwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
 }
 
-void PhyDB::SetPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
+void PhyDB::SetPwellLayer(double width,
+                          double spacing,
+                          double op_spacing,
+                          double max_plug_dist,
+                          double overhang) {
     tech_.SetPwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
 }
 
@@ -285,7 +342,8 @@ void PhyDB::SetNpwellSpacing(double same_spacing, double any_spacing) {
 
 MacroWell *PhyDB::AddMacrowell(std::string &macro_name) {
     Macro *macro_ptr = GetMacroPtr(macro_name);
-    PhyDBExpects(macro_ptr != nullptr, "Macro does not exist, cannot add well info: " + macro_name);
+    PhyDBExpects(macro_ptr != nullptr,
+                 "Macro does not exist, cannot add well info: " + macro_name);
     tech_.wells_.emplace_back(macro_ptr);
     macro_ptr->SetWellPtr(&(tech_.wells_.back()));
     return macro_ptr->GetWellPtr();
@@ -299,7 +357,78 @@ vector<ClusterCol> &PhyDB::GetClusterColsRef() {
     return design_.GetClusterColsRef();
 }
 
-GcellGrid *PhyDB::AddGcellGrid(XYDirection direction, int start, int nBoundaries, int step) {
+SpecialMacroRectLayout *PhyDB::CreatePpNpMacroAndComponent(
+    int llx,
+    int lly,
+    int urx,
+    int ury
+) {
+    std::string plus_filling_macro_name("circuitppnp");
+    Macro *plus_filling_macro = AddMacro(plus_filling_macro_name);
+    plus_filling_macro->SetClass(COVER_);
+    plus_filling_macro->SetOrigin(0, 0);
+    plus_filling_macro->SetSize(urx - llx, ury - lly);
+
+    std::string plus_filling_component_name("ppnps");
+    AddComponent(
+        plus_filling_component_name,
+        plus_filling_macro,
+        COVER,
+        llx,
+        lly,
+        N
+    );
+    return design_.CreatePpNpMacroAndComponent(
+        plus_filling_macro,
+        llx,
+        lly,
+        urx,
+        ury
+    );
+}
+
+void PhyDB::SavePpNpToRectFile(std::string &file_name) {
+    design_.SavePpNpToRectFile(file_name);
+}
+
+SpecialMacroRectLayout *PhyDB::CreateWellLayerMacroAndComponent(
+    int llx,
+    int lly,
+    int urx,
+    int ury
+) {
+    std::string well_filling_macro_name("circuitwell");
+    Macro *well_filling_macro = AddMacro(well_filling_macro_name);
+    well_filling_macro->SetClass(COVER_);
+    well_filling_macro->SetOrigin(0, 0);
+    well_filling_macro->SetSize(urx - llx, ury - lly);
+
+    std::string well_filling_component_name("npwells");
+    AddComponent(
+        well_filling_component_name,
+        well_filling_macro,
+        COVER,
+        llx,
+        lly,
+        N
+    );
+    return design_.CreateWellLayerMacroAndComponent(
+        well_filling_macro,
+        llx,
+        lly,
+        urx,
+        ury
+    );
+}
+
+void PhyDB::SaveWellToRectFile(std::string &file_name) {
+    design_.SaveWellToRectFile(file_name);
+}
+
+GcellGrid *PhyDB::AddGcellGrid(XYDirection direction,
+                               int start,
+                               int nBoundaries,
+                               int step) {
     return design_.AddGcellGrid(direction, start, nBoundaries, step);
 }
 
@@ -315,15 +444,19 @@ void PhyDB::SetUpdateTimingIncrementalCB(void (*callback_function)()) {
     timing_api_.SetUpdateTimingIncrementalCB(callback_function);
 }
 
-void PhyDB::SetGetSlackCB(std::vector<double> (*callback_function)(const std::vector<int> &)) {
+void PhyDB::SetGetSlackCB(std::vector<double> (*callback_function)(const std::vector<
+    int> &)) {
     timing_api_.SetGetSlackCB(callback_function);
 }
 
-void PhyDB::SetGetWitnessCB(void (*callback_function)(int, std::vector<ActEdge> &, std::vector<ActEdge> &)) {
+void PhyDB::SetGetWitnessCB(void (*callback_function)(int,
+                                                      std::vector<ActEdge> &,
+                                                      std::vector<ActEdge> &)) {
     timing_api_.SetGetWitnessCB(callback_function);
 }
 
-void PhyDB::SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<int> &)) {
+void PhyDB::SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<
+    int> &)) {
     timing_api_.SetGetViolatedTimingConstraintsCB(callback_function);
 }
 
@@ -376,7 +509,8 @@ void PhyDB::ReadCell(string const &cellFileName) {
     if (ist.is_open()) {
         //std::cout << "Loading CELL file: " << cellFileName << "\n";
     } else {
-        std::cout << "ERROR: cannot open input file " << cellFileName << std::endl;
+        std::cout << "ERROR: cannot open input file " << cellFileName
+                  << std::endl;
         exit(1);
     }
     std::string line;
@@ -393,25 +527,29 @@ void PhyDB::ReadCell(string const &cellFileName) {
                     getline(ist, line);
                     StrSplit(line, legalizer_fields);
                     if (legalizer_fields.size() != 2) {
-                        std::cout << "Expect: SPACING + Value, get: " + line << std::endl;
+                        std::cout << "Expect: SPACING + Value, get: " + line
+                                  << std::endl;
                         exit(1);
                     }
                     if (legalizer_fields[0] == "SAME_DIFF_SPACING") {
                         try {
                             same_diff_spacing = std::stod(legalizer_fields[1]);
                         } catch (...) {
-                            std::cout << "Invalid stod conversion: " + line << std::endl;
+                            std::cout << "Invalid stod conversion: " + line
+                                      << std::endl;
                             exit(1);
                         }
                     } else if (legalizer_fields[0] == "ANY_DIFF_SPACING") {
                         try {
                             any_diff_spacing = std::stod(legalizer_fields[1]);
                         } catch (...) {
-                            std::cout << "Invalid stod conversion: " + line << std::endl;
+                            std::cout << "Invalid stod conversion: " + line
+                                      << std::endl;
                             exit(1);
                         }
                     }
-                } while (line.find("END LEGALIZER") == std::string::npos && !ist.eof());
+                } while (line.find("END LEGALIZER") == std::string::npos
+                    && !ist.eof());
                 SetNpwellSpacing(same_diff_spacing, any_diff_spacing);
             } else {
                 std::vector<std::string> well_fields;
@@ -419,7 +557,8 @@ void PhyDB::ReadCell(string const &cellFileName) {
                 bool is_n_well = (well_fields[1] == "nwell");
                 if (!is_n_well) {
                     if (well_fields[1] != "pwell") {
-                        std::cout << "Unknow N/P well type: " + well_fields[1] << std::endl;
+                        std::cout << "Unknow N/P well type: " + well_fields[1]
+                                  << std::endl;
                         exit(1);
                     }
                 }
@@ -435,7 +574,9 @@ void PhyDB::ReadCell(string const &cellFileName) {
                         try {
                             width = std::stod(well_fields[1]);
                         } catch (...) {
-                            std::cout << "Invalid stod conversion: " + well_fields[1] << std::endl;
+                            std::cout
+                                << "Invalid stod conversion: " + well_fields[1]
+                                << std::endl;
                             exit(1);
                         }
                     } else if (line.find("OPPOSPACING") != std::string::npos) {
@@ -443,7 +584,9 @@ void PhyDB::ReadCell(string const &cellFileName) {
                         try {
                             op_spacing = std::stod(well_fields[1]);
                         } catch (...) {
-                            std::cout << "Invalid stod conversion: " + well_fields[1] << std::endl;
+                            std::cout
+                                << "Invalid stod conversion: " + well_fields[1]
+                                << std::endl;
                             exit(1);
                         }
                     } else if (line.find("SPACING") != std::string::npos) {
@@ -451,7 +594,9 @@ void PhyDB::ReadCell(string const &cellFileName) {
                         try {
                             spacing = std::stod(well_fields[1]);
                         } catch (...) {
-                            std::cout << "Invalid stod conversion: " + well_fields[1] << std::endl;
+                            std::cout
+                                << "Invalid stod conversion: " + well_fields[1]
+                                << std::endl;
                             exit(1);
                         }
                     } else if (line.find("MAXPLUGDIST") != std::string::npos) {
@@ -459,7 +604,9 @@ void PhyDB::ReadCell(string const &cellFileName) {
                         try {
                             max_plug_dist = std::stod(well_fields[1]);
                         } catch (...) {
-                            std::cout << "Invalid stod conversion: " + well_fields[1] << std::endl;
+                            std::cout
+                                << "Invalid stod conversion: " + well_fields[1]
+                                << std::endl;
                             exit(1);
                         }
                     } else if (line.find("MAXPLUGDIST") != std::string::npos) {
@@ -467,16 +614,27 @@ void PhyDB::ReadCell(string const &cellFileName) {
                         try {
                             overhang = std::stod(well_fields[1]);
                         } catch (...) {
-                            std::cout << "Invalid stod conversion: " + well_fields[1] << std::endl;
+                            std::cout
+                                << "Invalid stod conversion: " + well_fields[1]
+                                << std::endl;
                             exit(1);
                         }
                     } else {}
                     getline(ist, line);
-                } while (line.find(end_layer_flag) == std::string::npos && !ist.eof());
+                } while (line.find(end_layer_flag) == std::string::npos
+                    && !ist.eof());
                 if (is_n_well) {
-                    SetNwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
+                    SetNwellLayer(width,
+                                  spacing,
+                                  op_spacing,
+                                  max_plug_dist,
+                                  overhang);
                 } else {
-                    SetPwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
+                    SetPwellLayer(width,
+                                  spacing,
+                                  op_spacing,
+                                  max_plug_dist,
+                                  overhang);
                 }
             }
         }
@@ -504,15 +662,18 @@ void PhyDB::ReadCell(string const &cellFileName) {
                                 ux = std::stod(shape_fields[3]);
                                 uy = std::stod(shape_fields[4]);
                             } catch (...) {
-                                std::cout << "Invalid stod conversion: " + line << std::endl;
+                                std::cout << "Invalid stod conversion: " + line
+                                          << std::endl;
                                 exit(1);
                             }
                             well_ptr->SetWellRect(is_n, lx, ly, ux, uy);
                         }
                         getline(ist, line);
-                    } while (line.find("END VERSION") == std::string::npos && !ist.eof());
+                    } while (line.find("END VERSION") == std::string::npos
+                        && !ist.eof());
                 }
-            } while (line.find(end_macro_flag) == std::string::npos && !ist.eof());
+            } while (line.find(end_macro_flag) == std::string::npos
+                && !ist.eof());
         }
     }
     if (!tech_.IsWellInfoSet()) {
@@ -527,10 +688,11 @@ void PhyDB::ReadCell(string const &cellFileName) {
 void PhyDB::ReadCluster(string const &clusterFileName) {
     std::ifstream infile(clusterFileName.c_str());
     if (infile.is_open()) {
-        if(verbose_ > none)
+        if (verbose_ > none)
             std::cout << "Loading cluster file: " << clusterFileName << "\n";
     } else {
-        std::cout << "ERROR: cannot open input file " << clusterFileName << std::endl;
+        std::cout << "ERROR: cannot open input file " << clusterFileName
+                  << std::endl;
         exit(1);
     }
 
@@ -590,17 +752,19 @@ void PhyDB::WriteDef(string const &defFileName) {
 void PhyDB::WriteCluster(string const &clusterFileName) {
     std::ofstream outfile(clusterFileName.c_str());
     if (outfile.is_open()) {
-        if(verbose_ > none)
+        if (verbose_ > none)
             std::cout << "writing cluster file: " << clusterFileName << "\n";
     } else {
-        std::cout << "ERROR: cannot open output cluster file " << clusterFileName << std::endl;
+        std::cout << "ERROR: cannot open output cluster file "
+                  << clusterFileName << std::endl;
         exit(1);
     }
 
     auto cluster_cols = this->GetClusterColsRef();
-    for (auto cluster_col : cluster_cols) {
+    for (auto cluster_col: cluster_cols) {
         outfile << "STRIP " << cluster_col.GetName() << std::endl;
-        outfile << cluster_col.GetLX() << " " << cluster_col.GetUX() << " " << cluster_col.GetBotSignal() << std::endl;
+        outfile << cluster_col.GetLX() << " " << cluster_col.GetUX() << " "
+                << cluster_col.GetBotSignal() << std::endl;
         auto ly = cluster_col.GetLY();
         auto uy = cluster_col.GetUY();
         for (int i = 0; i < ly.size(); i++) {
@@ -614,23 +778,24 @@ void PhyDB::WriteCluster(string const &clusterFileName) {
 void PhyDB::WriteGuide(string const &guideFileName) {
     std::ofstream outfile(guideFileName.c_str());
     if (outfile.is_open()) {
-        if(verbose_ > none)
+        if (verbose_ > none)
             std::cout << "writing guide file: " << guideFileName << "\n";
     } else {
-        std::cout << "ERROR: cannot open output guide file " << guideFileName << std::endl;
+        std::cout << "ERROR: cannot open output guide file " << guideFileName
+                  << std::endl;
         exit(1);
     }
 
     auto design_p = this->GetDesignPtr();
     auto tech_p = this->GetTechPtr();
     auto netlist = design_p->GetNetsRef();
-    for(auto net : netlist) {
+    for (auto net: netlist) {
         string netName = net.GetName();
         outfile << netName << endl;
         outfile << "(" << endl;
 
         auto routing_guides = net.GetRoutingGuidesRef();
-        for(auto gcell : routing_guides) {
+        for (auto gcell: routing_guides) {
             string layer_name = tech_p->GetLayerName(gcell.ll.z);
             outfile << gcell.ll.x << " ";
             outfile << gcell.ll.y << " ";
