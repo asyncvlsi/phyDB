@@ -69,6 +69,13 @@ message(STATUS "Boost include path: ${Boost_INCLUDE_DIR}")
 message(STATUS "Boost libs: ${Boost_LIBRARIES}")
 include_directories(${Boost_INCLUDE_DIRS})
 
+find_package(FLEX REQUIRED)
+find_package(BISON REQUIRED)
+
+flex_target(lexer scanner.l "src/scanner.cpp")
+bison_target(parser parser.y "src/parser.cpp")
+ADD_FLEX_BISON_DEPENDENCY(lexer parser)
+
 # Set a default build type if none was specified
 set(default_build_type "RELEASE")
 if (NOT CMAKE_BUILD_TYPE)
