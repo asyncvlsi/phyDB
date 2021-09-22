@@ -484,6 +484,10 @@ galois::eda::utility::ExtNetlistAdaptor* PhyDB::GetNetlistAdaptor() {
     return timing_api_.GetNetlistAdaptor();
 }
 
+ActPhyDBTimingAPI &PhyDB::GetTimingApi() {
+    return timing_api_;
+}
+
 void PhyDB::ReadLef(string const &lefFileName) {
     tech_.SetLefName(lefFileName);
     Si2ReadLef(this, lefFileName);
