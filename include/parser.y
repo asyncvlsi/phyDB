@@ -9,11 +9,12 @@
  %define api.namespace { phydb }
  %code requires
  {
+    #include <stdint.h>
+    #include <string.h>
+
     #include <iostream>
     #include <string>
     #include <vector>
-    #include <stdint.h>
-    #include <string.h>
 
     using namespace std;
 
@@ -29,9 +30,8 @@
     #include "scanner.h"
     #include "parser.hpp"
     #include "techconfig.h"
-    #include "location.hh"
 
-    static phydb::Parser::symbol_type yylex(phydb::Scanner &scanner, phydb::Interpreter &driver) {
+    static phydb::Parser::symbol_type yylex(phydb::Scanner &scanner) {
         return scanner.get_next_token();
     }
     
@@ -39,40 +39,37 @@
 }
 
 %lex-param { phydb::Scanner &scanner }
-%lex-param { phydb::Interpreter &driver }
 %parse-param { phydb::Scanner &scanner }
 %parse-param { phydb::Interpreter &driver }
-%locations
 %define parse.trace
 %define parse.error verbose
 
 %define api.token.prefix {TOKEN_}
 
-%token <std::string> EXTRACTION
-%token <std::string> DIAGMODEL
-%token <std::string> ON
-%token <std::string> OFF
-%token <std::string> LAYERCOUNT
-%token <std::string> DENSITYRATE
-%token <std::string> DENSITYMODEL
-%token <std::string> DIST
 %token <std::string> COUNT
+%token <std::string> DENSITYMODEL
+%token <std::string> DENSITYMODEL_END
+%token <std::string> DENSITYRATE
+%token <std::string> DIAGMODEL
+%token <std::string> DIAGUNDER
+%token <std::string> DIST
+%token END 0
+%token <std::string> ENTRIES
+%token <std::string> EXTRACTION
+%token <std::string> LAYERCOUNT
+%token <std::string> METAL
+%token <double> NUMBER
+%token <std::string> OFF
+%token <std::string> ON
+%token <std::string> OVER
+%token <std::string> OVERUNDER
+%token <std::string> RESOVER
+%token <std::string> TABLE_END
+%token <std::string> UNDER
 %token <std::string> WIDTH
 %token <std::string> WIDTH_TABLE
-%token <std::string> ENTRIES
-%token <double> NUMBER
-%token <std::string> METAL
-%token <std::string> RESOVER
-%token <std::string> OVER
-%token <std::string> UNDER
-%token <std::string> DIAGUNDER
-%token <std::string> OVERUNDER
-%token <std::string> TABLE_END
-%token <std::string> DENSITYMODEL_END
 
-%token END 0
-
-%type<std::string> extraction diagmodel layercount densityrate densitymodel info 
+%type<std::string> densitymodel densityrate diagmodel extraction info layercount
 %type<std::string> relative_pos
 
 %start tech_config_file
@@ -268,6 +265,6 @@ end_densitymodel: DENSITYMODEL_END NUMBER
 
 %%
 
-void phydb::Parser::error(const location &loc , const std::string &message) {
-    cout << "Error: " << message << endl << "Error location: " << driver.location() << endl;
+void phydb::Parser::error(const std::string &message) {
+    cout << "Error: " << message << endl;
 }

@@ -88,7 +88,6 @@ message(STATUS "bison: ${BISON_EXECUTABLE}")
 add_custom_command(
     OUTPUT ${SRC_DIR}/parser.cpp
     COMMAND ${BISON_EXECUTABLE} -o ${SRC_DIR}/parser.cpp ${INC_DIR}/parser.y
-    COMMAND mv ${SRC_DIR}/location.hh ${INC_DIR}/location.hh
     COMMAND mv ${SRC_DIR}/parser.hpp ${INC_DIR}/parser.hpp
     DEPENDS ${INC_DIR}/parser.y
 )
@@ -121,6 +120,8 @@ add_subdirectory(test)
 add_library(phydb
     STATIC
     ${SOURCES}
+    ${SRC_DIR}/scanner.cpp
+    ${SRC_DIR}/parser.cpp
     )
 add_dependencies(phydb flex_target bison_target)
 target_link_libraries(phydb
@@ -133,7 +134,6 @@ target_link_libraries(PhyDB_test
     )
 
 add_executable(parser_test
-    EXCLUDE_FROM_ALL
     test/test_parser.cpp
 )
 target_link_libraries(parser_test

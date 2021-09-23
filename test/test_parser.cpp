@@ -4,8 +4,6 @@
 
 #include <iostream>
 #include <fstream>
-#include "scanner.h"
-#include "parser.hpp"
 #include "techconfig.h"
 
 using namespace phydb;

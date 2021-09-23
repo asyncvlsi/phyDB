@@ -205,16 +205,13 @@ void TechConfig::Report() {
 Interpreter::Interpreter(TechConfig *tech_config) :
     scanner_(*this),
     parser_(scanner_, *this),
-    location_(0),
     tech_config_(tech_config) {}
 
 int Interpreter::parse() {
-    location_ = 0;
     return parser_.parse();
 }
 
 void Interpreter::clear() {
-    location_ = 0;
 }
 
 void Interpreter::switchInputStream(std::istream *is) {
@@ -223,14 +220,6 @@ void Interpreter::switchInputStream(std::istream *is) {
 
 TechConfig *Interpreter::UserData() {
     return tech_config_;
-}
-
-void Interpreter::increaseLocation(unsigned int loc) {
-    location_ += loc;
-}
-
-unsigned int Interpreter::location() const {
-    return location_;
 }
 
 }

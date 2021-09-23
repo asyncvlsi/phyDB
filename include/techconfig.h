@@ -137,12 +137,8 @@ class Interpreter {
     friend class Scanner;
 
   private:
-    void increaseLocation(unsigned int loc);
-    unsigned int location() const;
-
     Scanner scanner_;
     Parser parser_;
-    unsigned int location_;
     TechConfig *tech_config_ = nullptr;
 };
 
