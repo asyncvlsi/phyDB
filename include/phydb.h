@@ -139,6 +139,7 @@ class PhyDB {
                                                    std::vector<ActEdge> &));
     void SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<
         int> &));
+    ActPhyDBTimingAPI &GetTimingApi();
 
     void SetParaManager(galois::eda::parasitics::Manager* manager);
     void AddCellLib(galois::eda::liberty::CellLib* lib);

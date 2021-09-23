@@ -7,6 +7,9 @@
 
 #include <vector>
 
+#include "scanner.h"
+#include "parser.hpp"
+
 namespace phydb{
 
 class CapEntry {
@@ -121,6 +124,26 @@ public:
     CornerModel *GetLastModel();
 
     void Report();
+};
+
+class Interpreter {
+  public:
+    explicit Interpreter(TechConfig *tech_config);
+    int parse();
+    void clear();
+    void switchInputStream(std::istream *is);
+    TechConfig *UserData();
+    friend class Parser;
+    friend class Scanner;
+
+  private:
+    void increaseLocation(unsigned int loc);
+    unsigned int location() const;
+
+    Scanner scanner_;
+    Parser parser_;
+    unsigned int location_;
+    TechConfig *tech_config_ = nullptr;
 };
 
 }

@@ -1,5 +1,5 @@
  %skeleton "lalr1.cc" /* -*- C++ -*- */
- %require "3.0"
+ %require "3.2"
  %defines
  %define api.parser.class { Parser }
 
@@ -14,7 +14,6 @@
     #include <vector>
     #include <stdint.h>
     #include <string.h>
-    #include "techconfig.h"
 
     using namespace std;
 
@@ -29,7 +28,7 @@
     #include <iostream>
     #include "scanner.h"
     #include "parser.hpp"
-    #include "interpreter.h"
+    #include "techconfig.h"
     #include "location.hh"
 
     static phydb::Parser::symbol_type yylex(phydb::Scanner &scanner, phydb::Interpreter &driver) {
@@ -98,27 +97,27 @@ extraction: EXTRACTION
 
 diagmodel: DIAGMODEL ON
     {
-        tech_config->SetDiagmodelOn(true);
+        driver.UserData()->SetDiagmodelOn(true);
     }
     | DIAGMODEL OFF
     {
-        tech_config->SetDiagmodelOn(false);
+        driver.UserData()->SetDiagmodelOn(false);
     }
 ;
 
 layercount: LAYERCOUNT NUMBER
     {
-        tech_config->SetLayerCount(int($2));
+        driver.UserData()->SetLayerCount(int($2));
     }
 ;
 
 densityrate: DENSITYRATE NUMBER
     {
-        tech_config->SetModelCount(int($2));
+        driver.UserData()->SetModelCount(int($2));
     }
     | densityrate NUMBER
     {
-        tech_config->AddDataRate($2);
+        driver.UserData()->AddDataRate($2);
     }
 ;
 
@@ -127,7 +126,7 @@ model: densitymodel metal_tables end_densitymodel
 
 densitymodel: DENSITYMODEL NUMBER
 {
-    tech_config->AddModel(int($2));
+    driver.UserData()->AddModel(int($2));
 }
 ;
 
@@ -150,7 +149,7 @@ relative_pos: RESOVER
 
 table: table_header table_start table_body table_end
     {
-        auto model = tech_config->GetLastModel();
+        auto model = driver.UserData()->GetLastModel();
         if (model != nullptr) {
             model->MarkNothing();
         }
@@ -163,7 +162,7 @@ table_header: simple_table_header
 
 simple_table_header: METAL NUMBER relative_pos NUMBER
     {
-        auto model = tech_config->GetLastModel();
+        auto model = driver.UserData()->GetLastModel();
         if (model != nullptr) {
             int layer_index = (int) $4;
             if ($3 == "RESOVER") {
@@ -188,7 +187,7 @@ simple_table_header: METAL NUMBER relative_pos NUMBER
 
 under_layer: UNDER NUMBER
 {
-    auto model = tech_config->GetLastModel();
+    auto model = driver.UserData()->GetLastModel();
     if (model != nullptr) {
         int over_index = model->cap_over_.back().layer_index_;
         model->cap_over_.pop_back();
@@ -202,7 +201,7 @@ under_layer: UNDER NUMBER
 
 table_start: DIST COUNT NUMBER WIDTH NUMBER
 {
-    auto model = tech_config->GetLastModel();
+    auto model = driver.UserData()->GetLastModel();
     int sz = (int) $3;
     double width = $5;
     if (model != nullptr) {
@@ -236,7 +235,7 @@ table_body:
 
 table_entry: NUMBER NUMBER NUMBER NUMBER
 {
-    auto model = tech_config->GetLastModel();
+    auto model = driver.UserData()->GetLastModel();
     double distance = $1;
     double coupling_cap = $2;
     double fringe_cap = $3;

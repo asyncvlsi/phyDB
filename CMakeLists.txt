@@ -25,7 +25,7 @@ if (NOT LEF_LIBRARY)
     message(FATAL_ERROR "liblef.a is not found")
 else ()
     message(STATUS "liblef.a found")
-endif()
+endif ()
 
 message(STATUS "Detecting environment variable DEF_ROOT...")
 if (DEFINED ENV{DEF_ROOT})
@@ -43,7 +43,7 @@ if (NOT DEF_LIBRARY)
     message(FATAL_ERROR "libdef.a is not found")
 else ()
     message(STATUS "libdef.a found")
-endif()
+endif ()
 
 message(STATUS "Detecting environment variable ACT_HOME...")
 if (DEFINED ENV{ACT_HOME})
@@ -69,12 +69,30 @@ message(STATUS "Boost include path: ${Boost_INCLUDE_DIR}")
 message(STATUS "Boost libs: ${Boost_LIBRARIES}")
 include_directories(${Boost_INCLUDE_DIRS})
 
-find_package(FLEX REQUIRED)
-find_package(BISON REQUIRED)
+set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-flex_target(lexer scanner.l "src/scanner.cpp")
-bison_target(parser parser.y "src/parser.cpp")
-ADD_FLEX_BISON_DEPENDENCY(lexer parser)
+# FLEX dependencies
+find_package(FLEX REQUIRED)
+message(STATUS "flex: ${FLEX_EXECUTABLE}")
+add_custom_command(
+    OUTPUT ${SRC_DIR}/scanner.cpp
+    COMMAND ${FLEX_EXECUTABLE} -o ${SRC_DIR}/scanner.cpp ${INC_DIR}/scanner.l
+    DEPENDS ${INC_DIR}/scanner.l
+)
+add_custom_target(flex_target ALL DEPENDS ${SRC_DIR}/scanner.cpp)
+
+# BISON dependencies
+find_package(BISON REQUIRED)
+message(STATUS "bison: ${BISON_EXECUTABLE}")
+add_custom_command(
+    OUTPUT ${SRC_DIR}/parser.cpp
+    COMMAND ${BISON_EXECUTABLE} -o ${SRC_DIR}/parser.cpp ${INC_DIR}/parser.y
+    COMMAND mv ${SRC_DIR}/location.hh ${INC_DIR}/location.hh
+    COMMAND mv ${SRC_DIR}/parser.hpp ${INC_DIR}/parser.hpp
+    DEPENDS ${INC_DIR}/parser.y
+)
+add_custom_target(bison_target ALL DEPENDS ${SRC_DIR}/parser.cpp)
 
 # Set a default build type if none was specified
 set(default_build_type "RELEASE")
@@ -100,9 +118,11 @@ include_directories(include)
 FILE(GLOB SOURCES "src/*.cpp")
 add_subdirectory(test)
 
-add_library(phydb 
+add_library(phydb
     STATIC
-    ${SOURCES})
+    ${SOURCES}
+    )
+add_dependencies(phydb flex_target bison_target)
 target_link_libraries(phydb
     lef def)
 
@@ -111,6 +131,14 @@ add_executable(PhyDB_test
 target_link_libraries(PhyDB_test
     PRIVATE phydb
     )
+
+add_executable(parser_test
+    EXCLUDE_FROM_ALL
+    test/test_parser.cpp
+)
+target_link_libraries(parser_test
+    PRIVATE phydb
+)
 
 ######################################
 # specify the installation directory: ${ACT_HOME}

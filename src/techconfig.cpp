@@ -2,14 +2,18 @@
 
 #include <iostream>
 
-namespace phydb{
+namespace phydb {
 
 void CapEntry::Report() {
-    std::cout << distance_ << " " << coupling_cap_ << " " << fringe_cap_ << " " << res_ << "\n";
+    std::cout << distance_ << " " << coupling_cap_ << " " << fringe_cap_ << " "
+              << res_ << "\n";
 }
 
-void ResOverTable::AddEntry(double distance, double coupling_cap, double fringe_cap, double res) {
-    table_.emplace_back(distance, coupling_cap,fringe_cap, res);
+void ResOverTable::AddEntry(double distance,
+                            double coupling_cap,
+                            double fringe_cap,
+                            double res) {
+    table_.emplace_back(distance, coupling_cap, fringe_cap, res);
 }
 
 void ResOverTable::Report() {
@@ -20,8 +24,11 @@ void ResOverTable::Report() {
     }
 }
 
-void CapOverTable::AddEntry(double distance, double coupling_cap, double fringe_cap, double res) {
-    table_.emplace_back(distance, coupling_cap,fringe_cap, res);
+void CapOverTable::AddEntry(double distance,
+                            double coupling_cap,
+                            double fringe_cap,
+                            double res) {
+    table_.emplace_back(distance, coupling_cap, fringe_cap, res);
 }
 
 void CapOverTable::Report() {
@@ -32,8 +39,11 @@ void CapOverTable::Report() {
     }
 }
 
-void CapUnderTable::AddEntry(double distance, double coupling_cap, double fringe_cap, double res) {
-    table_.emplace_back(distance, coupling_cap,fringe_cap, res);
+void CapUnderTable::AddEntry(double distance,
+                             double coupling_cap,
+                             double fringe_cap,
+                             double res) {
+    table_.emplace_back(distance, coupling_cap, fringe_cap, res);
 }
 
 void CapUnderTable::Report() {
@@ -44,8 +54,11 @@ void CapUnderTable::Report() {
     }
 }
 
-void CapDiagUnderTable::AddEntry(double distance, double coupling_cap, double fringe_cap, double res) {
-    table_.emplace_back(distance, coupling_cap,fringe_cap, res);
+void CapDiagUnderTable::AddEntry(double distance,
+                                 double coupling_cap,
+                                 double fringe_cap,
+                                 double res) {
+    table_.emplace_back(distance, coupling_cap, fringe_cap, res);
 }
 
 void CapDiagUnderTable::Report() {
@@ -56,12 +69,16 @@ void CapDiagUnderTable::Report() {
     }
 }
 
-void CapOverUnderTable::AddEntry(double distance, double coupling_cap, double fringe_cap, double res) {
-    table_.emplace_back(distance, coupling_cap,fringe_cap, res);
+void CapOverUnderTable::AddEntry(double distance,
+                                 double coupling_cap,
+                                 double fringe_cap,
+                                 double res) {
+    table_.emplace_back(distance, coupling_cap, fringe_cap, res);
 }
 
 void CapOverUnderTable::Report() {
-    std::cout << "Metal " << "?" << " OVER " << over_index_ << " UNDER " << under_index_ << "\n";
+    std::cout << "Metal " << "?" << " OVER " << over_index_ << " UNDER "
+              << under_index_ << "\n";
     std::cout << "DIST count " << table_.size() << " width " << width_ << "\n";
     for (auto &entry: table_) {
         entry.Report();
@@ -71,7 +88,7 @@ void CapOverUnderTable::Report() {
 void CornerModel::MarkResOver() {
     tmp_res_over_ = &res_over_.back();
     tmp_cap_over_ = nullptr;
-    tmp_cap_under_= nullptr;
+    tmp_cap_under_ = nullptr;
     tmp_cap_diagunder_ = nullptr;
     tmp_cap_overunder_ = nullptr;
 }
@@ -79,7 +96,7 @@ void CornerModel::MarkResOver() {
 void CornerModel::MarkCapOver() {
     tmp_res_over_ = nullptr;
     tmp_cap_over_ = &cap_over_.back();
-    tmp_cap_under_= nullptr;
+    tmp_cap_under_ = nullptr;
     tmp_cap_diagunder_ = nullptr;
     tmp_cap_overunder_ = nullptr;
 }
@@ -95,7 +112,7 @@ void CornerModel::MarkCapUnder() {
 void CornerModel::MarkCapDiagUnder() {
     tmp_res_over_ = nullptr;
     tmp_cap_over_ = nullptr;
-    tmp_cap_under_= nullptr;
+    tmp_cap_under_ = nullptr;
     tmp_cap_diagunder_ = &cap_diagunder_.back();
     tmp_cap_overunder_ = nullptr;
 }
@@ -103,7 +120,7 @@ void CornerModel::MarkCapDiagUnder() {
 void CornerModel::MarkCapOverUnder() {
     tmp_res_over_ = nullptr;
     tmp_cap_over_ = nullptr;
-    tmp_cap_under_= nullptr;
+    tmp_cap_under_ = nullptr;
     tmp_cap_diagunder_ = nullptr;
     tmp_cap_overunder_ = &cap_overunder_.back();
 }
@@ -111,7 +128,7 @@ void CornerModel::MarkCapOverUnder() {
 void CornerModel::MarkNothing() {
     tmp_res_over_ = nullptr;
     tmp_cap_over_ = nullptr;
-    tmp_cap_under_= nullptr;
+    tmp_cap_under_ = nullptr;
     tmp_cap_diagunder_ = nullptr;
     tmp_cap_overunder_ = nullptr;
 }
@@ -183,6 +200,37 @@ void TechConfig::Report() {
     for (auto &model: model_table_) {
         model.Report();
     }
+}
+
+Interpreter::Interpreter(TechConfig *tech_config) :
+    scanner_(*this),
+    parser_(scanner_, *this),
+    location_(0),
+    tech_config_(tech_config) {}
+
+int Interpreter::parse() {
+    location_ = 0;
+    return parser_.parse();
+}
+
+void Interpreter::clear() {
+    location_ = 0;
+}
+
+void Interpreter::switchInputStream(std::istream *is) {
+    scanner_.switch_streams(is, NULL);
+}
+
+TechConfig *Interpreter::UserData() {
+    return tech_config_;
+}
+
+void Interpreter::increaseLocation(unsigned int loc) {
+    location_ += loc;
+}
+
+unsigned int Interpreter::location() const {
+    return location_;
 }
 
 }
