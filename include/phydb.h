@@ -147,7 +147,6 @@ class PhyDB {
     galois::eda::parasitics::Manager* GetParaManager();
     std::vector<galois::eda::liberty::CellLib*> GetCellLibs();
     galois::eda::utility::ExtNetlistAdaptor* GetNetlistAdaptor();
-    ActPhyDBTimingAPI &GetTimingApi();
 
     /************************************************
     * The following APIs are for information in CELL
