@@ -158,7 +158,7 @@ message(STATUS "Current installation directory: " ${CMAKE_INSTALL_PREFIX})
 ######################################
 # Install header files
 ######################################
-install(DIRECTORY include/ DESTINATION include/phydb COMPONENT Development FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY include/ DESTINATION include/phydb COMPONENT Development FILES_MATCHING PATTERN "*")
 
 ######################################
 # Install library
