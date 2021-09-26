@@ -79,7 +79,7 @@ add_custom_command(
     OUTPUT ${SRC_DIR}/scanner.cpp
     COMMAND ${FLEX_EXECUTABLE} -o ${SRC_DIR}/scanner.cpp ${INC_DIR}/scanner.l
     COMMAND sed 's/register//g' ${SRC_DIR}/scanner.cpp > ${SRC_DIR}/scanner.cppx # if flex 2.6.4 is used, then this command can be removed
-    COMMAND mv -f ${SRC_DIR}/scanner.cppx ${SRC_DIR}/scaller.cpp # if flex 2.6.4 is used, then this command can be removed
+    COMMAND mv -f ${SRC_DIR}/scanner.cppx ${SRC_DIR}/scanner.cpp # if flex 2.6.4 is used, then this command can be removed
     DEPENDS ${INC_DIR}/scanner.l
 )
 add_custom_target(flex_target ALL DEPENDS ${SRC_DIR}/scanner.cpp)
