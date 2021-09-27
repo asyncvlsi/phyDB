@@ -183,44 +183,51 @@ simple_table_header: METAL NUMBER relative_pos NUMBER
 ;
 
 under_layer: UNDER NUMBER
-{
-    auto model = driver.UserData()->GetLastModel();
-    if (model != nullptr) {
-        int over_index = model->cap_over_.back().layer_index_;
-        model->cap_over_.pop_back();
+    {
+        auto model = driver.UserData()->GetLastModel();
+        if (model != nullptr) {
+       	    int layer_index = model->cap_over_.back().LayerIndex();
+            int over_index = model->cap_over_.back().OverIndex();
+            model->cap_over_.pop_back();
 
-        int under_index = (int) $2;
-        model->cap_overunder_.emplace_back(over_index, under_index);
-        model->MarkCapOverUnder();
+            int under_index = (int) $2;
+            model->cap_overunder_.emplace_back(
+            	layer_index,
+            	over_index,
+            	under_index
+            );
+            model->MarkCapOverUnder();
+        }
     }
 }
 ;
 
 table_start: DIST COUNT NUMBER WIDTH NUMBER
-{
-    auto model = driver.UserData()->GetLastModel();
-    int sz = (int) $3;
-    double width = $5;
-    if (model != nullptr) {
-        if (model->tmp_res_over_ != nullptr) {
-            model->tmp_res_over_->table_.reserve(sz);
-            model->tmp_res_over_->width_ = width;
-        }
-        if (model->tmp_cap_over_ != nullptr) {
-            model->tmp_cap_over_->table_.reserve(sz);
-            model->tmp_cap_over_->width_ = width;
-        }
-        if (model->tmp_cap_under_ != nullptr) {
-            model->tmp_cap_under_->table_.reserve(sz);
-            model->tmp_cap_under_->width_ = width;
-        }
-        if (model->tmp_cap_diagunder_ != nullptr) {
-            model->tmp_cap_diagunder_->table_.reserve(sz);
-            model->tmp_cap_diagunder_->width_ = width;
-        }
-        if (model->tmp_cap_overunder_ != nullptr) {
-            model->tmp_cap_overunder_->table_.reserve(sz);
-            model->tmp_cap_overunder_->width_ = width;
+    {
+        auto model = driver.UserData()->GetLastModel();
+        int sz = (int) $3;
+        double width = $5;
+        if (model != nullptr) {
+            if (model->tmp_res_over_ != nullptr) {
+                model->tmp_res_over_->GetTable().reserve(sz);
+                model->tmp_res_over_->SetWidth(width);
+            }
+            if (model->tmp_cap_over_ != nullptr) {
+                model->tmp_cap_over_->GetTable().reserve(sz);
+                model->tmp_cap_over_->SetWidth(width);
+            }
+            if (model->tmp_cap_under_ != nullptr) {
+                model->tmp_cap_under_->GetTable().reserve(sz);
+                model->tmp_cap_under_->SetWidth(width);
+            }
+            if (model->tmp_cap_diagunder_ != nullptr) {
+                model->tmp_cap_diagunder_->GetTable().reserve(sz);
+                model->tmp_cap_diagunder_->SetWidth(width);
+            }
+            if (model->tmp_cap_overunder_ != nullptr) {
+                model->tmp_cap_overunder_->GetTable().reserve(sz);
+                model->tmp_cap_overunder_->SetWidth(width);
+            }
         }
     }
 }

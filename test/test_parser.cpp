@@ -24,6 +24,7 @@ int main(int argc, char **argv) {
     cout << "Parse complete. Result = " << res << endl;
 
     tech_config.Report();
+    tech_config.CalculateSimplifiedResistanceTable(true);
 
     return res;
 }
