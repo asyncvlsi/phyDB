@@ -19,8 +19,8 @@ int main(int argc, char **argv) {
     std::string input_tech_config_file_name(argv[1]);
     std::ifstream ist(input_tech_config_file_name);
     std::istream &s = ist;
-    i.switchInputStream(&s);
-    int res = i.parse();
+    i.SetInputStream(&s);
+    int res = i.Parse();
     cout << "Parse complete. Result = " << res << endl;
 
     tech_config.Report();

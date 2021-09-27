@@ -15,11 +15,11 @@ class ClusterCol {
 
   public:
     ClusterCol() : lx_(0), ux_(0) {}
-    ClusterCol(string name, string bot_signal) : 
+    ClusterCol(string name, string bot_signal) :
         name_(name), bot_signal_(bot_signal) {}
-    ClusterCol(string name, string bot_signal, int lx, int ux) : 
+    ClusterCol(string name, string bot_signal, int lx, int ux) :
         name_(name), bot_signal_(bot_signal), lx_(lx), ux_(ux) {}
-    ClusterCol(string name, string bot_signal, int lx, int ux, vector<int> ly, vector<int> uy) : 
+    ClusterCol(string name, string bot_signal, int lx, int ux, vector<int> ly, vector<int> uy) :
         name_(name), bot_signal_(bot_signal), lx_(lx), ux_(ux), ly_(ly), uy_(uy){}
 
     void SetName(string& );

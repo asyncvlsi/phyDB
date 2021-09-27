@@ -10,7 +10,7 @@
 #include "scanner.h"
 #include "parser.hpp"
 
-namespace phydb{
+namespace phydb {
 
 /****
  * @brief This structure presents an entry in tables in a technology configuration
@@ -41,7 +41,7 @@ struct CapEntry {
     double fringe_cap_;
     double res_;
 
-    void Report();
+    void Report() const;
 };
 
 /****
@@ -253,14 +253,14 @@ class CornerModel {
 };
 
 class TechConfig {
-public:
+  public:
     bool is_diagmodel_on_ = false;
     int layer_count_ = 0;
     int model_count_; // DensityRate : model_count data_rate_table
     std::vector<double> data_rate_table_;
     std::vector<CornerModel> model_table_; // DensityModel
 
-    void SetDiagmodelOn(bool is_diagmodel_on);
+    void SetDiagModelOn(bool is_diagmodel_on);
     void SetLayerCount(int layer_count);
     void SetModelCount(int model_count);
     void AddDataRate(double data_rate);
@@ -284,9 +284,8 @@ public:
 class Interpreter {
   public:
     explicit Interpreter(TechConfig *tech_config);
-    int parse();
-    void clear();
-    void switchInputStream(std::istream *is);
+    int Parse();
+    void SetInputStream(std::istream *is);
     TechConfig *UserData();
     friend class Parser;
     friend class Scanner;

@@ -61,7 +61,7 @@ if (NOT GALOIS_EDA)
     message(FATAL_ERROR "libgalois_eda.a is not found in " $ENV{ACT_HOME}/lib)
 else ()
     message(STATUS "libgalois_eda.a found")
-endif()
+endif ()
 
 find_package(Boost 1.71.0)
 message(STATUS "Boost library path: ${Boost_LIBRARY_DIRS}")
@@ -73,7 +73,7 @@ set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # FLEX dependencies
-find_package(FLEX REQUIRED)
+find_package(FLEX 2.5.0 REQUIRED)
 message(STATUS "flex: ${FLEX_EXECUTABLE}")
 add_custom_command(
     OUTPUT ${SRC_DIR}/scanner.cpp
@@ -85,7 +85,7 @@ add_custom_command(
 add_custom_target(flex_target ALL DEPENDS ${SRC_DIR}/scanner.cpp)
 
 # BISON dependencies
-find_package(BISON REQUIRED)
+find_package(BISON 3.2.0 REQUIRED)
 message(STATUS "bison: ${BISON_EXECUTABLE}")
 add_custom_command(
     OUTPUT ${SRC_DIR}/parser.cpp
@@ -123,8 +123,7 @@ add_library(phydb
     STATIC
     ${SOURCES}
     ${SRC_DIR}/scanner.cpp
-    ${SRC_DIR}/parser.cpp
-    )
+    ${SRC_DIR}/parser.cpp)
 add_dependencies(phydb flex_target bison_target)
 target_link_libraries(phydb
     lef def)
@@ -132,15 +131,12 @@ target_link_libraries(phydb
 add_executable(PhyDB_test
     test/test.cpp)
 target_link_libraries(PhyDB_test
-    PRIVATE phydb
-    )
+    PRIVATE phydb)
 
 add_executable(parser_test
-    test/test_parser.cpp
-)
+    test/test_parser.cpp)
 target_link_libraries(parser_test
-    PRIVATE phydb
-)
+    PRIVATE phydb)
 
 ######################################
 # specify the installation directory: ${ACT_HOME}

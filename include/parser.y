@@ -77,72 +77,50 @@
 %%
 
 tech_config_file : header model
-;
 
-header: info
-    | header info
-;
+header: info | header info
 
-info: extraction 
-    | diagmodel 
-    | layercount 
-    | densityrate 
-;
+info: extraction | diagmodel | layercount | densityrate
 
 extraction: EXTRACTION
-;
 
 diagmodel: DIAGMODEL ON
     {
-        driver.UserData()->SetDiagmodelOn(true);
+        driver.UserData()->SetDiagModelOn(true);
     }
-    | DIAGMODEL OFF
+  | DIAGMODEL OFF
     {
-        driver.UserData()->SetDiagmodelOn(false);
+        driver.UserData()->SetDiagModelOn(false);
     }
-;
 
 layercount: LAYERCOUNT NUMBER
     {
         driver.UserData()->SetLayerCount(int($2));
     }
-;
 
 densityrate: DENSITYRATE NUMBER
     {
         driver.UserData()->SetModelCount(int($2));
     }
-    | densityrate NUMBER
+  | densityrate NUMBER
     {
         driver.UserData()->AddDataRate($2);
     }
-;
 
 model: densitymodel metal_tables end_densitymodel
-;
 
 densitymodel: DENSITYMODEL NUMBER
-{
-    driver.UserData()->AddModel(int($2));
-}
-;
+    {
+        driver.UserData()->AddModel(int($2));
+    }
 
-metal_tables: metal_header table
-    | metal_tables table
-    | metal_tables metal_header
-;
+metal_tables: metal_header table | metal_tables table | metal_tables metal_header
 
 
-metal_header: METAL NUMBER relative_pos WIDTH_TABLE NUMBER ENTRIES 
-    | METAL NUMBER relative_pos WIDTH_TABLE NUMBER ENTRIES NUMBER
-;
+metal_header: METAL NUMBER relative_pos WIDTH_TABLE NUMBER ENTRIES
+  | METAL NUMBER relative_pos WIDTH_TABLE NUMBER ENTRIES NUMBER
 
-relative_pos: RESOVER 
-    | OVER 
-    | UNDER 
-    | DIAGUNDER 
-    | OVERUNDER
-;
+relative_pos: RESOVER | OVER | UNDER | DIAGUNDER | OVERUNDER
 
 table: table_header table_start table_body table_end
     {
@@ -151,36 +129,33 @@ table: table_header table_start table_body table_end
             model->MarkNothing();
         }
     }
-;
 
-table_header: simple_table_header
-    | simple_table_header under_layer
-;
+table_header: simple_table_header | simple_table_header under_layer
 
 simple_table_header: METAL NUMBER relative_pos NUMBER
     {
         auto model = driver.UserData()->GetLastModel();
         if (model != nullptr) {
-            int layer_index = (int) $4;
+            int layer_index_1 = (int) $2;
+            int layer_index_2 = (int) $4;
             if ($3 == "RESOVER") {
-                model->res_over_.emplace_back(layer_index);
-                model->MarkResOver();
+            	model->res_over_.emplace_back(layer_index_1, layer_index_2);
+            	model->MarkResOver();
             } else if ($3 == "OVER") {
-                model->cap_over_.emplace_back(layer_index);
-                model->MarkCapOver();
+            	model->cap_over_.emplace_back(layer_index_1, layer_index_2);
+            	model->MarkCapOver();
             } else if ($3 == "UNDER") {
-                model->cap_under_.emplace_back(layer_index);
-                model->MarkCapUnder();
+            	model->cap_under_.emplace_back(layer_index_1, layer_index_2);
+            	model->MarkCapUnder();
             } else if ($3 == "DIAGUNDER") {
-                model->cap_diagunder_.emplace_back(layer_index);
-                model->MarkCapDiagUnder();
+            	model->cap_diagunder_.emplace_back(layer_index_1, layer_index_2);
+            	model->MarkCapDiagUnder();
             } else {
-                cout << "impossible\n";
-                exit(1);
+            	cout << "Error: impossible to happen\n";
+            	exit(1);
             }
         }
     }
-;
 
 under_layer: UNDER NUMBER
     {
@@ -199,8 +174,6 @@ under_layer: UNDER NUMBER
             model->MarkCapOverUnder();
         }
     }
-}
-;
 
 table_start: DIST COUNT NUMBER WIDTH NUMBER
     {
@@ -230,48 +203,39 @@ table_start: DIST COUNT NUMBER WIDTH NUMBER
             }
         }
     }
-}
-;
 
-table_body: 
-    | table_body table_entry
-;
+table_body: /* nothing */ | table_body table_entry
 
 table_entry: NUMBER NUMBER NUMBER NUMBER
-{
-    auto model = driver.UserData()->GetLastModel();
-    double distance = $1;
-    double coupling_cap = $2;
-    double fringe_cap = $3;
-    double res = $4;
-    if (model != nullptr) {
-        if (model->tmp_res_over_ != nullptr) {
-            model->tmp_res_over_->AddEntry(distance, coupling_cap, fringe_cap, res);
-        }
-        if (model->tmp_cap_over_ != nullptr) {
-            model->tmp_cap_over_->AddEntry(distance, coupling_cap, fringe_cap, res);
-        }
-        if (model->tmp_cap_under_ != nullptr) {
-            model->tmp_cap_under_->AddEntry(distance, coupling_cap, fringe_cap, res);
-        }
-        if (model->tmp_cap_diagunder_ != nullptr) {
-            model->tmp_cap_diagunder_->AddEntry(distance, coupling_cap, fringe_cap, res);
-        }
-        if (model->tmp_cap_overunder_ != nullptr) {
-            model->tmp_cap_overunder_->AddEntry(distance, coupling_cap, fringe_cap, res);
+    {
+        auto model = driver.UserData()->GetLastModel();
+        double distance = $1;
+        double coupling_cap = $2;
+        double fringe_cap = $3;
+        double res = $4;
+        if (model != nullptr) {
+            if (model->tmp_res_over_ != nullptr) {
+                model->tmp_res_over_->AddEntry(distance, coupling_cap, fringe_cap, res);
+            } else if (model->tmp_cap_over_ != nullptr) {
+                model->tmp_cap_over_->AddEntry(distance, coupling_cap, fringe_cap, res);
+            } else if (model->tmp_cap_under_ != nullptr) {
+                model->tmp_cap_under_->AddEntry(distance, coupling_cap, fringe_cap, res);
+            } else if (model->tmp_cap_diagunder_ != nullptr) {
+                model->tmp_cap_diagunder_->AddEntry(distance, coupling_cap, fringe_cap, res);
+            } else if (model->tmp_cap_overunder_ != nullptr) {
+                model->tmp_cap_overunder_->AddEntry(distance, coupling_cap, fringe_cap, res);
+            } else {
+            	cout << "Error: no table is available to accept this entry?" << endl;
+            }
         }
     }
-}
-;
 
 table_end: TABLE_END
-;
 
 end_densitymodel: DENSITYMODEL_END NUMBER
-;
 
 %%
 
-void phydb::Parser::error(const std::string &message) {
+void phydb::Parser::error(const string &message) {
     cout << "Error: " << message << endl;
 }

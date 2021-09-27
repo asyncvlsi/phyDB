@@ -17,7 +17,8 @@
 namespace phydb {
 
 struct PhydbPin {
-    explicit PhydbPin(int comp = -1, int pin = -1) : comp_id(comp), pin_id(pin) {}
+    explicit PhydbPin(int comp = -1, int pin = -1)
+        : comp_id(comp), pin_id(pin) {}
     int comp_id;
     int pin_id;
 
@@ -26,7 +27,11 @@ struct PhydbPin {
     }
 
     std::string Str() const {
-        return "(" + std::to_string(comp_id) + ", " + std::to_string(pin_id) + ")";
+        return "("
+            + std::to_string(comp_id)
+            + ", "
+            + std::to_string(pin_id)
+            + ")";
     }
 
     void Reset() {
@@ -70,7 +75,13 @@ struct PhydbPath {
     PhydbPin root;
     std::vector<PhydbTimingEdge> edges;
     void Clear();
-    void AddEdge(PhydbPin &src, PhydbPin &tgt, int net_id, double dly, int cnt);
+    void AddEdge(
+        PhydbPin &src,
+        PhydbPin &tgt,
+        int net_id,
+        double dly,
+        int cnt
+    );
 };
 
 struct TimingDAG {
@@ -116,17 +127,27 @@ class ActPhyDBTimingAPI {
 
     void SetGetNumConstraintsCB(int (*callback_function)());
     void SetUpdateTimingIncrementalCB(void (*callback_function)());
-    void SetGetSlackCB(std::vector<double> (*callback_function)(const std::vector<int> &));
-    void SetGetWitnessCB(void (*callback_function)(int, std::vector<ActEdge> &, std::vector<ActEdge> &));
-    void SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<int> &));
+    void SetGetSlackCB(
+        std::vector<double> (*callback_function)(const std::vector<int> &)
+    );
+    void SetGetWitnessCB(
+        void (*callback_function)(
+            int,
+            std::vector<ActEdge> &,
+            std::vector<ActEdge> &
+        )
+    );
+    void SetGetViolatedTimingConstraintsCB(
+        void (*callback_function)(std::vector<int> &)
+    );
 
-    void SetParaManager(galois::eda::parasitics::Manager* manager);
-    void AddCellLib(galois::eda::liberty::CellLib* lib);
-    void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor* adaptor);
+    void SetParaManager(galois::eda::parasitics::Manager *manager);
+    void AddCellLib(galois::eda::liberty::CellLib *lib);
+    void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor);
 
-    galois::eda::parasitics::Manager* GetParaManager();
-    std::vector<galois::eda::liberty::CellLib*> GetCellLibs();
-    galois::eda::utility::ExtNetlistAdaptor* GetNetlistAdaptor();
+    galois::eda::parasitics::Manager *GetParaManager();
+    std::vector<galois::eda::liberty::CellLib *> GetCellLibs();
+    galois::eda::utility::ExtNetlistAdaptor *GetNetlistAdaptor();
 
     //APIs for Dali and SPRoute
     bool IsActNetPtrExisting(void *act_net);
@@ -136,14 +157,22 @@ class ActPhyDBTimingAPI {
     int GetNumConstraints();
     void UpdateTimingIncremental();
     double GetSlack(int tc_num);
-    void GetWitness(int tc_num, PhydbPath &phydb_fast_path, PhydbPath &phydb_slow_path);
+    void GetWitness(
+        int tc_num,
+        PhydbPath &phydb_fast_path,
+        PhydbPath &phydb_slow_path
+    );
     void GetViolatedTimingConstraints(std::vector<int> &violated_tc_nums);
 
   private:
     int (*GetNumConstraintsCB)() = nullptr;
     void (*UpdateTimingIncrementalCB)() = nullptr;
     std::vector<double> (*GetSlackCB)(const std::vector<int> &) = nullptr;
-    void (*GetWitnessCB)(int, std::vector<ActEdge> &, std::vector<ActEdge> &) = nullptr;
+    void (*GetWitnessCB)(
+        int,
+        std::vector<ActEdge> &,
+        std::vector<ActEdge> &
+    ) = nullptr;
     void (*GetViolatedTimingConstraintsCB)(std::vector<int> &) = nullptr;
 
     // act net pointer <=> phydb net index
@@ -154,9 +183,9 @@ class ActPhyDBTimingAPI {
     std::unordered_map<void *, PhydbPin> component_pin_act_2_id_;
     std::unordered_map<PhydbPin, void *, PhydbPinHasher> component_pin_id_2_act_;
 
-    galois::eda::parasitics::Manager* para_manager_; //include galois/eda/parasitics/manager.h
-    std::vector<galois::eda::liberty::CellLib*> libs_; //include galois/eda/liberty/CellLib.h
-    galois::eda::utility::ExtNetlistAdaptor* adaptor_; //include galois/eda/utility/ExtNetlistAdaptor.h
+    galois::eda::parasitics::Manager *para_manager_;
+    std::vector<galois::eda::liberty::CellLib *> libs_;
+    galois::eda::utility::ExtNetlistAdaptor *adaptor_;
 
     void Translate(std::vector<ActEdge> &act_path, PhydbPath &phydb_path);
 };

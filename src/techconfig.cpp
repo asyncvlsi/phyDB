@@ -8,15 +8,19 @@
 
 namespace phydb {
 
-void CapEntry::Report() {
-    std::cout << distance_ << " " << coupling_cap_ << " " << fringe_cap_ << " "
+void CapEntry::Report() const {
+    std::cout << distance_ << " "
+              << coupling_cap_ << " "
+              << fringe_cap_ << " "
               << res_ << "\n";
 }
 
-void ResOverTable::AddEntry(double distance,
-                            double coupling_cap,
-                            double fringe_cap,
-                            double res) {
+void ResOverTable::AddEntry(
+    double distance,
+    double coupling_cap,
+    double fringe_cap,
+    double res
+) {
     table_.emplace_back(distance, coupling_cap, fringe_cap, res);
 }
 
@@ -53,10 +57,12 @@ void ResOverTable::Report() const {
     }
 }
 
-void CapOverTable::AddEntry(double distance,
-                            double coupling_cap,
-                            double fringe_cap,
-                            double res) {
+void CapOverTable::AddEntry(
+    double distance,
+    double coupling_cap,
+    double fringe_cap,
+    double res
+) {
     table_.emplace_back(distance, coupling_cap, fringe_cap, res);
 }
 
@@ -84,10 +90,12 @@ void CapOverTable::Report() const {
     }
 }
 
-void CapUnderTable::AddEntry(double distance,
-                             double coupling_cap,
-                             double fringe_cap,
-                             double res) {
+void CapUnderTable::AddEntry(
+    double distance,
+    double coupling_cap,
+    double fringe_cap,
+    double res
+) {
     table_.emplace_back(distance, coupling_cap, fringe_cap, res);
 }
 
@@ -108,17 +116,19 @@ std::vector<CapEntry> &CapUnderTable::GetTable() {
 }
 
 void CapUnderTable::Report() {
-    std::cout << "Metal " << "?" << " UNDER " << layer_index_ << "\n";
+    std::cout << "Metal " << layer_index_ << " UNDER " << under_index_ << "\n";
     std::cout << "DIST count " << table_.size() << " width " << width_ << "\n";
     for (auto &entry: table_) {
         entry.Report();
     }
 }
 
-void CapDiagUnderTable::AddEntry(double distance,
-                                 double coupling_cap,
-                                 double fringe_cap,
-                                 double res) {
+void CapDiagUnderTable::AddEntry(
+    double distance,
+    double coupling_cap,
+    double fringe_cap,
+    double res
+) {
     table_.emplace_back(distance, coupling_cap, fringe_cap, res);
 }
 
@@ -139,17 +149,21 @@ std::vector<CapEntry> &CapDiagUnderTable::GetTable() {
 }
 
 void CapDiagUnderTable::Report() {
-    std::cout << "Metal " << "?" << " DIAGUNDER " << layer_index_ << "\n";
-    std::cout << "DIST count " << table_.size() << " width " << width_ << "\n";
+    std::cout << "Metal " << layer_index_
+              << " DIAGUNDER " << diagunder_index_ << "\n";
+    std::cout << "DIST count " << table_.size()
+              << " width " << width_ << "\n";
     for (auto &entry: table_) {
         entry.Report();
     }
 }
 
-void CapOverUnderTable::AddEntry(double distance,
-                                 double coupling_cap,
-                                 double fringe_cap,
-                                 double res) {
+void CapOverUnderTable::AddEntry(
+    double distance,
+    double coupling_cap,
+    double fringe_cap,
+    double res
+) {
     table_.emplace_back(distance, coupling_cap, fringe_cap, res);
 }
 
@@ -174,9 +188,11 @@ std::vector<CapEntry> &CapOverUnderTable::GetTable() {
 }
 
 void CapOverUnderTable::Report() {
-    std::cout << "Metal " << "?" << " OVER " << over_index_ << " UNDER "
-              << under_index_ << "\n";
-    std::cout << "DIST count " << table_.size() << " width " << width_ << "\n";
+    std::cout << "Metal " << layer_index_
+              << " OVER " << over_index_
+              << " UNDER " << under_index_ << "\n";
+    std::cout << "DIST count " << table_.size()
+              << " width " << width_ << "\n";
     for (auto &entry: table_) {
         entry.Report();
     }
@@ -354,7 +370,7 @@ void CornerModel::Report() {
     }
 }
 
-void TechConfig::SetDiagmodelOn(bool is_diagmodel_on) {
+void TechConfig::SetDiagModelOn(bool is_diagmodel_on) {
     is_diagmodel_on_ = is_diagmodel_on;
 }
 
@@ -436,15 +452,14 @@ Interpreter::Interpreter(TechConfig *tech_config) :
     parser_(scanner_, *this),
     tech_config_(tech_config) {}
 
-int Interpreter::parse() {
-    return parser_.parse();
+int Interpreter::Parse() {
+    int res = parser_.parse();
+    tech_config_->FixResOverTable();
+    return res;
 }
 
-void Interpreter::clear() {
-}
-
-void Interpreter::switchInputStream(std::istream *is) {
-    scanner_.switch_streams(is, NULL);
+void Interpreter::SetInputStream(std::istream *is) {
+    scanner_.switch_streams(is, nullptr);
 }
 
 TechConfig *Interpreter::UserData() {

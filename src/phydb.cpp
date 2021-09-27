@@ -25,15 +25,19 @@ void PhyDB::SetManufacturingGrid(double manufacture_grid) {
     tech_.SetManufacturingGrid(manufacture_grid);
 }
 
-void PhyDB::AddSite(std::string const &name,
-                    std::string const &class_name,
-                    double width,
-                    double height) {
+void PhyDB::AddSite(
+    std::string const &name,
+    std::string const &class_name,
+    double width,
+    double height
+) {
     tech_.AddSite(name, class_name, width, height);
 }
 
-void PhyDB::SetPlacementGrids(double placement_grid_value_x_,
-                              double placement_grid_value_y_) {
+void PhyDB::SetPlacementGrids(
+    double placement_grid_value_x_,
+    double placement_grid_value_y_
+) {
     tech_.SetPlacementGrids(placement_grid_value_x_, placement_grid_value_y_);
 }
 
@@ -41,9 +45,11 @@ bool PhyDB::IsLayerExisting(std::string const &layer_name) {
     return tech_.IsLayerExisting(layer_name);
 }
 
-Layer *PhyDB::AddLayer(std::string &layer_name,
-                       LayerType type,
-                       MetalDirection direction) {
+Layer *PhyDB::AddLayer(
+    std::string &layer_name,
+    LayerType type,
+    MetalDirection direction
+) {
     return tech_.AddLayer(layer_name, type, direction);
 }
 
@@ -143,11 +149,13 @@ bool PhyDB::IsComponentExisting(std::string &component_name) {
     return design_.IsComponentExisting(component_name);
 }
 
-Track *PhyDB::AddTrack(XYDirection direction,
-                       int start,
-                       int nTracks,
-                       int step,
-                       vector<string> &layer_names) {
+Track *PhyDB::AddTrack(
+    XYDirection direction,
+    int start,
+    int nTracks,
+    int step,
+    vector<string> &layer_names
+) {
     return design_.AddTrack(direction, start, nTracks, step, layer_names);
 }
 
@@ -155,42 +163,50 @@ vector<Track> &PhyDB::GetTracksRef() {
     return design_.GetTracksRef();
 }
 
-Row *PhyDB::AddRow(string &name,
-                   string &site_name,
-                   string &site_orient,
-                   int origX,
-                   int origY,
-                   int numX,
-                   int numY,
-                   int stepX,
-                   int stepY) {
-    return design_.AddRow(name,
-                          site_name,
-                          site_orient,
-                          origX,
-                          origY,
-                          numX,
-                          numY,
-                          stepX,
-                          stepY);
+Row *PhyDB::AddRow(
+    string &name,
+    string &site_name,
+    string &site_orient,
+    int origX,
+    int origY,
+    int numX,
+    int numY,
+    int stepX,
+    int stepY
+) {
+    return design_.AddRow(
+        name,
+        site_name,
+        site_orient,
+        origX,
+        origY,
+        numX,
+        numY,
+        stepX,
+        stepY
+    );
 }
 
 vector<Row> &PhyDB::GetRowVec() {
     return design_.GetRowVec();
 }
 
-Component *PhyDB::AddComponent(std::string &comp_name,
-                               Macro *macro_ptr,
-                               PlaceStatus place_status,
-                               int llx,
-                               int lly,
-                               CompOrient orient) {
-    return design_.AddComponent(comp_name,
-                                macro_ptr,
-                                place_status,
-                                llx,
-                                lly,
-                                orient);
+Component *PhyDB::AddComponent(
+    std::string &comp_name,
+    Macro *macro_ptr,
+    PlaceStatus place_status,
+    int llx,
+    int lly,
+    CompOrient orient
+) {
+    return design_.AddComponent(
+        comp_name,
+        macro_ptr,
+        place_status,
+        llx,
+        lly,
+        orient
+    );
 }
 
 Component *PhyDB::GetComponentPtr(std::string &comp_name) {
@@ -261,9 +277,11 @@ void PhyDB::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
     design_.AddIoPinToNet(iopin_name, net_name);
 }
 
-void PhyDB::AddCompPinToNet(std::string &comp_name,
-                            std::string &pin_name,
-                            std::string &net_name) {
+void PhyDB::AddCompPinToNet(
+    std::string &comp_name,
+    std::string &pin_name,
+    std::string &net_name
+) {
     PhyDBExpects(IsNetExisting(net_name),
                  "Cannot add a component pin to a nonexistent Net: "
                      + net_name);
@@ -320,19 +338,23 @@ vector<SNet> &PhyDB::GetSNetRef() {
     return design_.GetSNetRef();
 }
 
-void PhyDB::SetNwellLayer(double width,
-                          double spacing,
-                          double op_spacing,
-                          double max_plug_dist,
-                          double overhang) {
+void PhyDB::SetNwellLayer(
+    double width,
+    double spacing,
+    double op_spacing,
+    double max_plug_dist,
+    double overhang
+) {
     tech_.SetNwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
 }
 
-void PhyDB::SetPwellLayer(double width,
-                          double spacing,
-                          double op_spacing,
-                          double max_plug_dist,
-                          double overhang) {
+void PhyDB::SetPwellLayer(
+    double width,
+    double spacing,
+    double op_spacing,
+    double max_plug_dist,
+    double overhang
+) {
     tech_.SetPwellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
 }
 
@@ -425,10 +447,12 @@ void PhyDB::SaveWellToRectFile(std::string &file_name) {
     design_.SaveWellToRectFile(file_name);
 }
 
-GcellGrid *PhyDB::AddGcellGrid(XYDirection direction,
-                               int start,
-                               int nBoundaries,
-                               int step) {
+GcellGrid *PhyDB::AddGcellGrid(
+    XYDirection direction,
+    int start,
+    int nBoundaries,
+    int step
+) {
     return design_.AddGcellGrid(direction, start, nBoundaries, step);
 }
 
@@ -444,14 +468,19 @@ void PhyDB::SetUpdateTimingIncrementalCB(void (*callback_function)()) {
     timing_api_.SetUpdateTimingIncrementalCB(callback_function);
 }
 
-void PhyDB::SetGetSlackCB(std::vector<double> (*callback_function)(const std::vector<
-    int> &)) {
+void PhyDB::SetGetSlackCB(
+    std::vector<double> (*callback_function)(const std::vector<int> &)
+) {
     timing_api_.SetGetSlackCB(callback_function);
 }
 
-void PhyDB::SetGetWitnessCB(void (*callback_function)(int,
-                                                      std::vector<ActEdge> &,
-                                                      std::vector<ActEdge> &)) {
+void PhyDB::SetGetWitnessCB(
+    void (*callback_function)(
+        int,
+        std::vector<ActEdge> &,
+        std::vector<ActEdge> &
+    )
+) {
     timing_api_.SetGetWitnessCB(callback_function);
 }
 
@@ -628,17 +657,21 @@ void PhyDB::ReadCell(string const &cellFileName) {
                 } while (line.find(end_layer_flag) == std::string::npos
                     && !ist.eof());
                 if (is_n_well) {
-                    SetNwellLayer(width,
-                                  spacing,
-                                  op_spacing,
-                                  max_plug_dist,
-                                  overhang);
+                    SetNwellLayer(
+                        width,
+                        spacing,
+                        op_spacing,
+                        max_plug_dist,
+                        overhang
+                    );
                 } else {
-                    SetPwellLayer(width,
-                                  spacing,
-                                  op_spacing,
-                                  max_plug_dist,
-                                  overhang);
+                    SetPwellLayer(
+                        width,
+                        spacing,
+                        op_spacing,
+                        max_plug_dist,
+                        overhang
+                    );
                 }
             }
         }
@@ -713,8 +746,12 @@ void PhyDB::ReadCluster(string const &clusterFileName) {
         } else if (tmp1 == "END") {
             assert(tmp2 == col->GetName());
         } else {
-            ly = atoi(tmp1.c_str());
-            uy = atoi(tmp2.c_str());
+            try {
+                ly = stoi(tmp1);
+                uy = stoi(tmp2);
+            } catch (...) {
+                PhyDBExpects(false, "Cannot convert string to integers");
+            }
             col->AddRow(ly, uy);
         }
     }
@@ -771,7 +808,7 @@ void PhyDB::WriteCluster(string const &clusterFileName) {
                 << cluster_col.GetBotSignal() << std::endl;
         auto ly = cluster_col.GetLY();
         auto uy = cluster_col.GetUY();
-        for (int i = 0; i < ly.size(); i++) {
+        for (size_t i = 0; i < ly.size(); i++) {
             outfile << ly[i] << " " << uy[i] << std::endl;
         }
         outfile << "END " << cluster_col.GetName() << std::endl;
