@@ -139,20 +139,20 @@ simple_table_header: METAL NUMBER relative_pos NUMBER
             int layer_index_1 = (int) $2;
             int layer_index_2 = (int) $4;
             if ($3 == "RESOVER") {
-            	model->res_over_.emplace_back(layer_index_1, layer_index_2);
-            	model->MarkResOver();
+                model->res_over_.emplace_back(layer_index_1, layer_index_2);
+                model->MarkResOver();
             } else if ($3 == "OVER") {
-            	model->cap_over_.emplace_back(layer_index_1, layer_index_2);
-            	model->MarkCapOver();
+                model->cap_over_.emplace_back(layer_index_1, layer_index_2);
+                model->MarkCapOver();
             } else if ($3 == "UNDER") {
-            	model->cap_under_.emplace_back(layer_index_1, layer_index_2);
-            	model->MarkCapUnder();
+                model->cap_under_.emplace_back(layer_index_1, layer_index_2);
+                model->MarkCapUnder();
             } else if ($3 == "DIAGUNDER") {
-            	model->cap_diagunder_.emplace_back(layer_index_1, layer_index_2);
-            	model->MarkCapDiagUnder();
+                model->cap_diagunder_.emplace_back(layer_index_1, layer_index_2);
+                model->MarkCapDiagUnder();
             } else {
-            	cout << "Error: impossible to happen\n";
-            	exit(1);
+                cout << "Error: impossible to happen\n";
+                exit(1);
             }
         }
     }
@@ -161,15 +161,15 @@ under_layer: UNDER NUMBER
     {
         auto model = driver.UserData()->GetLastModel();
         if (model != nullptr) {
-       	    int layer_index = model->cap_over_.back().LayerIndex();
+            int layer_index = model->cap_over_.back().LayerIndex();
             int over_index = model->cap_over_.back().OverIndex();
             model->cap_over_.pop_back();
 
             int under_index = (int) $2;
             model->cap_overunder_.emplace_back(
-            	layer_index,
-            	over_index,
-            	under_index
+                layer_index,
+                over_index,
+                under_index
             );
             model->MarkCapOverUnder();
         }
@@ -225,7 +225,7 @@ table_entry: NUMBER NUMBER NUMBER NUMBER
             } else if (model->tmp_cap_overunder_ != nullptr) {
                 model->tmp_cap_overunder_->AddEntry(distance, coupling_cap, fringe_cap, res);
             } else {
-            	cout << "Error: no table is available to accept this entry?" << endl;
+                cout << "Error: no table is available to accept this entry?" << endl;
             }
         }
     }

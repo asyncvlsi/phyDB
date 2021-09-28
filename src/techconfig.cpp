@@ -288,12 +288,13 @@ std::vector<CapOverUnderTable> &CornerModel::GetCapOverUnderTablesRef() {
  *
  * @param is_report: if true, print out the simplified resistance table.
  *
- * @return
+ * @return nothing
  */
 void CornerModel::CalculateSimplifiedResistanceTable(bool is_report) {
     std::vector<std::pair<size_t, size_t>> candidate_table_index;
     std::unordered_set<size_t> index_in_table;
 
+    // find all ResOver tables with over_index 0
     size_t sz = res_over_.size();
     for (size_t i = 0; i < sz; ++i) {
         auto &res_over_table = res_over_[i];
@@ -307,6 +308,7 @@ void CornerModel::CalculateSimplifiedResistanceTable(bool is_report) {
         }
     }
 
+    // sort the index
     std::sort(
         candidate_table_index.begin(),
         candidate_table_index.end(),
@@ -316,6 +318,7 @@ void CornerModel::CalculateSimplifiedResistanceTable(bool is_report) {
         }
     );
 
+    // collect values and put them in the final table
     resistance_table_.reserve(candidate_table_index.size());
     for (auto &pair: candidate_table_index) {
         size_t layer_index = pair.first;
@@ -329,6 +332,7 @@ void CornerModel::CalculateSimplifiedResistanceTable(bool is_report) {
         resistance_table_.push_back(table[0].res_);
     }
 
+    // optional, report the resistance table
     if (is_report) {
         std::cout << "model index: " << model_index_ << "\n";
         sz = resistance_table_.size();
@@ -339,6 +343,18 @@ void CornerModel::CalculateSimplifiedResistanceTable(bool is_report) {
     }
 }
 
+/****
+ * @brief Returns the resistance of a metal segment.
+ *
+ * The resistance is computed using the following formula:
+ *     r = resistance_factor * length / width
+ * where resistance_factor is from the technology configuration file.
+ *
+ * @param metal_index: the index of the metal layer
+ * @param width: width of the metal segment
+ * @param length: length of the metal segment
+ * @return resistance
+ */
 double CornerModel::GetResistance(
     int metal_index,
     double width,
@@ -348,6 +364,108 @@ double CornerModel::GetResistance(
     PhyDBExpects(metal_index < (int) resistance_table_.size(), "Metal index out of bound!");
 
     return length / width * resistance_table_[metal_index];
+}
+
+/****
+ * @brief This function computes a optimized/simplified fringe capacitance table
+ * for fringe capacitance extraction.
+ *
+ * This function is implemented based on `extMain::getShapeRC`, `extMain::getResCapTable(...)`,
+ * `extMetRCTable::getOverFringeRC(...)`, and `extDistWidthRCTable::getFringeRC`
+ * in OpenRCX. In these functions, the capacitance from the area of the metal segment
+ * is set to 0, one possible reason is that the metal segment also has the same width,
+ * so the area capacitance can be absorb into the fringe capacitance
+ *     fringe_capacitance = fringe_capacitance_factor * 2 * length (+width ?)
+ * it seems width is ignored from the above functions.
+ * And area capacitance is
+ *     area_capacitance = fringe_capacitance_factor * length * width
+ * because we assume the above width is fixed, so we can have
+ *     area_capacitance = fringe_capacitance_factor' * length
+ * and then we can put the area capacitance into the fringe capacitance.
+ *
+ * This function calculate the simplified fringe capacitance table in the following way:
+ * 1. iterate over all OVER tables
+ * 2. find all OVER tables with over_index 0, and sort them if necessary
+ * 3. for each OVER table, put the fringe_cap_ in the last entry to the simplified table
+ *
+ * @param is_report: if true, print out the simplified fringe capacitance table.
+ *
+ * @return nothing
+ */
+void CornerModel::CalculateSimplifiedFringeCapacitanceTable(bool is_report) {
+    std::vector<std::pair<size_t, size_t>> candidate_table_index;
+    std::unordered_set<size_t> index_in_table;
+
+    // find all OVER tables with over_index 0
+    size_t sz = cap_over_.size();
+    for (size_t i = 0; i < sz; ++i) {
+        auto &cap_over_table = cap_over_[i];
+        int layer_index = cap_over_table.LayerIndex();
+        int over_index = cap_over_table.OverIndex();
+        if (over_index == 0) {
+            if (index_in_table.find(layer_index) == index_in_table.end()) {
+                candidate_table_index.emplace_back(layer_index, i);
+                index_in_table.insert(layer_index);
+            }
+        }
+    }
+
+    // sort the index
+    std::sort(
+        candidate_table_index.begin(),
+        candidate_table_index.end(),
+        [](const std::pair<size_t, size_t> &lhs,
+           const std::pair<size_t, size_t> &rhs) {
+            return lhs.first < rhs.first;
+        }
+    );
+
+    // collect values and put them in the final table
+    fringe_capacitance_table_.reserve(candidate_table_index.size());
+    for (auto &pair: candidate_table_index) {
+        size_t layer_index = pair.first;
+        size_t cap_over_table_index = pair.second;
+        PhyDBExpects(layer_index - 1 == fringe_capacitance_table_.size(),
+                     "Metal layer index and fringe_capacitance_table_ size do not match during computation");
+        auto &table = cap_over_[cap_over_table_index].GetTable();
+        PhyDBExpects(!table.empty(),
+                     "Cannot find a valid OVER table for metal index: "
+                         + std::to_string(layer_index));
+        fringe_capacitance_table_.push_back(table.back().fringe_cap_);
+    }
+
+    // optional, report the resistance table
+    if (is_report) {
+        std::cout << "model index: " << model_index_ << "\n";
+        sz = fringe_capacitance_table_.size();
+        for (size_t i = 0; i < sz; ++i) {
+            std::cout << i + 1 << ": " << fringe_capacitance_table_[i] << ", ";
+        }
+        std::cout << "\n";
+    }
+}
+
+/****
+ * @brief Returns the fringe capacitance of a metal segment.
+ *
+ * The fringe capacitance is computed using the following formula:
+ *     c = fringe_capacitance_factor * 2 * length
+ * where fringe_capacitance_factor is from the technology configuration file.
+ *
+ * @param metal_index: the index of the metal layer
+ * @param width: width of the metal segment, width is not used in this function for now
+ * @param length: length of the metal segment
+ * @return fringe capacitance
+ */
+double CornerModel::GetFringeCapacitance(
+    int metal_index,
+    double width,
+    double length
+) {
+    PhyDBExpects(metal_index >= 0, "Negative metal index is not allowed!");
+    PhyDBExpects(metal_index < (int) resistance_table_.size(), "Metal index out of bound!");
+
+    return fringe_capacitance_table_[metal_index] * 2 * length;
 }
 
 void CornerModel::Report() {
@@ -409,12 +527,6 @@ void TechConfig::CalculateSimplifiedResistanceTable(bool is_report) {
     }
 }
 
-CornerModel &TechConfig::GetModel(int model_index) {
-    PhyDBExpects(model_index >= 0, "Negative model index is not allowed!");
-    PhyDBExpects(model_index < (int) model_table_.size(), "Model index out of bound!");
-    return model_table_[model_index];
-}
-
 double TechConfig::GetResistance(
     int metal_index,
     double width,
@@ -423,6 +535,28 @@ double TechConfig::GetResistance(
 ) {
     auto &model = GetModel(model_index);
     return model.GetResistance(metal_index, width, length);
+}
+
+void TechConfig::CalculateSimplifiedFringeCapacitanceTable(bool is_report) {
+    for (auto &model: model_table_) {
+        model.CalculateSimplifiedFringeCapacitanceTable(is_report);
+    }
+}
+
+double TechConfig::GetFringeCapacitance(
+    int metal_index,
+    double width,
+    double length,
+    int model_index
+) {
+    auto &model = GetModel(model_index);
+    return model.GetFringeCapacitance(metal_index, width, length);
+}
+
+CornerModel &TechConfig::GetModel(int model_index) {
+    PhyDBExpects(model_index >= 0, "Negative model index is not allowed!");
+    PhyDBExpects(model_index < (int) model_table_.size(), "Model index out of bound!");
+    return model_table_[model_index];
 }
 
 void TechConfig::Report() {

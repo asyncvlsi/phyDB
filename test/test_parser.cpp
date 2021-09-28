@@ -25,6 +25,7 @@ int main(int argc, char **argv) {
 
     tech_config.Report();
     tech_config.CalculateSimplifiedResistanceTable(true);
+    tech_config.CalculateSimplifiedFringeCapacitanceTable(true);
 
     return res;
 }

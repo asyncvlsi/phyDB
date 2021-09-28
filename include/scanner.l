@@ -1,14 +1,14 @@
 %{
-	#include <cstdlib>
+    #include <cstdlib>
 
-	#include <iostream>
+    #include <iostream>
 
     #include "scanner.h"
-	#include "parser.hpp"
-	#include "techconfig.h"
+    #include "parser.hpp"
+    #include "techconfig.h"
 
-	using namespace std;
-	#define yyterminate() phydb::Parser::make_END();
+    using namespace std;
+    #define yyterminate() phydb::Parser::make_END();
 %}
 
 %option nodefault

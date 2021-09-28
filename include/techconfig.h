@@ -229,6 +229,13 @@ class CornerModel {
         double length
     );
 
+    void CalculateSimplifiedFringeCapacitanceTable(bool is_report = false);
+    double GetFringeCapacitance(
+        int metal_index,
+        double width,
+        double length
+    );
+
     void Report();
     friend class Parser;
     friend class TechConfig;
@@ -250,6 +257,7 @@ class CornerModel {
 
     /**** simplified/optimized table for fast look-up ****/
     std::vector<double> resistance_table_;
+    std::vector<double> fringe_capacitance_table_;
 };
 
 class TechConfig {
@@ -269,14 +277,21 @@ class TechConfig {
 
     void FixResOverTable();
     void CalculateSimplifiedResistanceTable(bool is_report = false);
-
-    CornerModel &GetModel(int model_index);
     double GetResistance(
         int metal_index,
         double width,
         double length,
         int model_index
     );
+    void CalculateSimplifiedFringeCapacitanceTable(bool is_report = false);
+    double GetFringeCapacitance(
+        int metal_index,
+        double width,
+        double length,
+        int model_index
+    );
+
+    CornerModel &GetModel(int model_index);
 
     void Report();
 };
