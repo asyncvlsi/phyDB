@@ -140,13 +140,14 @@ class PhyDB {
     void SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<
         int> &));
     ActPhyDBTimingAPI &GetTimingApi();
-
+#if PHYDB_USE_GALOIS
     void SetParaManager(galois::eda::parasitics::Manager* manager);
     void AddCellLib(galois::eda::liberty::CellLib* lib);
     void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor* adaptor);
     galois::eda::parasitics::Manager* GetParaManager();
     std::vector<galois::eda::liberty::CellLib*> GetCellLibs();
     galois::eda::utility::ExtNetlistAdaptor* GetNetlistAdaptor();
+#endif
 
     /************************************************
     * The following APIs are for information in CELL

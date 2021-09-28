@@ -10,9 +10,13 @@
 
 #include <boost/functional/hash.hpp>
 
+#include "config.h"
+
+#if PHYDB_USE_GALOIS
 #include "galois/eda/parasitics/Manager.h"
 #include "galois/eda/liberty/CellLib.h"
 #include "galois/eda/utility/ExtNetlistAdaptor.h"
+#endif
 
 namespace phydb {
 
@@ -140,7 +144,7 @@ class ActPhyDBTimingAPI {
     void SetGetViolatedTimingConstraintsCB(
         void (*callback_function)(std::vector<int> &)
     );
-
+#if PHYDB_USE_GALOIS
     void SetParaManager(galois::eda::parasitics::Manager *manager);
     void AddCellLib(galois::eda::liberty::CellLib *lib);
     void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor);
@@ -148,6 +152,7 @@ class ActPhyDBTimingAPI {
     galois::eda::parasitics::Manager *GetParaManager();
     std::vector<galois::eda::liberty::CellLib *> GetCellLibs();
     galois::eda::utility::ExtNetlistAdaptor *GetNetlistAdaptor();
+#endif
 
     //APIs for Dali and SPRoute
     bool IsActNetPtrExisting(void *act_net);
@@ -182,10 +187,11 @@ class ActPhyDBTimingAPI {
     // act component-pin pointer <=> phydb component-pin index
     std::unordered_map<void *, PhydbPin> component_pin_act_2_id_;
     std::unordered_map<PhydbPin, void *, PhydbPinHasher> component_pin_id_2_act_;
-
+#if PHYDB_USE_GALOIS
     galois::eda::parasitics::Manager *para_manager_;
     std::vector<galois::eda::liberty::CellLib *> libs_;
     galois::eda::utility::ExtNetlistAdaptor *adaptor_;
+#endif
 
     void Translate(std::vector<ActEdge> &act_path, PhydbPath &phydb_path);
 };

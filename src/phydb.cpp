@@ -488,7 +488,7 @@ void PhyDB::SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vec
     int> &)) {
     timing_api_.SetGetViolatedTimingConstraintsCB(callback_function);
 }
-
+#if PHYDB_USE_GALOIS
 void PhyDB::SetParaManager(galois::eda::parasitics::Manager* manager) {
     timing_api_.SetParaManager(manager);
 }
@@ -512,6 +512,7 @@ std::vector<galois::eda::liberty::CellLib*> PhyDB::GetCellLibs() {
 galois::eda::utility::ExtNetlistAdaptor* PhyDB::GetNetlistAdaptor() {
     return timing_api_.GetNetlistAdaptor();
 }
+#endif
 
 ActPhyDBTimingAPI &PhyDB::GetTimingApi() {
     return timing_api_;
