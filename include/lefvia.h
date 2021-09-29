@@ -1,5 +1,5 @@
-#ifndef LEFVIA_H
-#define LEFVIA_H
+#ifndef PHYDB_INCLUDE_LEFVIA_H_
+#define PHYDB_INCLUDE_LEFVIA_H_
 
 #include <string>
 
@@ -30,4 +30,4 @@ class LefVia {
 
 }
 
-#endif
+#endif //PHYDB_INCLUDE_LEFVIA_H_

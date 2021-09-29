@@ -1,5 +1,5 @@
-#ifndef COMPONENT_H
-#define COMPONENT_H
+#ifndef PHYDB_INCLUDE_COMPONENT_H_
+#define PHYDB_INCLUDE_COMPONENT_H_
 
 #include "datatype.h"
 #include "enumtypes.h"
@@ -53,5 +53,4 @@ ostream &operator<<(ostream &, const Component &);
 
 }
 
-#endif
-
+#endif //PHYDB_INCLUDE_COMPONENT_H_

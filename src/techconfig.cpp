@@ -378,9 +378,9 @@ double CornerModel::GetResistance(
  *     fringe_capacitance = fringe_capacitance_factor * 2 * length (+width ?)
  * it seems width is ignored from the above functions.
  * And area capacitance is
- *     area_capacitance = fringe_capacitance_factor * length * width
+ *     area_capacitance = area_capacitance_factor * length * width
  * because we assume the above width is fixed, so we can have
- *     area_capacitance = fringe_capacitance_factor' * length
+ *     area_capacitance = area_capacitance_factor' * length
  * and then we can put the area capacitance into the fringe capacitance.
  *
  * This function calculate the simplified fringe capacitance table in the following way:

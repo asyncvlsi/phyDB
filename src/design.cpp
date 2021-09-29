@@ -212,13 +212,9 @@ void Design::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
     net_ptr->AddIoPin(iopin_name);
 }
 
-void Design::AddCompPinToNet(std::string &comp_name,
-                             std::string &pin_name,
-                             std::string &net_name) {
-    Net *net_ptr = GetNetPtr(net_name);
-    PhyDBExpects(net_ptr != nullptr, "Cannot add to a nonexistent net");
-
-    net_ptr->AddCompPin(comp_name, pin_name);
+void Design::AddCompPinToNet(int comp_id, int pin_id, int net_id) {
+    PhyDBExpects(net_id < (int)nets_.size(), "net id out of bound");
+    nets_[net_id].AddCompPin(comp_id, pin_id);
 }
 
 Net *Design::GetNetPtr(std::string &net_name) {

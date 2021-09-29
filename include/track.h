@@ -1,8 +1,8 @@
-#ifndef TRACK_H
-#define TRACK_H
+#ifndef PHYDB_INCLUDE_TRACK_H_
+#define PHYDB_INCLUDE_TRACK_H_
 
-#include "logging.h"
 #include "enumtypes.h"
+#include "logging.h"
 
 namespace phydb {
 
@@ -37,5 +37,4 @@ ostream &operator<<(ostream &, const Track &);
 
 }
 
-#endif
-
+#endif //PHYDB_INCLUDE_TRACK_H_

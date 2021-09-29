@@ -1,5 +1,5 @@
-#ifndef CORNERSPACING_H
-#define CORNERSPACING_H
+#ifndef PHYDB_INCLUDE_CORNERSPACING_H_
+#define PHYDB_INCLUDE_CORNERSPACING_H_
 
 #include "logging.h"
 
@@ -25,4 +25,4 @@ ostream &operator<<(ostream &, const CornerSpacing &);
 
 }
 
-#endif
+#endif //PHYDB_INCLUDE_CORNERSPACING_H_

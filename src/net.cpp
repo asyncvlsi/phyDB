@@ -6,44 +6,43 @@ void Net::AddIoPin(std::string const &iopin_name) {
     iopin_names_.push_back(iopin_name);
 }
 
-void Net::AddCompPin(std::string const &comp_name, std::string const &pin_name) {
-    component_names_.push_back(comp_name);
-    pin_names_.push_back(pin_name);
+void Net::AddCompPin(int comp_id, int pin_id) {
+    pins_.emplace_back(comp_id, pin_id);
 }
 
 void Net::AddRoutingGuide(int llx, int lly, int urx, int ury, int layerID) {
-  guides_.emplace_back(llx, lly, layerID, urx, ury, layerID);
+    guides_.emplace_back(llx, lly, layerID, urx, ury, layerID);
 }
 
-const string &Net::GetName() {
-  return name_;
+const string &Net::GetName() const {
+    return name_;
 }
 
-vector<string> &Net::GetComponentNamesRef() {
-  return component_names_;
-}
-
-vector<string> &Net::GetPinNamesRef() {
-  return pin_names_;
+vector<PhydbPin> &Net::GetPinsRef() {
+    return pins_;
 }
 
 vector<string> &Net::GetIoPinNamesRef() {
-  return iopin_names_;
+    return iopin_names_;
 }
 
-vector<Rect3D<int>>& Net::GetRoutingGuidesRef() {
-  return guides_;
+vector<Rect3D<int>> &Net::GetRoutingGuidesRef() {
+    return guides_;
 }
 
 void Net::Report() {
-    int sz  = component_names_.size();
-    std::cout << "NET: " << name_ << "  weight: " << weight_ << " size: " << sz << "\n";
+    int sz = (int) pins_.size();
+    std::cout << "NET: " << name_ << "  weight: " << weight_ << " size: " << sz
+              << "\n";
     for (auto &iopin_name: iopin_names_) {
         std::cout << "  (PIN " << iopin_name << ") ";
     }
 
-    for (int i=0; i<sz; ++i) {
-        std::cout << "  (" << component_names_[i] << " " << pin_names_[i] << ") ";
+    for (int i = 0; i < sz; ++i) {
+        std::cout << "  ("
+                  << pins_[i].comp_id << " "
+                  << pins_[i].pin_id
+                  << ") ";
     }
     std::cout << "\n";
 }

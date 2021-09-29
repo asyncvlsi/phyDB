@@ -1,5 +1,5 @@
-#ifndef GCELLGRID_H
-#define GCELLGRID_H
+#ifndef PHYDB_INCLUDE_GCELLGRID_H_
+#define PHYDB_INCLUDE_GCELLGRID_H_
 
 #include "logging.h"
 #include "enumtypes.h"
@@ -38,4 +38,4 @@ ostream &operator<<(ostream &, const GcellGrid &);
 
 }
 
-#endif
+#endif //PHYDB_INCLUDE_GCELLGRID_H_

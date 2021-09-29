@@ -1,5 +1,5 @@
-#ifndef CLUSTERCOL_H
-#define CLUSTERCOL_H
+#ifndef PHYDB_INCLUDE_CLUSTERCOL_H_
+#define PHYDB_INCLUDE_CLUSTERCOL_H_
 #include "logging.h"
 
 namespace phydb {
@@ -42,4 +42,4 @@ class ClusterCol {
 
 }
 
-#endif
+#endif //PHYDB_INCLUDE_CLUSTERCOL_H_

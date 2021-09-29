@@ -1,5 +1,5 @@
-#ifndef IOPIN_H
-#define IOPIN_H
+#ifndef PHYDB_INCLUDE_IOPIN_H_
+#define PHYDB_INCLUDE_IOPIN_H_
 
 #include "datatype.h"
 #include "logging.h"
@@ -59,7 +59,7 @@ ostream &operator<<(ostream &, const IOPin &);
 
 }
 
-#endif
+#endif //PHYDB_INCLUDE_IOPIN_H_
 
 
 

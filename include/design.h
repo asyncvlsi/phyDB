@@ -1,5 +1,5 @@
-#ifndef DESIGN_H
-#define DESIGN_H
+#ifndef PHYDB_INCLUDE_DESIGN_H_
+#define PHYDB_INCLUDE_DESIGN_H_
 
 #include <set>
 #include <unordered_map>
@@ -55,7 +55,7 @@ class Design {
     SpecialMacroRectLayout *plus_filling_ = nullptr;
     SpecialMacroRectLayout *well_filling_ = nullptr;
 
-    Design() {}
+    Design() = default;
 
     void SetName(std::string &name);
     void SetVersion(double version);
@@ -70,36 +70,42 @@ class Design {
     void SetUnitsDistanceMicrons(int distance_microns);
     void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
 
-    int GetUnitsDistanceMicrons() { return unit_distance_micron_; }
+    int GetUnitsDistanceMicrons() const { return unit_distance_micron_; }
     Rect2D<int> GetDieArea() const { return die_area_; }
 
-    Track *AddTrack(XYDirection direction,
-                    int start,
-                    int num_tracks,
-                    int step,
-                    vector<string> &layer_names);
+    Track *AddTrack(
+        XYDirection direction,
+        int start,
+        int num_tracks,
+        int step,
+        vector<string> &layer_names
+    );
     vector<Track> &GetTracksRef();
 
     bool IsRowExist(string &name);
-    Row *AddRow(string &name,
-                string &site_name,
-                string &site_orient,
-                int origX,
-                int origY,
-                int numX,
-                int numY,
-                int stepX,
-                int stepY);
+    Row *AddRow(
+        string &name,
+        string &site_name,
+        string &site_orient,
+        int origX,
+        int origY,
+        int numX,
+        int numY,
+        int stepX,
+        int stepY
+    );
     vector<Row> &GetRowVec();
 
     void SetComponentCount(int count, double redundancy_factor = 1.4);
     bool IsComponentExisting(std::string &comp_name);
-    Component *AddComponent(std::string &comp_name,
-                            Macro *macro_ptr,
-                            PlaceStatus place_status,
-                            int llx,
-                            int lly,
-                            CompOrient orient);
+    Component *AddComponent(
+        std::string &comp_name,
+        Macro *macro_ptr,
+        PlaceStatus place_status,
+        int llx,
+        int lly,
+        CompOrient orient
+    );
     Component *GetComponentPtr(std::string &comp_name);
     vector<Component> &GetComponentsRef() { return components_; }
 
@@ -110,9 +116,11 @@ class Design {
 
     void SetIoPinCount(int count);
     bool IsIoPinExist(std::string &iopin_name);
-    IOPin *AddIoPin(std::string &iopin_name,
-                    SignalDirection signal_direction,
-                    SignalUse signal_use);
+    IOPin *AddIoPin(
+        std::string &iopin_name,
+        SignalDirection signal_direction,
+        SignalUse signal_use
+    );
     IOPin *GetIoPinPtr(std::string &iopin_name);
     vector<IOPin> &GetIoPinsRef() { return iopins_; }
 
@@ -120,9 +128,7 @@ class Design {
     bool IsNetExist(std::string &net_name);
     Net *AddNet(std::string &net_name, double weight = 1);
     void AddIoPinToNet(std::string &iopin_name, std::string &net_name);
-    void AddCompPinToNet(std::string &comp_name,
-                         std::string &pin_name,
-                         std::string &net_name);
+    void AddCompPinToNet(int comp_id, int pin_id, int net_id);
     Net *GetNetPtr(std::string &net_name);
     vector<Net> &GetNetsRef() { return nets_; }
 
@@ -133,17 +139,21 @@ class Design {
     ClusterCol *AddClusterCol(string &name, string &bot_signal);
     vector<ClusterCol> &GetClusterColsRef();
 
-    GcellGrid *AddGcellGrid(XYDirection direction,
-                            int start,
-                            int nBoundaries,
-                            int step);
+    GcellGrid *AddGcellGrid(
+        XYDirection direction,
+        int start,
+        int nBoundaries,
+        int step
+    );
     vector<GcellGrid> &GetGcellGridsRef();
-    void InsertRoutingGuide(int netID,
-                            int llx,
-                            int lly,
-                            int urx,
-                            int ury,
-                            int layerID);
+    void InsertRoutingGuide(
+        int netID,
+        int llx,
+        int lly,
+        int urx,
+        int ury,
+        int layerID
+    );
 
     std::string GetDefName() const;
     void SetDefName(std::string const &def_file_name);
@@ -178,4 +188,4 @@ class Design {
 
 }
 
-#endif
+#endif //PHYDB_INCLUDE_DESIGN_H_

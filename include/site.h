@@ -1,5 +1,5 @@
-#ifndef SITE_H
-#define SITE_H
+#ifndef PHYDB_INCLUDE_SITE_H_
+#define PHYDB_INCLUDE_SITE_H_
 
 #include "logging.h"
 
@@ -33,4 +33,4 @@ ostream &operator<<(ostream &, const Site &);
 
 }
 
-#endif
+#endif //PHYDB_INCLUDE_SITE_H_

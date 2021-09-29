@@ -1,7 +1,7 @@
-#ifndef PHYDB_ENUMTYPES_H_
-#define PHYDB_ENUMTYPES_H_
+#ifndef PHYDB_INCLUDE_ENUMTYPES_H_
+#define PHYDB_INCLUDE_ENUMTYPES_H_
 
-#include "string"
+#include <string>
 
 namespace phydb {
 
@@ -121,4 +121,4 @@ std::string MacroClassStr(MacroClass macro_class);
 
 }
 
-#endif //PHYDB_ENUMTYPES_H_
+#endif //PHYDB_INCLUDE_ENUMTYPES_H_

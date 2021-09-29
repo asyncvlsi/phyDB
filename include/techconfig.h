@@ -297,13 +297,13 @@ class TechConfig {
 };
 
 class Interpreter {
+    friend class Parser;
+    friend class Scanner;
   public:
     explicit Interpreter(TechConfig *tech_config);
     int Parse();
     void SetInputStream(std::istream *is);
     TechConfig *UserData();
-    friend class Parser;
-    friend class Scanner;
 
   private:
     Scanner scanner_;

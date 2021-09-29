@@ -27,9 +27,9 @@ find_library(
     REQUIRED
 )
 if (NOT LEF_LIBRARY)
-    message(FATAL_ERROR "liblef.a is not found")
+    message(FATAL_ERROR "Cannot find liblef.a")
 else ()
-    message(STATUS "liblef.a found")
+    message(STATUS "Found liblef.a")
 endif ()
 
 message(STATUS "Detecting environment variable DEF_ROOT...")
@@ -47,9 +47,9 @@ find_library(
     REQUIRED
 )
 if (NOT DEF_LIBRARY)
-    message(FATAL_ERROR "libdef.a is not found")
+    message(FATAL_ERROR "Cannot find libdef.a")
 else ()
-    message(STATUS "libdef.a found")
+    message(STATUS "Found libdef.a")
 endif ()
 
 
@@ -60,7 +60,7 @@ message(STATUS "Detecting environment variable ACT_HOME...")
 if (DEFINED ENV{ACT_HOME})
     message(STATUS "Environment variable LEF_ROOT detected: " $ENV{ACT_HOME})
 else ()
-    message(FATAL_ERROR "Environment variable ACT_HOME not found")
+    message(FATAL_ERROR "Environment variable ACT_HOME is not found")
 endif ()
 include_directories($ENV{ACT_HOME}/include)
 link_directories($ENV{ACT_HOME}/lib)
@@ -75,10 +75,10 @@ find_library(
 )
 if (NOT GALOIS_EDA)
     set(PHYDB_USE_GALOIS 0)
-    message(STATUS "libgalois_eda.a not found")
+    message(STATUS "Cannot find libgalois_eda.a")
 else ()
     set(PHYDB_USE_GALOIS 1)
-    message(STATUS "libgalois_eda.a found")
+    message(STATUS "Found libgalois_eda.a")
 endif ()
 configure_file(${INC_DIR}/config.h.in ${INC_DIR}/config.h)
 
@@ -95,7 +95,6 @@ include_directories(${Boost_INCLUDE_DIRS})
 # Add a flex dependency
 ############################################################################
 find_package(FLEX 2.5.0 REQUIRED)
-message(STATUS "flex: ${FLEX_EXECUTABLE}")
 add_custom_command(
     OUTPUT ${SRC_DIR}/scanner.cpp
     COMMAND ${FLEX_EXECUTABLE} -o ${SRC_DIR}/scanner.cpp ${INC_DIR}/scanner.l
@@ -109,7 +108,6 @@ add_custom_target(flex_target ALL DEPENDS ${SRC_DIR}/scanner.cpp)
 # Add a bison dependency
 ############################################################################
 find_package(BISON 3.2.0 REQUIRED)
-message(STATUS "bison: ${BISON_EXECUTABLE}")
 add_custom_command(
     OUTPUT ${SRC_DIR}/parser.cpp
     COMMAND ${BISON_EXECUTABLE} -o ${SRC_DIR}/parser.cpp ${INC_DIR}/parser.y
@@ -161,14 +159,7 @@ target_link_libraries(parser_test PRIVATE phydb)
 ############################################################################
 # specify the installation directory: ${ACT_HOME}
 ############################################################################
-
-message(STATUS "Detecting environment variable ACT_HOME...")
-if (DEFINED ENV{ACT_HOME})
-    message(STATUS "Environment variable ACT_HOME detected: " $ENV{ACT_HOME})
-else ()
-    message(FATAL_ERROR "Environment variable ACT_HOME not found")
-endif ()
-message(STATUS "Changing Installation directory to ACT_HOME")
+message(STATUS "Changing Installation directory to $ACT_HOME")
 set(CMAKE_INSTALL_PREFIX $ENV{ACT_HOME} CACHE PATH "installation path" FORCE)
 message(STATUS "Current installation directory: " ${CMAKE_INSTALL_PREFIX})
 

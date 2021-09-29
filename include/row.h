@@ -1,5 +1,5 @@
-#ifndef ROW_H
-#define ROW_H
+#ifndef PHYDB_INCLUDE_ROW_H_
+#define PHYDB_INCLUDE_ROW_H_
 
 #include "logging.h"
 
@@ -36,5 +36,5 @@ ostream &operator<<(ostream &, const Row &);
 
 }
 
-#endif
+#endif //PHYDB_INCLUDE_ROW_H_
 

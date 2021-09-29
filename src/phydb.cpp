@@ -4,10 +4,15 @@
 
 #include <fstream>
 
-#include "lefdefparser.h"
 #include "defwriter.h"
+#include "helper.h"
+#include "lefdefparser.h"
 
 namespace phydb {
+
+PhyDB::~PhyDB() {
+    delete rc_estimator_;
+}
 
 Tech *PhyDB::GetTechPtr() {
     return &tech_;
@@ -213,6 +218,14 @@ Component *PhyDB::GetComponentPtr(std::string &comp_name) {
     return design_.GetComponentPtr(comp_name);
 }
 
+int PhyDB::GetComponentId(std::string &comp_name) {
+    auto res = design_.component_2_id_.find(comp_name);
+    if (res == design_.component_2_id_.end()) {
+        PhyDBExpects(false, "Component does not exist: " + comp_name);
+    }
+    return res->second;
+}
+
 void PhyDB::SetIoPinCount(int count) {
     design_.SetIoPinCount(count);
 }
@@ -233,9 +246,11 @@ DefVia *PhyDB::GetDefViaPtr(std::string const &via_name) {
     return design_.GetDefViaPtr(via_name);
 }
 
-IOPin *PhyDB::AddIoPin(std::string &iopin_name,
-                       SignalDirection signal_direction,
-                       SignalUse signal_use) {
+IOPin *PhyDB::AddIoPin(
+    std::string &iopin_name,
+    SignalDirection signal_direction,
+    SignalUse signal_use
+) {
     return design_.AddIoPin(iopin_name, signal_direction, signal_use);
 }
 
@@ -269,6 +284,18 @@ Net *PhyDB::AddNet(std::string &net_name, double weight, void *act_net_ptr) {
     return ret;
 }
 
+Net *PhyDB::GetNetPtr(std::string &net_name) {
+    return design_.GetNetPtr(net_name);
+}
+
+int PhyDB::GetNetId(std::string &net_name) {
+    auto res = design_.net_2_id_.find(net_name);
+    if (res == design_.net_2_id_.end()) {
+        PhyDBExpects(false, "Net does not exist: " + net_name);
+    }
+    return res->second;
+}
+
 void PhyDB::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
     PhyDBExpects(IsIoPinExisting(iopin_name),
                  "Cannot add a nonexistent iopin to a net: " + iopin_name);
@@ -288,16 +315,23 @@ void PhyDB::AddCompPinToNet(
     PhyDBExpects(IsComponentExisting(comp_name),
                  "Cannot add a nonexistent component to a net: " + comp_name);
     Component *comp_ptr = GetComponentPtr(comp_name);
-    Macro *macro_ptr = comp_ptr->GetMacro();
+    std::string macro_name = comp_ptr->GetMacro()->GetName();
+    Macro *macro_ptr = GetMacroPtr(macro_name);
     PhyDBExpects(macro_ptr->IsPinExist(pin_name),
-                 "Macro " + macro_ptr->GetName()
-                     + " does not contain a pin with name " + pin_name);
-    design_.AddCompPinToNet(comp_name, pin_name, net_name);
+                 "Macro " + macro_name + " does not contain a pin with name "
+                     + pin_name);
+
+    int comp_id = GetComponentId(comp_name);
+    int pin_id = macro_ptr->GetPinId(pin_name);
+    int net_id = GetNetId(net_name);
+    design_.AddCompPinToNet(comp_id, pin_id, net_id);
 }
 
-void PhyDB::BindPhydbPinToActPin(std::string &comp_name,
-                                 std::string &pin_name,
-                                 void *act_comp_pin_ptr) {
+void PhyDB::BindPhydbPinToActPin(
+    std::string &comp_name,
+    std::string &pin_name,
+    void *act_comp_pin_ptr
+) {
     PhyDBExpects(IsComponentExisting(comp_name),
                  "Cannot find component: " + comp_name);
     Component *comp_ptr = GetComponentPtr(comp_name);
@@ -320,10 +354,6 @@ void PhyDB::BindPhydbPinToActPin(std::string &comp_name,
         PhyDBExpects(false, error_msg);
     }
     timing_api_.AddActCompPinPtrIdPair(act_comp_pin_ptr, comp_id, pin_id);
-}
-
-Net *PhyDB::GetNetPtr(std::string &net_name) {
-    return design_.GetNetPtr(net_name);
 }
 
 SNet *PhyDB::AddSNet(string &net_name, SignalUse use) {
@@ -484,10 +514,12 @@ void PhyDB::SetGetWitnessCB(
     timing_api_.SetGetWitnessCB(callback_function);
 }
 
-void PhyDB::SetGetViolatedTimingConstraintsCB(void (*callback_function)(std::vector<
-    int> &)) {
+void PhyDB::SetGetViolatedTimingConstraintsCB(
+    void (*callback_function)(std::vector<int> &)
+) {
     timing_api_.SetGetViolatedTimingConstraintsCB(callback_function);
 }
+
 #if PHYDB_USE_GALOIS
 void PhyDB::SetParaManager(galois::eda::parasitics::Manager* manager) {
     timing_api_.SetParaManager(manager);
@@ -529,10 +561,10 @@ void PhyDB::ReadDef(string const &defFileName) {
 }
 
 /**
- * Override component locations from a DEF file.
+ * @brief Override component locations from a DEF file.
  *
- * @param defFileName, the DEF file name which contains new component locations.
- * @return void.
+ * @param defFileName: the DEF file name which contains new component locations.
+ * @return nothing
  */
 void PhyDB::OverrideComponentLocsFromDef(string const &defFileName) {
     Si2LoadPlacedDef(this, defFileName);
@@ -559,7 +591,7 @@ void PhyDB::ReadCell(string const &cellFileName) {
                 double any_diff_spacing = 0;
                 do {
                     getline(ist, line);
-                    StrSplit(line, legalizer_fields);
+                    StrTokenize(line, legalizer_fields);
                     if (legalizer_fields.size() != 2) {
                         std::cout << "Expect: SPACING + Value, get: " + line
                                   << std::endl;
@@ -587,7 +619,7 @@ void PhyDB::ReadCell(string const &cellFileName) {
                 SetNpwellSpacing(same_diff_spacing, any_diff_spacing);
             } else {
                 std::vector<std::string> well_fields;
-                StrSplit(line, well_fields);
+                StrTokenize(line, well_fields);
                 bool is_n_well = (well_fields[1] == "nwell");
                 if (!is_n_well) {
                     if (well_fields[1] != "pwell") {
@@ -604,7 +636,7 @@ void PhyDB::ReadCell(string const &cellFileName) {
                 double overhang = 0;
                 do {
                     if (line.find("MINWIDTH") != std::string::npos) {
-                        StrSplit(line, well_fields);
+                        StrTokenize(line, well_fields);
                         try {
                             width = std::stod(well_fields[1]);
                         } catch (...) {
@@ -614,7 +646,7 @@ void PhyDB::ReadCell(string const &cellFileName) {
                             exit(1);
                         }
                     } else if (line.find("OPPOSPACING") != std::string::npos) {
-                        StrSplit(line, well_fields);
+                        StrTokenize(line, well_fields);
                         try {
                             op_spacing = std::stod(well_fields[1]);
                         } catch (...) {
@@ -624,7 +656,7 @@ void PhyDB::ReadCell(string const &cellFileName) {
                             exit(1);
                         }
                     } else if (line.find("SPACING") != std::string::npos) {
-                        StrSplit(line, well_fields);
+                        StrTokenize(line, well_fields);
                         try {
                             spacing = std::stod(well_fields[1]);
                         } catch (...) {
@@ -634,7 +666,7 @@ void PhyDB::ReadCell(string const &cellFileName) {
                             exit(1);
                         }
                     } else if (line.find("MAXPLUGDIST") != std::string::npos) {
-                        StrSplit(line, well_fields);
+                        StrTokenize(line, well_fields);
                         try {
                             max_plug_dist = std::stod(well_fields[1]);
                         } catch (...) {
@@ -644,7 +676,7 @@ void PhyDB::ReadCell(string const &cellFileName) {
                             exit(1);
                         }
                     } else if (line.find("MAXPLUGDIST") != std::string::npos) {
-                        StrSplit(line, well_fields);
+                        StrTokenize(line, well_fields);
                         try {
                             overhang = std::stod(well_fields[1]);
                         } catch (...) {
@@ -679,7 +711,7 @@ void PhyDB::ReadCell(string const &cellFileName) {
 
         if (line.find("MACRO") != std::string::npos) {
             std::vector<std::string> macro_fields;
-            StrSplit(line, macro_fields);
+            StrTokenize(line, macro_fields);
             std::string end_macro_flag = "END " + macro_fields[1];
             MacroWell *well_ptr = AddMacrowell(macro_fields[1]);
             do {
@@ -693,7 +725,7 @@ void PhyDB::ReadCell(string const &cellFileName) {
                         if (line.find("RECT") != std::string::npos) {
                             double lx = 0, ly = 0, ux = 0, uy = 0;
                             std::vector<std::string> shape_fields;
-                            StrSplit(line, shape_fields);
+                            StrTokenize(line, shape_fields);
                             try {
                                 lx = std::stod(shape_fields[1]);
                                 ly = std::stod(shape_fields[2]);
@@ -754,35 +786,6 @@ void PhyDB::ReadCluster(string const &clusterFileName) {
                 PhyDBExpects(false, "Cannot convert string to integers");
             }
             col->AddRow(ly, uy);
-        }
-    }
-}
-
-void PhyDB::StrSplit(std::string &line, std::vector<std::string> &res) {
-    static std::vector<char> delimiter_list{' ', ':', ';', '\t', '\r', '\n'};
-
-    res.clear();
-    std::string empty_str;
-    bool is_delimiter, old_is_delimiter = true;
-    int current_field = -1;
-    for (auto &c: line) {
-        is_delimiter = false;
-        for (auto &delimiter: delimiter_list) {
-            if (c == delimiter) {
-                is_delimiter = true;
-                break;
-            }
-        }
-        if (is_delimiter) {
-            old_is_delimiter = is_delimiter;
-            continue;
-        } else {
-            if (old_is_delimiter) {
-                current_field++;
-                res.push_back(empty_str);
-            }
-            res[current_field] += c;
-            old_is_delimiter = is_delimiter;
         }
     }
 }
@@ -855,6 +858,26 @@ void PhyDB::SetVerbose(int v) {
 
 int PhyDB::GetVerbose() {
     return verbose_;
+}
+
+void PhyDB::InitializeRCEstimator(RCEstimatorType rc_estimator_type) {
+    switch (rc_estimator_type) {
+        case 0: {
+            rc_estimator_ = new StarNetPiRCEstimator(this);
+            break;
+        }
+        default: {
+            PhyDBExpects(false, "Unknown RCEstimatorType");
+        }
+    }
+}
+
+void PhyDB::ExtractNetRC(int net_id) {
+    rc_estimator_->ExtractNetRC(net_id);
+}
+
+void PhyDB::PushNetRCToManager(int net_id) {
+    rc_estimator_->PushNetRCToManager(net_id);
 }
 
 }

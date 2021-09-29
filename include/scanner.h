@@ -1,9 +1,5 @@
-//
-// Created by yihangyang on 9/21/21.
-//
-
-#ifndef PHYDB_SCANNER_H
-#define PHYDB_SCANNER_H
+#ifndef PHYDB_INCLUDE_SCANNER_H
+#define PHYDB_INCLUDE_SCANNER_H
 
 #if !defined(yyFlexLexerOnce)
 #undef yyFlexLexer
@@ -24,7 +20,7 @@ class Interpreter;
 
 class Scanner : public yyFlexLexer {
 public:
-    Scanner(Interpreter &driver) : driver_(driver) {}
+    explicit Scanner(Interpreter &driver) : driver_(driver) {}
 
     virtual ~Scanner() {}
 
@@ -36,4 +32,4 @@ private:
 
 }
 
-#endif //PHYDB_SCANNER_H
+#endif //PHYDB_INCLUDE_SCANNER_H

@@ -1,9 +1,9 @@
-#ifndef SNET_H
-#define SNET_H
+#ifndef PHYDB_INCLUDE_SNET_H_
+#define PHYDB_INCLUDE_SNET_H_
 
-#include "logging.h"
 #include "datatype.h"
 #include "enumtypes.h"
+#include "logging.h"
 
 namespace phydb {
 
@@ -72,8 +72,6 @@ class SNet {
     void Report();
 };
 
-
-
 }
 
-#endif
+#endif //PHYDB_INCLUDE_SNET_H_

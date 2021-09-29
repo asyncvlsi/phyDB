@@ -1,5 +1,5 @@
-#ifndef DEFVIA_H
-#define DEFVIA_H
+#ifndef PHYDB_INCLUDE_DEFVIA_H_
+#define PHYDB_INCLUDE_DEFVIA_H_
 
 #include "datatype.h"
 
@@ -60,4 +60,4 @@ class DefVia {
 
 }
 
-#endif
+#endif //PHYDB_INCLUDE_DEFVIA_H_

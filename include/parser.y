@@ -226,6 +226,7 @@ table_entry: NUMBER NUMBER NUMBER NUMBER
                 model->tmp_cap_overunder_->AddEntry(distance, coupling_cap, fringe_cap, res);
             } else {
                 cout << "Error: no table is available to accept this entry?" << endl;
+                exit(1);
             }
         }
     }

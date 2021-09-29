@@ -43,6 +43,26 @@ void Layer::SetSpacing(double spacing) {
     spacing_ = spacing;
 }
 
+void Layer::SetCPerSqDist(double cpersqdist) {
+    PhyDBExpects(cpersqdist > 0, "Negative capacitance per square distance?");
+    capacitance_cpersqdist_ = cpersqdist;
+}
+
+void Layer::SetCapMultiplier(double capmultiplier) {
+    PhyDBExpects(capmultiplier > 0, "Negative capacitance multiplier?");
+    capmultiplier_ = capmultiplier;
+}
+
+void Layer::SetEdgeCPerDist(double edgecapacitance) {
+    PhyDBExpects(edgecapacitance > 0, "Negative peripheral capacitance?");
+    edgecapacitance_ = edgecapacitance;
+}
+
+void Layer::SetRPerSqUnit(double rpersq) {
+    PhyDBExpects(rpersq > 0, "Negative resistance per square unit?");
+    resistance_rpersq_ = rpersq;
+}
+
 const std::string &Layer::GetName() {
     return name_;
 }
@@ -91,6 +111,22 @@ double Layer::GetArea() const {
 
 double Layer::GetSpacing() const {
     return spacing_;
+}
+
+double Layer::GetCPerSqDist() const {
+    return capacitance_cpersqdist_;
+}
+
+double Layer::GetCapMultiplier() const {
+    return capmultiplier_;
+}
+
+double Layer::GetEdgeCPerDist() const {
+    return edgecapacitance_;
+}
+
+double Layer::GetRPerSqUnit() const {
+    return resistance_rpersq_;
 }
 
 SpacingTable *Layer::SetSpacingTable(SpacingTable &st) {

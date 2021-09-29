@@ -1,13 +1,13 @@
-#ifndef TECH_H
-#define TECH_H
+#ifndef PHYDB_INCLUDE_TECH_H_
+#define PHYDB_INCLUDE_TECH_H_
 
 #include <list>
 #include <unordered_map>
 
 #include "layer.h"
-#include "site.h"
-#include "macro.h"
 #include "lefvia.h"
+#include "macro.h"
+#include "site.h"
 #include "viarulegenerate.h"
 
 namespace phydb {
@@ -59,16 +59,31 @@ class Tech {
     int GetDatabaseMicron();
     void SetManufacturingGrid(double manufacture_grid);
     double GetManufacturingGrid();
-    void AddSite(std::string const &name, std::string const &class_name, double width, double height);
+    void AddSite(
+        std::string const &name,
+        std::string const &class_name,
+        double width,
+        double height
+    );
     std::vector<Site> &GetSitesRef();
-    void SetPlacementGrids(double placement_grid_value_x, double placement_grid_value_y);
-    bool GetPlacementGrids(double &placement_grid_value_x, double &placement_grid_value_y);
+    void SetPlacementGrids(
+        double placement_grid_value_x,
+        double placement_grid_value_y
+    );
+    bool GetPlacementGrids(
+        double &placement_grid_value_x,
+        double &placement_grid_value_y
+    );
 
     bool IsLayerExisting(std::string const &layer_name);
-    Layer *AddLayer(std::string &layer_name, LayerType type, MetalDirection direction=HORIZONTAL);
+    Layer *AddLayer(
+        std::string &layer_name,
+        LayerType type,
+        MetalDirection direction = HORIZONTAL
+    );
     Layer *GetLayerPtr(std::string const &layer_name);
     int GetLayerId(string const &layer_name);
-    const std::string& GetLayerName(int layerID);
+    const std::string &GetLayerName(int layerID);
     std::vector<Layer> &GetLayersRef();
 
     bool IsMacroExisting(std::string const &macro_name);
@@ -79,15 +94,27 @@ class Tech {
     bool IsLefViaExisting(std::string const &via_name);
     LefVia *AddLefVia(std::string &via_name);
     LefVia *GetLefViaPtr(std::string const &via_name);
-    vector<LefVia>& GetLefViasRef();
+    vector<LefVia> &GetLefViasRef();
 
     bool IsViaRuleGenerateExisting(std::string const &name);
-    ViaRuleGenerate* AddViaRuleGenerate(std::string &name);
-    ViaRuleGenerate* GetViaRuleGeneratePtr(std::string const &name);
-    vector<ViaRuleGenerate>& GetViaRuleGeneratesRef();
-    
-    void SetNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
-    void SetPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang);
+    ViaRuleGenerate *AddViaRuleGenerate(std::string &name);
+    ViaRuleGenerate *GetViaRuleGeneratePtr(std::string const &name);
+    vector<ViaRuleGenerate> &GetViaRuleGeneratesRef();
+
+    void SetNwellLayer(
+        double width,
+        double spacing,
+        double op_spacing,
+        double max_plug_dist,
+        double overhang
+    );
+    void SetPwellLayer(
+        double width,
+        double spacing,
+        double op_spacing,
+        double max_plug_dist,
+        double overhang
+    );
     void SetNpwellSpacing(double same_diff, double any_diff);
     bool IsWellInfoSet() const;
     WellLayer *GetNwellLayerPtr();
@@ -112,5 +139,4 @@ ostream &operator<<(ostream &, const Tech &);
 
 }
 
-#endif
-
+#endif //PHYDB_INCLUDE_TECH_H_

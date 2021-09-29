@@ -1,5 +1,5 @@
-#ifndef SPACINGTABLEINFLUENCE_H
-#define SPACINGTABLEINFLUENCE_H
+#ifndef PHYDB_INCLUDE_SPACINGTABLEINFLUENCE_H
+#define PHYDB_INCLUDE_SPACINGTABLEINFLUENCE_H
 
 namespace phydb {
 
@@ -28,9 +28,4 @@ class SpacingTableInfluence {
 
 }
 
-
-#endif
-
-
-
-
+#endif //PHYDB_INCLUDE_SPACINGTABLEINFLUENCE_H

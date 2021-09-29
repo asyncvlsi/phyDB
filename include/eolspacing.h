@@ -1,5 +1,5 @@
-#ifndef EOLSPACING_H
-#define EOLSPACING_H
+#ifndef PHYDB_INCLUDE_EOLSPACING_H_
+#define PHYDB_INCLUDE_EOLSPACING_H_
 
 #include "logging.h"
 
@@ -40,4 +40,4 @@ ostream &operator<<(ostream &, const EolSpacing &);
 
 }
 
-#endif
+#endif //PHYDB_INCLUDE_EOLSPACING_H_

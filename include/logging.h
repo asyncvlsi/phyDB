@@ -1,5 +1,5 @@
-#ifndef PHYDB_HEADER_H
-#define PHYDB_HEADER_H
+#ifndef PHYDB_INCLUDE_LOGGING_H_
+#define PHYDB_INCLUDE_LOGGING_H_
 
 #include <cassert>
 #include <cstring>
@@ -32,6 +32,4 @@ inline void PhyDBWarns(bool e, const std::string &message) {
 
 }
 
-#endif
-
-
+#endif //PHYDB_INCLUDE_LOGGING_H_

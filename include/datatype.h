@@ -1,5 +1,5 @@
-#ifndef DATATYPES_H
-#define DATATYPES_H
+#ifndef PHYDB_INCLUDE_DATATYPES_H_
+#define PHYDB_INCLUDE_DATATYPES_H_
 
 #include <string>
 
@@ -253,8 +253,8 @@ ostream &operator<<(ostream &os, const Range<T> &r) {
 
 ostream &operator<<(ostream &os, const LayerRect &lr);
 
-} //end_ of namespace phydb
+}
 
-#endif
+#endif //PHYDB_INCLUDE_DATATYPES_H_
 
 

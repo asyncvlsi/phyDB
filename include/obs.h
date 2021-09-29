@@ -1,5 +1,5 @@
-#ifndef OBS_H
-#define OBS_H
+#ifndef PHYDB_INCLUDE_OBS_H_
+#define PHYDB_INCLUDE_OBS_H_
 
 #include "datatype.h"
 
@@ -28,5 +28,5 @@ ostream &operator<<(ostream &, const OBS &);
 
 }
 
-#endif
+#endif //PHYDB_INCLUDE_OBS_H_
 

@@ -1,7 +1,3 @@
-//
-// Created by yihang on 4/18/21.
-//
-
 #ifndef PHYDB_INCLUDE_ACTPHYDBTIMINGAPI_H_
 #define PHYDB_INCLUDE_ACTPHYDBTIMINGAPI_H_
 

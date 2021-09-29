@@ -1,7 +1,3 @@
-//
-// Created by yihang on 9/3/21.
-//
-
 #ifndef PHYDB_INCLUDE_SPECIALMACRORECTLAYOUT_H_
 #define PHYDB_INCLUDE_SPECIALMACRORECTLAYOUT_H_
 

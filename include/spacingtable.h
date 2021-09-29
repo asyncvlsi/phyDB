@@ -1,5 +1,5 @@
-#ifndef SPACINGTABLE_H
-#define SPACINGTABLE_H
+#ifndef PHYDB_INCLUDE_SPACINGTABLE_H_
+#define PHYDB_INCLUDE_SPACINGTABLE_H_
 
 #include "logging.h"
 
@@ -55,5 +55,4 @@ ostream &operator<<(ostream &, const SpacingTable &);
 
 }
 
-#endif
-
+#endif //PHYDB_INCLUDE_SPACINGTABLE_H_

@@ -1,12 +1,12 @@
-#ifndef MACRO_H
-#define MACRO_H
+#ifndef PHYDB_INCLUDE_MACRO_H_
+#define PHYDB_INCLUDE_MACRO_H_
 
 #include <unordered_map>
 
 #include "datatype.h"
 #include "enumtypes.h"
-#include "pin.h"
 #include "obs.h"
+#include "pin.h"
 
 namespace phydb {
 
@@ -30,13 +30,19 @@ class Macro {
 
   public:
     Macro() : name_("") {}
-    Macro(string &name) : name_(name){
+    Macro(string &name) : name_(name) {
         size_.x = 0;
         size_.y = 0;
         origin_.x = 0;
         origin_.y = 0;
     }
-    Macro(string name, Point2D<double> origin, Point2D<double> size, vector<Pin> pins, OBS obs) :
+    Macro(
+        string name,
+        Point2D<double> origin,
+        Point2D<double> size,
+        vector<Pin> pins,
+        OBS obs
+    ) :
         name_(name),
         origin_(origin),
         size_(size),
@@ -52,13 +58,17 @@ class Macro {
 
     // APIs for adding PINs to this MACRO
     bool IsPinExist(std::string pin_name);
-    Pin *AddPin(std::string &pin_name, SignalDirection direction, SignalUse use);
+    Pin *AddPin(
+        std::string &pin_name,
+        SignalDirection direction,
+        SignalUse use
+    );
     int GetPinId(std::string &pin_name);
 
     // APIs for adding OBS to this MACRO
     //void SetObs(OBS &obs); // TODO: change this API to return a pointer
     //void AddObsLayerRect(LayerRect &layer_rect);
-    
+
 
     void SetWellPtr(MacroWell *well_ptr);
 
@@ -107,7 +117,7 @@ struct MacroWell {
 
 }
 
-#endif
+#endif //PHYDB_INCLUDE_MACRO_H_
 
 
 

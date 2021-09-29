@@ -1,5 +1,5 @@
-#ifndef PIN_H
-#define PIN_H
+#ifndef PHYDB_INCLUDE_PIN_H_
+#define PHYDB_INCLUDE_PIN_H_
 
 #include "datatype.h"
 #include "enumtypes.h"
@@ -51,5 +51,4 @@ ostream &operator<<(ostream &, const Pin &);
 
 }
 
-#endif
-
+#endif //PHYDB_INCLUDE_PIN_H_

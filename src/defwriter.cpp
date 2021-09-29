@@ -143,22 +143,26 @@ int WriteIOPins(defwCallbackType_e type, defiUserData data) {
 }
 
 int WriteNets(defwCallbackType_e type, defiUserData data) {
-    auto nets = ((PhyDB*) data)->GetDesignPtr()->GetNetsRef();
-    defwStartNets(nets.size());
-    char* pin_str = "PIN";
+    auto phydb_ptr = ((PhyDB*) data);
+    auto nets = phydb_ptr->GetDesignPtr()->GetNetsRef();
+    defwStartNets((int)nets.size());
+    auto pin_str = (char*)"PIN";
     for(auto net : nets) {
         defwNet(net.GetName().c_str());
-        auto component_names = net.GetComponentNamesRef();
-        auto pin_names = net.GetPinNamesRef();
         auto iopin_names = net.GetIoPinNamesRef();
-        for(int i = 0; i < iopin_names.size(); i++) {
+        for(int i = 0; i < (int) iopin_names.size(); i++) {
             defwNetConnection(pin_str, iopin_names[i].c_str(), 0);
         }
 
-        for(int i = 0; i < component_names.size(); i++) {
-            defwNetConnection(component_names[i].c_str(), pin_names[i].c_str(), 0);
+        for(auto &pin: net.pins_) {
+            std::string component_name = phydb_ptr->GetDesignPtr()->components_[pin.comp_id].GetName();
+            std::string macro_name = phydb_ptr->GetDesignPtr()->components_[pin.comp_id].GetMacro()->GetName();
+            Macro *macro_ptr = phydb_ptr->GetMacroPtr(macro_name);
+            PhyDBExpects(macro_ptr!= nullptr, "Macro does not exist");
+            std::string pin_name = macro_ptr->GetPinsRef()[pin.pin_id].GetName();
+            defwNetConnection(component_name.c_str(), pin_name.c_str(), 0);
         }
-       defwNetEndOneNet();
+        defwNetEndOneNet();
     }
 
     defwEndNets();

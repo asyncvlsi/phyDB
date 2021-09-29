@@ -1,13 +1,14 @@
-#ifndef SI2WRITER_H_
-#define SI2WRITER_H_
+#ifndef PHYDB_INCLUDE_DEFWRITER_H_
+#define PHYDB_INCLUDE_DEFWRITER_H_
 
-#include "phydb.h"
-#include <lefrReader.hpp>
 #include <defrReader.hpp>
 #include <defwWriter.hpp>
 #include <defwWriterCalls.hpp>
+#include <lefrReader.hpp>
 #include <lefwWriter.hpp>
 #include <lefwWriterCalls.hpp>
+
+#include "phydb.h"
 
 namespace phydb {
 
@@ -33,4 +34,4 @@ void WriteCluter(PhyDB *phy_db_ptr, string const &clusterFileName);
 }
 
 
-#endif //SI2WRITER_H_
+#endif //PHYDB_INCLUDE_DEFWRITER_H_

@@ -1,5 +1,5 @@
-#ifndef ADJACENTCUTSPACING_H
-#define ADJACENTCUTSPACING_H
+#ifndef PHYDB_INCLUDE_ADJACENTCUTSPACING_H_
+#define PHYDB_INCLUDE_ADJACENTCUTSPACING_H_
 
 namespace phydb {
 
@@ -19,6 +19,6 @@ class AdjacentCutSpacing {
 
 }
 
-#endif
+#endif //PHYDB_INCLUDE_ADJACENTCUTSPACING_H_
 
 

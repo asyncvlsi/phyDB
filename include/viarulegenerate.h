@@ -1,5 +1,5 @@
-#ifndef VIARULEGENERATE_H
-#define VIARULEGENERATE_H
+#ifndef PHYDB_INCLUDE_VIARULEGENERATE_H
+#define PHYDB_INCLUDE_VIARULEGENERATE_H
 
 #include "datatype.h"
 
@@ -14,8 +14,8 @@ class ViaRuleGenerateLayer {
 
     ViaRuleGenerateLayer() {}
     ViaRuleGenerateLayer(string &layerName) : layer_name_(layerName) {}
-    
-    void SetLayerName(const string& layer_name);
+
+    void SetLayerName(const string &layer_name);
     void SetRect(double lx, double ly, double ux, double uy);
     void SetSpacing(double x, double y);
     void SetEnclosure(double x, double y);
@@ -37,9 +37,13 @@ class ViaRuleGenerate {
 
     void SetDefault();
     void UnsetDefault();
-    void SetLayers(ViaRuleGenerateLayer &, ViaRuleGenerateLayer &, ViaRuleGenerateLayer &);
+    void SetLayers(
+        ViaRuleGenerateLayer &,
+        ViaRuleGenerateLayer &,
+        ViaRuleGenerateLayer &
+    );
 };
 
 }
 
-#endif
+#endif //PHYDB_INCLUDE_VIARULEGENERATE_H
