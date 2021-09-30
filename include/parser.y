@@ -1,14 +1,14 @@
- %skeleton "lalr1.cc" /* -*- C++ -*- */
- %require "3.2"
- %defines
- %define api.parser.class { Parser }
+%skeleton "lalr1.cc" /* -*- C++ -*- */
+%require "3.2"
+%defines
+%define api.parser.class { Parser }
 
- %define api.token.constructor
- %define api.value.type variant
- %define parse.assert
- %define api.namespace { phydb }
- %code requires
- {
+%define api.token.constructor
+%define api.value.type variant
+%define parse.assert
+%define api.namespace { phydb }
+%code requires
+{
     #include <stdint.h>
     #include <string.h>
 

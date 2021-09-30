@@ -1,6 +1,7 @@
-#include <time.h>
+#include <ctime>
 
 #include "defwriter.h"
+#include "logging.h"
 
 namespace phydb {
 
@@ -239,12 +240,10 @@ void Si2WriteDef(PhyDB *phy_db_ptr, string const &defFileName) {
     int res;
 
     if ((f = fopen(defFileName.c_str(),"w")) == 0) {
-        cout <<"Couldn't open Write def file" <<endl;
+        std::cout <<"Couldn't open Write def file" << std::endl;
         exit(2);
     }
-    if(phy_db_ptr->GetVerbose() > none) {
-        std::cout << "Writing def to " << defFileName << std::endl;
-    }
+    std::cout << "Writing def to " << defFileName << std::endl;
     int status = defwInitCbk(f);
 
     defwSetVersionCbk (WriteVersion);
@@ -274,13 +273,11 @@ void Si2WriteDef(PhyDB *phy_db_ptr, string const &defFileName) {
     
     res = defwWrite(f, defFileName.c_str(), (defiUserData) phy_db_ptr);
     if (res != 0) {
-        cout << "DEF Writer returns an error!" << endl;
+        std::cout << "DEF Writer returns an error!" << endl;
         exit(2);
     }
     fclose(f);
-    if(phy_db_ptr->GetVerbose() > none) {
-        std::cout << "def writing completes" << std::endl;
-    }
+    std::cout << "def writing completes" << std::endl;
 }
 
 }

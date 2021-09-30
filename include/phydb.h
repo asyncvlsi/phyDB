@@ -5,7 +5,6 @@
 #include "design.h"
 #include "rcestimator.h"
 #include "tech.h"
-#include "verbose.h"
 
 namespace phydb {
 
@@ -245,7 +244,6 @@ class PhyDB {
     Tech tech_;
     Design design_;
     ActPhyDBTimingAPI timing_api_;
-    int verbose_ = 0;
 
     RCEstimator *rc_estimator_ = nullptr;
 

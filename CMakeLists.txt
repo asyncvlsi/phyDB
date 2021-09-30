@@ -85,7 +85,7 @@ configure_file(${INC_DIR}/config.h.in ${INC_DIR}/config.h)
 ############################################################################
 # Check Boost library
 ############################################################################
-find_package(Boost 1.71.0)
+find_package(Boost 1.71.0 COMPONENTS log_setup log filesystem REQUIRED)
 message(STATUS "Boost library path: ${Boost_LIBRARY_DIRS}")
 message(STATUS "Boost include path: ${Boost_INCLUDE_DIR}")
 message(STATUS "Boost libs: ${Boost_LIBRARIES}")
@@ -148,7 +148,11 @@ add_library(
     ${SRC_DIR}/parser.cpp
 )
 add_dependencies(phydb flex_target bison_target)
-target_link_libraries(phydb lef def)
+target_link_libraries(
+    phydb
+    lef def
+    ${Boost_LIBRARIES}
+)
 
 add_executable(PhyDB_test test/test.cpp)
 target_link_libraries(PhyDB_test PRIVATE phydb)
