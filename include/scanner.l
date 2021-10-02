@@ -109,7 +109,7 @@
 }
 
 . {
-    cout << "Scanner: unknown character [" << yytext << "]" << endl;
+    std::cout << "Scanner: unknown character [" << yytext << "]" << std::endl;
 }
             
 <<EOF>>     { return yyterminate(); }

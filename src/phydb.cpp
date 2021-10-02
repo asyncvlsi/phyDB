@@ -6,6 +6,7 @@
 
 #include "defwriter.h"
 #include "helper.h"
+#include "techconfigparser.h"
 #include "lefdefparser.h"
 
 namespace phydb {
@@ -550,32 +551,32 @@ ActPhyDBTimingAPI &PhyDB::GetTimingApi() {
     return timing_api_;
 }
 
-void PhyDB::ReadLef(string const &lefFileName) {
-    tech_.SetLefName(lefFileName);
-    Si2ReadLef(this, lefFileName);
+void PhyDB::ReadLef(string const &lef_file_name) {
+    tech_.SetLefName(lef_file_name);
+    Si2ReadLef(this, lef_file_name);
 }
 
-void PhyDB::ReadDef(string const &defFileName) {
-    design_.SetDefName(defFileName);
-    Si2ReadDef(this, defFileName);
+void PhyDB::ReadDef(string const &def_file_name) {
+    design_.SetDefName(def_file_name);
+    Si2ReadDef(this, def_file_name);
 }
 
 /**
  * @brief Override component locations from a DEF file.
  *
- * @param defFileName: the DEF file name which contains new component locations.
+ * @param def_file_name: the DEF file name which contains new component locations.
  * @return nothing
  */
-void PhyDB::OverrideComponentLocsFromDef(string const &defFileName) {
-    Si2LoadPlacedDef(this, defFileName);
+void PhyDB::OverrideComponentLocsFromDef(string const &def_file_name) {
+    Si2LoadPlacedDef(this, def_file_name);
 }
 
-void PhyDB::ReadCell(string const &cellFileName) {
-    std::ifstream ist(cellFileName.c_str());
+void PhyDB::ReadCell(string const &cell_file_name) {
+    std::ifstream ist(cell_file_name.c_str());
     if (ist.is_open()) {
         //std::cout << "Loading CELL file: " << cellFileName << "\n";
     } else {
-        std::cout << "ERROR: cannot open input file " << cellFileName
+        std::cout << "ERROR: cannot open input file " << cell_file_name
                   << std::endl;
         exit(1);
     }
@@ -755,14 +756,14 @@ void PhyDB::ReadCell(string const &cellFileName) {
     //std::cout << "CELL file loading complete: " << cellFileName << "\n";
 }
 
-void PhyDB::ReadCluster(string const &clusterFileName) {
-    std::ifstream infile(clusterFileName.c_str());
+void PhyDB::ReadCluster(string const &cluster_file_name) {
+    std::ifstream infile(cluster_file_name.c_str());
     if (infile.is_open()) {
         std::cout
-            << "Loading cluster file: " << clusterFileName << "\n";
+            << "Loading cluster file: " << cluster_file_name << "\n";
     } else {
         std::cout
-            << "ERROR: cannot open input file " << clusterFileName
+            << "ERROR: cannot open input file " << cluster_file_name
             << std::endl;
         exit(1);
     }
@@ -791,19 +792,30 @@ void PhyDB::ReadCluster(string const &clusterFileName) {
     }
 }
 
-void PhyDB::WriteDef(string const &defFileName) {
-    Si2WriteDef(this, defFileName);
+void PhyDB::ReadTechConfigFile(string const &tech_config_file_name) {
+    TechConfigParser interpreter(&tech_);
+    std::ifstream ist(tech_config_file_name);
+    PhyDBExpects(ist.is_open(),
+                 "Cannot open technology configuration file: "
+                     + tech_config_file_name);
+    std::istream *s = &ist;
+    interpreter.SetInputStream(s);
+    interpreter.Parse();
 }
 
-void PhyDB::WriteCluster(string const &clusterFileName) {
-    std::ofstream outfile(clusterFileName.c_str());
+void PhyDB::WriteDef(string const &def_file_name) {
+    Si2WriteDef(this, def_file_name);
+}
+
+void PhyDB::WriteCluster(string const &cluster_file_name) {
+    std::ofstream outfile(cluster_file_name.c_str());
     if (outfile.is_open()) {
         std::cout
-            << "writing cluster file: " << clusterFileName << "\n";
+            << "writing cluster file: " << cluster_file_name << "\n";
     } else {
         std::cout
             << "ERROR: cannot open output cluster file "
-            << clusterFileName << std::endl;
+            << cluster_file_name << std::endl;
         exit(1);
     }
 
@@ -822,14 +834,14 @@ void PhyDB::WriteCluster(string const &clusterFileName) {
     }
 }
 
-void PhyDB::WriteGuide(string const &guideFileName) {
-    std::ofstream outfile(guideFileName.c_str());
+void PhyDB::WriteGuide(string const &guide_file_name) {
+    std::ofstream outfile(guide_file_name.c_str());
     if (outfile.is_open()) {
         std::cout
-            << "writing guide file: " << guideFileName << "\n";
+            << "writing guide file: " << guide_file_name << "\n";
     } else {
         std::cout
-            << "ERROR: cannot open output guide file " << guideFileName
+            << "ERROR: cannot open output guide file " << guide_file_name
             << std::endl;
         exit(1);
     }

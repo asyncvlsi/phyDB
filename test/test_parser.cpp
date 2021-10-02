@@ -1,31 +1,26 @@
-//
-// Created by yihang on 9/22/21.
-//
-
-#include <iostream>
 #include <fstream>
-#include "techconfig.h"
+#include <iostream>
+
+#include "techconfigparser.h"
+#include "phydb.h"
 
 using namespace phydb;
-using namespace std;
 
 int main(int argc, char **argv) {
-    if (argc < 1) {
-        cout << "Please provide a technology configuration file\n";
+    if (argc != 3) {
+        cout << "Please provide a LEF file and a technology configuration file\n";
         return 1;
     }
-    TechConfig tech_config;
-    Interpreter i(&tech_config);
-    std::string input_tech_config_file_name(argv[1]);
-    std::ifstream ist(input_tech_config_file_name);
-    std::istream &s = ist;
-    i.SetInputStream(&s);
-    int res = i.Parse();
-    cout << "Parse complete. Result = " << res << endl;
+    std::string lef_file_name(argv[1]);
+    std::string tech_config_file_name(argv[2]);
 
-    tech_config.Report();
-    tech_config.CalculateSimplifiedResistanceTable(true);
-    tech_config.CalculateSimplifiedFringeCapacitanceTable(true);
+    PhyDB phy_db;
+    phy_db.ReadLef(lef_file_name);
+    phy_db.ReadTechConfigFile(tech_config_file_name);
 
-    return res;
+    phy_db.GetTechPtr()->ReportLayersTechConfig();
+    //phy_db.GetTechPtr()->CalculateSimplifiedResistanceTable(true);
+    //phy_db.GetTechPtr()->CalculateSimplifiedFringeCapacitanceTable(true);
+
+    return 0;
 }

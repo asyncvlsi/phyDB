@@ -16,11 +16,9 @@
     #include <string>
     #include <vector>
 
-    using namespace std;
-
     namespace phydb {
         class Scanner;
-        class Interpreter;
+        class TechConfigParser;
     }
 }
 
@@ -29,7 +27,7 @@
     #include <iostream>
     #include "scanner.h"
     #include "parser.hpp"
-    #include "techconfig.h"
+    #include "techconfigparser.h"
 
     static phydb::Parser::symbol_type yylex(phydb::Scanner &scanner) {
         return scanner.get_next_token();
@@ -40,7 +38,7 @@
 
 %lex-param { phydb::Scanner &scanner }
 %parse-param { phydb::Scanner &scanner }
-%parse-param { phydb::Interpreter &driver }
+%parse-param { phydb::TechConfigParser &tech_config_parser }
 %define parse.trace
 %define parse.error verbose
 
@@ -86,36 +84,41 @@ extraction: EXTRACTION
 
 diagmodel: DIAGMODEL ON
     {
-        driver.UserData()->SetDiagModelOn(true);
+        auto tech = tech_config_parser.UserData();
+        tech->GetTechConfigRef().SetDiagModelOn(true);
     }
   | DIAGMODEL OFF
     {
-        driver.UserData()->SetDiagModelOn(false);
+        auto tech = tech_config_parser.UserData();
+        tech->GetTechConfigRef().SetDiagModelOn(false);
     }
 
 layercount: LAYERCOUNT NUMBER
     {
-        driver.UserData()->SetLayerCount(int($2));
+        auto tech = tech_config_parser.UserData();
+        tech->GetTechConfigRef().SetLayerCount(int($2));
     }
 
 densityrate: DENSITYRATE NUMBER
     {
-        driver.UserData()->SetModelCount(int($2));
+        auto tech = tech_config_parser.UserData();
+        tech->GetTechConfigRef().SetModelCount(int($2));
     }
   | densityrate NUMBER
     {
-        driver.UserData()->AddDataRate($2);
+        auto tech = tech_config_parser.UserData();
+        tech->GetTechConfigRef().AddDataRate($2);
     }
 
 model: densitymodel metal_tables end_densitymodel
 
 densitymodel: DENSITYMODEL NUMBER
     {
-        driver.UserData()->AddModel(int($2));
+        auto tech = tech_config_parser.UserData();
+        tech->AddTechConfigCorner(int($2));
     }
 
 metal_tables: metal_header table | metal_tables table | metal_tables metal_header
-
 
 metal_header: METAL NUMBER relative_pos WIDTH_TABLE NUMBER ENTRIES
   | METAL NUMBER relative_pos WIDTH_TABLE NUMBER ENTRIES NUMBER
@@ -124,9 +127,30 @@ relative_pos: RESOVER | OVER | UNDER | DIAGUNDER | OVERUNDER
 
 table: table_header table_start table_body table_end
     {
-        auto model = driver.UserData()->GetLastModel();
-        if (model != nullptr) {
-            model->MarkNothing();
+        auto tech = tech_config_parser.UserData();
+        if (tech_config_parser.tmp_res_over_ != nullptr) {
+            tech->AddResOverTable(tech_config_parser.tmp_res_over_);
+            delete tech_config_parser.tmp_res_over_;
+            tech_config_parser.tmp_res_over_ = nullptr;
+        } else if (tech_config_parser.tmp_cap_over_ != nullptr) {
+            tech->AddCapOverTable(tech_config_parser.tmp_cap_over_);
+            delete tech_config_parser.tmp_cap_over_;
+            tech_config_parser.tmp_cap_over_ = nullptr;
+        } else if (tech_config_parser.tmp_cap_under_ != nullptr) {
+            tech->AddCapUnderTable(tech_config_parser.tmp_cap_under_);
+            delete tech_config_parser.tmp_cap_under_;
+            tech_config_parser.tmp_cap_under_ = nullptr;
+        } else if (tech_config_parser.tmp_cap_diagunder_ != nullptr) {
+            tech->AddCapDiagUnderTable(tech_config_parser.tmp_cap_diagunder_);
+            delete tech_config_parser.tmp_cap_diagunder_;
+            tech_config_parser.tmp_cap_diagunder_ = nullptr;
+        } else if (tech_config_parser.tmp_cap_overunder_ != nullptr) {
+            tech->AddCapOverUnderTable(tech_config_parser.tmp_cap_overunder_);
+            delete tech_config_parser.tmp_cap_overunder_;
+            tech_config_parser.tmp_cap_overunder_ = nullptr;
+        } else {
+            std::cout << "Error: this is impossible to happen" << std::endl;
+            exit(1);
         }
     }
 
@@ -134,73 +158,60 @@ table_header: simple_table_header | simple_table_header under_layer
 
 simple_table_header: METAL NUMBER relative_pos NUMBER
     {
-        auto model = driver.UserData()->GetLastModel();
-        if (model != nullptr) {
-            int layer_index_1 = (int) $2;
-            int layer_index_2 = (int) $4;
-            if ($3 == "RESOVER") {
-                model->res_over_.emplace_back(layer_index_1, layer_index_2);
-                model->MarkResOver();
-            } else if ($3 == "OVER") {
-                model->cap_over_.emplace_back(layer_index_1, layer_index_2);
-                model->MarkCapOver();
-            } else if ($3 == "UNDER") {
-                model->cap_under_.emplace_back(layer_index_1, layer_index_2);
-                model->MarkCapUnder();
-            } else if ($3 == "DIAGUNDER") {
-                model->cap_diagunder_.emplace_back(layer_index_1, layer_index_2);
-                model->MarkCapDiagUnder();
-            } else {
-                cout << "Error: impossible to happen\n";
-                exit(1);
-            }
+        int layer_index_1 = (int) $2 - 1;
+        int layer_index_2 = (int) $4 - 1;
+        if ($3 == "RESOVER") {
+            tech_config_parser.tmp_res_over_ = new ResOverTable(layer_index_1, layer_index_2);
+        } else if ($3 == "OVER") {
+            tech_config_parser.tmp_cap_over_ = new CapOverTable(layer_index_1, layer_index_2);
+        } else if ($3 == "UNDER") {
+            tech_config_parser.tmp_cap_under_ = new CapUnderTable(layer_index_1, layer_index_2);
+        } else if ($3 == "DIAGUNDER") {
+            tech_config_parser.tmp_cap_diagunder_ = new CapDiagUnderTable(layer_index_1, layer_index_2);
+        } else {
+            std::cout << "Error: impossible to happen" << std::endl;
+            exit(1);
         }
     }
 
 under_layer: UNDER NUMBER
     {
-        auto model = driver.UserData()->GetLastModel();
-        if (model != nullptr) {
-            int layer_index = model->cap_over_.back().LayerIndex();
-            int over_index = model->cap_over_.back().OverIndex();
-            model->cap_over_.pop_back();
+        int layer_index = tech_config_parser.tmp_cap_over_->LayerIndex();
+        int over_index = tech_config_parser.tmp_cap_over_->OverIndex();
+        delete tech_config_parser.tmp_cap_over_;
+        tech_config_parser.tmp_cap_over_ = nullptr;
 
-            int under_index = (int) $2;
-            model->cap_overunder_.emplace_back(
-                layer_index,
-                over_index,
-                under_index
-            );
-            model->MarkCapOverUnder();
-        }
+        int under_index = (int) $2 - 1;
+        tech_config_parser.tmp_cap_overunder_ = new CapOverUnderTable(
+            layer_index,
+            over_index,
+            under_index
+        );
     }
 
 table_start: DIST COUNT NUMBER WIDTH NUMBER
     {
-        auto model = driver.UserData()->GetLastModel();
         int sz = (int) $3;
         double width = $5;
-        if (model != nullptr) {
-            if (model->tmp_res_over_ != nullptr) {
-                model->tmp_res_over_->GetTable().reserve(sz);
-                model->tmp_res_over_->SetWidth(width);
-            }
-            if (model->tmp_cap_over_ != nullptr) {
-                model->tmp_cap_over_->GetTable().reserve(sz);
-                model->tmp_cap_over_->SetWidth(width);
-            }
-            if (model->tmp_cap_under_ != nullptr) {
-                model->tmp_cap_under_->GetTable().reserve(sz);
-                model->tmp_cap_under_->SetWidth(width);
-            }
-            if (model->tmp_cap_diagunder_ != nullptr) {
-                model->tmp_cap_diagunder_->GetTable().reserve(sz);
-                model->tmp_cap_diagunder_->SetWidth(width);
-            }
-            if (model->tmp_cap_overunder_ != nullptr) {
-                model->tmp_cap_overunder_->GetTable().reserve(sz);
-                model->tmp_cap_overunder_->SetWidth(width);
-            }
+        if (tech_config_parser.tmp_res_over_ != nullptr) {
+            tech_config_parser.tmp_res_over_->GetTable().reserve(sz);
+            tech_config_parser.tmp_res_over_->SetWidth(width);
+        }
+        if (tech_config_parser.tmp_cap_over_ != nullptr) {
+            tech_config_parser.tmp_cap_over_->GetTable().reserve(sz);
+            tech_config_parser.tmp_cap_over_->SetWidth(width);
+        }
+        if (tech_config_parser.tmp_cap_under_ != nullptr) {
+            tech_config_parser.tmp_cap_under_->GetTable().reserve(sz);
+            tech_config_parser.tmp_cap_under_->SetWidth(width);
+        }
+        if (tech_config_parser.tmp_cap_diagunder_ != nullptr) {
+            tech_config_parser.tmp_cap_diagunder_->GetTable().reserve(sz);
+            tech_config_parser.tmp_cap_diagunder_->SetWidth(width);
+        }
+        if (tech_config_parser.tmp_cap_overunder_ != nullptr) {
+            tech_config_parser.tmp_cap_overunder_->GetTable().reserve(sz);
+            tech_config_parser.tmp_cap_overunder_->SetWidth(width);
         }
     }
 
@@ -208,26 +219,23 @@ table_body: /* nothing */ | table_body table_entry
 
 table_entry: NUMBER NUMBER NUMBER NUMBER
     {
-        auto model = driver.UserData()->GetLastModel();
         double distance = $1;
         double coupling_cap = $2;
         double fringe_cap = $3;
         double res = $4;
-        if (model != nullptr) {
-            if (model->tmp_res_over_ != nullptr) {
-                model->tmp_res_over_->AddEntry(distance, coupling_cap, fringe_cap, res);
-            } else if (model->tmp_cap_over_ != nullptr) {
-                model->tmp_cap_over_->AddEntry(distance, coupling_cap, fringe_cap, res);
-            } else if (model->tmp_cap_under_ != nullptr) {
-                model->tmp_cap_under_->AddEntry(distance, coupling_cap, fringe_cap, res);
-            } else if (model->tmp_cap_diagunder_ != nullptr) {
-                model->tmp_cap_diagunder_->AddEntry(distance, coupling_cap, fringe_cap, res);
-            } else if (model->tmp_cap_overunder_ != nullptr) {
-                model->tmp_cap_overunder_->AddEntry(distance, coupling_cap, fringe_cap, res);
-            } else {
-                cout << "Error: no table is available to accept this entry?" << endl;
-                exit(1);
-            }
+        if (tech_config_parser.tmp_res_over_ != nullptr) {
+            tech_config_parser.tmp_res_over_->AddEntry(distance, coupling_cap, fringe_cap, res);
+        } else if (tech_config_parser.tmp_cap_over_ != nullptr) {
+            tech_config_parser.tmp_cap_over_->AddEntry(distance, coupling_cap, fringe_cap, res);
+        } else if (tech_config_parser.tmp_cap_under_ != nullptr) {
+            tech_config_parser.tmp_cap_under_->AddEntry(distance, coupling_cap, fringe_cap, res);
+        } else if (tech_config_parser.tmp_cap_diagunder_ != nullptr) {
+            tech_config_parser.tmp_cap_diagunder_->AddEntry(distance, coupling_cap, fringe_cap, res);
+        } else if (tech_config_parser.tmp_cap_overunder_ != nullptr) {
+            tech_config_parser.tmp_cap_overunder_->AddEntry(distance, coupling_cap, fringe_cap, res);
+        } else {
+            std::cout << "Error: no table is available to accept this entry?" << std::endl;
+            exit(1);
         }
     }
 
@@ -238,5 +246,5 @@ end_densitymodel: DENSITYMODEL_END NUMBER
 %%
 
 void phydb::Parser::error(const string &message) {
-    cout << "Error: " << message << endl;
+    std::cout << "Error: " << message << std::endl;
 }

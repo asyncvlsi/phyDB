@@ -37,6 +37,10 @@ void ResOverTable::SetWidth(double width) {
     width_ = width;
 }
 
+double ResOverTable::Width() const {
+    return width_;
+}
+
 int ResOverTable::LayerIndex() const {
     return layer_index_;
 }
@@ -50,7 +54,8 @@ std::vector<CapEntry> &ResOverTable::GetTable() {
 }
 
 void ResOverTable::Report() const {
-    std::cout << "Metal " << layer_index_ << " RESOVER " << over_index_ << "\n";
+    std::cout << "Metal " << layer_index_ + 1 << " RESOVER " << over_index_ + 1
+              << "\n";
     std::cout << "DIST count " << table_.size() << " width " << width_ << "\n";
     for (auto &entry: table_) {
         entry.Report();
@@ -70,6 +75,10 @@ void CapOverTable::SetWidth(double width) {
     width_ = width;
 }
 
+double CapOverTable::Width() const {
+    return width_;
+}
+
 int CapOverTable::LayerIndex() const {
     return layer_index_;
 }
@@ -83,7 +92,8 @@ std::vector<CapEntry> &CapOverTable::GetTable() {
 }
 
 void CapOverTable::Report() const {
-    std::cout << "Metal " << layer_index_ << " OVER " << over_index_ << "\n";
+    std::cout << "Metal " << layer_index_ + 1 << " OVER " << over_index_ + 1
+              << "\n";
     std::cout << "DIST count " << table_.size() << " width " << width_ << "\n";
     for (auto &entry: table_) {
         entry.Report();
@@ -103,6 +113,10 @@ void CapUnderTable::SetWidth(double width) {
     width_ = width;
 }
 
+double CapUnderTable::Width() const {
+    return width_;
+}
+
 int CapUnderTable::LayerIndex() const {
     return layer_index_;
 }
@@ -116,7 +130,8 @@ std::vector<CapEntry> &CapUnderTable::GetTable() {
 }
 
 void CapUnderTable::Report() {
-    std::cout << "Metal " << layer_index_ << " UNDER " << under_index_ << "\n";
+    std::cout << "Metal " << layer_index_ + 1 << " UNDER " << under_index_ + 1
+              << "\n";
     std::cout << "DIST count " << table_.size() << " width " << width_ << "\n";
     for (auto &entry: table_) {
         entry.Report();
@@ -136,6 +151,10 @@ void CapDiagUnderTable::SetWidth(double width) {
     width_ = width;
 }
 
+double CapDiagUnderTable::Width() const {
+    return width_;
+}
+
 int CapDiagUnderTable::LayerIndex() const {
     return layer_index_;
 }
@@ -149,8 +168,8 @@ std::vector<CapEntry> &CapDiagUnderTable::GetTable() {
 }
 
 void CapDiagUnderTable::Report() {
-    std::cout << "Metal " << layer_index_
-              << " DIAGUNDER " << diagunder_index_ << "\n";
+    std::cout << "Metal " << layer_index_ + 1
+              << " DIAGUNDER " << diagunder_index_ + 1 << "\n";
     std::cout << "DIST count " << table_.size()
               << " width " << width_ << "\n";
     for (auto &entry: table_) {
@@ -171,6 +190,10 @@ void CapOverUnderTable::SetWidth(double width) {
     width_ = width;
 }
 
+double CapOverUnderTable::Width() const {
+    return width_;
+}
+
 int CapOverUnderTable::LayerIndex() const {
     return layer_index_;
 }
@@ -188,9 +211,9 @@ std::vector<CapEntry> &CapOverUnderTable::GetTable() {
 }
 
 void CapOverUnderTable::Report() {
-    std::cout << "Metal " << layer_index_
-              << " OVER " << over_index_
-              << " UNDER " << under_index_ << "\n";
+    std::cout << "Metal " << layer_index_ + 1
+              << " OVER " << over_index_ + 1
+              << " UNDER " << under_index_ + 1 << "\n";
     std::cout << "DIST count " << table_.size()
               << " width " << width_ << "\n";
     for (auto &entry: table_) {
@@ -361,7 +384,8 @@ double CornerModel::GetResistance(
     double length
 ) {
     PhyDBExpects(metal_index >= 0, "Negative metal index is not allowed!");
-    PhyDBExpects(metal_index < (int) resistance_table_.size(), "Metal index out of bound!");
+    PhyDBExpects(metal_index < (int) resistance_table_.size(),
+                 "Metal index out of bound!");
 
     return length / width * resistance_table_[metal_index];
 }
@@ -463,7 +487,8 @@ double CornerModel::GetFringeCapacitance(
     double length
 ) {
     PhyDBExpects(metal_index >= 0, "Negative metal index is not allowed!");
-    PhyDBExpects(metal_index < (int) resistance_table_.size(), "Metal index out of bound!");
+    PhyDBExpects(metal_index < (int) resistance_table_.size(),
+                 "Metal index out of bound!");
 
     return fringe_capacitance_table_[metal_index] * 2 * length;
 }
@@ -555,7 +580,8 @@ double TechConfig::GetFringeCapacitance(
 
 CornerModel &TechConfig::GetModel(int model_index) {
     PhyDBExpects(model_index >= 0, "Negative model index is not allowed!");
-    PhyDBExpects(model_index < (int) model_table_.size(), "Model index out of bound!");
+    PhyDBExpects(model_index < (int) model_table_.size(),
+                 "Model index out of bound!");
     return model_table_[model_index];
 }
 
@@ -579,25 +605,6 @@ void TechConfig::Report() {
     for (auto &model: model_table_) {
         model.Report();
     }
-}
-
-Interpreter::Interpreter(TechConfig *tech_config) :
-    scanner_(*this),
-    parser_(scanner_, *this),
-    tech_config_(tech_config) {}
-
-int Interpreter::Parse() {
-    int res = parser_.parse();
-    tech_config_->FixResOverTable();
-    return res;
-}
-
-void Interpreter::SetInputStream(std::istream *is) {
-    scanner_.switch_streams(is, nullptr);
-}
-
-TechConfig *Interpreter::UserData() {
-    return tech_config_;
 }
 
 }

@@ -16,18 +16,18 @@
 
 namespace phydb {
 
-class Interpreter;
+class TechConfigParser;
 
 class Scanner : public yyFlexLexer {
 public:
-    explicit Scanner(Interpreter &driver) : driver_(driver) {}
+    explicit Scanner(TechConfigParser &driver) : driver_(driver) {}
 
     virtual ~Scanner() {}
 
     virtual phydb::Parser::symbol_type get_next_token();
 
 private:
-    Interpreter &driver_;
+    TechConfigParser &driver_;
 };
 
 }

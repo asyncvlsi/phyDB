@@ -1,6 +1,9 @@
 #ifndef PHYDB_INCLUDE_LAYER_H_
 #define PHYDB_INCLUDE_LAYER_H_
 
+#include <string>
+#include <vector>
+
 #include "adjacentcutspacing.h"
 #include "cornerspacing.h"
 #include "enumtypes.h"
@@ -8,44 +11,52 @@
 #include "logging.h"
 #include "spacingtable.h"
 #include "spacingtableinfluence.h"
+#include "techconfig.h"
 
 namespace phydb {
 
-class Layer {
+class LayerTechConfigCorner {
+  public:
+    explicit LayerTechConfigCorner(int model_index)
+        : model_index_(model_index) {}
+
+    void AddResOverTable(ResOverTable *res_over_table);
+    void AddCapOverTable(CapOverTable *cap_over_table);
+    void AddCapUnderTable(CapUnderTable *cap_under_table);
+    void AddCapDiagUnderTable(CapDiagUnderTable *cap_diag_under_table);
+    void AddCapOverUnderTable(CapOverUnderTable *cap_over_under_table);
+
+    /**** getters for raw data ****/
+    std::vector<ResOverTable> &GetResOverRef();
+    std::vector<CapOverTable> &GetCapOverRef();
+    std::vector<CapUnderTable> &GetCapUnderRef();
+    std::vector<CapDiagUnderTable> &GetCapDiagUnderRef();
+    std::vector<CapOverUnderTable> &GetCapOverUnderRef();
+
+    void FixResOverTableLastEntry();
+    void Report();
+
   private:
-    string name_;
-    LayerType type_;
-    int id_ = -1;
+    int model_index_;
+    /**** raw data from technology configuration file ****/
+    std::vector<ResOverTable> res_over_;
+    std::vector<CapOverTable> cap_over_;
+    std::vector<CapUnderTable> cap_under_;
+    std::vector<CapDiagUnderTable> cap_diagunder_;
+    std::vector<CapOverUnderTable> cap_overunder_;
+};
 
-    //metal layer
-    MetalDirection direction_ = VERTICAL;
-    double pitchx_ = -1;
-    double pitchy_ = -1;
-    double width_ = -1;
-    double area_ = 0;
-    double min_width_ = -1;
-    double offset_ = 0;
+class LayerTechConfig {
+  private:
+    std::vector<LayerTechConfigCorner> corners_;
+  public:
+    void AddCorner(int corner_index);
+    LayerTechConfigCorner *GetLastCorner();
 
-    SpacingTable spacing_table_;
-    vector<SpacingTableInfluence> spacing_table_influences_;
-    vector<EolSpacing> eol_spacings_;
-    CornerSpacing corner_spacing_;
+    void Report();
+};
 
-    //cut layer
-    double spacing_ = -1;
-    AdjacentCutSpacing adjacent_cut_spacing_;
-
-    // RC estimation
-    // capacitance for each square unit, in picofarads per square micron. This is used to model wire-to-ground capacitance.
-    double capacitance_cpersqdist_ = -1;
-    // Specifies the multiplier for interconnect capacitance to account for increases in capacitance caused by nearby wires.
-    double capmultiplier_ = 1;
-    // segment capacitance = (layer capacitance per square x segment width x segment length) + (peripheral capacitance x 2 (segment width + segment length))
-    double edgecapacitance_ = -1; // not used yet
-    // Specifies the resistance for a square of wire, in ohms per square. The resistance of a wire can be defined as
-    // RPERSQU x wire_length/wire_width
-    double resistance_rpersq_ = -1;
-
+class Layer {
   public:
     Layer(std::string &name, LayerType type, MetalDirection direction) :
         name_(name), type_(type), direction_(direction) {}
@@ -101,6 +112,8 @@ class Layer {
         type_(type),
         id_(-1),
         spacing_(spacing) {}
+
+    ~Layer();
 
     void SetName(string &name);
     void SetType(LayerType type);
@@ -168,9 +181,53 @@ class Layer {
     CornerSpacing *GetCornerSpacing();
     AdjacentCutSpacing *GetAdjCutSpacing();
 
+    void InitLayerTechConfig();
+    LayerTechConfig *GetLayerTechConfig();
+    void AddTechConfigCorner(int corner_index);
+
     friend ostream &operator<<(ostream &, const Layer &);
 
     void Report();
+
+  private:
+    string name_;
+    LayerType type_;
+    int id_ = -1;
+
+    //metal layer
+    MetalDirection direction_ = VERTICAL;
+    double pitchx_ = -1;
+    double pitchy_ = -1;
+    double width_ = -1;
+    double area_ = 0;
+    double min_width_ = -1;
+    double offset_ = 0;
+
+    SpacingTable spacing_table_;
+    vector<SpacingTableInfluence> spacing_table_influences_;
+    vector<EolSpacing> eol_spacings_;
+    CornerSpacing corner_spacing_;
+
+    //cut layer
+    double spacing_ = -1;
+    AdjacentCutSpacing adjacent_cut_spacing_;
+
+    /**** RC estimation ****/
+    double unit_area_cap = -1;
+    double unit_edge_cap = -1;
+    double unit_res = -1;
+    /**** Part 1. parameters from LEF ****/
+    // capacitance for each square unit, in picofarads per square micron. This is used to model wire-to-ground capacitance.
+    double capacitance_cpersqdist_ = -1;
+    // Specifies the multiplier for interconnect capacitance to account for increases in capacitance caused by nearby wires.
+    double capmultiplier_ = 1;
+    // segment capacitance = (layer_capacitance_per_square x segment_width x segment_length) + (peripheral_capacitance x 2 (segment_width + segment_length))
+    double edgecapacitance_ = -1; // not used yet
+    // Specifies the resistance for a square of wire, in ohms per square. The resistance of a wire can be defined as
+    // RPERSQU x wire_length/wire_width
+    double resistance_rpersq_ = -1;
+    /**** Part 2. parameters from OpenRCX technology configuration file ****/
+    LayerTechConfig *layer_tech_config_ = nullptr;
 };
 
 ostream &operator<<(ostream &, const Layer &);
@@ -189,13 +246,12 @@ class WellLayer {
         double op_spacing,
         double max_plug_dist,
         double overhang
-    ) {
-        SetWidth(width);
-        SetSpacing(spacing);
-        SetOpSpacing(op_spacing);
-        SetMaxPlugDist(max_plug_dist);
-        SetOverhang(overhang);
-    }
+    ) :
+        width_(width),
+        spacing_(spacing),
+        op_spacing_(op_spacing),
+        max_plug_dist_(max_plug_dist),
+        overhang_(overhang) {}
 
     double GetWidth() const;
     double GetSpacing() const;

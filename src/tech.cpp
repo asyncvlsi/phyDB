@@ -6,51 +6,59 @@
 namespace phydb {
 
 Tech::~Tech() {
-    if (n_layer_ptr_ != nullptr) {
-        delete n_layer_ptr_;
-        n_layer_ptr_ = nullptr;
-    }
-    if (p_layer_ptr_ != nullptr) {
-        delete p_layer_ptr_;
-        p_layer_ptr_ = nullptr;
-    }
+    delete n_layer_ptr_;
+    n_layer_ptr_ = nullptr;
+    delete p_layer_ptr_;
+    p_layer_ptr_ = nullptr;
 }
 
 void Tech::SetDatabaseMicron(int database_micron) {
-    PhyDBExpects(database_micron > 0, "Cannot Set negative database microns: " + std::to_string(database_micron));
+    PhyDBExpects(database_micron > 0,
+                 "Cannot Set negative database microns: "
+                     + std::to_string(database_micron));
 
-    std::unordered_set<int> legal_database_units({100, 200, 1000, 2000, 10000, 20000});
-    PhyDBExpects(legal_database_units.find(database_micron) != legal_database_units.end(),
-                 "Unsupported DATABASE MICRONS " + std::to_string(database_micron));
+    std::unordered_set<int>
+        legal_database_units({100, 200, 1000, 2000, 10000, 20000});
+    PhyDBExpects(legal_database_units.find(database_micron)
+                     != legal_database_units.end(),
+                 "Unsupported DATABASE MICRONS "
+                     + std::to_string(database_micron));
 
     if (database_micron_ > -1 && database_micron != database_micron_) {
-        std::cout << "Warning: changing DATABASE MICRONS from " << database_micron_ << " to " << database_micron
+        std::cout << "Warning: changing DATABASE MICRONS from "
+                  << database_micron_ << " to " << database_micron
                   << "\n";
     }
 
     database_micron_ = database_micron;
 }
 
-int Tech::GetDatabaseMicron() {
+int Tech::GetDatabaseMicron() const {
     return database_micron_;
 }
 
 void Tech::SetManufacturingGrid(double manufacture_grid) {
-    PhyDBExpects(manufacture_grid > 0, "Cannot Set negative manufacturing grid: " + std::to_string(manufacture_grid));
+    PhyDBExpects(manufacture_grid > 0,
+                 "Cannot Set negative manufacturing grid: "
+                     + std::to_string(manufacture_grid));
 
     if (manufacturing_grid_ > -1 && manufacture_grid != manufacturing_grid_) {
-        std::cout << "Warning: changing MANUFACTURINGGRID from " << manufacturing_grid_ << " to " << manufacture_grid
+        std::cout << "Warning: changing MANUFACTURINGGRID from "
+                  << manufacturing_grid_ << " to " << manufacture_grid
                   << "\n";
     }
 
     manufacturing_grid_ = manufacture_grid;
 }
 
-double Tech::GetManufacturingGrid() {
+double Tech::GetManufacturingGrid() const {
     return manufacturing_grid_;
 }
 
-void Tech::AddSite(std::string const &name, std::string const &class_name, double width, double height) {
+void Tech::AddSite(std::string const &name,
+                   std::string const &class_name,
+                   double width,
+                   double height) {
     sites_.emplace_back(name, class_name, width, height);
 }
 
@@ -58,7 +66,8 @@ std::vector<Site> &Tech::GetSitesRef() {
     return sites_;
 }
 
-void Tech::SetPlacementGrids(double placement_grid_value_x, double placement_grid_value_y) {
+void Tech::SetPlacementGrids(double placement_grid_value_x,
+                             double placement_grid_value_y) {
     PhyDBExpects(placement_grid_value_x > 0 && placement_grid_value_y > 0,
                  "negative placement grid value not allowed");
     placement_grid_value_x_ = placement_grid_value_x;
@@ -66,7 +75,8 @@ void Tech::SetPlacementGrids(double placement_grid_value_x, double placement_gri
     is_placement_grid_set_ = true;
 }
 
-bool Tech::GetPlacementGrids(double &placement_grid_value_x, double &placement_grid_value_y) {
+bool Tech::GetPlacementGrids(double &placement_grid_value_x,
+                             double &placement_grid_value_y) {
     placement_grid_value_x = placement_grid_value_x_;
     placement_grid_value_y = placement_grid_value_y_;
     return is_placement_grid_set_;
@@ -76,8 +86,11 @@ bool Tech::IsLayerExisting(std::string const &layer_name) {
     return layer_2_id_.find(layer_name) != layer_2_id_.end();
 }
 
-Layer *Tech::AddLayer(std::string &layer_name, LayerType type, MetalDirection direction) {
-    PhyDBExpects(!IsLayerExisting(layer_name), "LAYER name_ exists, cannot use again: " + layer_name);
+Layer *Tech::AddLayer(std::string &layer_name,
+                      LayerType type,
+                      MetalDirection direction) {
+    PhyDBExpects(!IsLayerExisting(layer_name),
+                 "LAYER name_ exists, cannot use again: " + layer_name);
     int id = layers_.size();
     layers_.emplace_back(layer_name, type, direction);
     layer_2_id_[layer_name] = id;
@@ -101,8 +114,8 @@ int Tech::GetLayerId(string const &layer_name) {
     return id;
 }
 
-const std::string& Tech::GetLayerName(int layerID) {
-    if(layerID >= layers_.size()) {
+const std::string &Tech::GetLayerName(int layerID) {
+    if (layerID >= layers_.size()) {
         std::cout << "accessing layerID > num. of layers" << endl;
         exit(1);
     }
@@ -118,7 +131,8 @@ bool Tech::IsMacroExisting(std::string const &macro_name) {
 }
 
 Macro *Tech::AddMacro(std::string &macro_name) {
-    PhyDBExpects(!IsMacroExisting(macro_name), "Macro name_ exists, cannot use it again: " + macro_name);
+    PhyDBExpects(!IsMacroExisting(macro_name),
+                 "Macro name_ exists, cannot use it again: " + macro_name);
     int id = (int) macros_.size();
     macros_.emplace_back(macro_name);
     macro_2_id_[macro_name] = id;
@@ -142,7 +156,8 @@ bool Tech::IsLefViaExisting(std::string const &via_name) {
 }
 
 LefVia *Tech::AddLefVia(std::string &via_name) {
-    PhyDBExpects(!IsLefViaExisting(via_name), "VIA name_ exists, cannot use it again: " + via_name);
+    PhyDBExpects(!IsLefViaExisting(via_name),
+                 "VIA name_ exists, cannot use it again: " + via_name);
     int id = vias_.size();
     vias_.emplace_back(via_name);
     via_2_id_[via_name] = id;
@@ -166,7 +181,8 @@ bool Tech::IsViaRuleGenerateExisting(std::string const &name) {
 }
 
 ViaRuleGenerate *Tech::AddViaRuleGenerate(std::string &name) {
-    PhyDBExpects(!IsViaRuleGenerateExisting(name), "Macro name_ exists, cannot use it again");
+    PhyDBExpects(!IsViaRuleGenerateExisting(name),
+                 "Macro name_ exists, cannot use it again");
     int id = via_rule_generates_.size();
     via_rule_generates_.emplace_back(name);
     via_rule_generate_2_id_[name] = id;
@@ -185,26 +201,45 @@ vector<ViaRuleGenerate> &Tech::GetViaRuleGeneratesRef() {
     return via_rule_generates_;
 }
 
-void Tech::SetNwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
+void Tech::SetNwellLayer(double width,
+                         double spacing,
+                         double op_spacing,
+                         double max_plug_dist,
+                         double overhang) {
     if (is_n_well_layer_set_) {
-        n_layer_ptr_->SetParams(width, spacing, op_spacing, max_plug_dist, overhang);
+        n_layer_ptr_->SetParams(width,
+                                spacing,
+                                op_spacing,
+                                max_plug_dist,
+                                overhang);
     } else {
-        n_layer_ptr_ = new WellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
+        n_layer_ptr_ =
+            new WellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
         is_n_well_layer_set_ = true;
     }
 }
 
-void Tech::SetPwellLayer(double width, double spacing, double op_spacing, double max_plug_dist, double overhang) {
+void Tech::SetPwellLayer(double width,
+                         double spacing,
+                         double op_spacing,
+                         double max_plug_dist,
+                         double overhang) {
     if (is_p_well_layer_set_) {
-        p_layer_ptr_->SetParams(width, spacing, op_spacing, max_plug_dist, overhang);
+        p_layer_ptr_->SetParams(width,
+                                spacing,
+                                op_spacing,
+                                max_plug_dist,
+                                overhang);
     } else {
-        p_layer_ptr_ = new WellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
+        p_layer_ptr_ =
+            new WellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
         is_p_well_layer_set_ = true;
     }
 }
 
 void Tech::SetNpwellSpacing(double same_diff, double any_diff) {
-    PhyDBExpects(same_diff >= 0 && any_diff >= 0, "Negative values not allowed: Tech::SetNpwellSpacing()");
+    PhyDBExpects(same_diff >= 0 && any_diff >= 0,
+                 "Negative values not allowed: Tech::SetNpwellSpacing()");
     same_diff_spacing_ = same_diff;
     any_diff_spacing_ = any_diff;
 }
@@ -221,7 +256,8 @@ WellLayer *Tech::GetPwellLayerPtr() {
     return p_layer_ptr_;
 }
 
-void Tech::GetDiffWellSpacing(double &same_diff_spacing, double any_diff_spacing) {
+void Tech::GetDiffWellSpacing(double &same_diff_spacing,
+                              double any_diff_spacing) {
     same_diff_spacing = same_diff_spacing_;
     any_diff_spacing = any_diff_spacing_;
 }
@@ -238,6 +274,81 @@ std::string Tech::GetLefName() const {
 
 void Tech::SetLefName(std::string const &lef_file_name) {
     lef_name_ = lef_file_name;
+}
+
+void Tech::FindAllMetalLayers() {
+    PhyDBExpects(!layers_.empty(),
+                 "It seems LEF file is not loaded, cannot load technology configuration file");
+    for (auto &layer: layers_) {
+        if (layer.GetType() == ROUTING) {
+            metal_layers_.emplace_back(std::make_shared<Layer>(layer));
+        }
+    }
+}
+
+TechConfig &Tech::GetTechConfigRef() {
+    return tech_config_;
+}
+
+void Tech::AddTechConfigCorner(int corner_index) {
+    if (metal_layers_.empty()) {
+        FindAllMetalLayers();
+    }
+
+    for (auto &metal_ptr: metal_layers_) {
+        metal_ptr->AddTechConfigCorner(corner_index);
+    }
+}
+
+void Tech::AddResOverTable(ResOverTable *res_over_table) {
+    if (res_over_table == nullptr) return;
+    int layer_index = res_over_table->LayerIndex();
+    auto metal_ptr = metal_layers_[layer_index];
+    auto corner = metal_ptr->GetLayerTechConfig()->GetLastCorner();
+    corner->AddResOverTable(res_over_table);
+}
+
+void Tech::AddCapOverTable(CapOverTable *cap_over_table) {
+    if (cap_over_table == nullptr) return;
+    int layer_index = cap_over_table->LayerIndex();
+    auto metal_ptr = metal_layers_[layer_index];
+    auto corner = metal_ptr->GetLayerTechConfig()->GetLastCorner();
+    corner->AddCapOverTable(cap_over_table);
+}
+
+void Tech::AddCapUnderTable(CapUnderTable *cap_under_table) {
+    if (cap_under_table == nullptr) return;
+    int layer_index = cap_under_table->LayerIndex();
+    auto metal_ptr = metal_layers_[layer_index];
+    auto corner = metal_ptr->GetLayerTechConfig()->GetLastCorner();
+    corner->AddCapUnderTable(cap_under_table);
+}
+
+void Tech::AddCapDiagUnderTable(CapDiagUnderTable *cap_diag_under_table) {
+    if (cap_diag_under_table == nullptr) return;
+    int layer_index = cap_diag_under_table->LayerIndex();
+    auto metal_ptr = metal_layers_[layer_index];
+    auto corner = metal_ptr->GetLayerTechConfig()->GetLastCorner();
+    corner->AddCapDiagUnderTable(cap_diag_under_table);
+}
+
+void Tech::AddCapOverUnderTable(CapOverUnderTable *cap_over_under_table) {
+    if (cap_over_under_table == nullptr) return;
+    int layer_index = cap_over_under_table->LayerIndex();
+    auto metal_ptr = metal_layers_[layer_index];
+    auto corner = metal_ptr->GetLayerTechConfig()->GetLastCorner();
+    corner->AddCapOverUnderTable(cap_over_under_table);
+}
+
+void Tech::FixResOverTable() {
+
+}
+
+void Tech::ReportLayersTechConfig() {
+    for (auto &metal_ptr: metal_layers_) {
+        auto tech_config = metal_ptr->GetLayerTechConfig();
+        tech_config->Report();
+    }
 }
 
 void Tech::ReportSites() {

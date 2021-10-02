@@ -203,7 +203,8 @@ class PhyDB {
     MacroWell *AddMacrowell(std::string &macro_name);
 
     /************************************************
-    * The following APIs are for information in clusters, N/P wells, and nplus/pplus layers
+    * The following APIs are for information in clusters,
+    * N/P wells, and nplus/pplus layers
     * ************************************************/
 
     ClusterCol *AddClusterCol(string &name, string &bot_signal);
@@ -227,15 +228,16 @@ class PhyDB {
     * The following APIs are for file IO
     * ************************************************/
 
-    void ReadLef(string const &lefFileName);
-    void ReadDef(string const &defFileName);
-    void OverrideComponentLocsFromDef(string const &defFileName);
-    void ReadCell(string const &cellFileName);
-    void ReadCluster(string const &clusterFileName);
+    void ReadLef(string const &lef_file_name);
+    void ReadDef(string const &def_file_name);
+    void OverrideComponentLocsFromDef(string const &def_file_name);
+    void ReadCell(string const &cell_file_name);
+    void ReadCluster(string const &cluster_file_name);
+    void ReadTechConfigFile(string const &tech_config_file_name);
 
-    void WriteDef(string const &defFileName);
-    void WriteCluster(string const &clusterFileName);
-    void WriteGuide(string const &guideFileName);
+    void WriteDef(string const &def_file_name);
+    void WriteCluster(string const &cluster_file_name);
+    void WriteGuide(string const &guide_file_name);
 
     void SetVerbose(int v);
     int GetVerbose();

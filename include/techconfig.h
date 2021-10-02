@@ -1,7 +1,3 @@
-//
-// Created by yihang on 9/16/21.
-//
-
 #ifndef PHYDB_INCLUDE_TECHCONFIG_H_
 #define PHYDB_INCLUDE_TECHCONFIG_H_
 
@@ -69,6 +65,7 @@ struct ResOverTable {
 
     void FixLastEntryIfWrong();
     void SetWidth(double width);
+    double Width() const;
     int LayerIndex() const;
     int OverIndex() const;
     std::vector<CapEntry> &GetTable();
@@ -99,6 +96,7 @@ struct CapOverTable {
         double res
     );
     void SetWidth(double width);
+    double Width() const;
     int LayerIndex() const;
     int OverIndex() const;
     std::vector<CapEntry> &GetTable();
@@ -128,6 +126,7 @@ class CapUnderTable {
         double res
     );
     void SetWidth(double width);
+    double Width() const;
     int LayerIndex() const;
     int UnderIndex() const;
     std::vector<CapEntry> &GetTable();
@@ -157,6 +156,7 @@ class CapDiagUnderTable {
         double res
     );
     void SetWidth(double width);
+    double Width() const;
     int LayerIndex() const;
     int DiagUnderIndex() const;
     std::vector<CapEntry> &GetTable();
@@ -186,6 +186,7 @@ class CapOverUnderTable {
         double res
     );
     void SetWidth(double width);
+    double Width() const;
     int LayerIndex() const;
     int OverIndex() const;
     int UnderIndex() const;
@@ -294,21 +295,6 @@ class TechConfig {
     CornerModel &GetModel(int model_index);
 
     void Report();
-};
-
-class Interpreter {
-    friend class Parser;
-    friend class Scanner;
-  public:
-    explicit Interpreter(TechConfig *tech_config);
-    int Parse();
-    void SetInputStream(std::istream *is);
-    TechConfig *UserData();
-
-  private:
-    Scanner scanner_;
-    Parser parser_;
-    TechConfig *tech_config_ = nullptr;
 };
 
 }

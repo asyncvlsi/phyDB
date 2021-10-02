@@ -2,12 +2,14 @@
 #define PHYDB_INCLUDE_TECH_H_
 
 #include <list>
+#include <memory>
 #include <unordered_map>
 
 #include "layer.h"
 #include "lefvia.h"
 #include "macro.h"
 #include "site.h"
+#include "techconfig.h"
 #include "viarulegenerate.h"
 
 namespace phydb {
@@ -15,24 +17,24 @@ namespace phydb {
 class Tech {
     friend class PhyDB;
   private:
-    string version_;
-    string bus_bit_char_;
-    string divier_char_;
-    string clearance_measure_;
+    std::string version_;
+    std::string bus_bit_char_;
+    std::string divier_char_;
+    std::string clearance_measure_;
     double manufacturing_grid_ = -1;
 
     int database_micron_ = -1;
 
-    vector<Site> sites_;
-    vector<Layer> layers_;
-    vector<Macro> macros_;
-    vector<LefVia> vias_;
-    vector<ViaRuleGenerate> via_rule_generates_;
+    std::vector<Site> sites_;
+    std::vector<Layer> layers_;
+    std::vector<Macro> macros_;
+    std::vector<LefVia> vias_;
+    std::vector<ViaRuleGenerate> via_rule_generates_;
 
-    unordered_map<string, int> layer_2_id_;
-    unordered_map<string, int> macro_2_id_;
-    unordered_map<string, int> via_2_id_;
-    unordered_map<string, int> via_rule_generate_2_id_;
+    std::unordered_map<std::string, int> layer_2_id_;
+    std::unordered_map<std::string, int> macro_2_id_;
+    std::unordered_map<std::string, int> via_2_id_;
+    std::unordered_map<std::string, int> via_rule_generate_2_id_;
 
     /****placement grid parameters****/
     bool is_placement_grid_set_ = false;
@@ -51,14 +53,18 @@ class Tech {
     /****LEF file name****/
     std::string lef_name_;
 
+    /****technology configuration file****/
+    TechConfig tech_config_;
+    std::vector<std::shared_ptr<Layer>> metal_layers_;
+
   public:
     Tech() : manufacturing_grid_(-1), database_micron_(-1) {}
     ~Tech();
 
     void SetDatabaseMicron(int database_micron);
-    int GetDatabaseMicron();
+    int GetDatabaseMicron() const;
     void SetManufacturingGrid(double manufacture_grid);
-    double GetManufacturingGrid();
+    double GetManufacturingGrid() const;
     void AddSite(
         std::string const &name,
         std::string const &class_name,
@@ -124,6 +130,17 @@ class Tech {
 
     std::string GetLefName() const;
     void SetLefName(std::string const &lef_file_name);
+
+    void FindAllMetalLayers();
+    TechConfig &GetTechConfigRef();
+    void AddTechConfigCorner(int corner_index);
+    void AddResOverTable(ResOverTable *res_over_table);
+    void AddCapOverTable(CapOverTable *cap_over_table);
+    void AddCapUnderTable(CapUnderTable *cap_under_table);
+    void AddCapDiagUnderTable(CapDiagUnderTable *cap_diag_under_table);
+    void AddCapOverUnderTable(CapOverUnderTable *cap_over_under_table);
+    void FixResOverTable();
+    void ReportLayersTechConfig();
 
     void ReportSites();
     void ReportLayers();
