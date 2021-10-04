@@ -207,7 +207,7 @@ class Layer {
     double GetFringeCapacitance(
         double width,
         double length,
-        int model_index
+        int corner_index
     );
 
     friend ostream &operator<<(ostream &, const Layer &);

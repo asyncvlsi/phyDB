@@ -172,6 +172,7 @@ class PhyDB {
     void SetGetViolatedTimingConstraintsCB(
         void (*callback_function)(std::vector<int> &)
     );
+    bool IsDriverPin(PhydbPin &phydb_pin);
     ActPhyDBTimingAPI &GetTimingApi();
 #if PHYDB_USE_GALOIS
     void SetParaManager(galois::eda::parasitics::Manager* manager);
@@ -180,6 +181,8 @@ class PhyDB {
     galois::eda::parasitics::Manager* GetParaManager();
     std::vector<galois::eda::liberty::CellLib*> GetCellLibs();
     galois::eda::utility::ExtNetlistAdaptor* GetNetlistAdaptor();
+
+    void PushRCToTimer();
 #endif
 
     /************************************************

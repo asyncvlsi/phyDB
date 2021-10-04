@@ -522,30 +522,69 @@ void PhyDB::SetGetViolatedTimingConstraintsCB(
 }
 
 #if PHYDB_USE_GALOIS
-void PhyDB::SetParaManager(galois::eda::parasitics::Manager* manager) {
+void PhyDB::SetParaManager(galois::eda::parasitics::Manager *manager) {
     timing_api_.SetParaManager(manager);
 }
 
-void PhyDB::AddCellLib(galois::eda::liberty::CellLib* lib) {
+void PhyDB::AddCellLib(galois::eda::liberty::CellLib *lib) {
     timing_api_.AddCellLib(lib);
 }
 
-void PhyDB::SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor* adaptor) {
+void PhyDB::SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor) {
     timing_api_.SetNetlistAdaptor(adaptor);
 }
 
-galois::eda::parasitics::Manager* PhyDB::GetParaManager() {
+galois::eda::parasitics::Manager *PhyDB::GetParaManager() {
     return timing_api_.GetParaManager();
 }
 
-std::vector<galois::eda::liberty::CellLib*> PhyDB::GetCellLibs() {
+std::vector<galois::eda::liberty::CellLib *> PhyDB::GetCellLibs() {
     return timing_api_.GetCellLibs();
 }
 
-galois::eda::utility::ExtNetlistAdaptor* PhyDB::GetNetlistAdaptor() {
+galois::eda::utility::ExtNetlistAdaptor *PhyDB::GetNetlistAdaptor() {
     return timing_api_.GetNetlistAdaptor();
 }
+
+void PhyDB::PushRCToTimer() {
+    auto spef_manager = GetParaManager();
+    if (spef_manager == nullptr) {
+        std::cout << "SPEF manager is a nullptr";
+        return;
+    } else {
+        std::cout << "Found the SPEF manager\n";
+    }
+    auto libs = GetCellLibs();
+    std::cout << "Cell library number: " << libs.size() << "\n";
+
+    // add nets and pins to the SPEF manager
+    int number_of_nets = (int) design_.nets_.size();
+    for (int i = 0; i < number_of_nets; ++i) {
+        void *act_net = timing_api_.net_id_2_act_[i];
+        spef_manager->addNet(act_net);
+
+        auto &net = design_.nets_[i];
+        int number_of_pins = (int) net.GetPinsRef().size();
+        for (int j = 0; j<number_of_pins; ++j) {
+            auto &phydb_pin = net.GetPinsRef()[j];
+            void *act_pin = timing_api_.component_pin_id_2_act_[phydb_pin];
+            if (IsDriverPin(phydb_pin)) {
+                spef_manager->addDriverPin(act_pin);
+            } else {
+                spef_manager->addLoadPin(act_pin);
+            }
+        }
+    }
+}
+
 #endif
+
+bool PhyDB::IsDriverPin(PhydbPin &phydb_pin) {
+    int comp_id = phydb_pin.comp_id;
+    Macro *macro_ptr = design_.components_[comp_id].GetMacro();
+    int pin_id = phydb_pin.pin_id;
+    return macro_ptr->GetPinsRef()[pin_id].IsDriverPin();
+}
 
 ActPhyDBTimingAPI &PhyDB::GetTimingApi() {
     return timing_api_;

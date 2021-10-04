@@ -120,6 +120,7 @@ struct ActEdge {
 };
 
 class ActPhyDBTimingAPI {
+    friend class PhyDB;
   public:
     //APIs for ACT
     void AddActNetPtrIdPair(void *act_net, int net_id);

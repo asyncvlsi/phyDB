@@ -40,6 +40,7 @@ class Pin {
 
     const string &GetName();
     SignalDirection GetDirection();
+    bool IsDriverPin() const;
     SignalUse GetUse();
     vector<LayerRect> &GetLayerRectRef();
     vector<LayerRect> GetLayerRectCpy();

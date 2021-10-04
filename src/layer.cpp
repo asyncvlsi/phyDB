@@ -569,10 +569,10 @@ double Layer::GetAreaCapacitance(
 double Layer::GetFringeCapacitance(
     double width,
     double length,
-    int model_index
+    int corner_index
 ) {
-    assert(model_index < (int) unit_edge_cap_.size());
-    return unit_edge_cap_[model_index] * 2 * (width + length);
+    assert(corner_index < (int) unit_edge_cap_.size());
+    return unit_edge_cap_[corner_index] * 2 * (width + length);
 }
 
 ostream &operator<<(ostream &os, const Layer &l) {

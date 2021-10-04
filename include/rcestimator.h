@@ -19,7 +19,6 @@ class RCEstimator {
     explicit RCEstimator(PhyDB *phydb_ptr) : phy_db_(phydb_ptr) {}
     virtual ~RCEstimator() = default;
 
-    virtual void ExtractNetRC(int net_id) = 0;
     virtual void PushNetRCToManager(int net_id) = 0;
 };
 
@@ -27,7 +26,6 @@ class StarNetPiRCEstimator : public RCEstimator {
   public:
     explicit StarNetPiRCEstimator(PhyDB *phydb_ptr) : RCEstimator(phydb_ptr) {}
     ~StarNetPiRCEstimator() override = default;
-    void ExtractNetRC(int net_id) override;
     void PushNetRCToManager(int net_id) override;
 
     void InitializeRCTree(Net &net);

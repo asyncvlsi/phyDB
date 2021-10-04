@@ -23,6 +23,10 @@ SignalDirection Pin::GetDirection() {
     return direction_;
 }
 
+bool Pin::IsDriverPin() const {
+    return direction_ == OUTPUT || direction_ == OUTPUT_TRISTATE;
+}
+
 SignalUse Pin::GetUse() {
     return use_;
 }
