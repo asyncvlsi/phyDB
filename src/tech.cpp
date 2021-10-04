@@ -341,7 +341,62 @@ void Tech::AddCapOverUnderTable(CapOverUnderTable *cap_over_under_table) {
 }
 
 void Tech::FixResOverTable() {
+    for (auto &metal_ptr: metal_layers_) {
+        auto layer_tech_config = metal_ptr->GetLayerTechConfig();
+        layer_tech_config->FixResOverTable();
+    }
+}
 
+void Tech::SetResistanceUnit(bool from_tech_config, bool is_report) {
+    if (from_tech_config) {
+        for (auto &metal_ptr: metal_layers_) {
+            metal_ptr->SetResistanceUnitFromTechConfig();
+        }
+    } else {
+        for (auto &metal_ptr: metal_layers_) {
+            metal_ptr->SetResistanceUnitFromLef();
+        }
+    }
+
+    if (is_report) {
+        int num_of_corners_ = tech_config_.model_count_;
+        for (int i = 0; i < num_of_corners_; ++i) {
+            std::cout << "model index: " << i << "\nres, ";
+            size_t sz = metal_layers_.size();
+            for (size_t j = 0; j < sz; ++j) {
+                std::cout << j + 1 << ": " << metal_layers_[j]->unit_res_[i] << ", ";
+            }
+            std::cout << "\n";
+        }
+    }
+}
+
+void Tech::SetCapacitanceUnit(bool from_tech_config, bool is_report) {
+    if (from_tech_config) {
+        for (auto &metal_ptr: metal_layers_) {
+            metal_ptr->SetCapacitanceUnitFromTechConfig();
+        }
+    } else {
+        for (auto &metal_ptr: metal_layers_) {
+            metal_ptr->SetCapacitanceUnitFromLef();
+        }
+    }
+
+    if (is_report) {
+        int num_of_corners_ = tech_config_.model_count_;
+        for (int i = 0; i < num_of_corners_; ++i) {
+            std::cout << "model index: " << i << "\nedge cap, ";
+            size_t sz = metal_layers_.size();
+            for (size_t j = 0; j < sz; ++j) {
+                std::cout << j + 1 << ": " << metal_layers_[j]->unit_edge_cap_[i] << ", ";
+            }
+            std::cout << "\narea cap, ";
+            for (size_t j = 0; j < sz; ++j) {
+                std::cout << j + 1 << ": " << metal_layers_[j]->unit_area_cap_[i] << ", ";
+            }
+            std::cout << "\n";
+        }
+    }
 }
 
 void Tech::ReportLayersTechConfig() {

@@ -33,7 +33,10 @@ class LayerTechConfigCorner {
     std::vector<CapDiagUnderTable> &GetCapDiagUnderRef();
     std::vector<CapOverUnderTable> &GetCapOverUnderRef();
 
+    int ModelIndex() const;
     void FixResOverTableLastEntry();
+    double GetOverSubstrateNoSurroundingWireRes();
+    double GetOverSubstrateNoSurroundingWireCap();
     void Report();
 
   private:
@@ -51,12 +54,15 @@ class LayerTechConfig {
     std::vector<LayerTechConfigCorner> corners_;
   public:
     void AddCorner(int corner_index);
+    std::vector<LayerTechConfigCorner> &CornersRef();
     LayerTechConfigCorner *GetLastCorner();
+    void FixResOverTable();
 
     void Report();
 };
 
 class Layer {
+    friend class Tech;
   public:
     Layer(std::string &name, LayerType type, MetalDirection direction) :
         name_(name), type_(type), direction_(direction) {}
@@ -184,13 +190,32 @@ class Layer {
     void InitLayerTechConfig();
     LayerTechConfig *GetLayerTechConfig();
     void AddTechConfigCorner(int corner_index);
+    void SetResistanceUnitFromTechConfig();
+    void SetResistanceUnitFromLef();
+    void SetCapacitanceUnitFromTechConfig();
+    void SetCapacitanceUnitFromLef();
+    double GetResistance(
+        double width,
+        double length,
+        int corner_index
+    );
+    double GetAreaCapacitance(
+        double width,
+        double length,
+        int corner_index
+    );
+    double GetFringeCapacitance(
+        double width,
+        double length,
+        int model_index
+    );
 
     friend ostream &operator<<(ostream &, const Layer &);
 
     void Report();
 
   private:
-    string name_;
+    std::string name_;
     LayerType type_;
     int id_ = -1;
 
@@ -212,21 +237,21 @@ class Layer {
     double spacing_ = -1;
     AdjacentCutSpacing adjacent_cut_spacing_;
 
-    /**** RC estimation ****/
-    double unit_area_cap = -1;
-    double unit_edge_cap = -1;
-    double unit_res = -1;
-    /**** Part 1. parameters from LEF ****/
+    /**** RC estimation (multiple corners) ****/
+    std::vector<double> unit_area_cap_;
+    std::vector<double> unit_edge_cap_;
+    std::vector<double> unit_res_;
+    /**** Part 1. parameters from LEF (only one corner?) ****/
     // capacitance for each square unit, in picofarads per square micron. This is used to model wire-to-ground capacitance.
     double capacitance_cpersqdist_ = -1;
     // Specifies the multiplier for interconnect capacitance to account for increases in capacitance caused by nearby wires.
     double capmultiplier_ = 1;
     // segment capacitance = (layer_capacitance_per_square x segment_width x segment_length) + (peripheral_capacitance x 2 (segment_width + segment_length))
-    double edgecapacitance_ = -1; // not used yet
+    double edgecapacitance_ = -1;
     // Specifies the resistance for a square of wire, in ohms per square. The resistance of a wire can be defined as
     // RPERSQU x wire_length/wire_width
     double resistance_rpersq_ = -1;
-    /**** Part 2. parameters from OpenRCX technology configuration file ****/
+    /**** Part 2. parameters from OpenRCX technology configuration file (multiple corners) ****/
     LayerTechConfig *layer_tech_config_ = nullptr;
 };
 

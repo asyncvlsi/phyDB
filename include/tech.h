@@ -140,6 +140,8 @@ class Tech {
     void AddCapDiagUnderTable(CapDiagUnderTable *cap_diag_under_table);
     void AddCapOverUnderTable(CapOverUnderTable *cap_over_under_table);
     void FixResOverTable();
+    void SetResistanceUnit(bool from_tech_config, bool is_report);
+    void SetCapacitanceUnit(bool from_tech_config, bool is_report);
     void ReportLayersTechConfig();
 
     void ReportSites();

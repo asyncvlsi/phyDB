@@ -19,8 +19,8 @@ int main(int argc, char **argv) {
     phy_db.ReadTechConfigFile(tech_config_file_name);
 
     phy_db.GetTechPtr()->ReportLayersTechConfig();
-    //phy_db.GetTechPtr()->CalculateSimplifiedResistanceTable(true);
-    //phy_db.GetTechPtr()->CalculateSimplifiedFringeCapacitanceTable(true);
+    phy_db.GetTechPtr()->SetResistanceUnit(true, true);
+    phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
 
     return 0;
 }

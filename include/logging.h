@@ -21,7 +21,7 @@ inline void PhyDBExpects(bool e, const std::string &error_message) {
 }
 
 inline void PhyDBWarns(bool e, const std::string &message) {
-    if (!e) {
+    if (e) {
         std::cout << "\033[0;31m" << "WARNING:\n"
                   << "    " << message << "\033[0m" << std::endl;
         std::cout

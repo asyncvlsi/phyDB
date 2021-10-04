@@ -103,10 +103,64 @@ std::vector<CapOverUnderTable> &LayerTechConfigCorner::GetCapOverUnderRef() {
     return cap_overunder_;
 }
 
+int LayerTechConfigCorner::ModelIndex() const {
+    return model_index_;
+}
+
 void LayerTechConfigCorner::FixResOverTableLastEntry() {
     for (auto &res_over_table: res_over_) {
         res_over_table.FixLastEntryIfWrong();
     }
+}
+
+/****
+ * @brief Returns the unit resistance for metal segment over substrate with no
+ * surrounding wires.
+ *
+ * This function calculate the simplified unit resistance in the following way:
+ * 1. iterate over all ResOver tables
+ * 2. find the first ResOver table with over_index -1 (substrate, 0 used in technology configuration file)
+ * 3. return res_ in the first entry as the result
+ * 4. if there is no ResOver table satisfies this condition, return -1;
+ *
+ * @return unit resistance
+ */
+double LayerTechConfigCorner::GetOverSubstrateNoSurroundingWireRes() {
+    double res = -1;
+    for (auto &table: res_over_) {
+        if (table.OverIndex() == -1) {
+            if (!table.GetTable().empty()) {
+                res = table.GetTable()[0].res_;
+                break;
+            }
+        }
+    }
+    return res;
+}
+
+/****
+ * @brief Returns the unit capacitance for metal segment over substrate with no
+ * surrounding wires.
+ *
+ * This function calculate the simplified unit fringe capacitance in the following way:
+ * 1. iterate over all OVER tables
+ * 2. find the first OVER tables with over_index -1
+ * 3. return fringe_cap_ in the last entry as the result
+ * 4. if there is no OVER table satisfies this condition, return -1;
+ *
+ * @return unit fringe capacitance
+ */
+double LayerTechConfigCorner::GetOverSubstrateNoSurroundingWireCap() {
+    double res = -1;
+    for (auto &table: cap_over_) {
+        if (table.OverIndex() == -1) {
+            if (!table.GetTable().empty()) {
+                res = table.GetTable().back().fringe_cap_;
+                break;
+            }
+        }
+    }
+    return res;
 }
 
 void LayerTechConfigCorner::Report() {
@@ -131,11 +185,21 @@ void LayerTechConfig::AddCorner(int corner_index) {
     corners_.emplace_back(corner_index);
 }
 
+std::vector<LayerTechConfigCorner> &LayerTechConfig::CornersRef() {
+    return corners_;
+}
+
 LayerTechConfigCorner *LayerTechConfig::GetLastCorner() {
     if (corners_.empty()) {
         return nullptr;
     }
     return &corners_.back();
+}
+
+void LayerTechConfig::FixResOverTable() {
+    for (auto &corner: corners_) {
+        corner.FixResOverTableLastEntry();
+    }
 }
 
 void LayerTechConfig::Report() {
@@ -280,28 +344,34 @@ SpacingTable *Layer::SetSpacingTable(SpacingTable &st) {
     return &spacing_table_;
 }
 
-SpacingTable *Layer::SetSpacingTable(int n_col,
-                                     int n_row,
-                                     const vector<double> &v_parallel_run_length,
-                                     const vector<double> &v_width,
-                                     const vector<double> &v_spacing) {
+SpacingTable *Layer::SetSpacingTable(
+    int n_col,
+    int n_row,
+    const vector<double> &v_parallel_run_length,
+    const vector<double> &v_width,
+    const vector<double> &v_spacing
+) {
     spacing_table_ =
         SpacingTable(n_col, n_row, v_parallel_run_length, v_width, v_spacing);
     return &spacing_table_;
 }
 
-SpacingTableInfluence *Layer::AddSpacingTableInfluence(double width,
-                                                       double within,
-                                                       double spacing) {
+SpacingTableInfluence *Layer::AddSpacingTableInfluence(
+    double width,
+    double within,
+    double spacing
+) {
     spacing_table_influences_.emplace_back(width, within, spacing);
     return &spacing_table_influences_.back();
 }
 
-EolSpacing *Layer::AddEolSpacing(double spacing,
-                                 double width,
-                                 double within,
-                                 double par_edge,
-                                 double par_within) {
+EolSpacing *Layer::AddEolSpacing(
+    double spacing,
+    double width,
+    double within,
+    double par_edge,
+    double par_within
+) {
     eol_spacings_.emplace_back(spacing, width, within, par_edge, par_within);
     return &eol_spacings_.back();
 }
@@ -311,9 +381,11 @@ CornerSpacing *Layer::SetCornerSpacing(CornerSpacing &cornerSpacing) {
     return &corner_spacing_;
 }
 
-AdjacentCutSpacing *Layer::SetAdjCutSpacing(double spacing,
-                                            int adjacent_cuts,
-                                            int cut_within) {
+AdjacentCutSpacing *Layer::SetAdjCutSpacing(
+    double spacing,
+    int adjacent_cuts,
+    int cut_within
+) {
     adjacent_cut_spacing_ =
         AdjacentCutSpacing(spacing, adjacent_cuts, cut_within);
     return &adjacent_cut_spacing_;
@@ -352,6 +424,155 @@ void Layer::AddTechConfigCorner(int corner_index) {
         InitLayerTechConfig();
     }
     layer_tech_config_->AddCorner(corner_index);
+}
+
+/****
+ * @brief This function computes a optimized/simplified resistance table for
+ * resistance extraction.
+ *
+ * This function is implemented based on `extMain::getResCapTable(...)` and
+ * `extMain::calcRes0(...)` in OpenRCX.
+ * The basic goal of the above two functions is to construct a simpler resistance
+ * table to extract resistance, because the `ResOver` table may contain duplicated
+ * or redundant information.
+ *
+ * @param
+ *
+ * @return nothing
+ */
+void Layer::SetResistanceUnitFromTechConfig() {
+    PhyDBExpects(layer_tech_config_ != nullptr,
+                 "Cannot find RC extraction parameters from technology configuration file: "
+                     + name_);
+    size_t number_of_corners = layer_tech_config_->CornersRef().size();
+    unit_res_.assign(number_of_corners, 0);
+
+    for (size_t i = 0; i < number_of_corners; ++i) {
+        auto corner = layer_tech_config_->CornersRef()[i];
+        double unit_res = corner.GetOverSubstrateNoSurroundingWireRes();
+        PhyDBExpects(unit_res >= 0,
+                     "Cannot find unit resistance for corner: " + name_ + " "
+                         + std::to_string(corner.ModelIndex()));
+        unit_res_[i] = unit_res;
+    }
+}
+
+void Layer::SetResistanceUnitFromLef() {
+    PhyDBWarns(resistance_rpersq_ <= 0,
+               "resistance_rpersq_ not set: " + name_);
+    unit_res_.assign(1, resistance_rpersq_);
+}
+
+/****
+ * @brief This function computes a optimized/simplified fringe capacitance table
+ * for fringe capacitance extraction.
+ *
+ * This function is implemented based on `extMain::getShapeRC`, `extMain::getResCapTable(...)`,
+ * `extMetRCTable::getOverFringeRC(...)`, and `extDistWidthRCTable::getFringeRC`
+ * in OpenRCX. In these functions, the capacitance from the area of the metal segment
+ * is set to 0, one possible reason is that the metal segment also has the same width,
+ * so the area capacitance can be absorb into the fringe capacitance
+ *     fringe_capacitance = fringe_capacitance_factor * 2 * length (+width ?)
+ * it seems width is ignored from the above functions.
+ * And area capacitance is
+ *     area_capacitance = area_capacitance_factor * length * width
+ * because we assume the above width is fixed, so we can have
+ *     area_capacitance = area_capacitance_factor' * length
+ * and then we can put the area capacitance into the fringe capacitance.
+ *
+ * @param
+ *
+ * @return nothing
+ */
+void Layer::SetCapacitanceUnitFromTechConfig() {
+    PhyDBExpects(layer_tech_config_ != nullptr,
+                 "Cannot find RC extraction parameters from technology configuration file: "
+                     + name_);
+    size_t number_of_corners = layer_tech_config_->CornersRef().size();
+    unit_area_cap_.assign(number_of_corners, 0);
+    unit_edge_cap_.assign(number_of_corners, 0);
+
+    for (size_t i = 0; i < number_of_corners; ++i) {
+        auto corner = layer_tech_config_->CornersRef()[i];
+        double unit_cap = corner.GetOverSubstrateNoSurroundingWireCap();
+        PhyDBExpects(unit_cap >= 0,
+                     "Cannot find unit capacitance for corner: " + name_ + " "
+                         + std::to_string(corner.ModelIndex()));
+        unit_edge_cap_[i] = unit_cap;
+    }
+}
+
+void Layer::SetCapacitanceUnitFromLef() {
+    PhyDBWarns(capacitance_cpersqdist_ <= 0,
+               "capacitance_cpersqdist_ not set: " + name_);
+    PhyDBWarns(edgecapacitance_ <= 0,
+               "edgecapacitance_ not set: " + name_);
+    unit_area_cap_.assign(1, capacitance_cpersqdist_ * capmultiplier_);
+    unit_edge_cap_.assign(1, edgecapacitance_ * capmultiplier_);
+}
+
+/****
+ * @brief Returns the resistance of a metal segment.
+ *
+ * The resistance is computed using the following formula:
+ *     r = resistance_factor * length / width
+ * where resistance_factor is from the technology configuration file.
+ *
+ * @param width: width of the metal segment
+ * @param length: length of the metal segment
+ * @param corner_index: the index of corner
+ * @return resistance
+ */
+double Layer::GetResistance(
+    double width,
+    double length,
+    int corner_index
+) {
+    assert(corner_index < (int) unit_res_.size());
+    return unit_res_[corner_index] * length / width;
+}
+
+/****
+ * @brief Returns the area capacitance of a metal segment.
+ *
+ * The fringe capacitance is computed using the following formula:
+ *     c = area_capacitance_factor * width * length
+ *
+ * Important: this area capacitance from technology configuration file is 0
+ *
+ * @param width: width of the metal segment, width is not used in this function for now
+ * @param length: length of the metal segment
+ *  * @param corner_index: the index of corner
+ * @return fringe capacitance
+ */
+double Layer::GetAreaCapacitance(
+    double width,
+    double length,
+    int corner_index
+) {
+    assert(corner_index < (int) unit_area_cap_.size());
+    return unit_area_cap_[corner_index] * width * length;
+}
+
+/****
+ * @brief Returns the fringe capacitance of a metal segment.
+ *
+ * The fringe capacitance is computed using the following formula:
+ *     c = fringe_capacitance_factor * 2 * length
+ * where fringe_capacitance_factor is from the technology configuration file.
+ *
+ *
+ * @param width: width of the metal segment, width is not used in this function for now
+ * @param length: length of the metal segment
+ * @return fringe capacitance
+ */
+double Layer::GetFringeCapacitance(
+    double width,
+    double length,
+    int model_index
+) {
+    assert(model_index < (int) unit_edge_cap_.size());
+    return unit_edge_cap_[model_index] * 2 * (width + length);
 }
 
 ostream &operator<<(ostream &os, const Layer &l) {

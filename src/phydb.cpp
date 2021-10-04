@@ -801,6 +801,7 @@ void PhyDB::ReadTechConfigFile(string const &tech_config_file_name) {
     std::istream *s = &ist;
     interpreter.SetInputStream(s);
     interpreter.Parse();
+    tech_.FixResOverTable();
 }
 
 void PhyDB::WriteDef(string const &def_file_name) {

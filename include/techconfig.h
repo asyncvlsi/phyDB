@@ -200,99 +200,17 @@ class CapOverUnderTable {
     std::vector<CapEntry> table_;
 };
 
-/****
- * @brief A class for storing
- */
-class CornerModel {
-  public:
-    explicit CornerModel(int model_index) : model_index_(model_index) {}
-
-    /**** DO NOT USE--these methods are for parsing technology configuration files ****/
-    void MarkResOver();
-    void MarkCapOver();
-    void MarkCapUnder();
-    void MarkCapDiagUnder();
-    void MarkCapOverUnder();
-    void MarkNothing();
-    void FixResOverTableLastEntry();
-
-    /**** getters for raw data ****/
-    std::vector<ResOverTable> &GetResOverTablesRef();
-    std::vector<CapOverTable> &GetCapOverTablesRef();
-    std::vector<CapUnderTable> &GetCapUnderTablesRef();
-    std::vector<CapDiagUnderTable> &GetCapDiagUnderTablesRef();
-    std::vector<CapOverUnderTable> &GetCapOverUnderTablesRef();
-
-    void CalculateSimplifiedResistanceTable(bool is_report = false);
-    double GetResistance(
-        int metal_index,
-        double width,
-        double length
-    );
-
-    void CalculateSimplifiedFringeCapacitanceTable(bool is_report = false);
-    double GetFringeCapacitance(
-        int metal_index,
-        double width,
-        double length
-    );
-
-    void Report();
-    friend class Parser;
-    friend class TechConfig;
-  private:
-    int model_index_;
-    /**** raw data from technology configuration file ****/
-    std::vector<ResOverTable> res_over_;
-    std::vector<CapOverTable> cap_over_;
-    std::vector<CapUnderTable> cap_under_;
-    std::vector<CapDiagUnderTable> cap_diagunder_;
-    std::vector<CapOverUnderTable> cap_overunder_;
-
-    /**** temporary pointers for parsing technology configuration files ****/
-    ResOverTable *tmp_res_over_ = nullptr;
-    CapOverTable *tmp_cap_over_ = nullptr;
-    CapUnderTable *tmp_cap_under_ = nullptr;
-    CapDiagUnderTable *tmp_cap_diagunder_ = nullptr;
-    CapOverUnderTable *tmp_cap_overunder_ = nullptr;
-
-    /**** simplified/optimized table for fast look-up ****/
-    std::vector<double> resistance_table_;
-    std::vector<double> fringe_capacitance_table_;
-};
-
 class TechConfig {
   public:
     bool is_diagmodel_on_ = false;
     int layer_count_ = 0;
     int model_count_; // DensityRate : model_count data_rate_table
     std::vector<double> data_rate_table_;
-    std::vector<CornerModel> model_table_; // DensityModel
 
     void SetDiagModelOn(bool is_diagmodel_on);
     void SetLayerCount(int layer_count);
     void SetModelCount(int model_count);
     void AddDataRate(double data_rate);
-    void AddModel(int model_index);
-    CornerModel *GetLastModel();
-
-    void FixResOverTable();
-    void CalculateSimplifiedResistanceTable(bool is_report = false);
-    double GetResistance(
-        int metal_index,
-        double width,
-        double length,
-        int model_index
-    );
-    void CalculateSimplifiedFringeCapacitanceTable(bool is_report = false);
-    double GetFringeCapacitance(
-        int metal_index,
-        double width,
-        double length,
-        int model_index
-    );
-
-    CornerModel &GetModel(int model_index);
 
     void Report();
 };
