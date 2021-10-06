@@ -297,7 +297,11 @@ int PhyDB::GetNetId(std::string &net_name) {
     return res->second;
 }
 
-void PhyDB::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
+void PhyDB::AddIoPinToNet(
+    std::string &iopin_name,
+    std::string &net_name,
+    void *act_io_pin_ptr
+) {
     PhyDBExpects(IsIoPinExisting(iopin_name),
                  "Cannot add a nonexistent iopin to a net: " + iopin_name);
     PhyDBExpects(IsNetExisting(net_name),
@@ -344,6 +348,43 @@ void PhyDB::BindPhydbPinToActPin(
     int comp_id = design_.component_2_id_[comp_name];
     int pin_id = macro_ptr->GetPinId(pin_name);
 
+    if (timing_api_.IsActComPinPtrExisting(act_comp_pin_ptr)) {
+        auto id_pair = timing_api_.ActCompPinPtr2Id(act_comp_pin_ptr);
+        Component &comp = design_.components_[id_pair.comp_id];
+        Macro *tmp_macro_ptr = comp.GetMacro();
+        Pin &pin = tmp_macro_ptr->GetPinsRef()[id_pair.pin_id];
+        std::string error_msg =
+            "Component pin: " + comp.GetName() + " " + pin.GetName()
+                + " has the same Act pointer as " + comp_name + " " + pin_name;
+        PhyDBExpects(false, error_msg);
+    }
+    timing_api_.AddActCompPinPtrIdPair(act_comp_pin_ptr, comp_id, pin_id);
+}
+
+void PhyDB::AddCompPinToNetWithActPtr(
+    std::string &comp_name,
+    std::string &pin_name,
+    std::string &net_name,
+    void *act_comp_pin_ptr
+) {
+    PhyDBExpects(IsNetExisting(net_name),
+                 "Cannot add a component pin to a nonexistent Net: "
+                     + net_name);
+    PhyDBExpects(IsComponentExisting(comp_name),
+                 "Cannot add a nonexistent component to a net: " + comp_name);
+    Component *comp_ptr = GetComponentPtr(comp_name);
+    std::string macro_name = comp_ptr->GetMacro()->GetName();
+    Macro *macro_ptr = GetMacroPtr(macro_name);
+    PhyDBExpects(macro_ptr->IsPinExist(pin_name),
+                 "Macro " + macro_name + " does not contain a pin with name "
+                     + pin_name);
+
+    int comp_id = GetComponentId(comp_name);
+    int pin_id = macro_ptr->GetPinId(pin_name);
+    int net_id = GetNetId(net_name);
+    design_.AddCompPinToNet(comp_id, pin_id, net_id);
+
+    if (act_comp_pin_ptr == nullptr) return;
     if (timing_api_.IsActComPinPtrExisting(act_comp_pin_ptr)) {
         auto id_pair = timing_api_.ActCompPinPtr2Id(act_comp_pin_ptr);
         Component &comp = design_.components_[id_pair.comp_id];
@@ -548,26 +589,31 @@ galois::eda::utility::ExtNetlistAdaptor *PhyDB::GetNetlistAdaptor() {
 
 void PhyDB::PushRCToTimer() {
     auto spef_manager = GetParaManager();
-    if (spef_manager == nullptr) {
-        std::cout << "SPEF manager is a nullptr";
-        return;
-    } else {
-        std::cout << "Found the SPEF manager\n";
-    }
+    PhyDBExpects(spef_manager != nullptr,
+                 "Cannot push RC to the timer because the SPEF manager is not set");
     auto libs = GetCellLibs();
-    std::cout << "Cell library number: " << libs.size() << "\n";
+    PhyDBExpects(libs.size() >= 0, "No cell library found in the timer?");
 
     // add nets and pins to the SPEF manager
     int number_of_nets = (int) design_.nets_.size();
     for (int i = 0; i < number_of_nets; ++i) {
         void *act_net = timing_api_.net_id_2_act_[i];
+        PhyDBExpects(act_net != nullptr,
+                     "Cannot map from a PhyDB net to an ACT net, net name: "
+                         + design_.nets_[i].GetName());
         spef_manager->addNet(act_net);
 
         auto &net = design_.nets_[i];
         int number_of_pins = (int) net.GetPinsRef().size();
-        for (int j = 0; j<number_of_pins; ++j) {
+        for (int j = 0; j < number_of_pins; ++j) {
             auto &phydb_pin = net.GetPinsRef()[j];
             void *act_pin = timing_api_.component_pin_id_2_act_[phydb_pin];
+            PhyDBExpects(act_pin != nullptr,
+                         "Cannot map from a PhyDB component pin to an ACT pin: "
+                             + design_.components_[phydb_pin.comp_id].GetName()
+                             + " "
+                             + design_.components_[phydb_pin.comp_id].GetMacro()->GetPinsRef()[j].GetName());
+            //auto spef_pin = spef_manager->findPin(act_pin);
             if (IsDriverPin(phydb_pin)) {
                 spef_manager->addDriverPin(act_pin);
             } else {
@@ -576,7 +622,6 @@ void PhyDB::PushRCToTimer() {
         }
     }
 }
-
 #endif
 
 bool PhyDB::IsDriverPin(PhydbPin &phydb_pin) {
@@ -917,10 +962,6 @@ void PhyDB::InitializeRCEstimator(RCEstimatorType rc_estimator_type) {
             PhyDBExpects(false, "Unknown RCEstimatorType");
         }
     }
-}
-
-void PhyDB::ExtractNetRC(int net_id) {
-    rc_estimator_->ExtractNetRC(net_id);
 }
 
 void PhyDB::PushNetRCToManager(int net_id) {

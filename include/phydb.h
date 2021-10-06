@@ -129,7 +129,11 @@ class PhyDB {
     );
     Net *GetNetPtr(std::string &net_name);
     int GetNetId(std::string &net_name);
-    void AddIoPinToNet(std::string &iopin_name, std::string &net_name);
+    void AddIoPinToNet(
+        std::string &iopin_name,
+        std::string &net_name,
+        void *act_io_pin_ptr = nullptr
+        );
     void AddCompPinToNet(
         std::string &comp_name,
         std::string &pin_name,
@@ -139,6 +143,12 @@ class PhyDB {
         std::string &comp_name,
         std::string &pin_name,
         void *act_comp_pin_ptr
+    );
+    void AddCompPinToNetWithActPtr(
+        std::string &comp_name,
+        std::string &pin_name,
+        std::string &net_name,
+        void *act_comp_pin_ptr = nullptr
     );
 
     SNet *AddSNet(std::string &net_name, SignalUse use);
@@ -256,7 +266,6 @@ class PhyDB {
     * The following APIs are for RC extraction and timing analysis
     * ************************************************/
     void InitializeRCEstimator(RCEstimatorType rc_estimator_type);
-    void ExtractNetRC(int net_id);
     void PushNetRCToManager(int net_id);
 };
 

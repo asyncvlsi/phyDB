@@ -69,11 +69,11 @@ link_directories($ENV{ACT_HOME}/lib)
 # Check if the galois_eda library is installed
 ############################################################################
 find_library(
-    GALOIS_EDA
+    GALOIS_EDA_LIBRARY
     NAMES galois_eda
     PATHS $ENV{ACT_HOME}/lib
 )
-if (NOT GALOIS_EDA)
+if (NOT GALOIS_EDA_LIBRARY)
     set(PHYDB_USE_GALOIS 0)
     message(STATUS "Cannot find libgalois_eda.a")
 else ()
@@ -147,11 +147,16 @@ add_library(
     ${SRC_DIR}/scanner.cpp
     ${SRC_DIR}/parser.cpp
 )
-add_dependencies(phydb flex_target bison_target)
+add_dependencies(
+    phydb
+    flex_target
+    bison_target
+)
 target_link_libraries(
     phydb
     lef def
     ${Boost_LIBRARIES}
+    ${GALOIS_EDA_LIBRARY}
 )
 
 add_executable(PhyDB_test test/test.cpp)
