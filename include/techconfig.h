@@ -204,7 +204,7 @@ class TechConfig {
   public:
     bool is_diagmodel_on_ = false;
     int layer_count_ = 0;
-    int model_count_; // DensityRate : model_count data_rate_table
+    int corner_count_; // DensityRate : model_count data_rate_table
     std::vector<double> data_rate_table_;
 
     void SetDiagModelOn(bool is_diagmodel_on);

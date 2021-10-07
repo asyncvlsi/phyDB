@@ -192,6 +192,7 @@ class PhyDB {
     std::vector<galois::eda::liberty::CellLib*> GetCellLibs();
     galois::eda::utility::ExtNetlistAdaptor* GetNetlistAdaptor();
 
+    void BuildPhydbActAdaptor();
     void PushRCToTimer();
 #endif
 
@@ -246,14 +247,12 @@ class PhyDB {
     void OverrideComponentLocsFromDef(string const &def_file_name);
     void ReadCell(string const &cell_file_name);
     void ReadCluster(string const &cluster_file_name);
-    void ReadTechConfigFile(string const &tech_config_file_name);
+    bool ReadTechConfigFile(string const &tech_config_file_name);
+    bool ReadTechConfigFile(int argc, char **argv);
 
     void WriteDef(string const &def_file_name);
     void WriteCluster(string const &cluster_file_name);
     void WriteGuide(string const &guide_file_name);
-
-    void SetVerbose(int v);
-    int GetVerbose();
 
   private:
     Tech tech_;

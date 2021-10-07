@@ -230,7 +230,7 @@ void TechConfig::SetLayerCount(int layer_count) {
 }
 
 void TechConfig::SetModelCount(int model_count) {
-    model_count_ = model_count;
+    corner_count_ = model_count;
 }
 
 void TechConfig::AddDataRate(double data_rate) {
@@ -248,7 +248,7 @@ void TechConfig::Report() {
 
     std::cout << "LayerCount " << layer_count_ << "\n";
 
-    std::cout << "DensityRate " << model_count_ << " ";
+    std::cout << "DensityRate " << corner_count_ << " ";
     for (auto &data_rate: data_rate_table_) {
         std::cout << data_rate << " ";
     }

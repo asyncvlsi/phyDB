@@ -353,10 +353,10 @@ void PhyDB::BindPhydbPinToActPin(
         Component &comp = design_.components_[id_pair.comp_id];
         Macro *tmp_macro_ptr = comp.GetMacro();
         Pin &pin = tmp_macro_ptr->GetPinsRef()[id_pair.pin_id];
-        std::string error_msg =
-            "Component pin: " + comp.GetName() + " " + pin.GetName()
-                + " has the same Act pointer as " + comp_name + " " + pin_name;
-        PhyDBExpects(false, error_msg);
+        std::cout << "Component pin: " << comp.GetName() << " " << pin.GetName()
+                  << " has the same Act pointer as " << comp_name << " "
+                  << pin_name << std::endl;
+        exit(1);
     }
     timing_api_.AddActCompPinPtrIdPair(act_comp_pin_ptr, comp_id, pin_id);
 }
@@ -390,10 +390,10 @@ void PhyDB::AddCompPinToNetWithActPtr(
         Component &comp = design_.components_[id_pair.comp_id];
         Macro *tmp_macro_ptr = comp.GetMacro();
         Pin &pin = tmp_macro_ptr->GetPinsRef()[id_pair.pin_id];
-        std::string error_msg =
-            "Component pin: " + comp.GetName() + " " + pin.GetName()
-                + " has the same Act pointer as " + comp_name + " " + pin_name;
-        PhyDBExpects(false, error_msg);
+        std::cout << "Component pin: " << comp.GetName() << " " << pin.GetName()
+                  << " has the same Act pointer as " << comp_name << " "
+                  << pin_name << std::endl;
+        exit(1);
     }
     timing_api_.AddActCompPinPtrIdPair(act_comp_pin_ptr, comp_id, pin_id);
 }
@@ -585,6 +585,20 @@ std::vector<galois::eda::liberty::CellLib *> PhyDB::GetCellLibs() {
 
 galois::eda::utility::ExtNetlistAdaptor *PhyDB::GetNetlistAdaptor() {
     return timing_api_.GetNetlistAdaptor();
+}
+
+void PhyDB::BuildPhydbActAdaptor() {
+    auto timer_adaptor = GetNetlistAdaptor();
+    PhyDBExpects(timer_adaptor != nullptr,
+                 "Timer netlist adaptor no found! Cannot build phydb-act adaptor");
+    int number_of_nets = (int) design_.nets_.size();
+    for (int i = 0; i < number_of_nets; ++i) {
+        auto &net = design_.nets_[i];
+        void *act_net = timer_adaptor->getNetFromFullName(net.GetName(), '.');
+        PhyDBExpects(act_net != nullptr,
+                     "Net cannot be found in the timer netlist adaptor: "
+                         + net.GetName());
+    }
 }
 
 void PhyDB::PushRCToTimer() {
@@ -831,10 +845,8 @@ void PhyDB::ReadCell(string const &cell_file_name) {
                 && !ist.eof());
         }
     }
-    if (!tech_.IsWellInfoSet()) {
-        std::cout << "N/P well technology information not found!" << std::endl;
-        exit(1);
-    }
+    PhyDBExpects(tech_.IsWellInfoSet(),
+                 "N/P well technology information not found!");
     //tech_.ReportWellShape();
 
     //std::cout << "CELL file loading complete: " << cellFileName << "\n";
@@ -846,15 +858,11 @@ void PhyDB::ReadCluster(string const &cluster_file_name) {
         std::cout
             << "Loading cluster file: " << cluster_file_name << "\n";
     } else {
-        std::cout
-            << "ERROR: cannot open input file " << cluster_file_name
-            << std::endl;
-        exit(1);
+        PhyDBExpects(false, "cannot open input file " + cluster_file_name);
     }
 
     string tmp1, tmp2, tmp3;
     int lx, ux, ly, uy;
-    int cnt_y = 0, cnt_x = 0;
     ClusterCol *col;
     while (!infile.eof()) {
         infile >> tmp1 >> tmp2;
@@ -876,16 +884,58 @@ void PhyDB::ReadCluster(string const &cluster_file_name) {
     }
 }
 
-void PhyDB::ReadTechConfigFile(string const &tech_config_file_name) {
+/****
+ * @brief Read a technology configuration file
+ *
+ * @param tech_config_file_name
+ * @return true if there is no errors, false if there is anything wrong
+ */
+bool PhyDB::ReadTechConfigFile(string const &tech_config_file_name) {
+    // resistance and capacitance information will be saved into metal layers,
+    // so we need to make sure metal layers are in the database
+    if (tech_.layers_.empty()) {
+        std::cout
+            << "Layers are missing in PhyDB, cannot load technology configuration file\n";
+        return false;
+    }
+
+    // check if we can open the input file or not
     TechConfigParser interpreter(&tech_);
     std::ifstream ist(tech_config_file_name);
-    PhyDBExpects(ist.is_open(),
-                 "Cannot open technology configuration file: "
-                     + tech_config_file_name);
+    if (!ist.is_open()) {
+        std::cout << "Cannot open technology configuration file: "
+                  << tech_config_file_name << "\n";
+        return false;
+    }
+
+    // parse the file
     std::istream *s = &ist;
     interpreter.SetInputStream(s);
     interpreter.Parse();
+
+    // fix the last entry in the resistance over table
+    // and use this technology configuration table to set r/c units
     tech_.FixResOverTable();
+    tech_.SetResistanceUnit(true, false);
+    tech_.SetCapacitanceUnit(true, false);
+
+    return true;
+}
+
+bool PhyDB::ReadTechConfigFile(int argc, char **argv) {
+    if (argc < 2) {
+        std::cout << "Please provide a technology configuration file name\n";
+        return false;
+    }
+
+    std::string file_name(argv[1]);
+    if (file_name == "__fake__") {
+        tech_.LoadFakeTechConfigFile();
+    } else {
+        return ReadTechConfigFile(file_name);
+    }
+
+    return true;
 }
 
 void PhyDB::WriteDef(string const &def_file_name) {
@@ -898,10 +948,8 @@ void PhyDB::WriteCluster(string const &cluster_file_name) {
         std::cout
             << "writing cluster file: " << cluster_file_name << "\n";
     } else {
-        std::cout
-            << "ERROR: cannot open output cluster file "
-            << cluster_file_name << std::endl;
-        exit(1);
+        PhyDBExpects(false,
+                     "Cannot open output cluster file " + cluster_file_name);
     }
 
     auto cluster_cols = this->GetClusterColsRef();
@@ -925,10 +973,7 @@ void PhyDB::WriteGuide(string const &guide_file_name) {
         std::cout
             << "writing guide file: " << guide_file_name << "\n";
     } else {
-        std::cout
-            << "ERROR: cannot open output guide file " << guide_file_name
-            << std::endl;
-        exit(1);
+        PhyDBExpects(false, "Cannot open output guide file " + guide_file_name);
     }
 
     auto design_p = this->GetDesignPtr();

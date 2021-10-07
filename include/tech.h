@@ -16,47 +16,6 @@ namespace phydb {
 
 class Tech {
     friend class PhyDB;
-  private:
-    std::string version_;
-    std::string bus_bit_char_;
-    std::string divier_char_;
-    std::string clearance_measure_;
-    double manufacturing_grid_ = -1;
-
-    int database_micron_ = -1;
-
-    std::vector<Site> sites_;
-    std::vector<Layer> layers_;
-    std::vector<Macro> macros_;
-    std::vector<LefVia> vias_;
-    std::vector<ViaRuleGenerate> via_rule_generates_;
-
-    std::unordered_map<std::string, int> layer_2_id_;
-    std::unordered_map<std::string, int> macro_2_id_;
-    std::unordered_map<std::string, int> via_2_id_;
-    std::unordered_map<std::string, int> via_rule_generate_2_id_;
-
-    /****placement grid parameters****/
-    bool is_placement_grid_set_ = false;
-    double placement_grid_value_x_ = -1;
-    double placement_grid_value_y_ = -1;
-
-    /****N/P-well layers_****/
-    bool is_n_well_layer_set_ = false;
-    bool is_p_well_layer_set_ = false;
-    WellLayer *n_layer_ptr_ = nullptr;
-    WellLayer *p_layer_ptr_ = nullptr;
-    double same_diff_spacing_ = -1;
-    double any_diff_spacing_ = -1;
-    std::list<MacroWell> wells_;
-
-    /****LEF file name****/
-    std::string lef_name_;
-
-    /****technology configuration file****/
-    TechConfig tech_config_;
-    std::vector<std::shared_ptr<Layer>> metal_layers_;
-
   public:
     Tech() : manufacturing_grid_(-1), database_micron_(-1) {}
     ~Tech();
@@ -125,7 +84,10 @@ class Tech {
     bool IsWellInfoSet() const;
     WellLayer *GetNwellLayerPtr();
     WellLayer *GetPwellLayerPtr();
-    void GetDiffWellSpacing(double &same_diff_spacing, double any_diff_spacing);
+    void GetDiffWellSpacing(
+        double &same_diff_spacing,
+        double any_diff_spacing
+    ) const;
     void ReportWellShape(); // report the well shape_ for each BlockType for debugging purposes.
 
     std::string GetLefName() const;
@@ -152,6 +114,49 @@ class Tech {
     void Report(); // for debugging purposes
 
     friend ostream &operator<<(ostream &, const Tech &);
+
+  private:
+    std::string version_;
+    std::string bus_bit_char_;
+    std::string divier_char_;
+    std::string clearance_measure_;
+    double manufacturing_grid_ = -1;
+
+    int database_micron_ = -1;
+
+    std::vector<Site> sites_;
+    std::vector<Layer> layers_;
+    std::vector<Macro> macros_;
+    std::vector<LefVia> vias_;
+    std::vector<ViaRuleGenerate> via_rule_generates_;
+
+    std::unordered_map<std::string, int> layer_2_id_;
+    std::unordered_map<std::string, int> macro_2_id_;
+    std::unordered_map<std::string, int> via_2_id_;
+    std::unordered_map<std::string, int> via_rule_generate_2_id_;
+
+    /****placement grid parameters****/
+    bool is_placement_grid_set_ = false;
+    double placement_grid_value_x_ = -1;
+    double placement_grid_value_y_ = -1;
+
+    /****N/P-well layers_****/
+    bool is_n_well_layer_set_ = false;
+    bool is_p_well_layer_set_ = false;
+    WellLayer *n_layer_ptr_ = nullptr;
+    WellLayer *p_layer_ptr_ = nullptr;
+    double same_diff_spacing_ = -1;
+    double any_diff_spacing_ = -1;
+    std::list<MacroWell> wells_;
+
+    /****LEF file name****/
+    std::string lef_name_;
+
+    /****technology configuration file****/
+    TechConfig tech_config_;
+    std::vector<Layer *> metal_layers_;
+
+    void LoadFakeTechConfigFile();
 };
 
 ostream &operator<<(ostream &, const Tech &);

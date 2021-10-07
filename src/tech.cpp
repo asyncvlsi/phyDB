@@ -256,8 +256,10 @@ WellLayer *Tech::GetPwellLayerPtr() {
     return p_layer_ptr_;
 }
 
-void Tech::GetDiffWellSpacing(double &same_diff_spacing,
-                              double any_diff_spacing) {
+void Tech::GetDiffWellSpacing(
+    double &same_diff_spacing,
+    double any_diff_spacing
+) const {
     same_diff_spacing = same_diff_spacing_;
     any_diff_spacing = any_diff_spacing_;
 }
@@ -277,11 +279,9 @@ void Tech::SetLefName(std::string const &lef_file_name) {
 }
 
 void Tech::FindAllMetalLayers() {
-    PhyDBExpects(!layers_.empty(),
-                 "It seems LEF file is not loaded, cannot load technology configuration file");
     for (auto &layer: layers_) {
         if (layer.GetType() == ROUTING) {
-            metal_layers_.emplace_back(std::make_shared<Layer>(layer));
+            metal_layers_.emplace_back(&layer);
         }
     }
 }
@@ -359,12 +359,13 @@ void Tech::SetResistanceUnit(bool from_tech_config, bool is_report) {
     }
 
     if (is_report) {
-        int num_of_corners_ = tech_config_.model_count_;
+        int num_of_corners_ = tech_config_.corner_count_;
         for (int i = 0; i < num_of_corners_; ++i) {
-            std::cout << "model index: " << i << "\nres, ";
+            std::cout << "corner index: " << i << "\nres, ";
             size_t sz = metal_layers_.size();
             for (size_t j = 0; j < sz; ++j) {
-                std::cout << j + 1 << ": " << metal_layers_[j]->unit_res_[i] << ", ";
+                std::cout << j + 1 << ": " << metal_layers_[j]->unit_res_[i]
+                          << ", ";
             }
             std::cout << "\n";
         }
@@ -383,16 +384,18 @@ void Tech::SetCapacitanceUnit(bool from_tech_config, bool is_report) {
     }
 
     if (is_report) {
-        int num_of_corners_ = tech_config_.model_count_;
+        int num_of_corners_ = tech_config_.corner_count_;
         for (int i = 0; i < num_of_corners_; ++i) {
             std::cout << "model index: " << i << "\nedge cap, ";
             size_t sz = metal_layers_.size();
             for (size_t j = 0; j < sz; ++j) {
-                std::cout << j + 1 << ": " << metal_layers_[j]->unit_edge_cap_[i] << ", ";
+                std::cout << j + 1 << ": "
+                          << metal_layers_[j]->unit_edge_cap_[i] << ", ";
             }
             std::cout << "\narea cap, ";
             for (size_t j = 0; j < sz; ++j) {
-                std::cout << j + 1 << ": " << metal_layers_[j]->unit_area_cap_[i] << ", ";
+                std::cout << j + 1 << ": "
+                          << metal_layers_[j]->unit_area_cap_[i] << ", ";
             }
             std::cout << "\n";
         }
@@ -400,9 +403,11 @@ void Tech::SetCapacitanceUnit(bool from_tech_config, bool is_report) {
 }
 
 void Tech::ReportLayersTechConfig() {
-    for (auto &metal_ptr: metal_layers_) {
-        auto tech_config = metal_ptr->GetLayerTechConfig();
-        tech_config->Report();
+    for (auto &layer: layers_) {
+        if (layer.GetType() == ROUTING) {
+            auto tech_config = layer.GetLayerTechConfig();
+            tech_config->Report();
+        }
     }
 }
 
@@ -469,6 +474,16 @@ void Tech::Report() {
     ReportVias(); // TODO : Vias not reported, maybe they are not added using callback functions
     //ReportMacros();
     //ReportMacroWell();
+}
+
+void Tech::LoadFakeTechConfigFile() {
+    const double fake_resistance_unit = 0.001;
+    const double fake_capacitance_unit = 4e-5;
+    for (auto &metal_ptr: metal_layers_) {
+        metal_ptr->unit_res_.assign(1, fake_resistance_unit);
+        metal_ptr->unit_edge_cap_.assign(1, fake_capacitance_unit);
+        metal_ptr->unit_area_cap_.assign(1, 0);
+    }
 }
 
 }
