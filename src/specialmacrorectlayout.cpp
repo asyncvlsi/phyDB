@@ -31,7 +31,10 @@ Rect2D<int> &RectSignalLayer::Rect() {
     return rect_;
 }
 
-ostream &operator<<(ostream &os, const RectSignalLayer &rect_signal_layer) {
+std::ostream &operator<<(
+    std::ostream &os,
+    const RectSignalLayer &rect_signal_layer
+) {
     os << "rect " << rect_signal_layer.signal_name_ << " "
        << rect_signal_layer.layer_name_ << " "
        << rect_signal_layer.rect_.LLX() << "\t"

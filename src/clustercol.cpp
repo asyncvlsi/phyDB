@@ -2,11 +2,11 @@
 
 namespace phydb {
 
-void ClusterCol::SetName(string &name) {
+void ClusterCol::SetName(std::string &name) {
     name_ = name;
 }
 
-void ClusterCol::SetBotSignal(string &bot_signal) {
+void ClusterCol::SetBotSignal(std::string &bot_signal) {
     bool e = (bot_signal == "GND") || (bot_signal == "VDD");
     PhyDBExpects(e, "ERROR: bot signal in cluster col is not GND or VDD");
     bot_signal_ = bot_signal;
@@ -28,30 +28,35 @@ void ClusterCol::AddRow(int ly, int uy) {
     uy_.push_back(uy);
 }
 
-string ClusterCol::GetName() const {
+std::string ClusterCol::GetName() const {
     return name_;
 }
 
-string ClusterCol::GetBotSignal() const {
+std::string ClusterCol::GetBotSignal() const {
     return bot_signal_;
 }
+
 int ClusterCol::GetLX() const {
     return lx_;
 }
+
 int ClusterCol::GetUX() const {
     return ux_;
 }
-vector<int> &ClusterCol::GetLY() {
+
+std::vector<int> &ClusterCol::GetLY() {
     return ly_;
 }
-vector<int> &ClusterCol::GetUY() {
+
+std::vector<int> &ClusterCol::GetUY() {
     return uy_;
 }
 
 void ClusterCol::Report() {
-    cout << "signal: " << bot_signal_ << " " << lx_ << " " << ux_ << endl;
+    std::cout << "signal: " << bot_signal_ << " " << lx_ << " " << ux_
+              << std::endl;
     for (size_t i = 0; i < ly_.size(); i++) {
-        cout << ly_[i] << " " << uy_[i] << endl;
+        std::cout << ly_[i] << " " << uy_[i] << std::endl;
     }
 
 }

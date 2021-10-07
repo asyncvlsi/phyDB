@@ -7,23 +7,21 @@
 
 using namespace phydb;
 
-
-void test_datatype( ) {
-
-    cout << "this is test_datatype!"<< endl;
+void test_datatype() {
+    std::cout << "this is test_datatype!" << std::endl;
 
     //Point2D
-        Point2D<int> a1;
-        assert(a1.IsEmpty());
-        a1.x = 1;
-        a1.y = 2;
-        Point2D<int> b1(3, 0), c1;
+    Point2D<int> a1;
+    assert(a1.IsEmpty());
+    a1.x = 1;
+    a1.y = 2;
+    Point2D<int> b1(3, 0), c1;
     c1.Set(2, 6);
-        assert(a1 > b1 && b1 < c1);
+    assert(a1 > b1 && b1 < c1);
     c1.Reset();
-        assert(c1.IsEmpty());
-        cout << b1 << endl;
-        cout << "Point2D test passes!" << endl;
+    assert(c1.IsEmpty());
+    std::cout << b1 << std::endl;
+    std::cout << "Point2D test passes!" << std::endl;
     //Point3D
     {
         Point3D<double> a2;
@@ -36,8 +34,8 @@ void test_datatype( ) {
         assert(a2 > b2 && a2 > c2);
         c2.Reset();
         assert(c2.IsEmpty());
-        cout << b2 << endl;
-        cout << "Point3D test passes!" << endl;
+        std::cout << b2 << std::endl;
+        std::cout << "Point3D test passes!" << std::endl;
     }
     //Rect2D 
     {
@@ -47,129 +45,132 @@ void test_datatype( ) {
         Point2D<double> q3(1.5, 2.5);
         assert(!a3.BoundaryExclusiveCover(p3) && a3.Cover(p3));
         assert(a3.BoundaryExclusiveCover(q3));
-        cout << a3 << endl;
+        std::cout << a3 << std::endl;
         a3.ur.x = 0.5;
         assert(!a3.IsLegal());
-        cout << "Rect2D test passes!" << endl;
+        std::cout << "Rect2D test passes!" << std::endl;
     }
     //Rect3D
     {
         Rect3D<double> a4;
         a4.set(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
-        cout << a4 << endl;
+        std::cout << a4 << std::endl;
 
-        cout << "Rect3D test passes!" << endl;
+        std::cout << "Rect3D test passes!" << std::endl;
     }
     //Range
     Range<int> a5(1, 5);
-    cout << a5 << endl;
-    cout << "Range test passes!" << endl;
+    std::cout << a5 << std::endl;
+    std::cout << "Range test passes!" << std::endl;
 
     //LayerRect
-    string layerName = "Metal1";
+    std::string layerName = "Metal1";
     Rect2D<double> rect1(1.0, 2.0, 3.0, 4.0);
     Rect2D<double> rect2(10.0, 20.0, 30.0, 40.0);
 
-    vector<Rect2D<double>> v;
+    std::vector<Rect2D<double>> v;
     v.push_back(rect1);
     v.push_back(rect2);
     LayerRect lr(layerName, v);
-    cout << lr << endl;
-    cout << "LayerRect passes!" << endl;
+    std::cout << lr << std::endl;
+    std::cout << "LayerRect passes!" << std::endl;
 
 }
 
-void test_spacingtable( ) {
+void test_spacingtable() {
     int nCol = 5;
     int nRow = 6;
 
-    vector<double> p;
-    vector<double> w;
-    vector<double> s;
+    std::vector<double> p;
+    std::vector<double> w;
+    std::vector<double> s;
 
-    for(int i = 0; i < nCol; i++)
-        p.push_back((double)i);
-    for(int j = 0; j < nRow; j++) 
+    for (int i = 0; i < nCol; i++)
+        p.push_back((double) i);
+    for (int j = 0; j < nRow; j++)
         w.push_back((double) (j + nCol));
-    for(int i = 0; i < nRow * nCol; i++) {
+    for (int i = 0; i < nRow * nCol; i++) {
         double f = (double) i;
         s.push_back(f / 10.0);
     }
 
     SpacingTable st(nCol, nRow, p, w, s);
-    cout << st << endl;
-    cout << "here?" << endl;
+    std::cout << st << std::endl;
+    std::cout << "here?" << std::endl;
 
     st.SetSpacingAt(4, 3, 100.0);
-    cout << st << endl;
+    std::cout << st << std::endl;
 }
 
-void test_layer( ) {
+void test_layer() {
     Layer l("metal1", ROUTING, VERTICAL, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6);
-    cout << l << endl;
+    std::cout << l << std::endl;
 
 }
 
-void test_site( ) {
+void test_site() {
     Site s("AAA", "BBB", 0.1, 0.2);
-    cout << s << endl;
+    std::cout << s << std::endl;
 
 }
 
-void test_tech( ) {
-    
+void test_tech() {
+
     Tech tech;
-    vector<Pin> pins;
+    std::vector<Pin> pins;
     OBS obs;
-    Macro macro1("testMacro", Point2D<double>(1.0, 2.0), Point2D<double>(3.0, 4.0), pins, obs);
+    Macro macro1("testMacro",
+                 Point2D<double>(1.0, 2.0),
+                 Point2D<double>(3.0, 4.0),
+                 pins,
+                 obs);
 
     std::string macro_name = "testMacro";
     tech.AddMacro(macro_name);
     auto *macro2 = tech.GetMacroPtr("testMacro");
 
-    cout << macro2->GetOrigin() << endl;
+    std::cout << macro2->GetOrigin() << std::endl;
     macro2->GetOriginRef().x = 2.0;
-    cout << macro2->GetOriginRef() << endl;
-    
+    std::cout << macro2->GetOriginRef() << std::endl;
 
 }
 
 int main() {
-    cout << "this is a test!"<< endl;
+    std::cout << "this is a test!" << std::endl;
     //
     //test_datatype( );
-    
+
     //test_spacingtable();
-    
+
     //test_layer();
-    
+
     //test_site();
-    
+
     //test_tech( );
 
     PhyDB db;
 
-    string clusterFileName = "circuit_router.cluster";
+    std::string clusterFileName = "circuit_router.cluster";
     db.ReadCluster(clusterFileName);
 
-    string lefFileName = "processor.lef";
+    std::string lefFileName = "processor.lef";
     db.ReadLef(lefFileName);
-    cout << "lef reading done" << endl;
+    std::cout << "lef reading done" << std::endl;
 
-    string defFileName = "pwroute.def";
+    std::string defFileName = "pwroute.def";
     db.ReadDef(defFileName);
-    cout << "def reading done" << endl;
+    std::cout << "def reading done" << std::endl;
 
-    string cellFileName = "processor.cell";
+    std::string cellFileName = "processor.cell";
     db.ReadCell(cellFileName);
 
     //db.GetTechPtr()->Report();
     //db.GetDesignPtr()->Report();
-    string write_def_file_name = "new.def";
+    std::string write_def_file_name = "new.def";
     db.WriteDef(write_def_file_name);
 
     //string write_cluster_file_name = "new.cluster";
     //db.WriteCluster(write_cluster_file_name);
-    
+
     return 0;
 }

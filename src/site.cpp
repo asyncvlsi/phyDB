@@ -2,11 +2,11 @@
 
 namespace phydb {
 
-void Site::SetName(string name) {
+void Site::SetName(std::string name) {
     name_ = name;
 }
 
-void Site::SetClassName(string className) {
+void Site::SetClassName(std::string className) {
     class_name_ = className;
 }
 
@@ -18,11 +18,11 @@ void Site::SetHeight(double height) {
     height_ = height;
 }
 
-string Site::GetName( ) const {
+std::string Site::GetName( ) const {
     return name_;
 }
 
-string Site::GetClassName( ) const {
+std::string Site::GetClassName( ) const {
     return class_name_;
 }
 
@@ -34,9 +34,9 @@ double Site::GetHeight( ) const {
     return height_;
 }
 
-ostream& operator<< (ostream& os, const Site& s) {
-    os << s.GetName() << " " << s.GetClassName() << endl;
-    os << s.GetWidth() << " " << s.GetHeight() << endl;
+std::ostream& operator<< (std::ostream& os, const Site& s) {
+    os << s.GetName() << " " << s.GetClassName() << "\n";
+    os << s.GetWidth() << " " << s.GetHeight() << "\n";
     return os;
 
 }

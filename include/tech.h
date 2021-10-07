@@ -47,7 +47,7 @@ class Tech {
         MetalDirection direction = HORIZONTAL
     );
     Layer *GetLayerPtr(std::string const &layer_name);
-    int GetLayerId(string const &layer_name);
+    int GetLayerId(std::string const &layer_name);
     const std::string &GetLayerName(int layerID);
     std::vector<Layer> &GetLayersRef();
 
@@ -59,12 +59,12 @@ class Tech {
     bool IsLefViaExisting(std::string const &via_name);
     LefVia *AddLefVia(std::string &via_name);
     LefVia *GetLefViaPtr(std::string const &via_name);
-    vector<LefVia> &GetLefViasRef();
+    std::vector<LefVia> &GetLefViasRef();
 
     bool IsViaRuleGenerateExisting(std::string const &name);
     ViaRuleGenerate *AddViaRuleGenerate(std::string &name);
     ViaRuleGenerate *GetViaRuleGeneratePtr(std::string const &name);
-    vector<ViaRuleGenerate> &GetViaRuleGeneratesRef();
+    std::vector<ViaRuleGenerate> &GetViaRuleGeneratesRef();
 
     void SetNwellLayer(
         double width,
@@ -113,7 +113,7 @@ class Tech {
     void ReportMacroWell();
     void Report(); // for debugging purposes
 
-    friend ostream &operator<<(ostream &, const Tech &);
+    friend std::ostream &operator<<(std::ostream &, const Tech &);
 
   private:
     std::string version_;
@@ -159,7 +159,7 @@ class Tech {
     void LoadFakeTechConfigFile();
 };
 
-ostream &operator<<(ostream &, const Tech &);
+std::ostream &operator<<(std::ostream &, const Tech &);
 
 }
 

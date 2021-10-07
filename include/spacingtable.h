@@ -9,9 +9,9 @@ class SpacingTable {
   private:
     int n_col_;
     int n_row_;
-    vector<double> parallel_run_length_;
-    vector<double> width_;
-    vector<double> spacing_;
+    std::vector<double> parallel_run_length_;
+    std::vector<double> width_;
+    std::vector<double> spacing_;
 
   public:
     SpacingTable() : n_col_(0), n_row_(0) {}
@@ -20,8 +20,13 @@ class SpacingTable {
         width_.resize(nR);
         spacing_.resize(nC * nR);
     }
-    SpacingTable(int nC, int nR, const vector<double>& v_parallel_run_length,
-                 const vector<double>& v_width, const vector<double>& v_spacing) {
+    SpacingTable(
+        int nC,
+        int nR,
+        const std::vector<double> &v_parallel_run_length,
+        const std::vector<double> &v_width,
+        const std::vector<double> &v_spacing
+    ) {
         SetSize(nC, nR);
         SetParallelRunLengthVec(v_parallel_run_length);
         SetWidthVec(v_width);
@@ -33,13 +38,13 @@ class SpacingTable {
     int GetNCol() const;
     int GetNRow() const;
 
-    void SetParallelRunLengthVec(const vector<double>& v);
-    void SetWidthVec(const vector<double>& v);
-    void SetSpacingVec(const vector<double>& v);
+    void SetParallelRunLengthVec(const std::vector<double> &v);
+    void SetWidthVec(const std::vector<double> &v);
+    void SetSpacingVec(const std::vector<double> &v);
 
-    vector<double>& GetParallelRunLengthVec();
-    vector<double>& GetWidthVec();
-    vector<double>& GetSpacingVec();
+    std::vector<double> &GetParallelRunLengthVec();
+    std::vector<double> &GetWidthVec();
+    std::vector<double> &GetSpacingVec();
 
     void SetParallelRunLengthAt(int col, double val);
     void SetWidthAt(int row, double val);
@@ -51,7 +56,7 @@ class SpacingTable {
 
 };
 
-ostream &operator<<(ostream &, const SpacingTable &);
+std::ostream &operator<<(std::ostream &, const SpacingTable &);
 
 }
 

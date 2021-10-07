@@ -9,12 +9,12 @@
 #include <string>
 #include <vector>
 
-using namespace std;
+#define PHYDB_LOC std::string(__FILE__) + " : " + std::to_string(__LINE__) + " : " + std::string(__FUNCTION__)
+#define PhyDBExpects(e, error_message) PhyDBExpects_(e, error_message, PHYDB_LOC)
 
 namespace phydb {
-#define PHYDB_LOC std::string(__FILE__) + " : " + std::to_string(__LINE__) + " : " + std::string(__FUNCTION__)
 
-inline void PhyDBExpects(
+inline void PhyDBExpects_(
     bool e,
     const std::string &error_message,
     const std::string &location = ""

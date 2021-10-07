@@ -4,6 +4,11 @@
 
 namespace phydb {
 
+Design::~Design() {
+    delete plus_filling_;
+    delete well_filling_;
+}
+
 void Design::SetName(std::string &name) {
     name_ = name;
 }
@@ -51,53 +56,59 @@ void Design::SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
     die_area_.ur.y = upper_y;
 }
 
-Track *Design::AddTrack(XYDirection direction,
-                        int start,
-                        int num_tracks,
-                        int step,
-                        vector<string> &layer_names) {
+Track *Design::AddTrack(
+    XYDirection direction,
+    int start,
+    int num_tracks,
+    int step,
+    std::vector<std::string> &layer_names
+) {
     tracks_.emplace_back(direction, start, num_tracks, step, layer_names);
     return &(tracks_.back());
 }
 
-vector<Track> &Design::GetTracksRef() {
+std::vector<Track> &Design::GetTracksRef() {
     return tracks_;
 }
 
-bool Design::IsRowExist(string &row_name) {
+bool Design::IsRowExist(std::string &row_name) {
     return (row_set_.find(row_name) != row_set_.end());
 }
 
-Row *Design::AddRow(string &name,
-                    string &site_name,
-                    string &site_orient,
-                    int origX,
-                    int origY,
-                    int numX,
-                    int numY,
-                    int stepX,
-                    int stepY) {
+Row *Design::AddRow(
+    std::string &name,
+    std::string &site_name,
+    std::string &site_orient,
+    int origX,
+    int origY,
+    int numX,
+    int numY,
+    int stepX,
+    int stepY
+) {
     int id = rows_.size();
     PhyDBExpects(!IsRowExist(name),
                  name + " row name_ exists, cannot use it again");
-    rows_.emplace_back(name,
-                       site_name,
-                       site_orient,
-                       origX,
-                       origY,
-                       numX,
-                       numY,
-                       stepX,
-                       stepY);
+    rows_.emplace_back(
+        name,
+        site_name,
+        site_orient,
+        origX,
+        origY,
+        numX,
+        numY,
+        stepX,
+        stepY
+    );
     return &(rows_[id]);
 }
 
-vector<Row> &Design::GetRowVec() {
+std::vector<Row> &Design::GetRowVec() {
     return rows_;
 }
 
-void Design::SetComponentCount(int count,
-                               double redundancy_factor) { // redundancy_factor for well tap cells and buffer insertion
+void Design::SetComponentCount(int count, double redundancy_factor) {
+    // redundancy_factor for well tap cells and buffer insertion
     if (redundancy_factor < 1) redundancy_factor = 1;
     int actual_count = (int) std::ceil(count * redundancy_factor);
     components_.reserve(actual_count);
@@ -107,21 +118,25 @@ bool Design::IsComponentExisting(std::string &comp_name) {
     return component_2_id_.find(comp_name) != component_2_id_.end();
 }
 
-Component *Design::AddComponent(std::string &comp_name,
-                                Macro *macro_ptr,
-                                PlaceStatus place_status,
-                                int llx,
-                                int lly,
-                                CompOrient orient) {
+Component *Design::AddComponent(
+    std::string &comp_name,
+    Macro *macro_ptr,
+    PlaceStatus place_status,
+    int llx,
+    int lly,
+    CompOrient orient
+) {
     PhyDBExpects(!IsComponentExisting(comp_name),
                  "Component name_ exists, cannot use it again");
     int id = (int) components_.size();
-    components_.emplace_back(comp_name,
-                             macro_ptr,
-                             place_status,
-                             llx,
-                             lly,
-                             orient);
+    components_.emplace_back(
+        comp_name,
+        macro_ptr,
+        place_status,
+        llx,
+        lly,
+        orient
+    );
     component_2_id_[comp_name] = id;
     return &(components_[id]);
 }
@@ -141,7 +156,7 @@ bool Design::IsDefViaExist(std::string const &via_name) {
 DefVia *Design::AddDefVia(std::string &via_name) {
     PhyDBExpects(!IsDefViaExist(via_name),
                  "Macro name_ exists, cannot use it again");
-    int id = vias_.size();
+    int id = (int) vias_.size();
     vias_.emplace_back(via_name);
     via_2_id_[via_name] = id;
     return &(vias_[id]);
@@ -168,7 +183,7 @@ IOPin *Design::AddIoPin(std::string &iopin_name,
                         SignalUse signal_use) {
     PhyDBExpects(!IsIoPinExist(iopin_name),
                  "IOPin name_ exists, cannot use it again");
-    int id = iopins_.size();
+    int id = (int) iopins_.size();
     iopins_.emplace_back(iopin_name, signal_direction, signal_use);
     iopin_2_id_[iopin_name] = id;
     return &(iopins_[id]);
@@ -195,7 +210,7 @@ bool Design::IsNetExist(std::string &net_name) {
 
 Net *Design::AddNet(std::string &net_name, double weight) {
     PhyDBExpects(!IsNetExist(net_name), "Net name exists, cannot use it again");
-    int id = nets_.size();
+    int id = (int) nets_.size();
     nets_.emplace_back(net_name, weight);
     net_2_id_[net_name] = id;
     return &(nets_[id]);
@@ -213,7 +228,7 @@ void Design::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
 }
 
 void Design::AddCompPinToNet(int comp_id, int pin_id, int net_id) {
-    PhyDBExpects(net_id < (int)nets_.size(), "net id out of bound");
+    PhyDBExpects(net_id < (int) nets_.size(), "net id out of bound");
     nets_[net_id].AddCompPin(comp_id, pin_id);
 }
 
@@ -225,54 +240,58 @@ Net *Design::GetNetPtr(std::string &net_name) {
     return &(nets_[id]);
 }
 
-SNet *Design::AddSNet(string &net_name, SignalUse use) {
+SNet *Design::AddSNet(std::string &net_name, SignalUse use) {
     bool e = (use == GROUND || use == POWER);
     PhyDBExpects(e, "special net use should be POWER or GROUND");
-    int id = snets_.size();
+    int id = (int) snets_.size();
     snets_.emplace_back(net_name, use);
     snet_2_id_[net_name] = id;
     return &snets_[id];
 }
 
-SNet *Design::GetSNet(string &net_name) {
+SNet *Design::GetSNet(std::string &net_name) {
     bool e = (snet_2_id_.find(net_name) != snet_2_id_.end());
     PhyDBExpects(e, "snet is not found");
     return &snets_[snet_2_id_[net_name]];
 }
 
-vector<SNet> &Design::GetSNetRef() {
+std::vector<SNet> &Design::GetSNetRef() {
     return snets_;
 }
 
-ClusterCol *Design::AddClusterCol(string &name, string &bot_signal) {
-    int id = cluster_cols_.size();
+ClusterCol *Design::AddClusterCol(std::string &name, std::string &bot_signal) {
+    int id = (int) cluster_cols_.size();
     cluster_cols_.emplace_back(name, bot_signal);
     return &cluster_cols_[id];
 }
 
-vector<ClusterCol> &Design::GetClusterColsRef() {
+std::vector<ClusterCol> &Design::GetClusterColsRef() {
     return cluster_cols_;
 }
 
-GcellGrid *Design::AddGcellGrid(XYDirection direction,
-                                int start,
-                                int nBoundaries,
-                                int step) {
-    int id = gcell_grids_.size();
+GcellGrid *Design::AddGcellGrid(
+    XYDirection direction,
+    int start,
+    int nBoundaries,
+    int step
+) {
+    int id = (int) gcell_grids_.size();
     gcell_grids_.emplace_back(direction, start, nBoundaries, step);
     return &gcell_grids_[id];
 }
 
-vector<GcellGrid> &Design::GetGcellGridsRef() {
+std::vector<GcellGrid> &Design::GetGcellGridsRef() {
     return gcell_grids_;
 }
 
-void Design::InsertRoutingGuide(int netID,
-                                int llx,
-                                int lly,
-                                int urx,
-                                int ury,
-                                int layerID) {
+void Design::InsertRoutingGuide(
+    int netID,
+    int llx,
+    int lly,
+    int urx,
+    int ury,
+    int layerID
+) {
     this->nets_[netID].AddRoutingGuide(llx, lly, urx, ury, layerID);
 }
 

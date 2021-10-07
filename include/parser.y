@@ -245,6 +245,6 @@ end_densitymodel: DENSITYMODEL_END NUMBER
 
 %%
 
-void phydb::Parser::error(const string &message) {
+void phydb::Parser::error(const std::string &message) {
     std::cout << "Error: " << message << std::endl;
 }

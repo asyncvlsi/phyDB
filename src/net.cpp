@@ -14,19 +14,19 @@ void Net::AddRoutingGuide(int llx, int lly, int urx, int ury, int layerID) {
     guides_.emplace_back(llx, lly, layerID, urx, ury, layerID);
 }
 
-const string &Net::GetName() const {
+const std::string &Net::GetName() const {
     return name_;
 }
 
-vector<PhydbPin> &Net::GetPinsRef() {
+std::vector<PhydbPin> &Net::GetPinsRef() {
     return pins_;
 }
 
-vector<string> &Net::GetIoPinNamesRef() {
+std::vector<std::string> &Net::GetIoPinNamesRef() {
     return iopin_names_;
 }
 
-vector<Rect3D<int>> &Net::GetRoutingGuidesRef() {
+std::vector<Rect3D<int>> &Net::GetRoutingGuidesRef() {
     return guides_;
 }
 
@@ -39,10 +39,8 @@ void Net::Report() {
     }
 
     for (int i = 0; i < sz; ++i) {
-        std::cout << "  ("
-                  << pins_[i].comp_id << " "
-                  << pins_[i].pin_id
-                  << ") ";
+        std::cout
+            << "  (" << pins_[i].comp_id << " " << pins_[i].pin_id << ") ";
     }
     std::cout << "\n";
 }

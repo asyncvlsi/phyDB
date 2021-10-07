@@ -7,9 +7,9 @@ namespace phydb {
 
 class Row {
   public:
-    string name_;
-    string site_name_;
-    string site_orient_;
+    std::string name_;
+    std::string site_name_;
+    std::string site_orient_;
     int orig_x_;
     int orig_y_;
     int num_x_;
@@ -18,8 +18,17 @@ class Row {
     int step_y_;
 
     Row() {}
-    Row(string name, string siteName, string siteOrient,
-        int origX, int origY, int numX, int numY, int stepX, int stepY) :
+    Row(
+        std::string name,
+        std::string siteName,
+        std::string siteOrient,
+        int origX,
+        int origY,
+        int numX,
+        int numY,
+        int stepX,
+        int stepY
+    ) :
         name_(name),
         site_name_(siteName),
         site_orient_(siteOrient),
@@ -32,7 +41,7 @@ class Row {
 
 };
 
-ostream &operator<<(ostream &, const Row &);
+std::ostream &operator<<(std::ostream &, const Row &);
 
 }
 

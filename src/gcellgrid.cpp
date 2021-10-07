@@ -37,12 +37,12 @@ int GcellGrid::GetStep() const {
 }
 
 void GcellGrid::Report() const {
-    cout << "GCELLGRID: " << endl;
-    cout << " dir: " << direction_;
-    cout << " start: " << start_;
-    cout << " numBoundaries: " << numBoundaries_;
-    cout << " step: " << step_;
-    cout << endl;
+    std::cout << "GCELLGRID: "
+              << " dir: " << direction_
+              << " start: " << start_
+              << " numBoundaries: " << numBoundaries_
+              << " step: " << step_
+              << std::endl;
 }
 
 }

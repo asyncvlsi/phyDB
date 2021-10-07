@@ -18,18 +18,25 @@ int getLefSite(lefrCallbackType_e type, lefiSite *site, lefiUserData data) {
         if (site->hasClass()) {
             site_class_name = std::string(site->siteClass());
         }
-        phy_db_ptr->AddSite(site_name, site_class_name, site->sizeX(), site->sizeY());
+        phy_db_ptr->AddSite(site_name,
+                            site_class_name,
+                            site->sizeX(),
+                            site->sizeY());
     } else {
         PhyDBExpects(false, "SITE SIZE information not provided");
     }
     return 0;
 }
 
-int getLefMacrosBegin(lefrCallbackType_e type, const char *str, lefiUserData data) {
+int getLefMacrosBegin(
+    lefrCallbackType_e type,
+    const char *str,
+    lefiUserData data
+) {
     assert(type == lefrMacroBeginCbkType);
 
     auto *phy_db_ptr = (PhyDB *) data;
-    string tmpMacroName(str);
+    std::string tmpMacroName(str);
     phy_db_ptr->AddMacro(tmpMacroName); //add an empty macro
 
     return 0;
@@ -38,7 +45,7 @@ int getLefMacrosBegin(lefrCallbackType_e type, const char *str, lefiUserData dat
 int getLefMacros(lefrCallbackType_e type, lefiMacro *macro, lefiUserData data) {
 
     if ((type != lefrMacroCbkType)) {
-        cout << "Type is not lefrMacroCbkType!" << endl;
+        std::cout << "Type is not lefrMacroCbkType!" << std::endl;
         exit(2);
     }
 
@@ -47,13 +54,15 @@ int getLefMacros(lefrCallbackType_e type, lefiMacro *macro, lefiUserData data) {
     double sizeX = macro->sizeX();
     double sizeY = macro->sizeY();
 
-    PhyDBExpects(macro->hasClass(), "Macro has no class?" + std::string(macro->name()));
-    std::string str_macro_class (macro->macroClass());
+    PhyDBExpects(macro->hasClass(),
+                 "Macro has no class?" + std::string(macro->name()));
+    std::string str_macro_class(macro->macroClass());
     MacroClass macro_class = StrToMacroClass(str_macro_class);
 
     auto *phy_db_ptr = (PhyDB *) data;
 
-    Macro &m = phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); //write to the last one
+    Macro &m =
+        phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); //write to the last one
     m.SetOrigin(originX, originY);
     m.SetSize(sizeX, sizeY);
     m.SetClass(macro_class);
@@ -61,7 +70,11 @@ int getLefMacros(lefrCallbackType_e type, lefiMacro *macro, lefiUserData data) {
     return 0;
 }
 
-int getLefMacrosEnd(lefrCallbackType_e type, const char *str, lefiUserData data) {
+int getLefMacrosEnd(
+    lefrCallbackType_e type,
+    const char *str,
+    lefiUserData data
+) {
     // could probably delete this function
 
     assert(type == lefrMacroEndCbkType);
@@ -77,7 +90,9 @@ int getLefUnits(lefrCallbackType_e type, lefiUnits *units, lefiUserData data) {
     return 0;
 }
 
-int getLefManufacturingGrid(lefrCallbackType_e type, double number, lefiUserData data) {
+int getLefManufacturingGrid(lefrCallbackType_e type,
+                            double number,
+                            lefiUserData data) {
     auto *phy_db_ptr = (PhyDB *) data;
     phy_db_ptr->SetManufacturingGrid(number);
     return 0;
@@ -86,20 +101,25 @@ int getLefManufacturingGrid(lefrCallbackType_e type, double number, lefiUserData
 int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
     auto *phy_db_ptr = (PhyDB *) data;
     if (type != lefrPinCbkType) {
-        cout << "Type is not lefrPinCbkType!" << endl;
+        std::cout << "Type is not lefrPinCbkType!" << std::endl;
         exit(1);
     }
 
-    Macro &last_macro = phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); // last macro
+    Macro &last_macro =
+        phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); // last macro
 
     std::string macro_name = last_macro.GetName();
     std::string pin_name(pin->name());
     std::string pin_direction(pin->direction());
     std::string pin_use(pin->use());
-    Pin *pin_ptr = last_macro.AddPin(pin_name, StrToSignalDirection(pin_direction), StrToSignalUse(pin_use));
+    Pin *pin_ptr = last_macro.AddPin(pin_name,
+                                     StrToSignalDirection(pin_direction),
+                                     StrToSignalUse(pin_use));
 
     int numPorts = pin->numPorts();
-    PhyDBExpects(numPorts > 0, "No physical pins, Macro: " + last_macro.GetName() + ", pin: " + pin_name);
+    PhyDBExpects(numPorts > 0,
+                 "No physical pins, Macro: " + last_macro.GetName() + ", pin: "
+                     + pin_name);
 
     for (int i = 0; i < numPorts; ++i) {
         int numItems = pin->port(i)->numItems();
@@ -115,11 +135,17 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
                 double y1 = pin->port(i)->getRect(j)->yl;
                 double x2 = pin->port(i)->getRect(j)->xh;
                 double y2 = pin->port(i)->getRect(j)->yh;
-                PhyDBExpects(layer_rect_ptr != nullptr, "unexpected error in getLefPins()");
-                layer_rect_ptr->AddRect(min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
+                PhyDBExpects(layer_rect_ptr != nullptr,
+                             "unexpected error in getLefPins()");
+                layer_rect_ptr->AddRect(
+                    std::min(x1, x2),
+                    std::min(y1, y2),
+                    std::max(x1, x2),
+                    std::max(y1, y2)
+                );
 
             } else {
-                cout << "unsupported lefiGeometries!" << endl;
+                std::cout << "unsupported lefiGeometries!\n";
                 continue;
                 // exit(2);
             }
@@ -128,14 +154,19 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
     return 0;
 }
 
-int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) {
+int getLefObs(
+    lefrCallbackType_e type,
+    lefiObstruction *obs,
+    lefiUserData data
+) {
 
     if (type != lefrObstructionCbkType) {
-        cout << "Type is not lefrObstructionCbkType!" << endl;
+        std::cout << "Type is not lefrObstructionCbkType!" << std::endl;
         exit(1);
     }
     auto *phy_db_ptr = (PhyDB *) data;
-    Macro &last_macro = phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); // last macro
+    Macro &last_macro =
+        phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); // last macro
 
     LayerRect tmpLayerRect;
     Rect2D<double> tmpRect;
@@ -156,10 +187,16 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
             double y1 = geometry->getRect(i)->yl;
             double x2 = geometry->getRect(i)->xh;
             double y2 = geometry->getRect(i)->yh;
-            PhyDBExpects(layer_rect_ptr != nullptr, "unexpected error in getLefObs()");
-            layer_rect_ptr->AddRect(min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
+            PhyDBExpects(layer_rect_ptr != nullptr,
+                         "unexpected error in getLefObs()");
+            layer_rect_ptr->AddRect(
+                std::min(x1, x2),
+                std::min(y1, y2),
+                std::max(x1, x2),
+                std::max(y1, y2)
+            );
         } else {
-            cout << "Warning: unsupported OBS" << endl;
+            std::cout << "Warning: unsupported OBS\n";
             continue;
         }
     }
@@ -167,7 +204,7 @@ int getLefObs(lefrCallbackType_e type, lefiObstruction *obs, lefiUserData data) 
     return 0;
 }
 
-int getLefCornerSpacing(void *data, const string &stringProp) {
+int getLefCornerSpacing(void *data, const std::string &stringProp) {
 //TODO: This function is for the ISPD2018/19 benchmarks, we can handle this later
     /*istringstream istr(stringProp);
     string token;
@@ -193,7 +230,7 @@ int getLefCornerSpacing(void *data, const string &stringProp) {
 int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
 
     if (type != lefrLayerCbkType) {
-        cout << "Type is not lefrLayerCbkType!" << endl;
+        std::cout << "Type is not lefrLayerCbkType!" << std::endl;
         exit(1);
     }
 
@@ -201,12 +238,15 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
     //Layer &last_layer = phy_db_ptr->GetTechPtr()->GetLayersRef().back(); //write to the last one
 
     if (strcmp(layer->type(), "ROUTING") == 0) {
-        string metal_layer_name(layer->name());
-        string layer_type(layer->type());
-        string direction(layer->direction());
+        std::string metal_layer_name(layer->name());
+        std::string layer_type(layer->type());
+        std::string direction(layer->direction());
 
-        Layer &last_layer =
-            *(phy_db_ptr->AddLayer(metal_layer_name, StrToLayerType(layer_type), StrToMetalDirection(direction)));
+        Layer &last_layer = *(phy_db_ptr->AddLayer(
+            metal_layer_name,
+            StrToLayerType(layer_type),
+            StrToMetalDirection(direction))
+        );
 
         last_layer.SetWidth(layer->width());
         if (layer->hasMinwidth()) {
@@ -228,14 +268,18 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
         }
 
         if (layer->numProps() > 1) {
-            cout << "Error: enable to handle more than one properties:" << layer->name() << endl;
+            std::cout << "Error: enable to handle more than one properties:"
+                      << layer->name() << std::endl;
             exit(1);
         }
         for (int i = 0; i < layer->numProps(); i++) {
-            if (string(layer->propName(i)) == string("LEF58_CORNERSPACING") && layer->propIsString(i)) {
+            if (std::string(layer->propName(i)) == "LEF58_CORNERSPACING"
+                && layer->propIsString(i)) {
                 getLefCornerSpacing(data, layer->propValue(i));
             } else {
-                cout << "WARNING: UNSUPPORTED PROPERTY: " << layer->propName(i) << endl;
+                std::cout << "WARNING: UNSUPPORTED PROPERTY: "
+                          << layer->propName(i)
+                          << "\n";
             }
         }
 
@@ -254,10 +298,16 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
                     par_within = layer->spacingParWithin(i);
                 }
 
-                last_layer.AddEolSpacing(spacing, eol_width, eol_within, par_edge, par_within);
+                last_layer.AddEolSpacing(
+                    spacing,
+                    eol_width,
+                    eol_within,
+                    par_edge,
+                    par_within
+                );
 
             } else {
-                cout << "warning: no eol spacing!" << endl;
+                std::cout << "warning: no eol spacing!\n";
                 last_layer.SetSpacing(spacing);
             }
         }
@@ -266,9 +316,9 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
 
         for (int i = 0; i < layer->numSpacingTable(); ++i) {
             auto spTable = layer->spacingTable(i);
-            vector<double> v_parallel_run_length;
-            vector<double> v_width;
-            vector<double> v_spacing;
+            std::vector<double> v_parallel_run_length;
+            std::vector<double> v_width;
+            std::vector<double> v_spacing;
             if (spTable->isParallel() == 1) {
                 auto parallel = spTable->parallel();
 
@@ -291,23 +341,25 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
 
             } else if (spTable->isInfluence()) {
                 auto influence = spTable->influence();
-                for (int entry = 0; entry < influence->numInfluenceEntry(); entry++) {
+                for (int entry = 0; entry < influence->numInfluenceEntry();
+                     entry++) {
                     last_layer.AddSpacingTableInfluence(
                         influence->width(entry),
                         influence->distance(entry),
                         influence->spacing(entry));
                 }
             } else {
-                cout << "unsupported spacing table!" << endl;
+                std::cout << "unsupported spacing table!" << std::endl;
                 exit(1);
             }
         }
 
     } else if (strcmp(layer->type(), "CUT") == 0) { // cut layer
-        string metal_layer_name(layer->name());
-        string layer_type(layer->type());
+        std::string metal_layer_name(layer->name());
+        std::string layer_type(layer->type());
 
-        Layer &last_layer = *(phy_db_ptr->AddLayer(metal_layer_name, StrToLayerType(layer_type)));
+        Layer &last_layer = *(phy_db_ptr->AddLayer(metal_layer_name,
+                                                   StrToLayerType(layer_type)));
 
         last_layer.SetWidth(layer->width());
         // read spacing constraint
@@ -324,8 +376,9 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
         }
 
     } else {
-        if (string(layer->name()) != "OVERLAP")
-            cout << "unsupported layer type: " << layer->name() << ": " << layer->type() << endl;
+        if (std::string(layer->name()) != "OVERLAP")
+            std::cout << "unsupported layer type: " << layer->name() << ": "
+                      << layer->type() << std::endl;
     }
 
     return 0;
@@ -333,11 +386,12 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
 
 int getLefVias(lefrCallbackType_e type, lefiVia *via, lefiUserData data) {
     if (type != lefrViaCbkType) {
-        cout << "Type is not lefrViaCbkType!" << endl;
+        std::cout << "Type is not lefrViaCbkType!" << std::endl;
+        exit(1);
     }
 
     auto *phy_db_ptr = (PhyDB *) data;
-    string via_name = via->name();
+    std::string via_name = via->name();
     LefVia &last_via = *(phy_db_ptr->AddLefVia(via_name));
     if (via->hasDefault())
         last_via.SetDefault();
@@ -345,32 +399,49 @@ int getLefVias(lefrCallbackType_e type, lefiVia *via, lefiUserData data) {
         last_via.UnsetDefault();
 
     if (via->numLayers() != 3) {
-        cout << "Error: unsupported via (via layers != 3) " << via->name() << endl;
+        std::cout << "Error: unsupported via (via layers != 3) " << via->name()
+                  << std::endl;
         exit(1);
     }
-    string layer_name[3];
-    vector<Rect2D<double>> rects[3];
+    std::string layer_name[3];
+    std::vector<Rect2D<double>> rects[3];
     for (int i = 0; i < via->numLayers(); ++i) {
         layer_name[i] = via->layerName(i);
         for (int j = 0; j < via->numRects(i); ++j) {
-            rects[i].emplace_back(via->xl(i, j), via->yl(i, j), via->xh(i, j), via->yh(i, j));
+            rects[i].emplace_back(
+                via->xl(i, j),
+                via->yl(i, j),
+                via->xh(i, j),
+                via->yh(i, j)
+            );
         }
     }
-    last_via.SetLayerRect(layer_name[0], rects[0], layer_name[1], rects[1], layer_name[2], rects[2]);
+    last_via.SetLayerRect(
+        layer_name[0],
+        rects[0],
+        layer_name[1],
+        rects[1],
+        layer_name[2],
+        rects[2]
+    );
 
     return 0;
 }
 
-int getLefViaRuleGenerates(lefrCallbackType_e type, lefiViaRule *viaRule, lefiUserData data) {
+int getLefViaRuleGenerates(lefrCallbackType_e type,
+                           lefiViaRule *viaRule,
+                           lefiUserData data) {
 
     if (type != lefrViaRuleCbkType) {
-        cout << "Type is not lefrViaRuleCbkType!" << endl;
+        std::cout << "Type is not lefrViaRuleCbkType!" << std::endl;
+        exit(1);
     }
 
-    string name = viaRule->name();
+    std::string name = viaRule->name();
 
     auto *phy_db_ptr = (PhyDB *) data;
-    ViaRuleGenerate &last_viarule_generate = *(phy_db_ptr->AddViaRuleGenerate(name));
+    ViaRuleGenerate
+        &last_viarule_generate = *(phy_db_ptr->AddViaRuleGenerate(name));
 
     if (viaRule->hasDefault())
         last_viarule_generate.SetDefault();
@@ -378,25 +449,36 @@ int getLefViaRuleGenerates(lefrCallbackType_e type, lefiViaRule *viaRule, lefiUs
         last_viarule_generate.UnsetDefault();
 
     if (viaRule->numLayers() != 3) {
-        cout << "Error: unsupported via" << endl;
+        std::cout << "Error: unsupported via" << std::endl;
         exit(1);
     }
     ViaRuleGenerateLayer layer[3];
 
     for (int i = 0; i < viaRule->numLayers(); ++i) {
         auto viaRuleLayer = viaRule->layer(i);
-        string layer_name = viaRuleLayer->name();
+        std::string layer_name = viaRuleLayer->name();
         layer[i].SetLayerName(layer_name);
         if (viaRuleLayer->hasEnclosure()) {
-            layer[i].SetEnclosure(viaRuleLayer->enclosureOverhang1(), viaRuleLayer->enclosureOverhang2());
+            layer[i].SetEnclosure(
+                viaRuleLayer->enclosureOverhang1(),
+                viaRuleLayer->enclosureOverhang2()
+            );
         }
 
         if (viaRuleLayer->hasRect()) {
-            layer[i].SetRect(viaRuleLayer->xl(), viaRuleLayer->yl(), viaRuleLayer->xh(), viaRuleLayer->xh());
+            layer[i].SetRect(
+                viaRuleLayer->xl(),
+                viaRuleLayer->yl(),
+                viaRuleLayer->xh(),
+                viaRuleLayer->xh()
+            );
         }
 
         if (viaRuleLayer->hasSpacing()) {
-            layer[i].SetSpacing(viaRuleLayer->spacingStepX(), viaRuleLayer->spacingStepY());
+            layer[i].SetSpacing(
+                viaRuleLayer->spacingStepX(),
+                viaRuleLayer->spacingStepY()
+            );
         }
     }
     last_viarule_generate.SetLayers(layer[0], layer[1], layer[2]);
@@ -426,14 +508,24 @@ int getDefRow(defrCallbackType_e type, defiRow *row, defiUserData data) {
     int stepX = row->xStep();
     int stepY = row->yStep();
 
-    phy_db_ptr->AddRow(row_name, site_name, site_orientation, origX, origY, numX, numY, stepX, stepY);
+    phy_db_ptr->AddRow(
+        row_name,
+        site_name,
+        site_orientation,
+        origX,
+        origY,
+        numX,
+        numY,
+        stepX,
+        stepY
+    );
 
     return 0;
 }
 
 int getDefString(defrCallbackType_e type, const char *str, defiUserData data) {
     auto *phy_db_ptr = (PhyDB *) data;
-    if ((type == defrDesignStartCbkType)) {
+    if (type == defrDesignStartCbkType) {
         std::string design_name(str);
         phy_db_ptr->SetDefName(design_name);
     }
@@ -448,7 +540,7 @@ int getDefDieArea(defrCallbackType_e type, defiBox *box, defiUserData data) {
 
     auto *phy_db_ptr = (PhyDB *) data;
     if ((type != defrDieAreaCbkType)) {
-        cout << "Type is not defrDieAreaCbkType!" << endl;
+        std::cout << "Type is not defrDieAreaCbkType!" << std::endl;
         exit(1);
     }
     phy_db_ptr->SetDieArea(box->xl(), box->yl(), box->xh(), box->yh());
@@ -464,7 +556,7 @@ int getDefUnits(defrCallbackType_e type, double number, defiUserData data) {
 
 int getDefTracks(defrCallbackType_e type, defiTrack *track, defiUserData data) {
     if ((type != defrTrackCbkType)) {
-        cout << "Type is not defrTrackCbkType!" << endl;
+        std::cout << "Type is not defrTrackCbkType!" << std::endl;
         exit(1);
     }
 
@@ -478,7 +570,7 @@ int getDefTracks(defrCallbackType_e type, defiTrack *track, defiUserData data) {
     std::vector<std::string> layer_names;
 
     for (int i = 0; i < track->numLayers(); i++) {
-        string layerName = track->layer(i);
+        std::string layerName = track->layer(i);
         layer_names.push_back(layerName);
     }
     phy_db_ptr->AddTrack(direction, start, num_tracks, step, layer_names);
@@ -513,9 +605,13 @@ int getDefCountNumber(defrCallbackType_e type, int num, defiUserData data) {
     return 0;
 }
 
-int getDefComponents(defrCallbackType_e type, defiComponent *comp, defiUserData data) {
-    if ((type != defrComponentCbkType)) {
-        cout << "Type is not defrComponentCbkType!" << endl;
+int getDefComponents(
+    defrCallbackType_e type,
+    defiComponent *comp,
+    defiUserData data
+) {
+    if (type != defrComponentCbkType) {
+        std::cout << "Type is not defrComponentCbkType!" << std::endl;
         exit(1);
     }
 
@@ -544,17 +640,20 @@ int getDefComponents(defrCallbackType_e type, defiComponent *comp, defiUserData 
 
     auto *phy_db_ptr = (PhyDB *) data;
     Macro *macro_ptr = phy_db_ptr->GetMacroPtr(macro_name);
-    PhyDBExpects(macro_ptr!= nullptr, "Cannot find " + macro_name + " in PhyDB");
-    phy_db_ptr->AddComponent(comp_name, macro_ptr,
-                             place_status, llx, lly,
-                             StrToCompOrient(orient));
+    PhyDBExpects(macro_ptr != nullptr,
+                 "Cannot find " + macro_name + " in PhyDB");
+    phy_db_ptr->AddComponent(
+        comp_name, macro_ptr,
+        place_status, llx, lly,
+        StrToCompOrient(orient)
+    );
 
     return 0;
 }
 
 int getDefIOPins(defrCallbackType_e type, defiPin *pin, defiUserData data) {
     if (type != defrPinCbkType) {
-        cout << "Type is not defrPinCbkType!" << endl;
+        std::cout << "Type is not defrPinCbkType!" << std::endl;
         exit(1);
     }
 
@@ -567,9 +666,11 @@ int getDefIOPins(defrCallbackType_e type, defiPin *pin, defiUserData data) {
         signal_use = std::string(pin->use());
 
     auto *phy_db_ptr = (PhyDB *) data;
-    IOPin *io_pin_ptr = phy_db_ptr->AddIoPin(iopin_name,
-                                             StrToSignalDirection(signal_direction),
-                                             StrToSignalUse(signal_use));
+    IOPin *io_pin_ptr = phy_db_ptr->AddIoPin(
+        iopin_name,
+        StrToSignalDirection(signal_direction),
+        StrToSignalUse(signal_use)
+    );
 
     int iopin_x = 0;
     int iopin_y = 0;
@@ -599,14 +700,20 @@ int getDefIOPins(defrCallbackType_e type, defiPin *pin, defiUserData data) {
     io_pin_ptr->SetPlacement(place_status, iopin_x, iopin_y, orient);
 
     if (pin->hasPort()) {
-        cout << "Error: multiple pin ports existing in DEF" << endl;
+        std::cout << "Error: multiple pin ports existing in DEF" << std::endl;
         exit(1);
     } else {
         for (int i = 0; i < pin->numLayer(); ++i) {
             int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
             pin->bounds(i, &x1, &y1, &x2, &y2);
             std::string layer_name(pin->layer(i));
-            io_pin_ptr->SetShape(layer_name, min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
+            io_pin_ptr->SetShape(
+                layer_name,
+                std::min(x1, x2),
+                std::min(y1, y2),
+                std::max(x1, x2),
+                std::max(y1, y2)
+            );
         }
     }
 
@@ -616,7 +723,7 @@ int getDefIOPins(defrCallbackType_e type, defiPin *pin, defiUserData data) {
 
 int getDefNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
     if (type != defrNetCbkType) {
-        cout << "Type is not defrNetCbkType!" << endl;
+        std::cout << "Type is not defrNetCbkType!" << std::endl;
         exit(1);
     }
     auto *phy_db_ptr = (PhyDB *) data;
@@ -640,12 +747,12 @@ int getDefNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
 int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
 
     if (type != defrSNetCbkType) {
-        cout << "Type is not defr(S)NetCbkType!" << endl;
+        std::cout << "Type is not defr(S)NetCbkType!" << std::endl;
         exit(1);
     }
     auto *phy_db_ptr = (PhyDB *) data;
-    string name = net->name();
-    string use_str = net->use();
+    std::string name = net->name();
+    std::string use_str = net->use();
     SignalUse use = StrToSignalUse(use_str);
 
     auto *phydb_snet = phy_db_ptr->AddSNet(name, use);
@@ -666,12 +773,12 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
                 //cout << "  pathId = " << pathId << endl;
                 switch (pathId) {
                     case DEFIPATH_LAYER: {
-                        string layer_name = string(path->getLayer());
+                        auto layer_name = std::string(path->getLayer());
                         phydb_path->SetLayerName(layer_name);
                         break;
                     }
                     case DEFIPATH_VIA: {
-                        string via_name = string(string(path->getVia()));
+                        auto via_name = std::string(path->getVia());
                         phydb_path->SetViaName(via_name);
                         break;
                     }
@@ -708,14 +815,19 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
                         break;
                     }
                     case DEFIPATH_SHAPE: {
-                        string shape = string(path->getShape());
+                        auto shape = std::string(path->getShape());
                         phydb_path->SetShape(shape);
                         break;
                     }
                     case DEFIPATH_RECT: {
                         int x1, y1, x2, y2;
                         path->getViaRect(&x1, &y1, &x2, &y2);
-                        phydb_path->SetRect(min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2));
+                        phydb_path->SetRect(
+                            std::min(x1, x2),
+                            std::min(y1, y2),
+                            std::max(x1, x2),
+                            std::max(y1, y2)
+                        );
                         break;
                     }
                     case DEFIPATH_VIRTUALPOINT: {
@@ -732,7 +844,9 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
                         break;
                     }
                     default : {
-                        cout << " net " << net->name() << " unknown pathId " << pathId << endl;
+                        std::cout << " net " << net->name()
+                                  << " unknown pathId "
+                                  << pathId << "\n";
                         break;
                     }
                 }
@@ -855,11 +969,18 @@ int getDefVias(defrCallbackType_e type, defiVia *via, defiUserData data) {
     return 0;
 }
 
-int getDefGcellGrid(defrCallbackType_e type, defiGcellGrid *gcellGrid, defiUserData data) {
+int getDefGcellGrid(defrCallbackType_e type,
+                    defiGcellGrid *gcellGrid,
+                    defiUserData data) {
     auto *phy_db_ptr = (PhyDB *) data;
-    string dir_str = string(gcellGrid->macro());
+    auto dir_str = std::string(gcellGrid->macro());
     XYDirection direction = StrToXYDirection(dir_str);
-    phy_db_ptr->AddGcellGrid(direction, gcellGrid->x(), gcellGrid->xNum(), gcellGrid->xStep());
+    phy_db_ptr->AddGcellGrid(
+        direction,
+        gcellGrid->x(),
+        gcellGrid->xNum(),
+        gcellGrid->xStep()
+    );
     return 0;
 }
 
@@ -868,19 +989,23 @@ int getDefVersion(defrCallbackType_e type, double version, defiUserData data) {
     return 0;
 }
 
-int getDefBusBit(defrCallbackType_e type, const char *BusBit, defiUserData data) {
+int getDefBusBit(defrCallbackType_e type,
+                 const char *BusBit,
+                 defiUserData data) {
     std::string bus_bit_char(BusBit);
     ((PhyDB *) data)->SetDefBusBitChar(bus_bit_char);
     return 0;
 }
 
-int getDefDivider(defrCallbackType_e type, const char *divider, defiUserData data) {
+int getDefDivider(defrCallbackType_e type,
+                  const char *divider,
+                  defiUserData data) {
     std::string divider_chars(divider);
     ((PhyDB *) data)->SetDefDividerChar(divider_chars);
     return 0;
 }
 
-void Si2ReadLef(PhyDB *phy_db_ptr, string const &lefFileName) {
+void Si2ReadLef(PhyDB *phy_db_ptr, std::string const &lefFileName) {
     FILE *f;
     int res;
 
@@ -900,14 +1025,14 @@ void Si2ReadLef(PhyDB *phy_db_ptr, string const &lefFileName) {
     lefrSetViaCbk(getLefVias);
     lefrSetViaRuleCbk(getLefViaRuleGenerates);
 
-    if ((f = fopen(lefFileName.c_str(), "r")) == 0) {
-        cout << "Couldn't open lef file" << endl;
+    if ((f = fopen(lefFileName.c_str(), "r")) == nullptr) {
+        std::cout << "Couldn't open lef file" << std::endl;
         exit(2);
     }
 
     res = lefrRead(f, lefFileName.c_str(), (lefiUserData) phy_db_ptr);
     if (res != 0) {
-        cout << "LEF parser returns an error!" << endl;
+        std::cout << "LEF parser returns an error!" << std::endl;
         exit(2);
     }
     fclose(f);
@@ -915,7 +1040,7 @@ void Si2ReadLef(PhyDB *phy_db_ptr, string const &lefFileName) {
     lefrClear();
 }
 
-void Si2ReadDef(PhyDB *phy_db_ptr, string const &defFileName) {
+void Si2ReadDef(PhyDB *phy_db_ptr, std::string const &defFileName) {
     FILE *f;
     int res;
 
@@ -952,13 +1077,13 @@ void Si2ReadDef(PhyDB *phy_db_ptr, string const &defFileName) {
     defrSetGcellGridCbk(getDefGcellGrid);
 
     if ((f = fopen(defFileName.c_str(), "r")) == 0) {
-        cout << "Couldn't open def file" << endl;
+        std::cout << "Couldn't open def file" << std::endl;
         exit(2);
     }
 
     res = defrRead(f, defFileName.c_str(), (defiUserData) phy_db_ptr, 1);
     if (res != 0) {
-        cout << "DEF parser returns an error!" << endl;
+        std::cout << "DEF parser returns an error!" << std::endl;
         exit(2);
     }
     fclose(f);
@@ -995,9 +1120,11 @@ int CheckDefUnits(defrCallbackType_e type, double number, defiUserData data) {
  * @param data, void pointer to PhyDB.
  * @return 0 for success.
  */
-int LoadDefComponentLoc(defrCallbackType_e type, defiComponent *comp, defiUserData data) {
+int LoadDefComponentLoc(defrCallbackType_e type,
+                        defiComponent *comp,
+                        defiUserData data) {
     if ((type != defrComponentCbkType)) {
-        cout << "Type is not defrComponentCbkType!" << endl;
+        std::cout << "Type is not defrComponentCbkType!" << std::endl;
         exit(1);
     }
 
@@ -1044,7 +1171,7 @@ int LoadDefComponentLoc(defrCallbackType_e type, defiComponent *comp, defiUserDa
  * @param defFileName, the DEF file name which contains new component locations.
  * @return void.
  */
-void Si2LoadPlacedDef(PhyDB *phy_db_ptr, string const &defFileName) {
+void Si2LoadPlacedDef(PhyDB *phy_db_ptr, std::string const &defFileName) {
     FILE *f;
     int res;
 
@@ -1060,14 +1187,14 @@ void Si2LoadPlacedDef(PhyDB *phy_db_ptr, string const &defFileName) {
     defrSetComponentStartCbk(getDefCountNumber);
     defrSetComponentCbk(LoadDefComponentLoc);
 
-    if ((f = fopen(defFileName.c_str(), "r")) == 0) {
-        cout << "Couldn't open def file" << endl;
+    if ((f = fopen(defFileName.c_str(), "r")) == nullptr) {
+        std::cout << "Couldn't open def file" << std::endl;
         exit(2);
     }
 
     res = defrRead(f, defFileName.c_str(), (defiUserData) phy_db_ptr, 1);
     if (res != 0) {
-        cout << "DEF parser returns an error!" << endl;
+        std::cout << "DEF parser returns an error!" << std::endl;
         exit(2);
     }
     fclose(f);

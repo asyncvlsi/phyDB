@@ -7,24 +7,24 @@ namespace phydb {
 
 class OBS {
   private:
-    vector<LayerRect> layer_rects_;
+    std::vector<LayerRect> layer_rects_;
 
   public:
     OBS() {}
-    OBS(vector<LayerRect> layerRects) : layer_rects_(layerRects) {}
+    OBS(std::vector<LayerRect> layerRects) : layer_rects_(layerRects) {}
 
-    void SetLayerRects(vector<LayerRect>);
+    void SetLayerRects(std::vector<LayerRect>);
 
-    vector<LayerRect> GetLayerRects() const;
-    vector<LayerRect>& GetLayerRectsRef();
+    std::vector<LayerRect> GetLayerRects() const;
+    std::vector<LayerRect> &GetLayerRectsRef();
 
     // API to add LayerRect
     LayerRect *AddLayerRect(std::string &layer_name);
 
-    friend ostream &operator<<(ostream &, const OBS &);
+    friend std::ostream &operator<<(std::ostream &, const OBS &);
 };
 
-ostream &operator<<(ostream &, const OBS &);
+std::ostream &operator<<(std::ostream &, const OBS &);
 
 }
 

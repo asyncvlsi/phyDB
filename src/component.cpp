@@ -15,7 +15,7 @@ void Component::SetLocation(int lx, int ly) {
 	location_.y = ly;
 }
 
-const string &Component::GetName() {
+const std::string &Component::GetName() {
     return name_;
 }
 
@@ -35,11 +35,11 @@ Point2D<int> Component::GetLocation() {
 	return location_;
 }
 
-ostream &operator<<(ostream &os, const Component &c) {
+std::ostream &operator<<(std::ostream &os, const Component &c) {
     os << c.name_ << " " << c.macro_ptr_ << " "
        << c.source_ << " " << PlaceStatusStr(c.place_status_) << " "
-       << CompOrientStr(c.orient_) << endl;
-    os << "weight: " << c.weight_ << " location: " << c.location_ << endl;
+       << CompOrientStr(c.orient_) << std::endl;
+    os << "weight: " << c.weight_ << " location: " << c.location_ << std::endl;
     return os;
 }
 

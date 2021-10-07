@@ -1,8 +1,8 @@
 #ifndef PHYDB_INCLUDE_GCELLGRID_H_
 #define PHYDB_INCLUDE_GCELLGRID_H_
 
-#include "logging.h"
 #include "enumtypes.h"
+#include "logging.h"
 
 namespace phydb {
 
@@ -15,14 +15,17 @@ class GcellGrid {
 
   public:
     GcellGrid() : start_(0), numBoundaries_(0), step_(0) {}
-    GcellGrid(XYDirection direction, int start, int numBoundaries, int step) : 
-      direction_(direction), start_(start), numBoundaries_(numBoundaries), step_(step) {}
+    GcellGrid(XYDirection direction, int start, int numBoundaries, int step) :
+        direction_(direction),
+        start_(start),
+        numBoundaries_(numBoundaries),
+        step_(step) {}
 
-    void SetDirection(XYDirection );
-    void SetStart(int );
-    void SetNBoundaries(int );
-    void SetStep(int );
-    
+    void SetDirection(XYDirection);
+    void SetStart(int);
+    void SetNBoundaries(int);
+    void SetStep(int);
+
     XYDirection GetDirection() const;
     int GetStart() const;
     int GetNBoundaries() const;
@@ -30,11 +33,11 @@ class GcellGrid {
 
     void Report() const;
 
-    friend ostream &operator<<(ostream &, const GcellGrid &);
+    friend std::ostream &operator<<(std::ostream &, const GcellGrid &);
 
 };
 
-ostream &operator<<(ostream &, const GcellGrid &);
+std::ostream &operator<<(std::ostream &, const GcellGrid &);
 
 }
 

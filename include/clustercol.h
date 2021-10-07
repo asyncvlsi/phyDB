@@ -1,40 +1,53 @@
 #ifndef PHYDB_INCLUDE_CLUSTERCOL_H_
 #define PHYDB_INCLUDE_CLUSTERCOL_H_
+
 #include "logging.h"
 
 namespace phydb {
 
 class ClusterCol {
   private:
-    string name_;
-    string bot_signal_;
+    std::string name_;
+    std::string bot_signal_;
     int lx_;
     int ux_;
-    vector<int> ly_;
-    vector<int> uy_;
+    std::vector<int> ly_;
+    std::vector<int> uy_;
 
   public:
     ClusterCol() : lx_(0), ux_(0) {}
-    ClusterCol(string name, string bot_signal) :
+    ClusterCol(std::string name, std::string bot_signal) :
         name_(name), bot_signal_(bot_signal) {}
-    ClusterCol(string name, string bot_signal, int lx, int ux) :
+    ClusterCol(std::string name, std::string bot_signal, int lx, int ux) :
         name_(name), bot_signal_(bot_signal), lx_(lx), ux_(ux) {}
-    ClusterCol(string name, string bot_signal, int lx, int ux, vector<int> ly, vector<int> uy) :
-        name_(name), bot_signal_(bot_signal), lx_(lx), ux_(ux), ly_(ly), uy_(uy){}
+    ClusterCol(
+        std::string name,
+        std::string bot_signal,
+        int lx,
+        int ux,
+        std::vector<int> ly,
+        std::vector<int> uy
+    ) :
+        name_(name),
+        bot_signal_(bot_signal),
+        lx_(lx),
+        ux_(ux),
+        ly_(ly),
+        uy_(uy) {}
 
-    void SetName(string& );
-    void SetBotSignal(string& );
+    void SetName(std::string &);
+    void SetBotSignal(std::string &);
     void SetXRange(int lx, int ux);
     void SetLX(int lx);
     void SetUX(int ux);
     void AddRow(int ly, int uy);
 
-    string GetName() const;
-    string GetBotSignal() const;
+    std::string GetName() const;
+    std::string GetBotSignal() const;
     int GetLX() const;
     int GetUX() const;
-    vector<int>& GetLY();
-    vector<int>& GetUY();
+    std::vector<int> &GetLY();
+    std::vector<int> &GetUY();
 
     void Report();
 

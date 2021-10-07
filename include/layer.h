@@ -69,7 +69,7 @@ class Layer {
 
     //constructor for metal layer
     Layer(
-        string &name,
+        std::string &name,
         LayerType type,
         MetalDirection direction,
         double pitch_x,
@@ -91,7 +91,7 @@ class Layer {
         offset_(offset) {}
 
     Layer(
-        string name,
+        std::string name,
         LayerType type,
         MetalDirection direction,
         double pitch_x,
@@ -113,7 +113,7 @@ class Layer {
         offset_(offset) {}
 
     //constructor for cut layer
-    Layer(string &name, LayerType type, double spacing) :
+    Layer(std::string &name, LayerType type, double spacing) :
         name_(name),
         type_(type),
         id_(-1),
@@ -121,7 +121,7 @@ class Layer {
 
     ~Layer();
 
-    void SetName(string &name);
+    void SetName(std::string &name);
     void SetType(LayerType type);
     void SetID(int id);
     void SetDirection(MetalDirection direction);
@@ -157,9 +157,9 @@ class Layer {
     SpacingTable *SetSpacingTable(
         int n_col,
         int n_row,
-        const vector<double> &v_parallel_run_length,
-        const vector<double> &v_width,
-        const vector<double> &v_spacing
+        const std::vector<double> &v_parallel_run_length,
+        const std::vector<double> &v_width,
+        const std::vector<double> &v_spacing
     );
     SpacingTableInfluence *AddSpacingTableInfluence(
         double width,
@@ -182,8 +182,8 @@ class Layer {
     );
 
     SpacingTable *GetSpacingTable();
-    vector<SpacingTableInfluence> *GetSpacingTableInfluences();
-    vector<EolSpacing> *GetEolSpacings();
+    std::vector<SpacingTableInfluence> *GetSpacingTableInfluences();
+    std::vector<EolSpacing> *GetEolSpacings();
     CornerSpacing *GetCornerSpacing();
     AdjacentCutSpacing *GetAdjCutSpacing();
 
@@ -210,7 +210,7 @@ class Layer {
         int corner_index
     );
 
-    friend ostream &operator<<(ostream &, const Layer &);
+    friend std::ostream &operator<<(std::ostream &, const Layer &);
 
     void Report();
 
@@ -229,8 +229,8 @@ class Layer {
     double offset_ = 0;
 
     SpacingTable spacing_table_;
-    vector<SpacingTableInfluence> spacing_table_influences_;
-    vector<EolSpacing> eol_spacings_;
+    std::vector<SpacingTableInfluence> spacing_table_influences_;
+    std::vector<EolSpacing> eol_spacings_;
     CornerSpacing corner_spacing_;
 
     //cut layer
@@ -255,7 +255,7 @@ class Layer {
     LayerTechConfig *layer_tech_config_ = nullptr;
 };
 
-ostream &operator<<(ostream &, const Layer &);
+std::ostream &operator<<(std::ostream &, const Layer &);
 
 class WellLayer {
   private:

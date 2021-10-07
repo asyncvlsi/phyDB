@@ -19,24 +19,28 @@ class EolSpacing {
                    par_edge_(0), par_within_(0) {}
 
     //constructor for metal layer
-    EolSpacing(double spacing, double eolWidth, double eolWithin,
-               double parEdge, double parWithin) :
-        spacing_(spacing), 
+    EolSpacing(
+        double spacing,
+        double eolWidth,
+        double eolWithin,
+        double parEdge,
+        double parWithin
+    ) : spacing_(spacing),
         eol_width_(eolWidth),
-        eol_within_(eolWithin), 
-        par_edge_(parEdge), 
+        eol_within_(eolWithin),
+        par_edge_(parEdge),
         par_within_(parWithin) {}
-    
-    double GetSpacing()   {return spacing_;}
-    double GetEOLWidth()  {return eol_width_;}
-    double GetEOLWithin() {return eol_within_;}
-    double GetParEdge()   {return par_edge_;}
-    double GetParWithin() {return par_within_;}
+
+    double GetSpacing() { return spacing_; }
+    double GetEOLWidth() { return eol_width_; }
+    double GetEOLWithin() { return eol_within_; }
+    double GetParEdge() { return par_edge_; }
+    double GetParWithin() { return par_within_; }
 
     void Reset();
 };
 
-ostream &operator<<(ostream &, const EolSpacing &);
+std::ostream &operator<<(std::ostream &, const EolSpacing &);
 
 }
 

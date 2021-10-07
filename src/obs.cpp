@@ -7,20 +7,20 @@ LayerRect *OBS::AddLayerRect(std::string &layer_name) {
     return &(layer_rects_.back());
 }
 
-ostream &operator<<(ostream &os, const OBS &obs) {
+std::ostream &operator<<(std::ostream &os, const OBS &obs) {
     if (!obs.layer_rects_.empty()) {
         os << "OBS\n";
     }
-    for (auto &l : obs.layer_rects_)
-        os << l << endl;
+    for (auto &l: obs.layer_rects_)
+        os << l << std::endl;
     return os;
 }
 
-vector<LayerRect> OBS::GetLayerRects() const {
+std::vector<LayerRect> OBS::GetLayerRects() const {
     return layer_rects_;
 }
 
-vector<LayerRect>& OBS::GetLayerRectsRef() {
+std::vector<LayerRect> &OBS::GetLayerRectsRef() {
     return layer_rects_;
 }
 

@@ -11,7 +11,7 @@ void SpacingTable::SetSize(int nC, int nR) {
     spacing_.resize(nC * nR);
 }
 
-void SpacingTable::Reset( ) {
+void SpacingTable::Reset() {
     n_col_ = 0;
     n_row_ = 0;
     parallel_run_length_.clear();
@@ -19,38 +19,38 @@ void SpacingTable::Reset( ) {
     spacing_.clear();
 }
 
-int SpacingTable::GetNCol( ) const {
+int SpacingTable::GetNCol() const {
     return n_col_;
 }
 
-int SpacingTable::GetNRow( ) const {
+int SpacingTable::GetNRow() const {
     return n_row_;
 }
 
-void SpacingTable::SetParallelRunLengthVec(const vector<double>& v) {
+void SpacingTable::SetParallelRunLengthVec(const std::vector<double> &v) {
     assert(v.size() == n_col_);
     parallel_run_length_ = v;
 }
 
-void SpacingTable::SetWidthVec(const vector<double>& v) {
+void SpacingTable::SetWidthVec(const std::vector<double> &v) {
     assert(v.size() == n_row_);
     width_ = v;
 }
 
-void SpacingTable::SetSpacingVec(const vector<double>& v) {
+void SpacingTable::SetSpacingVec(const std::vector<double> &v) {
     assert(v.size() == n_row_ * n_col_);
     spacing_ = v;
 }
 
-vector<double>& SpacingTable::GetParallelRunLengthVec() {
+std::vector<double> &SpacingTable::GetParallelRunLengthVec() {
     return parallel_run_length_;
 }
 
-vector<double>& SpacingTable::GetWidthVec() {
+std::vector<double> &SpacingTable::GetWidthVec() {
     return width_;
 }
 
-vector<double>& SpacingTable::GetSpacingVec() {
+std::vector<double> &SpacingTable::GetSpacingVec() {
     return spacing_;
 }
 
@@ -84,24 +84,23 @@ double SpacingTable::GetSpacingAt(int col, int row) const {
     return spacing_[col + n_col_ * row];
 }
 
-ostream& operator<< (ostream& os, const SpacingTable& st) {
+std::ostream &operator<<(std::ostream &os, const SpacingTable &st) {
     int nCol = st.GetNCol();
     int nRow = st.GetNRow();
-    os << "nCol: " << nCol << " nRow: " << nRow << endl;
-    
+    os << "nCol: " << nCol << " nRow: " << nRow << "\n";
+
     os << "\t";
-    for(int c = 0; c < nCol; c++)
+    for (int c = 0; c < nCol; c++)
         os << st.GetParallelRunLengthAt(c) << "\t";
-    os << endl;
-    for(int r = 0; r < nRow; r++) {
+    os << "\n";
+    for (int r = 0; r < nRow; r++) {
         os << st.GetWidthAt(r) << "\t";
-        for(int c = 0; c < nCol; c++) {
+        for (int c = 0; c < nCol; c++) {
             os << st.GetSpacingAt(c, r) << "\t";
         }
-        os << endl;
+        os << "\n";
     }
     return os;
 }
-
 
 }

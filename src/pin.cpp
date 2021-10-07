@@ -2,12 +2,12 @@
 
 namespace phydb {
 
-void Pin::SetName(string &name) { 
-  name_ = name; 
+void Pin::SetName(std::string &name) {
+    name_ = name;
 }
 
-void Pin::SetUse(SignalUse &use) { 
-  use_ = use; 
+void Pin::SetUse(SignalUse &use) {
+    use_ = use;
 }
 
 LayerRect *Pin::AddLayerRect(std::string &layer_name) {
@@ -15,7 +15,7 @@ LayerRect *Pin::AddLayerRect(std::string &layer_name) {
     return &(layer_rects_.back());
 }
 
-const string &Pin::GetName() {
+const std::string &Pin::GetName() {
     return name_;
 }
 
@@ -31,23 +31,23 @@ SignalUse Pin::GetUse() {
     return use_;
 }
 
-vector<LayerRect> &Pin::GetLayerRectRef() {
+std::vector<LayerRect> &Pin::GetLayerRectRef() {
     return layer_rects_;
 }
 
-vector<LayerRect> Pin::GetLayerRectCpy() {
+std::vector<LayerRect> Pin::GetLayerRectCpy() {
     return layer_rects_;
 }
 
-ostream &operator<<(ostream &os, const Pin &p) {
+std::ostream &operator<<(std::ostream &os, const Pin &p) {
     os << p.name_ << " "
        << SignalDirectionStr(p.direction_) << " "
        << SignalUseStr(p.use_) << " "
-       << p.shape_ << endl;
-    os << p.antenna_diff_area_layer_ << " " << p.antenna_diff_area_ << endl;
+       << p.shape_ << std::endl;
+    os << p.antenna_diff_area_layer_ << " " << p.antenna_diff_area_ << "\n";
 
-    for (auto &l : p.layer_rects_)
-        os << l << endl;
+    for (auto &l: p.layer_rects_)
+        os << l << std::endl;
     return os;
 }
 

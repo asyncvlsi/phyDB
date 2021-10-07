@@ -2,7 +2,7 @@
 
 namespace phydb {
 
-void Path::SetLayerName(string& layer_name) {
+void Path::SetLayerName(std::string &layer_name) {
     layer_name_ = layer_name;
 }
 
@@ -10,11 +10,11 @@ void Path::SetWidth(int width) {
     width_ = width;
 }
 
-void Path::SetShape(string& shape) {
+void Path::SetShape(std::string &shape) {
     shape_ = shape;
 }
 
-void Path::SetViaName(string& via_name) {
+void Path::SetViaName(std::string &via_name) {
     via_name_ = via_name;
 }
 
@@ -45,7 +45,7 @@ void Path::SetEnd(int x, int y) {
     end_.y = y;
 }
 
-string Path::GetLayerName() const {
+std::string Path::GetLayerName() const {
     return layer_name_;
 }
 
@@ -53,11 +53,11 @@ int Path::GetWidth() const {
     return width_;
 }
 
-string Path::GetShape() const {
+std::string Path::GetShape() const {
     return shape_;
 }
 
-string Path::GetViaName() const {
+std::string Path::GetViaName() const {
     return via_name_;
 }
 
@@ -86,21 +86,23 @@ bool Path::HasEndPoint() const {
 }
 
 void Path::Report() {
-    cout << " NEW " << layer_name_ << " " << width_ << " + SHAPE " << shape_;
+    std::cout << " NEW " << layer_name_ << " " << width_ << " + SHAPE "
+              << shape_;
     if (!rect_.IsEmpty())
-        cout << " (" << rect_.ll.x << " " << rect_.ll.y << " " << rect_.ur.x << " " << rect_.ur.y << ")";
+        std::cout << " (" << rect_.ll.x << " " << rect_.ll.y << " "
+                  << rect_.ur.x << " " << rect_.ur.y << ")";
     if (!begin_.IsEmpty())
-        cout << " (" << begin_.x << " " << begin_.y << " ) ";
+        std::cout << " (" << begin_.x << " " << begin_.y << " ) ";
     if (!end_.IsEmpty())
-        cout << " (" << end_.x << " " << end_.y << " ) ";
+        std::cout << " (" << end_.x << " " << end_.y << " ) ";
     if (begin_ext_ != 0 || end_ext_ != 0)
-        cout << " EXT " << begin_ext_ << " " << end_ext_;
-    if (via_name_ != "")
-        cout << via_name_;
-    cout << endl;
+        std::cout << " EXT " << begin_ext_ << " " << end_ext_;
+    if (!via_name_.empty())
+        std::cout << via_name_;
+    std::cout << "\n";
 }
 
-void SNet::SetName(string& name) {
+void SNet::SetName(std::string &name) {
     name_ = name;
 }
 
@@ -110,19 +112,19 @@ void SNet::SetUse(SignalUse use) {
     use_ = use;
 }
 
-Path* SNet::AddPath() {
-    int id = paths_.size();
+Path *SNet::AddPath() {
+    int id = (int) paths_.size();
     paths_.emplace_back();
     return &paths_[id];
 }
 
-Path* SNet::AddPath(string& layer_name, int width, string shape) {
-    int id = paths_.size();
+Path *SNet::AddPath(std::string &layer_name, int width, std::string shape) {
+    int id = (int) paths_.size();
     paths_.emplace_back(layer_name, width, shape);
     return &paths_[id];
 }
 
-string SNet::GetName() const {
+std::string SNet::GetName() const {
     return name_;
 }
 
@@ -130,16 +132,15 @@ SignalUse SNet::GetUse() const {
     return use_;
 }
 
-vector<Path>& SNet::GetPathRef() {
+std::vector<Path> &SNet::GetPathRef() {
     return paths_;
 }
 
 void SNet::Report() {
-    cout << "SNET: " << name_ << " use: " << use_ << endl;
-    for(auto p : paths_) {
+    std::cout << "SNET: " << name_ << " use: " << use_ << "\n";
+    for (auto p: paths_) {
         p.Report();
     }
 }
-
 
 }

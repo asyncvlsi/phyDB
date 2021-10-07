@@ -63,7 +63,7 @@ Layer *PhyDB::GetLayerPtr(std::string const &layer_name) {
     return tech_.GetLayerPtr(layer_name);
 }
 
-vector<Layer> &PhyDB::GetLayersRef() {
+std::vector<Layer> &PhyDB::GetLayersRef() {
     return tech_.GetLayersRef();
 }
 
@@ -160,19 +160,19 @@ Track *PhyDB::AddTrack(
     int start,
     int nTracks,
     int step,
-    vector<string> &layer_names
+    std::vector<std::string> &layer_names
 ) {
     return design_.AddTrack(direction, start, nTracks, step, layer_names);
 }
 
-vector<Track> &PhyDB::GetTracksRef() {
+std::vector<Track> &PhyDB::GetTracksRef() {
     return design_.GetTracksRef();
 }
 
 Row *PhyDB::AddRow(
-    string &name,
-    string &site_name,
-    string &site_orient,
+    std::string &name,
+    std::string &site_name,
+    std::string &site_orient,
     int origX,
     int origY,
     int numX,
@@ -193,7 +193,7 @@ Row *PhyDB::AddRow(
     );
 }
 
-vector<Row> &PhyDB::GetRowVec() {
+std::vector<Row> &PhyDB::GetRowVec() {
     return design_.GetRowVec();
 }
 
@@ -221,9 +221,8 @@ Component *PhyDB::GetComponentPtr(std::string &comp_name) {
 
 int PhyDB::GetComponentId(std::string &comp_name) {
     auto res = design_.component_2_id_.find(comp_name);
-    if (res == design_.component_2_id_.end()) {
-        PhyDBExpects(false, "Component does not exist: " + comp_name);
-    }
+    PhyDBExpects(res != design_.component_2_id_.end(),
+                 "Component does not exist: " + comp_name);
     return res->second;
 }
 
@@ -398,15 +397,15 @@ void PhyDB::AddCompPinToNetWithActPtr(
     timing_api_.AddActCompPinPtrIdPair(act_comp_pin_ptr, comp_id, pin_id);
 }
 
-SNet *PhyDB::AddSNet(string &net_name, SignalUse use) {
+SNet *PhyDB::AddSNet(std::string &net_name, SignalUse use) {
     return design_.AddSNet(net_name, use);
 }
 
-SNet *PhyDB::GetSNet(string &net_name) {
+SNet *PhyDB::GetSNet(std::string &net_name) {
     return design_.GetSNet(net_name);
 }
 
-vector<SNet> &PhyDB::GetSNetRef() {
+std::vector<SNet> &PhyDB::GetSNetRef() {
     return design_.GetSNetRef();
 }
 
@@ -443,11 +442,11 @@ MacroWell *PhyDB::AddMacrowell(std::string &macro_name) {
     return macro_ptr->GetWellPtr();
 }
 
-ClusterCol *PhyDB::AddClusterCol(string &name, string &bot_signal) {
+ClusterCol *PhyDB::AddClusterCol(std::string &name, std::string &bot_signal) {
     return design_.AddClusterCol(name, bot_signal);
 }
 
-vector<ClusterCol> &PhyDB::GetClusterColsRef() {
+std::vector<ClusterCol> &PhyDB::GetClusterColsRef() {
     return design_.GetClusterColsRef();
 }
 
@@ -528,7 +527,7 @@ GcellGrid *PhyDB::AddGcellGrid(
     return design_.AddGcellGrid(direction, start, nBoundaries, step);
 }
 
-vector<GcellGrid> &PhyDB::GetGcellGridsRef() {
+std::vector<GcellGrid> &PhyDB::GetGcellGridsRef() {
     return design_.GetGcellGridsRef();
 }
 
@@ -596,9 +595,10 @@ void PhyDB::CreatePhydbActAdaptor() {
     for (int i = 0; i < number_of_nets; ++i) {
         Net &net = design_.nets_[i];
         void *act_net = timer_adaptor->getNetFromFullName(net.GetName(), '.');
-        PhyDBExpects(act_net != nullptr,
-                     "Net cannot be found in the timer netlist adaptor: "
-                         + net.GetName(), PHYDB_LOC);
+        PhyDBExpects(
+            act_net != nullptr,
+            "Net cannot be found in the timer netlist adaptor: " + net.GetName()
+        );
         timing_api_.AddActNetPtrIdPair(act_net, i);
 
         int number_of_pins = (int) net.GetPinsRef().size();
@@ -615,10 +615,11 @@ void PhyDB::CreatePhydbActAdaptor() {
             act_pin_full_name.append(pin_name);
             void *act_pin =
                 timer_adaptor->getPinFromFullName(act_pin_full_name);
-            PhyDBExpects(act_pin != nullptr,
-                         "Component pin cannot be found in the timer netlist adaptor: "
-                             + act_pin_full_name,
-                         PHYDB_LOC);
+            PhyDBExpects(
+                act_pin != nullptr,
+                "Component pin cannot be found in the timer netlist adaptor: "
+                    + act_pin_full_name
+            );
             timing_api_.AddActCompPinPtrIdPair(act_pin, phydb_pin);
         }
     }
@@ -627,11 +628,9 @@ void PhyDB::CreatePhydbActAdaptor() {
 void PhyDB::AddNetsAndCompPinsToSpefManager() {
     galois::eda::parasitics::Manager *spef_manager = GetParaManager();
     PhyDBExpects(spef_manager != nullptr,
-                 "Cannot push RC to the timer because the SPEF manager is not set",
-                 PHYDB_LOC);
+                 "Cannot push RC to the timer because the SPEF manager is not set");
     std::vector<galois::eda::liberty::CellLib *> libs = GetCellLibs();
-    PhyDBExpects(libs.size() >= 0, "No cell library found in the timer?",
-                 PHYDB_LOC);
+    PhyDBExpects(libs.size() >= 0, "No cell library found in the timer?");
 
     // add nets and pins to the SPEF manager
     int number_of_nets = (int) design_.nets_.size();
@@ -640,7 +639,7 @@ void PhyDB::AddNetsAndCompPinsToSpefManager() {
         void *act_net = timing_api_.net_id_2_act_[i];
         PhyDBExpects(act_net != nullptr,
                      "Cannot map from a PhyDB net to an ACT net, net name: "
-                         + design_.nets_[i].GetName(), PHYDB_LOC);
+                         + design_.nets_[i].GetName());
         if (spef_manager->findNet(act_net) != nullptr) {
             spef_manager->addNet(act_net);
         }
@@ -649,12 +648,13 @@ void PhyDB::AddNetsAndCompPinsToSpefManager() {
         for (int j = 0; j < number_of_pins; ++j) {
             auto &phydb_pin = net.GetPinsRef()[j];
             void *act_pin = timing_api_.component_pin_id_2_act_[phydb_pin];
-            PhyDBExpects(act_pin != nullptr,
-                         "Cannot map from a PhyDB component pin to an ACT pin: "
-                             + design_.components_[phydb_pin.comp_id].GetName()
-                             + " "
-                             + design_.components_[phydb_pin.comp_id].GetMacro()->GetPinsRef()[j].GetName(),
-                         PHYDB_LOC);
+            PhyDBExpects(
+                act_pin != nullptr,
+                "Cannot map from a PhyDB component pin to an ACT pin: "
+                    + design_.components_[phydb_pin.comp_id].GetName()
+                    + " "
+                    + design_.components_[phydb_pin.comp_id].GetMacro()->GetPinsRef()[j].GetName()
+            );
             if (spef_manager->findPin(act_pin) != nullptr) {
                 if (IsDriverPin(phydb_pin)) {
                     spef_manager->addDriverPin(act_pin);
@@ -679,12 +679,12 @@ ActPhyDBTimingAPI &PhyDB::GetTimingApi() {
     return timing_api_;
 }
 
-void PhyDB::ReadLef(string const &lef_file_name) {
+void PhyDB::ReadLef(std::string const &lef_file_name) {
     tech_.SetLefName(lef_file_name);
     Si2ReadLef(this, lef_file_name);
 }
 
-void PhyDB::ReadDef(string const &def_file_name) {
+void PhyDB::ReadDef(std::string const &def_file_name) {
     design_.SetDefName(def_file_name);
     Si2ReadDef(this, def_file_name);
 }
@@ -695,11 +695,11 @@ void PhyDB::ReadDef(string const &def_file_name) {
  * @param def_file_name: the DEF file name which contains new component locations.
  * @return nothing
  */
-void PhyDB::OverrideComponentLocsFromDef(string const &def_file_name) {
+void PhyDB::OverrideComponentLocsFromDef(std::string const &def_file_name) {
     Si2LoadPlacedDef(this, def_file_name);
 }
 
-void PhyDB::ReadCell(string const &cell_file_name) {
+void PhyDB::ReadCell(std::string const &cell_file_name) {
     std::ifstream ist(cell_file_name.c_str());
     if (ist.is_open()) {
         //std::cout << "Loading CELL file: " << cellFileName << "\n";
@@ -882,7 +882,7 @@ void PhyDB::ReadCell(string const &cell_file_name) {
     //std::cout << "CELL file loading complete: " << cellFileName << "\n";
 }
 
-void PhyDB::ReadCluster(string const &cluster_file_name) {
+void PhyDB::ReadCluster(std::string const &cluster_file_name) {
     std::ifstream infile(cluster_file_name.c_str());
     if (infile.is_open()) {
         std::cout
@@ -891,7 +891,7 @@ void PhyDB::ReadCluster(string const &cluster_file_name) {
         PhyDBExpects(false, "cannot open input file " + cluster_file_name);
     }
 
-    string tmp1, tmp2, tmp3;
+    std::string tmp1, tmp2, tmp3;
     int lx, ux, ly, uy;
     ClusterCol *col;
     while (!infile.eof()) {
@@ -924,7 +924,7 @@ void PhyDB::LoadFakeTechConfigFile() {
  * @param tech_config_file_name
  * @return true if there is no errors, false if there is anything wrong
  */
-bool PhyDB::ReadTechConfigFile(string const &tech_config_file_name) {
+bool PhyDB::ReadTechConfigFile(std::string const &tech_config_file_name) {
     // resistance and capacitance information will be saved into metal layers,
     // so we need to make sure metal layers are in the database
     if (tech_.layers_.empty()) {
@@ -972,11 +972,11 @@ bool PhyDB::ReadTechConfigFile(int argc, char **argv) {
     return true;
 }
 
-void PhyDB::WriteDef(string const &def_file_name) {
+void PhyDB::WriteDef(std::string const &def_file_name) {
     Si2WriteDef(this, def_file_name);
 }
 
-void PhyDB::WriteCluster(string const &cluster_file_name) {
+void PhyDB::WriteCluster(std::string const &cluster_file_name) {
     std::ofstream outfile(cluster_file_name.c_str());
     if (outfile.is_open()) {
         std::cout
@@ -1001,7 +1001,7 @@ void PhyDB::WriteCluster(string const &cluster_file_name) {
     }
 }
 
-void PhyDB::WriteGuide(string const &guide_file_name) {
+void PhyDB::WriteGuide(std::string const &guide_file_name) {
     std::ofstream outfile(guide_file_name.c_str());
     if (outfile.is_open()) {
         std::cout
@@ -1014,20 +1014,20 @@ void PhyDB::WriteGuide(string const &guide_file_name) {
     auto tech_p = this->GetTechPtr();
     auto netlist = design_p->GetNetsRef();
     for (auto net: netlist) {
-        string netName = net.GetName();
-        outfile << netName << endl;
-        outfile << "(" << endl;
+        std::string netName = net.GetName();
+        outfile << netName << std::endl;
+        outfile << "(" << std::endl;
 
         auto routing_guides = net.GetRoutingGuidesRef();
         for (auto gcell: routing_guides) {
-            string layer_name = tech_p->GetLayerName(gcell.ll.z);
+            std::string layer_name = tech_p->GetLayerName(gcell.ll.z);
             outfile << gcell.ll.x << " ";
             outfile << gcell.ll.y << " ";
             outfile << gcell.ur.x << " ";
             outfile << gcell.ur.y << " ";
             outfile << layer_name << std::endl;
         }
-        outfile << ")" << endl;
+        outfile << ")" << std::endl;
     }
 }
 

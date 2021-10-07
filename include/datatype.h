@@ -71,7 +71,8 @@ class Point3D {
         return (x == 0 && y == 0 && z == 0);
     }
     std::string Str() const {
-        return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
+        return "(" + std::to_string(x) + ", " + std::to_string(y) + ", "
+            + std::to_string(z) + ")";
     }
 
     //define '<' and '>' for comparison in Set amd map
@@ -99,10 +100,19 @@ class Rect2D {
 
     Rect2D() : ll(0, 0), ur(0, 0) {}
     Rect2D(Point2D<T> LL, Point2D<T> UR) : ll(LL), ur(UR) { SanityCheck(); }
-    Rect2D(T llx, T lly, T urx, T ury) : ll(llx, lly), ur(urx, ury) { SanityCheck(); }
+    Rect2D(T llx, T lly, T urx, T ury) :
+        ll(llx, lly),
+        ur(urx, ury) {
+        SanityCheck();
+    }
 
     bool IsLegal() { return (ll.x < ur.x && ll.y < ur.y); }
-    void SanityCheck() { PhyDBExpects(this->IsLegal(), "Illegal Rect2D: ll, ur, " + ll.Str() + ur.Str()); }
+    void SanityCheck() {
+        PhyDBExpects(
+            this->IsLegal(),
+            "Illegal Rect2D: ll, ur, " + ll.Str() + ur.Str()
+        );
+    }
     bool IsEmpty() { return ll.IsEmpty() && ur.IsEmpty(); }
 
     void Set(Point2D<T> LL, Point2D<T> UR) {
@@ -125,7 +135,7 @@ class Rect2D {
         return (ll.x <= p.x && ll.y <= p.y && ur.x >= p.x && ur.y >= p.y);
     }
 
-    string Str() {
+    std::string Str() {
         return ll.Str() + ur.Str();
     }
 
@@ -140,9 +150,9 @@ class Rect2D {
 template<typename T>
 class Rect2DLayer : public Rect2D<T> {
   public:
-    string layer;
+    std::string layer;
     Rect2DLayer() : Rect2D<T>() {}
-    void Set(string &layer_init, T llx, T lly, T urx, T ury) {
+    void Set(std::string &layer_init, T llx, T lly, T urx, T ury) {
         this->layer = layer_init;
         this->lowerLeft.Set(llx, lly);
         this->upperRight.Set(urx, ury);
@@ -157,12 +167,19 @@ class Rect3D {
 
     Rect3D() : ll(0, 0, 0), ur(0, 0, 0) {}
     Rect3D(Point3D<T> LL, Point3D<T> UR) : ll(LL), ur(UR) {}
-    Rect3D(T llx, T lly, T llz, T urx, T ury, T urz) : ll(llx, lly, llz), ur(urx, ury, urz) {}
+    Rect3D(T llx, T lly, T llz, T urx, T ury, T urz) :
+        ll(llx, lly, llz),
+        ur(urx, ury, urz) {}
 
     bool IsLegal() { //on the same layer is legal
         return (ll.x < ur.x && ll.y < ur.y && ll.z <= ur.z);
     }
-    void SanityCheck() { PhyDBExpects(this->IsLegal(), "Illegal Rect2D: ll, ur, " + ll.Str() + ur.Str()); }
+    void SanityCheck() {
+        PhyDBExpects(
+            this->IsLegal(),
+            "Illegal Rect2D: ll, ur, " + ll.Str() + ur.Str()
+        );
+    }
 
     void set(Point3D<T> LL, Point3D<T> UR) {
         ll = LL;
@@ -193,12 +210,13 @@ class Range {
 
 class LayerRect {
   public:
-    string layer_name_;
-    vector<Rect2D<double>> rects_;
+    std::string layer_name_;
+    std::vector<Rect2D<double>> rects_;
 
     LayerRect() : layer_name_("") {}
     explicit LayerRect(std::string &layer_name) : layer_name_(layer_name) {}
-    LayerRect(const string &layerName, const vector<Rect2D<double>> &rects) :
+    LayerRect(const std::string &layerName,
+              const std::vector<Rect2D<double>> &rects) :
         layer_name_(layerName),
         rects_(rects) {}
 
@@ -207,7 +225,7 @@ class LayerRect {
         rects_.emplace_back(llx, lly, urx, ury);
     }
 
-    vector<Rect2D<double>> &GetRects() { return rects_;}
+    std::vector<Rect2D<double>> &GetRects() { return rects_; }
 
     void Reset() {
         layer_name_ = "";
@@ -216,42 +234,43 @@ class LayerRect {
     void Report() {
         std::cout << "Name: " << layer_name_ << "\n";
         for (auto &rect_2d: rects_) {
-            std::cout << "  " << rect_2d.ll.Str() << " " << rect_2d.ur.Str() << "\n";
+            std::cout << "  " << rect_2d.ll.Str() << " " << rect_2d.ur.Str()
+                      << "\n";
         }
     }
 };
 
 template<typename T>
-ostream &operator<<(ostream &os, const Point2D<T> &p) {
+std::ostream &operator<<(std::ostream &os, const Point2D<T> &p) {
     os << "(" << p.x << ", " << p.y << ") ";
     return os;
 }
 
 template<typename T>
-ostream &operator<<(ostream &os, const Point3D<T> &p) {
+std::ostream &operator<<(std::ostream &os, const Point3D<T> &p) {
     os << "(" << p.x << ", " << p.y << ", " << p.z << ") ";
     return os;
 }
 
 template<typename T>
-ostream &operator<<(ostream &os, const Rect2D<T> &p) {
+std::ostream &operator<<(std::ostream &os, const Rect2D<T> &p) {
     os << "Rect: " << p.ll << " " << p.ur << " ";
     return os;
 }
 
 template<typename T>
-ostream &operator<<(ostream &os, const Rect3D<T> &p) {
+std::ostream &operator<<(std::ostream &os, const Rect3D<T> &p) {
     os << "Rect: " << p.ll << " " << p.ur << " ";
     return os;
 }
 
 template<typename T>
-ostream &operator<<(ostream &os, const Range<T> &r) {
+std::ostream &operator<<(std::ostream &os, const Range<T> &r) {
     os << "Range [" << r.begin << ", " << r.end << "] ";
     return os;
 }
 
-ostream &operator<<(ostream &os, const LayerRect &lr);
+std::ostream &operator<<(std::ostream &os, const LayerRect &lr);
 
 }
 

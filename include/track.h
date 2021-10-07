@@ -13,12 +13,17 @@ class Track {
     int n_tracks_;
     int step_;
 
-    vector<string> layer_names_;
+    std::vector<std::string> layer_names_;
 
   public:
     Track() {}
-    Track(XYDirection direction, int start, int nTracks, int step, vector<string> &layerNames) :
-        direction_(direction),
+    Track(
+        XYDirection direction,
+        int start,
+        int nTracks,
+        int step,
+        std::vector<std::string> &layerNames
+    ) : direction_(direction),
         start_(start),
         n_tracks_(nTracks),
         step_(step),
@@ -28,12 +33,12 @@ class Track {
     int GetStart() const;
     int GetNTracks() const;
     int GetStep() const;
-    vector<string>& GetLayerNames();
+    std::vector<std::string> &GetLayerNames();
 
-    friend ostream &operator<<(ostream &, const Track &);
+    friend std::ostream &operator<<(std::ostream &, const Track &);
 };
 
-ostream &operator<<(ostream &, const Track &);
+std::ostream &operator<<(std::ostream &, const Track &);
 
 }
 

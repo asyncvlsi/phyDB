@@ -106,7 +106,7 @@ Layer *Tech::GetLayerPtr(std::string const &layer_name) {
     return &(layers_[id]);
 }
 
-int Tech::GetLayerId(string const &layer_name) {
+int Tech::GetLayerId(std::string const &layer_name) {
     if (!IsLayerExisting(layer_name)) {
         return -1;
     }
@@ -115,8 +115,8 @@ int Tech::GetLayerId(string const &layer_name) {
 }
 
 const std::string &Tech::GetLayerName(int layerID) {
-    if (layerID >= layers_.size()) {
-        std::cout << "accessing layerID > num. of layers" << endl;
+    if (layerID >= (int) layers_.size()) {
+        std::cout << "accessing layerID > num. of layers" << std::endl;
         exit(1);
     }
     return layers_[layerID].GetName();
@@ -158,7 +158,7 @@ bool Tech::IsLefViaExisting(std::string const &via_name) {
 LefVia *Tech::AddLefVia(std::string &via_name) {
     PhyDBExpects(!IsLefViaExisting(via_name),
                  "VIA name_ exists, cannot use it again: " + via_name);
-    int id = vias_.size();
+    int id = (int) vias_.size();
     vias_.emplace_back(via_name);
     via_2_id_[via_name] = id;
     return &(vias_[id]);
@@ -172,7 +172,7 @@ LefVia *Tech::GetLefViaPtr(std::string const &via_name) {
     return &(vias_[id]);
 }
 
-vector<LefVia> &Tech::GetLefViasRef() {
+std::vector<LefVia> &Tech::GetLefViasRef() {
     return vias_;
 }
 
@@ -183,7 +183,7 @@ bool Tech::IsViaRuleGenerateExisting(std::string const &name) {
 ViaRuleGenerate *Tech::AddViaRuleGenerate(std::string &name) {
     PhyDBExpects(!IsViaRuleGenerateExisting(name),
                  "Macro name_ exists, cannot use it again");
-    int id = via_rule_generates_.size();
+    int id = (int) via_rule_generates_.size();
     via_rule_generates_.emplace_back(name);
     via_rule_generate_2_id_[name] = id;
     return &(via_rule_generates_[id]);
@@ -197,21 +197,25 @@ ViaRuleGenerate *Tech::GetViaRuleGeneratePtr(std::string const &name) {
     return &(via_rule_generates_[id]);
 }
 
-vector<ViaRuleGenerate> &Tech::GetViaRuleGeneratesRef() {
+std::vector<ViaRuleGenerate> &Tech::GetViaRuleGeneratesRef() {
     return via_rule_generates_;
 }
 
-void Tech::SetNwellLayer(double width,
-                         double spacing,
-                         double op_spacing,
-                         double max_plug_dist,
-                         double overhang) {
+void Tech::SetNwellLayer(
+    double width,
+    double spacing,
+    double op_spacing,
+    double max_plug_dist,
+    double overhang
+) {
     if (is_n_well_layer_set_) {
-        n_layer_ptr_->SetParams(width,
-                                spacing,
-                                op_spacing,
-                                max_plug_dist,
-                                overhang);
+        n_layer_ptr_->SetParams(
+            width,
+            spacing,
+            op_spacing,
+            max_plug_dist,
+            overhang
+        );
     } else {
         n_layer_ptr_ =
             new WellLayer(width, spacing, op_spacing, max_plug_dist, overhang);
@@ -219,17 +223,21 @@ void Tech::SetNwellLayer(double width,
     }
 }
 
-void Tech::SetPwellLayer(double width,
-                         double spacing,
-                         double op_spacing,
-                         double max_plug_dist,
-                         double overhang) {
+void Tech::SetPwellLayer(
+    double width,
+    double spacing,
+    double op_spacing,
+    double max_plug_dist,
+    double overhang
+) {
     if (is_p_well_layer_set_) {
-        p_layer_ptr_->SetParams(width,
-                                spacing,
-                                op_spacing,
-                                max_plug_dist,
-                                overhang);
+        p_layer_ptr_->SetParams(
+            width,
+            spacing,
+            op_spacing,
+            max_plug_dist,
+            overhang
+        );
     } else {
         p_layer_ptr_ =
             new WellLayer(width, spacing, op_spacing, max_plug_dist, overhang);

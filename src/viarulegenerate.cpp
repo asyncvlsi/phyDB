@@ -2,7 +2,7 @@
 
 namespace phydb {
 
-void ViaRuleGenerateLayer::SetLayerName(const string& layer_name) {
+void ViaRuleGenerateLayer::SetLayerName(const std::string &layer_name) {
     layer_name_ = layer_name;
 }
 
@@ -18,9 +18,9 @@ void ViaRuleGenerateLayer::SetEnclosure(double x, double y) {
     enclosure_.Set(x, y);
 }
 
-string ViaRuleGenerateLayer::GetLayerName() const {
+std::string ViaRuleGenerateLayer::GetLayerName() const {
     return layer_name_;
-}   
+}
 
 Rect2D<double> ViaRuleGenerateLayer::GetRect() const {
     return rect_;
@@ -40,10 +40,13 @@ void ViaRuleGenerate::SetDefault() {
 
 void ViaRuleGenerate::UnsetDefault() {
     is_default_ = false;
-}   
+}
 
-void ViaRuleGenerate::SetLayers(ViaRuleGenerateLayer& layer0,
-        ViaRuleGenerateLayer& layer1, ViaRuleGenerateLayer& layer2) {
+void ViaRuleGenerate::SetLayers(
+    ViaRuleGenerateLayer &layer0,
+    ViaRuleGenerateLayer &layer1,
+    ViaRuleGenerateLayer &layer2
+) {
     layers_[0] = layer0;
     layers_[1] = layer1;
     layers_[2] = layer2;

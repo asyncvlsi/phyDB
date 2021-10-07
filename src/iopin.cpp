@@ -22,11 +22,11 @@ void IOPin::SetPlacementStatus(PlaceStatus place_status) {
     place_status_ = place_status;
 }
 
-const string &IOPin::GetName() {
+const std::string &IOPin::GetName() {
     return name_;   
 }
 
-const string& IOPin::GetNetName() {
+const std::string& IOPin::GetNetName() {
     return net_name_;
 }
 
@@ -38,7 +38,7 @@ SignalUse IOPin::GetUse() {
     return use_;
 }
 
-const string &IOPin::GetLayerName() {
+const std::string &IOPin::GetLayerName() {
     return layer_name_;
 }
 

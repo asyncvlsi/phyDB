@@ -26,8 +26,8 @@ struct RectSignalLayer {
     std::string &LayerName();
     Rect2D<int> &Rect();
 
-    friend ostream &operator<<(
-        ostream &os,
+    friend std::ostream &operator<<(
+        std::ostream &os,
         const RectSignalLayer &rect_signal_layer
     );
 };

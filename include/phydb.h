@@ -41,7 +41,7 @@ class PhyDB {
         MetalDirection direction = HORIZONTAL
     );
     Layer *GetLayerPtr(std::string const &layer_name);
-    vector<Layer> &GetLayersRef();
+    std::vector<Layer> &GetLayersRef();
 
     bool IsMacroExisting(std::string const &macro_name);
     Macro *AddMacro(std::string &macro_name);
@@ -73,14 +73,14 @@ class PhyDB {
         int start,
         int nTracks,
         int step,
-        vector<string> &layer_names
+        std::vector<std::string> &layer_names
     );
-    vector<Track> &GetTracksRef();
+    std::vector<Track> &GetTracksRef();
 
     Row *AddRow(
-        string &name,
-        string &site_name,
-        string &site_orient,
+        std::string &name,
+        std::string &site_name,
+        std::string &site_orient,
         int origX,
         int origY,
         int numX,
@@ -88,7 +88,7 @@ class PhyDB {
         int stepX,
         int stepY
     );
-    vector<Row> &GetRowVec();
+    std::vector<Row> &GetRowVec();
 
     bool IsViaRuleGenerateExisting(std::string const &name);
     ViaRuleGenerate *AddViaRuleGenerate(std::string &name);
@@ -153,7 +153,7 @@ class PhyDB {
 
     SNet *AddSNet(std::string &net_name, SignalUse use);
     SNet *GetSNet(std::string &net_name);
-    vector<SNet> &GetSNetRef();
+    std::vector<SNet> &GetSNetRef();
 
     GcellGrid *AddGcellGrid(
         XYDirection direction,
@@ -161,7 +161,7 @@ class PhyDB {
         int nBoundaries,
         int step
     );
-    vector<GcellGrid> &GetGcellGridsRef();
+    std::vector<GcellGrid> &GetGcellGridsRef();
 
     /************************************************
     * The following APIs are for setting up callback functions for timing-driven flow
@@ -221,8 +221,8 @@ class PhyDB {
     * N/P wells, and nplus/pplus layers
     * ************************************************/
 
-    ClusterCol *AddClusterCol(string &name, string &bot_signal);
-    vector<ClusterCol> &GetClusterColsRef();
+    ClusterCol *AddClusterCol(std::string &name, std::string &bot_signal);
+    std::vector<ClusterCol> &GetClusterColsRef();
     SpecialMacroRectLayout *CreatePpNpMacroAndComponent(
         int llx,
         int lly,
@@ -242,18 +242,18 @@ class PhyDB {
     * The following APIs are for file IO
     * ************************************************/
 
-    void ReadLef(string const &lef_file_name);
-    void ReadDef(string const &def_file_name);
-    void OverrideComponentLocsFromDef(string const &def_file_name);
-    void ReadCell(string const &cell_file_name);
-    void ReadCluster(string const &cluster_file_name);
+    void ReadLef(std::string const &lef_file_name);
+    void ReadDef(std::string const &def_file_name);
+    void OverrideComponentLocsFromDef(std::string const &def_file_name);
+    void ReadCell(std::string const &cell_file_name);
+    void ReadCluster(std::string const &cluster_file_name);
     void LoadFakeTechConfigFile();
-    bool ReadTechConfigFile(string const &tech_config_file_name);
+    bool ReadTechConfigFile(std::string const &tech_config_file_name);
     bool ReadTechConfigFile(int argc, char **argv);
 
-    void WriteDef(string const &def_file_name);
-    void WriteCluster(string const &cluster_file_name);
-    void WriteGuide(string const &guide_file_name);
+    void WriteDef(std::string const &def_file_name);
+    void WriteCluster(std::string const &cluster_file_name);
+    void WriteGuide(std::string const &guide_file_name);
 
   private:
     Tech tech_;

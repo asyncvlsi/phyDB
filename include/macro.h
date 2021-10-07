@@ -15,32 +15,32 @@ struct MacroWell;
 
 class Macro {
   private:
-    string name_;
+    std::string name_;
 
     MacroClass class_ = CORE_;
 
     Point2D<double> origin_;
     Point2D<double> size_;
 
-    vector<Pin> pins_;
+    std::vector<Pin> pins_;
     OBS obs_;
 
-    unordered_map<string, int> pin_2_id_;
+    std::unordered_map<std::string, int> pin_2_id_;
     MacroWell *well_ptr_ = nullptr;
 
   public:
     Macro() : name_("") {}
-    Macro(string &name) : name_(name) {
+    Macro(std::string &name) : name_(name) {
         size_.x = 0;
         size_.y = 0;
         origin_.x = 0;
         origin_.y = 0;
     }
     Macro(
-        string name,
+        std::string name,
         Point2D<double> origin,
         Point2D<double> size,
-        vector<Pin> pins,
+        std::vector<Pin> pins,
         OBS obs
     ) :
         name_(name),
@@ -49,7 +49,7 @@ class Macro {
         pins_(pins),
         obs_(obs) {}
 
-    void SetName(string &name);
+    void SetName(std::string &name);
     void SetClass(MacroClass macro_class);
     void SetOrigin(Point2D<double> _origin);
     void SetOrigin(double x, double y);
@@ -72,7 +72,7 @@ class Macro {
 
     void SetWellPtr(MacroWell *well_ptr);
 
-    const string &GetName();
+    const std::string &GetName();
     MacroClass GetClass() const;
     Point2D<double> GetOrigin() const;
     Point2D<double> &GetOriginRef();
@@ -81,17 +81,17 @@ class Macro {
     Point2D<double> GetSize() const;
     double GetWidth() const;
     double GetHeight() const;
-    vector<Pin> GetPinVec() const;
-    vector<Pin> &GetPinsRef();
-    bool GetPin(string pinName, Pin &pin) const;
+    std::vector<Pin> GetPinVec() const;
+    std::vector<Pin> &GetPinsRef();
+    bool GetPin(std::string pinName, Pin &pin) const;
     //bool GetObs(OBS &) const;
     OBS *GetObs();
     MacroWell *GetWellPtr();
 
-    friend ostream &operator<<(ostream &, const Macro &);
+    friend std::ostream &operator<<(std::ostream &, const Macro &);
 };
 
-ostream &operator<<(ostream &, const Macro &);
+std::ostream &operator<<(std::ostream &, const Macro &);
 
 struct MacroWell {
   private:

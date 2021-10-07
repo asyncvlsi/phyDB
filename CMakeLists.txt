@@ -73,13 +73,24 @@ find_library(
     NAMES galois_eda
     PATHS $ENV{ACT_HOME}/lib
 )
-if (NOT GALOIS_EDA_LIBRARY)
+find_library(
+    GALOIS_SHMEM_LIBRARY
+    NAMES galois_shmem
+    PATHS $ENV{ACT_HOME}/lib
+)
+find_library(
+    NUMA_LIBRARY
+    NAMES numa
+)
+if (NOT (GALOIS_EDA_LIBRARY AND GALOIS_SHMEM_LIBRARY AND NUMA_LIBRARY))
     set(PHYDB_USE_GALOIS 0)
     set(GALOIS_EDA_LIBRARY "")
-    message(STATUS "Cannot find libgalois_eda.a")
+    set(GALOIS_SHMEM_LIBRARY "")
+    set(NUMA_LIBRARY "")
+    message(STATUS "Cannot find libgalois_eda.a or libgalois_shmem.a or numa")
 else ()
     set(PHYDB_USE_GALOIS 1)
-    message(STATUS "Found libgalois_eda.a")
+    message(STATUS "Found libgalois_eda.a, libgalois_shmem.a, numa")
 endif ()
 configure_file(${INC_DIR}/config.h.in ${INC_DIR}/config.h)
 
@@ -157,7 +168,7 @@ target_link_libraries(
     phydb
     lef def
     ${Boost_LIBRARIES}
-    ${GALOIS_EDA_LIBRARY}
+    ${GALOIS_EDA_LIBRARY} ${GALOIS_SHMEM_LIBRARY} ${NUMA_LIBRARY}
 )
 
 add_executable(PhyDB_test test/test.cpp)
@@ -172,7 +183,6 @@ target_link_libraries(parser_test PRIVATE phydb)
 message(STATUS "Changing Installation directory to $ACT_HOME")
 set(CMAKE_INSTALL_PREFIX $ENV{ACT_HOME} CACHE PATH "installation path" FORCE)
 message(STATUS "Current installation directory: " ${CMAKE_INSTALL_PREFIX})
-
 
 ############################################################################
 # Install header files

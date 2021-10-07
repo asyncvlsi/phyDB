@@ -212,7 +212,7 @@ Layer::~Layer() {
     delete layer_tech_config_;
 }
 
-void Layer::SetName(string &name) {
+void Layer::SetName(std::string &name) {
     name_ = name;
 }
 
@@ -347,9 +347,9 @@ SpacingTable *Layer::SetSpacingTable(SpacingTable &st) {
 SpacingTable *Layer::SetSpacingTable(
     int n_col,
     int n_row,
-    const vector<double> &v_parallel_run_length,
-    const vector<double> &v_width,
-    const vector<double> &v_spacing
+    const std::vector<double> &v_parallel_run_length,
+    const std::vector<double> &v_width,
+    const std::vector<double> &v_spacing
 ) {
     spacing_table_ =
         SpacingTable(n_col, n_row, v_parallel_run_length, v_width, v_spacing);
@@ -395,11 +395,11 @@ SpacingTable *Layer::GetSpacingTable() {
     return &spacing_table_;
 }
 
-vector<EolSpacing> *Layer::GetEolSpacings() {
+std::vector<EolSpacing> *Layer::GetEolSpacings() {
     return &eol_spacings_;
 }
 
-vector<SpacingTableInfluence> *Layer::GetSpacingTableInfluences() {
+std::vector<SpacingTableInfluence> *Layer::GetSpacingTableInfluences() {
     return &spacing_table_influences_;
 }
 
@@ -575,25 +575,25 @@ double Layer::GetFringeCapacitance(
     return unit_edge_cap_[corner_index] * 2 * (width + length);
 }
 
-ostream &operator<<(ostream &os, const Layer &l) {
+std::ostream &operator<<(std::ostream &os, const Layer &l) {
     os << l.name_ << " " << LayerTypeStr(l.type_) << " "
-       << l.id_ << " " << MetalDirectionStr(l.direction_) << endl;
+       << l.id_ << " " << MetalDirectionStr(l.direction_) << std::endl;
     os << l.pitchx_ << " " << l.pitchy_ << " " << l.width_ << " " << l.area_
-       << endl;
-    os << l.min_width_ << " " << l.offset_ << endl;
-    os << l.spacing_ << endl;
+       << std::endl;
+    os << l.min_width_ << " " << l.offset_ << std::endl;
+    os << l.spacing_ << std::endl;
     return os;
 }
 
 void Layer::Report() {
-    cout << "------------------------------" << endl;
-    cout << "Layer: " << name_ << " type: " << LayerTypeStr(type_)
-         << " direction: " << MetalDirectionStr(direction_) << " idx_: " << id_
-         << endl;
-    cout << "pitch: " << pitchx_ << " " << pitchy_ << " Width:" << width_
-         << " area: " << area_ << endl;
-    cout << "minWidth: " << min_width_ << " offset: " << offset_
-         << " GetSpacing: " << spacing_ << endl;
+    std::cout << "------------------------------" << std::endl;
+    std::cout << "Layer: " << name_ << " type: " << LayerTypeStr(type_)
+              << " direction: " << MetalDirectionStr(direction_) << " idx_: "
+              << id_ << std::endl;
+    std::cout << "pitch: " << pitchx_ << " " << pitchy_ << " Width:" << width_
+              << " area: " << area_ << std::endl;
+    std::cout << "minWidth: " << min_width_ << " offset: " << offset_
+              << " GetSpacing: " << spacing_ << std::endl;
     /*
     if (spacingTable.parallelRunLength.size())
         spacingTable.print();
@@ -655,11 +655,13 @@ void WellLayer::SetOverhang(double overhang) {
     overhang_ = overhang;
 }
 
-void WellLayer::SetParams(double width,
-                          double spacing,
-                          double op_spacing,
-                          double max_plug_dist,
-                          double overhang) {
+void WellLayer::SetParams(
+    double width,
+    double spacing,
+    double op_spacing,
+    double max_plug_dist,
+    double overhang
+) {
     SetWidth(width);
     SetSpacing(spacing);
     SetOpSpacing(op_spacing);
@@ -668,11 +670,12 @@ void WellLayer::SetParams(double width,
 }
 
 void WellLayer::Report() const {
-    std::cout << "    MINWIDTH:    " << width_ << " um\n"
-              << "    SPACING:     " << spacing_ << " um\n"
-              << "    OPPOSPACING: " << op_spacing_ << " um\n"
-              << "    MAXPLUGDIST: " << max_plug_dist_ << " um\n"
-              << "    OVERHANG:    " << overhang_ << " um\n";
+    std::cout
+        << "    MINWIDTH:    " << width_ << " um\n"
+        << "    SPACING:     " << spacing_ << " um\n"
+        << "    OPPOSPACING: " << op_spacing_ << " um\n"
+        << "    MAXPLUGDIST: " << max_plug_dist_ << " um\n"
+        << "    OVERHANG:    " << overhang_ << " um\n";
 }
 
 }

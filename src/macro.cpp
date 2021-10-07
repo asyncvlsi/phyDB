@@ -2,11 +2,11 @@
 
 namespace phydb {
 
-const string &Macro::GetName() {
+const std::string &Macro::GetName() {
     return name_;
 }
 
-void Macro::SetName(string &name) {
+void Macro::SetName(std::string &name) {
     name_ = name;
 }
 
@@ -91,11 +91,11 @@ Point2D<double> Macro::GetSize() const {
     return size_;
 }
 
-vector<Pin> Macro::GetPinVec() const {
+std::vector<Pin> Macro::GetPinVec() const {
     return pins_;
 }
 
-vector<Pin> &Macro::GetPinsRef() {
+std::vector<Pin> &Macro::GetPinsRef() {
     return pins_;
 }
 
@@ -103,15 +103,15 @@ MacroWell *Macro::GetWellPtr() {
     return well_ptr_;
 }
 
-ostream &operator<<(ostream &os, const Macro &macro) {
-    os << macro.name_ << endl;
-    os << macro.origin_ << endl;
-    os << macro.size_ << endl;
+std::ostream &operator<<(std::ostream &os, const Macro &macro) {
+    os << macro.name_ << std::endl;
+    os << macro.origin_ << std::endl;
+    os << macro.size_ << std::endl;
 
     for (auto &p : macro.pins_) {
-        os << p << endl;
+        os << p << std::endl;
     }
-    os << macro.obs_ << endl;
+    os << macro.obs_ << std::endl;
     return os;
 
 }

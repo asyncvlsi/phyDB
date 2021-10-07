@@ -28,10 +28,9 @@ int writeDefVias(defwCallbackType_e c, defiUserData ud);
 int writeDefGcellGrid(defwCallbackType_e c, defiUserData ud);
 int writeDefRow(defwCallbackType_e c, defiUserData ud);
 
-void Si2WriteDef(PhyDB *phy_db_ptr, string const &defFileName);
-void WriteCluter(PhyDB *phy_db_ptr, string const &clusterFileName);
+void Si2WriteDef(PhyDB *phy_db_ptr, std::string const &defFileName);
+void WriteCluter(PhyDB *phy_db_ptr, std::string const &clusterFileName);
 
 }
-
 
 #endif //PHYDB_INCLUDE_DEFWRITER_H_

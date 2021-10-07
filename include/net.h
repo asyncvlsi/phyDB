@@ -16,26 +16,28 @@ class Net {
     double weight_;
 
     std::vector<PhydbPin> pins_;
-    std::vector<string> iopin_names_;
+    std::vector<std::string> iopin_names_;
 
-    std::vector<Rect3D<int>> guides_;
+    std::vector<Rect3D < int>> guides_;
 
     Net() {}
-    Net(std::string name, double weight) : name_(name), weight_(weight) {}
+    Net(const std::string &name, double weight)
+        : name_(name), weight_(weight) {}
 
     void AddIoPin(std::string const &iopin_name);
     void AddCompPin(int comp_id, int pin_id);
     void AddRoutingGuide(int llx, int lly, int urx, int ury, int layerID);
 
     const std::string &GetName() const;
-    vector<PhydbPin> &GetPinsRef();
-    vector<std::string> &GetIoPinNamesRef();
-    vector<Rect3D<int>>& GetRoutingGuidesRef();
+    std::vector<PhydbPin> &GetPinsRef();
+    std::vector<std::string> &GetIoPinNamesRef();
+    std::vector<Rect3D < int>>&
+    GetRoutingGuidesRef();
 
     void Report();
 };
 
-ostream &operator<<(ostream &, const Net &);
+std::ostream &operator<<(std::ostream &, const Net &);
 
 }
 
