@@ -75,6 +75,7 @@ find_library(
 )
 if (NOT GALOIS_EDA_LIBRARY)
     set(PHYDB_USE_GALOIS 0)
+    set(GALOIS_EDA_LIBRARY "")
     message(STATUS "Cannot find libgalois_eda.a")
 else ()
     set(PHYDB_USE_GALOIS 1)
