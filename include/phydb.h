@@ -133,7 +133,7 @@ class PhyDB {
         std::string &iopin_name,
         std::string &net_name,
         void *act_io_pin_ptr = nullptr
-        );
+    );
     void AddCompPinToNet(
         std::string &comp_name,
         std::string &pin_name,
@@ -185,15 +185,15 @@ class PhyDB {
     bool IsDriverPin(PhydbPin &phydb_pin);
     ActPhyDBTimingAPI &GetTimingApi();
 #if PHYDB_USE_GALOIS
-    void SetParaManager(galois::eda::parasitics::Manager* manager);
-    void AddCellLib(galois::eda::liberty::CellLib* lib);
-    void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor* adaptor);
-    galois::eda::parasitics::Manager* GetParaManager();
-    std::vector<galois::eda::liberty::CellLib*> GetCellLibs();
-    galois::eda::utility::ExtNetlistAdaptor* GetNetlistAdaptor();
+    void SetParaManager(galois::eda::parasitics::Manager *manager);
+    void AddCellLib(galois::eda::liberty::CellLib *lib);
+    void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor);
+    galois::eda::parasitics::Manager *GetParaManager();
+    std::vector<galois::eda::liberty::CellLib *> GetCellLibs();
+    galois::eda::utility::ExtNetlistAdaptor *GetNetlistAdaptor();
 
-    void BuildPhydbActAdaptor();
-    void PushRCToTimer();
+    void CreatePhydbActAdaptor();
+    void AddNetsAndCompPinsToSpefManager();
 #endif
 
     /************************************************
@@ -247,6 +247,7 @@ class PhyDB {
     void OverrideComponentLocsFromDef(string const &def_file_name);
     void ReadCell(string const &cell_file_name);
     void ReadCluster(string const &cluster_file_name);
+    void LoadFakeTechConfigFile();
     bool ReadTechConfigFile(string const &tech_config_file_name);
     bool ReadTechConfigFile(int argc, char **argv);
 

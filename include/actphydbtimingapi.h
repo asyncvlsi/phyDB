@@ -124,7 +124,8 @@ class ActPhyDBTimingAPI {
   public:
     //APIs for ACT
     void AddActNetPtrIdPair(void *act_net, int net_id);
-    void AddActCompPinPtrIdPair(void *act_comp, int comp_id, int pin_id);
+    void AddActCompPinPtrIdPair(void *act_pin, PhydbPin phydb_pin);
+    void AddActCompPinPtrIdPair(void *act_pin, int comp_id, int pin_id);
 
     void SetGetNumConstraintsCB(int (*callback_function)());
     void SetUpdateTimingIncrementalCB(void (*callback_function)());
@@ -154,8 +155,8 @@ class ActPhyDBTimingAPI {
     //APIs for Dali and SPRoute
     bool IsActNetPtrExisting(void *act_net);
     int ActNetPtr2Id(void *act_net);
-    bool IsActComPinPtrExisting(void *act_comp);
-    PhydbPin ActCompPinPtr2Id(void *act_comp);
+    bool IsActComPinPtrExisting(void *act_pin);
+    PhydbPin ActCompPinPtr2Id(void *act_pin);
     int GetNumConstraints();
     void UpdateTimingIncremental();
     double GetSlack(int tc_num);

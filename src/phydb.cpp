@@ -587,37 +587,64 @@ galois::eda::utility::ExtNetlistAdaptor *PhyDB::GetNetlistAdaptor() {
     return timing_api_.GetNetlistAdaptor();
 }
 
-void PhyDB::BuildPhydbActAdaptor() {
-    auto timer_adaptor = GetNetlistAdaptor();
+void PhyDB::CreatePhydbActAdaptor() {
+    galois::eda::utility::ExtNetlistAdaptor *timer_adaptor =
+        GetNetlistAdaptor();
     PhyDBExpects(timer_adaptor != nullptr,
                  "Timer netlist adaptor no found! Cannot build phydb-act adaptor");
     int number_of_nets = (int) design_.nets_.size();
     for (int i = 0; i < number_of_nets; ++i) {
-        auto &net = design_.nets_[i];
+        Net &net = design_.nets_[i];
         void *act_net = timer_adaptor->getNetFromFullName(net.GetName(), '.');
         PhyDBExpects(act_net != nullptr,
                      "Net cannot be found in the timer netlist adaptor: "
-                         + net.GetName());
+                         + net.GetName(), PHYDB_LOC);
+        timing_api_.AddActNetPtrIdPair(act_net, i);
+
+        int number_of_pins = (int) net.GetPinsRef().size();
+        for (int j = 0; j < number_of_pins; ++j) {
+            auto &phydb_pin = net.GetPinsRef()[j];
+            int comp_id = phydb_pin.comp_id;
+            int pin_id = phydb_pin.pin_id;
+            Component &comp = design_.components_[comp_id];
+            const std::string &comp_name = comp.GetName();
+            const std::string &pin_name =
+                comp.GetMacro()->GetPinsRef()[pin_id].GetName();
+            std::string act_pin_full_name(comp_name);
+            act_pin_full_name.append(":");
+            act_pin_full_name.append(pin_name);
+            void *act_pin =
+                timer_adaptor->getPinFromFullName(act_pin_full_name);
+            PhyDBExpects(act_pin != nullptr,
+                         "Component pin cannot be found in the timer netlist adaptor: "
+                             + act_pin_full_name,
+                         PHYDB_LOC);
+            timing_api_.AddActCompPinPtrIdPair(act_pin, phydb_pin);
+        }
     }
 }
 
-void PhyDB::PushRCToTimer() {
-    auto spef_manager = GetParaManager();
+void PhyDB::AddNetsAndCompPinsToSpefManager() {
+    galois::eda::parasitics::Manager *spef_manager = GetParaManager();
     PhyDBExpects(spef_manager != nullptr,
-                 "Cannot push RC to the timer because the SPEF manager is not set");
-    auto libs = GetCellLibs();
-    PhyDBExpects(libs.size() >= 0, "No cell library found in the timer?");
+                 "Cannot push RC to the timer because the SPEF manager is not set",
+                 PHYDB_LOC);
+    std::vector<galois::eda::liberty::CellLib *> libs = GetCellLibs();
+    PhyDBExpects(libs.size() >= 0, "No cell library found in the timer?",
+                 PHYDB_LOC);
 
     // add nets and pins to the SPEF manager
     int number_of_nets = (int) design_.nets_.size();
     for (int i = 0; i < number_of_nets; ++i) {
+        Net &net = design_.nets_[i];
         void *act_net = timing_api_.net_id_2_act_[i];
         PhyDBExpects(act_net != nullptr,
                      "Cannot map from a PhyDB net to an ACT net, net name: "
-                         + design_.nets_[i].GetName());
-        spef_manager->addNet(act_net);
+                         + design_.nets_[i].GetName(), PHYDB_LOC);
+        if (spef_manager->findNet(act_net) != nullptr) {
+            spef_manager->addNet(act_net);
+        }
 
-        auto &net = design_.nets_[i];
         int number_of_pins = (int) net.GetPinsRef().size();
         for (int j = 0; j < number_of_pins; ++j) {
             auto &phydb_pin = net.GetPinsRef()[j];
@@ -626,13 +653,16 @@ void PhyDB::PushRCToTimer() {
                          "Cannot map from a PhyDB component pin to an ACT pin: "
                              + design_.components_[phydb_pin.comp_id].GetName()
                              + " "
-                             + design_.components_[phydb_pin.comp_id].GetMacro()->GetPinsRef()[j].GetName());
-            //auto spef_pin = spef_manager->findPin(act_pin);
-            if (IsDriverPin(phydb_pin)) {
-                spef_manager->addDriverPin(act_pin);
-            } else {
-                spef_manager->addLoadPin(act_pin);
+                             + design_.components_[phydb_pin.comp_id].GetMacro()->GetPinsRef()[j].GetName(),
+                         PHYDB_LOC);
+            if (spef_manager->findPin(act_pin) != nullptr) {
+                if (IsDriverPin(phydb_pin)) {
+                    spef_manager->addDriverPin(act_pin);
+                } else {
+                    spef_manager->addLoadPin(act_pin);
+                }
             }
+
         }
     }
 }
@@ -882,6 +912,10 @@ void PhyDB::ReadCluster(string const &cluster_file_name) {
             col->AddRow(ly, uy);
         }
     }
+}
+
+void PhyDB::LoadFakeTechConfigFile() {
+    tech_.LoadFakeTechConfigFile();
 }
 
 /****

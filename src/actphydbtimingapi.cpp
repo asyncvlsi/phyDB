@@ -109,34 +109,46 @@ int ActPhyDBTimingAPI::ActNetPtr2Id(void *act_net) {
 }
 
 void ActPhyDBTimingAPI::AddActNetPtrIdPair(void *act_net, int net_id) {
+    PhyDBExpects(!IsActNetPtrExisting(act_net),
+                 "Cannot add ACT net again, it is in already in the PhyDB, net id: "
+                     + std::to_string(net_id), PHYDB_LOC);
     std::pair<void *, int> tmp_pair_0(act_net, net_id);
     std::pair<int, void *> tmp_pair_1(net_id, act_net);
     net_act_2_id_.insert(tmp_pair_0);
     net_id_2_act_.insert(tmp_pair_1);
 }
 
-bool ActPhyDBTimingAPI::IsActComPinPtrExisting(void *act_comp) {
-    return component_pin_act_2_id_.find(act_comp)
-        != component_pin_act_2_id_.end();
-}
-
-PhydbPin ActPhyDBTimingAPI::ActCompPinPtr2Id(void *act_comp) {
-    if (IsActComPinPtrExisting(act_comp)) {
-        return component_pin_act_2_id_[act_comp];
-    }
-    return PhydbPin(-1, -1);
+void ActPhyDBTimingAPI::AddActCompPinPtrIdPair(void *act_pin,
+                                               PhydbPin phydb_pin) {
+    PhyDBExpects(!IsActComPinPtrExisting(act_pin),
+                 "Cannot add ACT pin again, it is in already in the PhyDB, component pin id: "
+                     + phydb_pin.Str(),
+                 PHYDB_LOC);
+    std::pair<void *, PhydbPin> tmp_pair_0(act_pin, phydb_pin);
+    std::pair<PhydbPin, void *> tmp_pair_1(phydb_pin, act_pin);
+    component_pin_act_2_id_.insert(tmp_pair_0);
+    component_pin_id_2_act_.insert(tmp_pair_1);
 }
 
 void ActPhyDBTimingAPI::AddActCompPinPtrIdPair(
-    void *act_comp,
+    void *act_pin,
     int comp_id,
     int pin_id
 ) {
-    PhydbPin id_pair(comp_id, pin_id);
-    std::pair<void *, PhydbPin> tmp_pair_0(act_comp, id_pair);
-    std::pair<PhydbPin, void *> tmp_pair_1(id_pair, act_comp);
-    component_pin_act_2_id_.insert(tmp_pair_0);
-    component_pin_id_2_act_.insert(tmp_pair_1);
+    PhydbPin phydb_pin(comp_id, pin_id);
+    AddActCompPinPtrIdPair(act_pin, phydb_pin);
+}
+
+bool ActPhyDBTimingAPI::IsActComPinPtrExisting(void *act_pin) {
+    return component_pin_act_2_id_.find(act_pin)
+        != component_pin_act_2_id_.end();
+}
+
+PhydbPin ActPhyDBTimingAPI::ActCompPinPtr2Id(void *act_pin) {
+    if (IsActComPinPtrExisting(act_pin)) {
+        return component_pin_act_2_id_[act_pin];
+    }
+    return PhydbPin(-1, -1);
 }
 
 void ActPhyDBTimingAPI::SetGetNumConstraintsCB(int (*callback_function)()) {
@@ -168,23 +180,23 @@ void ActPhyDBTimingAPI::SetGetViolatedTimingConstraintsCB(
     GetViolatedTimingConstraintsCB = callback_function;
 }
 #if PHYDB_USE_GALOIS
-void ActPhyDBTimingAPI::SetParaManager(galois::eda::parasitics::Manager* manager) {
+void ActPhyDBTimingAPI::SetParaManager(galois::eda::parasitics::Manager *manager) {
     para_manager_ = manager;
 }
-void ActPhyDBTimingAPI::AddCellLib(galois::eda::liberty::CellLib* lib) {
+void ActPhyDBTimingAPI::AddCellLib(galois::eda::liberty::CellLib *lib) {
     libs_.push_back(lib);
 }
-void ActPhyDBTimingAPI::SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor* adaptor) {
+void ActPhyDBTimingAPI::SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor) {
     adaptor_ = adaptor;
 }
 
-galois::eda::parasitics::Manager* ActPhyDBTimingAPI::GetParaManager() {
+galois::eda::parasitics::Manager *ActPhyDBTimingAPI::GetParaManager() {
     return para_manager_;
 }
-std::vector<galois::eda::liberty::CellLib*> ActPhyDBTimingAPI::GetCellLibs() {
+std::vector<galois::eda::liberty::CellLib *> ActPhyDBTimingAPI::GetCellLibs() {
     return libs_;
 }
-galois::eda::utility::ExtNetlistAdaptor* ActPhyDBTimingAPI::GetNetlistAdaptor() {
+galois::eda::utility::ExtNetlistAdaptor *ActPhyDBTimingAPI::GetNetlistAdaptor() {
     return adaptor_;
 }
 #endif
