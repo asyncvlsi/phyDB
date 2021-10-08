@@ -9,20 +9,21 @@
 #include <string>
 #include <vector>
 
-#define PHYDB_LOC std::string(__FILE__) + " : " + std::to_string(__LINE__) + " : " + std::string(__FUNCTION__)
-#define PhyDBExpects(e, error_message) PhyDBExpects_(e, error_message, PHYDB_LOC)
+#define PhyDBExpects(e, error_message) PhyDBExpects_(e, error_message, __FILE__, __LINE__, __FUNCTION__)
 
 namespace phydb {
 
 inline void PhyDBExpects_(
     bool e,
     const std::string &error_message,
-    const std::string &location = ""
+    const char *file,
+    size_t line,
+    const char *function
 ) {
     if (!e) {
         std::cout << "\033[0;31m" << "FATAL ERROR:\n    "
                   << error_message << "\n";
-        std::cout << location << "\033[0m" << std::endl;
+        std::cout << file << " : " << line << " : " << function << "\033[0m" << std::endl;
         exit(1);
     }
 }

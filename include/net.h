@@ -17,8 +17,8 @@ class Net {
 
     std::vector<PhydbPin> pins_;
     std::vector<std::string> iopin_names_;
-
-    std::vector<Rect3D < int>> guides_;
+    int driver_pin_id_ = 0;
+    std::vector<Rect3D<int>> guides_;
 
     Net() {}
     Net(const std::string &name, double weight)
@@ -31,8 +31,7 @@ class Net {
     const std::string &GetName() const;
     std::vector<PhydbPin> &GetPinsRef();
     std::vector<std::string> &GetIoPinNamesRef();
-    std::vector<Rect3D < int>>&
-    GetRoutingGuidesRef();
+    std::vector<Rect3D<int>> &GetRoutingGuidesRef();
 
     void Report();
 };

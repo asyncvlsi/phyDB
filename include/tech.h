@@ -16,6 +16,7 @@ namespace phydb {
 
 class Tech {
     friend class PhyDB;
+    friend class StarPiModelEstimator;
   public:
     Tech() : manufacturing_grid_(-1), database_micron_(-1) {}
     ~Tech();
@@ -105,6 +106,11 @@ class Tech {
     void SetResistanceUnit(bool from_tech_config, bool is_report);
     void SetCapacitanceUnit(bool from_tech_config, bool is_report);
     void ReportLayersTechConfig();
+    void SetUnitResAndCap(
+        double unit_res,
+        double unit_fringe_cap,
+        double unit_area_cap
+    );
 
     void ReportSites();
     void ReportLayers();
@@ -155,8 +161,6 @@ class Tech {
     /****technology configuration file****/
     TechConfig tech_config_;
     std::vector<Layer *> metal_layers_;
-
-    void LoadFakeTechConfigFile();
 };
 
 std::ostream &operator<<(std::ostream &, const Tech &);

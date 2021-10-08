@@ -19,8 +19,16 @@ Tech *PhyDB::GetTechPtr() {
     return &tech_;
 }
 
+Tech &PhyDB::tech() {
+    return tech_;
+}
+
 Design *PhyDB::GetDesignPtr() {
     return &design_;
+}
+
+Design &PhyDB::design() {
+    return design_;
 }
 
 void PhyDB::SetDatabaseMicron(int database_micron) {
@@ -578,7 +586,7 @@ galois::eda::parasitics::Manager *PhyDB::GetParaManager() {
     return timing_api_.GetParaManager();
 }
 
-std::vector<galois::eda::liberty::CellLib *> PhyDB::GetCellLibs() {
+std::vector<galois::eda::liberty::CellLib *> &PhyDB::GetCellLibs() {
     return timing_api_.GetCellLibs();
 }
 
@@ -629,8 +637,8 @@ void PhyDB::AddNetsAndCompPinsToSpefManager() {
     galois::eda::parasitics::Manager *spef_manager = GetParaManager();
     PhyDBExpects(spef_manager != nullptr,
                  "Cannot push RC to the timer because the SPEF manager is not set");
-    std::vector<galois::eda::liberty::CellLib *> libs = GetCellLibs();
-    PhyDBExpects(libs.size() >= 0, "No cell library found in the timer?");
+    std::vector<galois::eda::liberty::CellLib *> &libs = GetCellLibs();
+    PhyDBExpects(!libs.empty(), "No cell library found in the timer?");
 
     // add nets and pins to the SPEF manager
     int number_of_nets = (int) design_.nets_.size();
@@ -658,6 +666,7 @@ void PhyDB::AddNetsAndCompPinsToSpefManager() {
             if (spef_manager->findPin(act_pin) != nullptr) {
                 if (IsDriverPin(phydb_pin)) {
                     spef_manager->addDriverPin(act_pin);
+                    net.driver_pin_id_ = j;
                 } else {
                     spef_manager->addLoadPin(act_pin);
                 }
@@ -666,6 +675,24 @@ void PhyDB::AddNetsAndCompPinsToSpefManager() {
         }
     }
 }
+
+void PhyDB::InitializeRCEstimator(RCEstimatorType rc_estimator_type) {
+    switch (rc_estimator_type) {
+        case 0: {
+            rc_estimator_ = new StarPiModelEstimator(this);
+            break;
+        }
+        default: {
+            PhyDBExpects(false, "Unknown RCEstimatorType");
+        }
+    }
+}
+
+void PhyDB::PushRCToSpefManager() {
+    PhyDBExpects(rc_estimator_ != nullptr, "RC estimator is a nullptr");
+    rc_estimator_->PushNetRCToManager();
+}
+
 #endif
 
 bool PhyDB::IsDriverPin(PhydbPin &phydb_pin) {
@@ -914,10 +941,6 @@ void PhyDB::ReadCluster(std::string const &cluster_file_name) {
     }
 }
 
-void PhyDB::LoadFakeTechConfigFile() {
-    tech_.LoadFakeTechConfigFile();
-}
-
 /****
  * @brief Read a technology configuration file
  *
@@ -964,7 +987,21 @@ bool PhyDB::ReadTechConfigFile(int argc, char **argv) {
 
     std::string file_name(argv[1]);
     if (file_name == "__fake__") {
-        tech_.LoadFakeTechConfigFile();
+        if (argc < 5) {
+            std::cout
+                << "Please provide unit resistance and unit capacitance\n";
+            return false;
+        }
+        double unit_res, unit_fringe_cap, unit_area_cap;
+        try {
+            unit_res = std::stod(argv[2]);
+            unit_fringe_cap = std::stod(argv[3]);
+            unit_area_cap = std::stod(argv[4]);
+        } catch (...) {
+            return false;
+        }
+        tech_.FindAllMetalLayers();
+        tech_.SetUnitResAndCap(unit_res, unit_fringe_cap, unit_area_cap);
     } else {
         return ReadTechConfigFile(file_name);
     }
@@ -1029,22 +1066,6 @@ void PhyDB::WriteGuide(std::string const &guide_file_name) {
         }
         outfile << ")" << std::endl;
     }
-}
-
-void PhyDB::InitializeRCEstimator(RCEstimatorType rc_estimator_type) {
-    switch (rc_estimator_type) {
-        case 0: {
-            rc_estimator_ = new StarNetPiRCEstimator(this);
-            break;
-        }
-        default: {
-            PhyDBExpects(false, "Unknown RCEstimatorType");
-        }
-    }
-}
-
-void PhyDB::PushNetRCToManager(int net_id) {
-    rc_estimator_->PushNetRCToManager(net_id);
 }
 
 }

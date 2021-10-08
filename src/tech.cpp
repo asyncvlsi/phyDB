@@ -419,6 +419,21 @@ void Tech::ReportLayersTechConfig() {
     }
 }
 
+void Tech::SetUnitResAndCap(
+    double unit_res,
+    double unit_fringe_cap,
+    double unit_area_cap
+) {
+    PhyDBExpects(unit_res > 0, "Non positive resistance?");
+    PhyDBExpects(unit_fringe_cap >= 0, "Negative fringe capacitance?");
+    PhyDBExpects(unit_area_cap >= 0, "Negative area capacitance?");
+    for (auto &metal_ptr: metal_layers_) {
+        metal_ptr->unit_res_.assign(1, unit_res);
+        metal_ptr->unit_edge_cap_.assign(1, unit_fringe_cap);
+        metal_ptr->unit_area_cap_.assign(1, unit_area_cap);
+    }
+}
+
 void Tech::ReportSites() {
     for (auto &site: sites_) {
         std::cout << site << "\n";
@@ -482,16 +497,6 @@ void Tech::Report() {
     ReportVias(); // TODO : Vias not reported, maybe they are not added using callback functions
     //ReportMacros();
     //ReportMacroWell();
-}
-
-void Tech::LoadFakeTechConfigFile() {
-    const double fake_resistance_unit = 0.001;
-    const double fake_capacitance_unit = 4e-5;
-    for (auto &metal_ptr: metal_layers_) {
-        metal_ptr->unit_res_.assign(1, fake_resistance_unit);
-        metal_ptr->unit_edge_cap_.assign(1, fake_capacitance_unit);
-        metal_ptr->unit_area_cap_.assign(1, 0);
-    }
 }
 
 }

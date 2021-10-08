@@ -108,6 +108,14 @@ int ActPhyDBTimingAPI::ActNetPtr2Id(void *act_net) {
     return -1;
 }
 
+void *ActPhyDBTimingAPI::PhydbNetId2ActPtr(int net_id) {
+    auto ret = net_id_2_act_.find(net_id);
+    if (ret != net_id_2_act_.end()) {
+        return ret->second;
+    }
+    return nullptr;
+}
+
 void ActPhyDBTimingAPI::AddActNetPtrIdPair(void *act_net, int net_id) {
     PhyDBExpects(!IsActNetPtrExisting(act_net),
                  "Cannot add ACT net again, it is in already in the PhyDB, net id: "
@@ -148,6 +156,14 @@ PhydbPin ActPhyDBTimingAPI::ActCompPinPtr2Id(void *act_pin) {
         return component_pin_act_2_id_[act_pin];
     }
     return PhydbPin(-1, -1);
+}
+
+void *ActPhyDBTimingAPI::PhydbCompPin2ActPtr(PhydbPin phydb_pin) {
+    auto ret = component_pin_id_2_act_.find(phydb_pin);
+    if (ret != component_pin_id_2_act_.end()) {
+        return ret->second;
+    }
+    return nullptr;
 }
 
 void ActPhyDBTimingAPI::SetGetNumConstraintsCB(int (*callback_function)()) {
@@ -192,33 +208,40 @@ void ActPhyDBTimingAPI::SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdapto
 galois::eda::parasitics::Manager *ActPhyDBTimingAPI::GetParaManager() {
     return para_manager_;
 }
-std::vector<galois::eda::liberty::CellLib *> ActPhyDBTimingAPI::GetCellLibs() {
+
+std::vector<galois::eda::liberty::CellLib *> &ActPhyDBTimingAPI::GetCellLibs() {
     return libs_;
 }
+
 galois::eda::utility::ExtNetlistAdaptor *ActPhyDBTimingAPI::GetNetlistAdaptor() {
     return adaptor_;
 }
+
+galois::eda::parasitics::Node *ActPhyDBTimingAPI::PhyDBPinToSpefNode(PhydbPin phydb_pin) {
+    void *act_pin = PhydbCompPin2ActPtr(phydb_pin);
+    PhyDBExpects(act_pin != nullptr, "Cannot map PhyDB pin to ACT?");
+    auto node = para_manager_->findPin(act_pin);
+    PhyDBExpects(node != nullptr, "Cannot map ACT pin to SPEF node?");
+    return node;
+}
+
 #endif
+
 int ActPhyDBTimingAPI::GetNumConstraints() {
-    if (GetNumConstraintsCB == nullptr) {
-        PhyDBExpects(false,
-                     "Callback function for GetNumConstraints() is not set");
-    }
+    PhyDBExpects(GetNumConstraintsCB != nullptr,
+                 "Callback function for GetNumConstraints() is not set");
     return GetNumConstraintsCB();
 }
 
 void ActPhyDBTimingAPI::UpdateTimingIncremental() {
-    if (UpdateTimingIncrementalCB != nullptr) {
-        PhyDBExpects(false,
-                     "Callback function for UpdateTimingIncremental() is not set");
-    }
+    PhyDBExpects(UpdateTimingIncrementalCB != nullptr,
+                 "Callback function for UpdateTimingIncremental() is not set");
     UpdateTimingIncrementalCB();
 }
 
 double ActPhyDBTimingAPI::GetSlack(int tc_num) {
-    if (GetSlackCB != nullptr) {
-        PhyDBExpects(false, "Callback function for GetSlack() is not set");
-    }
+    PhyDBExpects(GetSlackCB != nullptr,
+                 "Callback function for GetSlack() is not set");
     return GetSlackCB(std::vector(1, tc_num))[0];
 }
 
@@ -227,9 +250,8 @@ void ActPhyDBTimingAPI::GetWitness(
     PhydbPath &phydb_fast_path,
     PhydbPath &phydb_slow_path
 ) {
-    if (GetWitnessCB != nullptr) {
-        PhyDBExpects(false, "Callback GetWitness for GetSlack() is not set");
-    }
+    PhyDBExpects(GetWitnessCB != nullptr,
+                 "Callback GetWitness for GetSlack() is not set");
     std::vector<ActEdge> act_fast_path;
     std::vector<ActEdge> act_slow_path;
 
@@ -240,10 +262,8 @@ void ActPhyDBTimingAPI::GetWitness(
 }
 
 void ActPhyDBTimingAPI::GetViolatedTimingConstraints(std::vector<int> &violated_tc_nums) {
-    if (GetViolatedTimingConstraintsCB != nullptr) {
-        PhyDBExpects(false,
-                     "Callback GetWitness for GetViolatedTimingConstraints() is not set");
-    }
+    PhyDBExpects(GetViolatedTimingConstraintsCB != nullptr,
+                 "Callback GetWitness for GetViolatedTimingConstraints() is not set");
     GetViolatedTimingConstraintsCB(violated_tc_nums);
 }
 

@@ -453,7 +453,7 @@ void Layer::SetResistanceUnitFromTechConfig() {
         PhyDBExpects(unit_res >= 0,
                      "Cannot find unit resistance for corner: " + name_ + " "
                          + std::to_string(corner.ModelIndex()));
-        unit_res_[i] = unit_res;
+        unit_res_[i] = unit_res * width_;
     }
 }
 

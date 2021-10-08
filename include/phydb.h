@@ -16,7 +16,10 @@ class PhyDB {
     ~PhyDB();
 
     Tech *GetTechPtr();
+    Tech &tech();
     Design *GetDesignPtr();
+    Design &design();
+
 
     /************************************************
     * The following APIs are for information in LEF
@@ -189,11 +192,13 @@ class PhyDB {
     void AddCellLib(galois::eda::liberty::CellLib *lib);
     void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor);
     galois::eda::parasitics::Manager *GetParaManager();
-    std::vector<galois::eda::liberty::CellLib *> GetCellLibs();
+    std::vector<galois::eda::liberty::CellLib *> &GetCellLibs();
     galois::eda::utility::ExtNetlistAdaptor *GetNetlistAdaptor();
 
     void CreatePhydbActAdaptor();
     void AddNetsAndCompPinsToSpefManager();
+    void InitializeRCEstimator(RCEstimatorType rc_estimator_type);
+    void PushRCToSpefManager();
 #endif
 
     /************************************************
@@ -247,7 +252,6 @@ class PhyDB {
     void OverrideComponentLocsFromDef(std::string const &def_file_name);
     void ReadCell(std::string const &cell_file_name);
     void ReadCluster(std::string const &cluster_file_name);
-    void LoadFakeTechConfigFile();
     bool ReadTechConfigFile(std::string const &tech_config_file_name);
     bool ReadTechConfigFile(int argc, char **argv);
 
@@ -259,14 +263,7 @@ class PhyDB {
     Tech tech_;
     Design design_;
     ActPhyDBTimingAPI timing_api_;
-
     RCEstimator *rc_estimator_ = nullptr;
-
-    /************************************************
-    * The following APIs are for RC extraction and timing analysis
-    * ************************************************/
-    void InitializeRCEstimator(RCEstimatorType rc_estimator_type);
-    void PushNetRCToManager(int net_id);
 };
 
 }

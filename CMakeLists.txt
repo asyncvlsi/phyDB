@@ -68,29 +68,23 @@ link_directories($ENV{ACT_HOME}/lib)
 ############################################################################
 # Check if the galois_eda library is installed
 ############################################################################
+find_package(Galois COMPONENTS eda shmem)
+message(STATUS "Galois include path: ${Galois_INCLUDE_DIRS}")
+message(STATUS "Galois library path: ${Galois_LIBRARY_DIRS}")
+message(STATUS "Galois libs: ${Galois_LIBRARIES}")
+include_directories(${Galois_INCLUDE_DIRS})
 find_library(
     GALOIS_EDA_LIBRARY
     NAMES galois_eda
-    PATHS $ENV{ACT_HOME}/lib
+    PATHS ${Galois_LIBRARY_DIRS}
 )
-find_library(
-    GALOIS_SHMEM_LIBRARY
-    NAMES galois_shmem
-    PATHS $ENV{ACT_HOME}/lib
-)
-find_library(
-    NUMA_LIBRARY
-    NAMES numa
-)
-if (NOT (GALOIS_EDA_LIBRARY AND GALOIS_SHMEM_LIBRARY AND NUMA_LIBRARY))
+if (GALOIS_EDA_LIBRARY)
+    set(PHYDB_USE_GALOIS 1)
+    message(STATUS "Found libgalois_eda.a")
+else ()
     set(PHYDB_USE_GALOIS 0)
     set(GALOIS_EDA_LIBRARY "")
-    set(GALOIS_SHMEM_LIBRARY "")
-    set(NUMA_LIBRARY "")
-    message(STATUS "Cannot find libgalois_eda.a or libgalois_shmem.a or numa")
-else ()
-    set(PHYDB_USE_GALOIS 1)
-    message(STATUS "Found libgalois_eda.a, libgalois_shmem.a, numa")
+    message(STATUS "Cannot find libgalois_eda.a")
 endif ()
 configure_file(${INC_DIR}/config.h.in ${INC_DIR}/config.h)
 
@@ -98,8 +92,8 @@ configure_file(${INC_DIR}/config.h.in ${INC_DIR}/config.h)
 # Check Boost library
 ############################################################################
 find_package(Boost 1.71.0 COMPONENTS log_setup log filesystem REQUIRED)
-message(STATUS "Boost library path: ${Boost_LIBRARY_DIRS}")
 message(STATUS "Boost include path: ${Boost_INCLUDE_DIR}")
+message(STATUS "Boost library path: ${Boost_LIBRARY_DIRS}")
 message(STATUS "Boost libs: ${Boost_LIBRARIES}")
 include_directories(${Boost_INCLUDE_DIRS})
 
@@ -164,12 +158,20 @@ add_dependencies(
     flex_target
     bison_target
 )
-target_link_libraries(
-    phydb
-    lef def
-    ${Boost_LIBRARIES}
-    ${GALOIS_EDA_LIBRARY} ${GALOIS_SHMEM_LIBRARY} ${NUMA_LIBRARY}
-)
+if (PHYDB_USE_GALOIS)
+    target_link_libraries(
+        phydb
+        lef def
+        ${Boost_LIBRARIES}
+        galois_eda galois_shmem numa
+    )
+else()
+    target_link_libraries(
+        phydb
+        lef def
+        ${Boost_LIBRARIES}
+    )
+endif()
 
 add_executable(PhyDB_test test/test.cpp)
 target_link_libraries(PhyDB_test PRIVATE phydb)

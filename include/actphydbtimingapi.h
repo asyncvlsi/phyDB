@@ -9,8 +9,10 @@
 #include "config.h"
 
 #if PHYDB_USE_GALOIS
-#include "galois/eda/parasitics/Manager.h"
 #include "galois/eda/liberty/CellLib.h"
+#include "galois/eda/parasitics/Edge.h"
+#include "galois/eda/parasitics/Manager.h"
+#include "galois/eda/parasitics/Node.h"
 #include "galois/eda/utility/ExtNetlistAdaptor.h"
 #endif
 
@@ -148,15 +150,19 @@ class ActPhyDBTimingAPI {
     void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor);
 
     galois::eda::parasitics::Manager *GetParaManager();
-    std::vector<galois::eda::liberty::CellLib *> GetCellLibs();
+    std::vector<galois::eda::liberty::CellLib *> &GetCellLibs();
     galois::eda::utility::ExtNetlistAdaptor *GetNetlistAdaptor();
+
+    galois::eda::parasitics::Node *PhyDBPinToSpefNode(PhydbPin phydb_pin);
 #endif
 
     //APIs for Dali and SPRoute
     bool IsActNetPtrExisting(void *act_net);
     int ActNetPtr2Id(void *act_net);
+    void *PhydbNetId2ActPtr(int net_id);
     bool IsActComPinPtrExisting(void *act_pin);
     PhydbPin ActCompPinPtr2Id(void *act_pin);
+    void *PhydbCompPin2ActPtr(PhydbPin phydb_pin);
     int GetNumConstraints();
     void UpdateTimingIncremental();
     double GetSlack(int tc_num);

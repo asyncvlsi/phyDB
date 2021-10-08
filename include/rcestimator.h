@@ -1,6 +1,8 @@
 #ifndef PHYDB_INCLUDE_RCESTIMATOR_H_
 #define PHYDB_INCLUDE_RCESTIMATOR_H_
 
+#include "datatype.h"
+#include "layer.h"
 #include "net.h"
 
 namespace phydb {
@@ -8,8 +10,7 @@ namespace phydb {
 class PhyDB;
 
 enum RCEstimatorType {
-    STARPIMODEL = 0,
-    FLUTEMODEL = 1
+    STARPIMODEL = 0
 };
 
 class RCEstimator {
@@ -19,16 +20,27 @@ class RCEstimator {
     explicit RCEstimator(PhyDB *phydb_ptr) : phy_db_(phydb_ptr) {}
     virtual ~RCEstimator() = default;
 
-    virtual void PushNetRCToManager(int net_id) = 0;
+    virtual void PushNetRCToManager() = 0;
 };
 
-class StarNetPiRCEstimator : public RCEstimator {
+class StarPiModelEstimator : public RCEstimator {
   public:
-    explicit StarNetPiRCEstimator(PhyDB *phydb_ptr) : RCEstimator(phydb_ptr) {}
-    ~StarNetPiRCEstimator() override = default;
-    void PushNetRCToManager(int net_id) override;
-
-    void InitializeRCTree(Net &net);
+    explicit StarPiModelEstimator(PhyDB *phydb_ptr) : RCEstimator(phydb_ptr) {}
+    ~StarPiModelEstimator() override = default;
+    void PushNetRCToManager() override;
+  private:
+    int distance_micron_ = 0;
+    bool edge_pushed_to_spef_manager_ = false;
+    Layer *horizontal_layer_ = nullptr;
+    Layer *vertical_layer_ = nullptr;
+    void AddEdgesToManager();
+    void FindFirstHorizontalAndVerticalMetalLayer();
+    void GetResistanceAndCapacitance(
+        Point2D<int> &driver_loc,
+        Point2D<int> &load_loc,
+        double &resistance,
+        double &capacitance
+    );
 };
 
 }
