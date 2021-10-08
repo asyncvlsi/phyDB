@@ -636,7 +636,13 @@ int getDefComponents(
         lly = 0;
     }
 
-    std::string orient(comp->placementOrientStr());
+    std::string orient;
+    if (place_status == UNPLACED) {
+      orient = "N";
+    }
+    else {
+      orient = comp->placementOrientStr();
+    }
 
     auto *phy_db_ptr = (PhyDB *) data;
     Macro *macro_ptr = phy_db_ptr->GetMacroPtr(macro_name);
