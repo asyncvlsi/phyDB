@@ -529,6 +529,7 @@ double Layer::GetResistance(
     int corner_index
 ) {
     assert(corner_index < (int) unit_res_.size());
+    //std::cout << length << " " << width << "\n";
     return unit_res_[corner_index] * length / width;
 }
 
@@ -572,6 +573,7 @@ double Layer::GetFringeCapacitance(
     int corner_index
 ) {
     assert(corner_index < (int) unit_edge_cap_.size());
+    //std::cout << length << " " << width << "\n";
     return unit_edge_cap_[corner_index] * 2 * (width + length);
 }
 

@@ -186,6 +186,7 @@ class PhyDB {
         void (*callback_function)(std::vector<int> &)
     );
     bool IsDriverPin(PhydbPin &phydb_pin);
+    std::string GetFullCompPinName(PhydbPin &phydb_pin, const char delimiter = ':');
     ActPhyDBTimingAPI &GetTimingApi();
 #if PHYDB_USE_GALOIS
     void SetParaManager(galois::eda::parasitics::Manager *manager);
