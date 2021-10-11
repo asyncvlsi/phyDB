@@ -1,10 +1,10 @@
 #ifndef PHYDB_INCLUDE_LEFDEFPARSER_H_
 #define PHYDB_INCLUDE_LEFDEFPARSER_H_
 
-#include <defrReader.hpp>
-#include <defwWriter.hpp>
-#include <defwWriterCalls.hpp>
-#include <lefrReader.hpp>
+#include <def/defrReader.hpp>
+#include <def/defwWriter.hpp>
+#include <def/defwWriterCalls.hpp>
+#include <lef/lefrReader.hpp>
 
 #include "phydb.h"
 

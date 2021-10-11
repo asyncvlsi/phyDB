@@ -9,56 +9,11 @@ set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 ############################################################################
-# Detect the installation path of LEF parser and DEF parser,
-# and check if the liblef and libdef library can be found or not
-############################################################################
-message(STATUS "Detecting environment variable LEF_ROOT...")
-if (DEFINED ENV{LEF_ROOT})
-    message(STATUS "Environment variable LEF_ROOT detected: " $ENV{LEF_ROOT})
-else ()
-    message(FATAL_ERROR "Environment variable LEF_ROOT not found")
-endif ()
-include_directories($ENV{LEF_ROOT}/include)
-link_directories($ENV{LEF_ROOT}/lib)
-find_library(
-    LEF_LIBRARY
-    NAMES lef
-    PATHS $ENV{LEF_ROOT}/lib
-    REQUIRED
-)
-if (NOT LEF_LIBRARY)
-    message(FATAL_ERROR "Cannot find liblef.a")
-else ()
-    message(STATUS "Found liblef.a")
-endif ()
-
-message(STATUS "Detecting environment variable DEF_ROOT...")
-if (DEFINED ENV{DEF_ROOT})
-    message(STATUS "Environment variable LEF_ROOT detected: " $ENV{DEF_ROOT})
-else ()
-    message(FATAL_ERROR "Environment variable DEF_ROOT not found")
-endif ()
-include_directories($ENV{DEF_ROOT}/include)
-link_directories($ENV{DEF_ROOT}/lib)
-find_library(
-    DEF_LIBRARY
-    NAMES def
-    PATHS $ENV{DEF_ROOT}/lib
-    REQUIRED
-)
-if (NOT DEF_LIBRARY)
-    message(FATAL_ERROR "Cannot find libdef.a")
-else ()
-    message(STATUS "Found libdef.a")
-endif ()
-
-
-############################################################################
 # Detect if the environment variable ACT_HOME can be found
 ############################################################################
 message(STATUS "Detecting environment variable ACT_HOME...")
 if (DEFINED ENV{ACT_HOME})
-    message(STATUS "Environment variable LEF_ROOT detected: " $ENV{ACT_HOME})
+    message(STATUS "Environment variable ACT_HOME detected: " $ENV{ACT_HOME})
 else ()
     message(FATAL_ERROR "Environment variable ACT_HOME is not found")
 endif ()
@@ -66,31 +21,102 @@ include_directories($ENV{ACT_HOME}/include)
 link_directories($ENV{ACT_HOME}/lib)
 
 ############################################################################
+# Detect the installation path of LEF parser and DEF parser,
+# and check if the liblef and libdef library can be found or not
+############################################################################
+message(STATUS "Detecting environment variable LEF_ROOT...")
+set(LEF_ROOT "")
+if (DEFINED ENV{LEF_ROOT})
+    message(STATUS "Environment variable LEF_ROOT detected: " $ENV{LEF_ROOT})
+    include_directories($ENV{LEF_ROOT}/include)
+    link_directories($ENV{LEF_ROOT}/lib)
+    set(LEF_ROOT $ENV{LEF_ROOT})
+else ()
+    message(STATUS "Environment variable LEF_ROOT not found, using ACT_HOME instead")
+    include_directories($ENV{ACT_HOME}/include)
+    link_directories($ENV{ACT_HOME}/lib)
+    set(LEF_ROOT $ENV{ACT_HOME})
+endif ()
+find_library(
+    LEF_LIBRARY
+    NAMES lef
+    PATHS ${LEF_ROOT}/lib
+    REQUIRED
+)
+if (NOT LEF_LIBRARY)
+    message(FATAL_ERROR "Cannot find liblef.a")
+else ()
+    message(STATUS "Found liblef.a: " ${LEF_LIBRARY})
+endif ()
+
+message(STATUS "Detecting environment variable DEF_ROOT...")
+set(DEF_ROOT "")
+if (DEFINED ENV{DEF_ROOT})
+    message(STATUS "Environment variable DEF_ROOT detected: " $ENV{DEF_ROOT})
+    include_directories($ENV{DEF_ROOT}/include)
+    link_directories($ENV{DEF_ROOT}/lib)
+    set(DEF_ROOT $ENV{DEF_ROOT})
+else ()
+    message(STATUS "Environment variable DEF_ROOT not found, using ACT_HOME instead")
+    include_directories($ENV{ACT_HOME}/include)
+    link_directories($ENV{ACT_HOME}/lib)
+    set(DEF_ROOT $ENV{ACT_HOME})
+endif ()
+find_library(
+    DEF_LIBRARY
+    NAMES def
+    PATHS ${DEF_ROOT}/lib
+    REQUIRED
+)
+if (NOT DEF_LIBRARY)
+    message(FATAL_ERROR "Cannot find libdef.a")
+else ()
+    message(STATUS "Found libdef.a: " ${DEF_LIBRARY})
+endif ()
+
+############################################################################
 # Check if the galois_eda library is installed
 ############################################################################
-find_package(Galois COMPONENTS eda shmem)
-message(STATUS "Galois include path: ${Galois_INCLUDE_DIRS}")
-message(STATUS "Galois library path: ${Galois_LIBRARY_DIRS}")
-message(STATUS "Galois libs: ${Galois_LIBRARIES}")
-include_directories(${Galois_INCLUDE_DIRS})
+message(STATUS "Detecting Galois libraries...")
 find_library(
     GALOIS_EDA_LIBRARY
     NAMES galois_eda
-    PATHS ${Galois_LIBRARY_DIRS}
+    PATHS $ENV{ACT_HOME}/lib
 )
-if (GALOIS_EDA_LIBRARY)
+find_library(
+    GALOIS_SHMEM_LIBRARY
+    NAMES galois_shmem
+    PATHS $ENV{ACT_HOME}/lib
+)
+find_library(
+    NUMA_LIBRARY
+    NAMES numa
+)
+if (GALOIS_EDA_LIBRARY AND GALOIS_SHMEM_LIBRARY AND NUMA_LIBRARY)
     set(PHYDB_USE_GALOIS 1)
-    message(STATUS "Found libgalois_eda.a")
+    message(STATUS "Found libgalois_eda.a: " ${GALOIS_EDA_LIBRARY})
+    message(STATUS "Found libgalois_shmem.a: " ${GALOIS_SHMEM_LIBRARY})
+    message(STATUS "Found libnuma: " ${NUMA_LIBRARY})
 else ()
     set(PHYDB_USE_GALOIS 0)
     set(GALOIS_EDA_LIBRARY "")
-    message(STATUS "Cannot find libgalois_eda.a")
+    if (NOT GALOIS_EDA_LIBRARY)
+        message(STATUS "Cannot find libgalois_eda.a")
+    endif()
+    if (NOT GALOIS_SHMEM_LIBRARY)
+        message(STATUS "Cannot find libgalois_shmem.a")
+    endif()
+    if (NOT NUMA_LIBRARY)
+        message(STATUS "Cannot find libnuma")
+    endif()
 endif ()
 configure_file(${INC_DIR}/config.h.in ${INC_DIR}/config.h)
 
 ############################################################################
 # Check Boost library
 ############################################################################
+message(STATUS "Detecting Boost libraries...")
+#set(Boost_USE_STATIC_LIBS ON) # turn on/off static linking
 find_package(Boost 1.71.0 COMPONENTS log_setup log filesystem REQUIRED)
 message(STATUS "Boost include path: ${Boost_INCLUDE_DIR}")
 message(STATUS "Boost library path: ${Boost_LIBRARY_DIRS}")
@@ -100,6 +126,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 ############################################################################
 # Add a flex dependency
 ############################################################################
+message(STATUS "Detecting flex...")
 find_package(FLEX 2.5.0 REQUIRED)
 add_custom_command(
     OUTPUT ${SRC_DIR}/scanner.cpp
@@ -113,6 +140,7 @@ add_custom_target(flex_target ALL DEPENDS ${SRC_DIR}/scanner.cpp)
 ############################################################################
 # Add a bison dependency
 ############################################################################
+message(STATUS "Detecting bison...")
 find_package(BISON 3.2.0 REQUIRED)
 add_custom_command(
     OUTPUT ${SRC_DIR}/parser.cpp
@@ -158,20 +186,12 @@ add_dependencies(
     flex_target
     bison_target
 )
-if (PHYDB_USE_GALOIS)
-    target_link_libraries(
-        phydb
-        lef def
-        ${Boost_LIBRARIES}
-        galois_eda galois_shmem numa
-    )
-else()
-    target_link_libraries(
-        phydb
-        lef def
-        ${Boost_LIBRARIES}
-    )
-endif()
+target_link_libraries(
+    phydb
+    lef def
+    ${Boost_LIBRARIES}
+    ${GALOIS_EDA_LIBRARY} ${GALOIS_SHMEM_LIBRARY} ${NUMA_LIBRARY}
+)
 
 add_executable(PhyDB_test test/test.cpp)
 target_link_libraries(PhyDB_test PRIVATE phydb)

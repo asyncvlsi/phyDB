@@ -619,15 +619,6 @@ void PhyDB::CreatePhydbActAdaptor() {
                 "Component pin cannot be found in the timer netlist adaptor: "
                     + phydb_pin_name
             );
-            std::string pin_name_from_act =
-                timer_adaptor->getFullName4Pin(act_pin);
-
-            //PhyDBExpects(
-            //    phydb_pin_name == pin_name_from_act,
-            //    "Pin name inconsistency, PhyDB pin name: "
-            //        + phydb_pin_name
-            //        + " -> ACT pointer: " + std::to_string((long int) act_pin)
-            //        + " -> " + pin_name_from_act);
             timing_api_.AddActCompPinPtrIdPair(act_pin, phydb_pin);
         }
     }
