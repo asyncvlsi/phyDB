@@ -639,8 +639,7 @@ int getDefComponents(
     std::string orient;
     if (place_status == UNPLACED) {
       orient = "N";
-    }
-    else {
+    } else {
       orient = comp->placementOrientStr();
     }
 

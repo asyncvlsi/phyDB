@@ -8,7 +8,7 @@
 * Boost, version >= 1.61.0
 * Bison, version >= 3.2.0
 * Flex, version >= 2.6.4 (lower versions may also work, not tested)
-* Si2 LEF/DEF parser: [LEF parser](https://github.com/The-OpenROAD-Project/lef) and [DEF parser](https://github.com/The-OpenROAD-Project/def). Use `cmake .. -DCMAKE_INSTALL_PREFIX=path/to/install` to specify the installation destination for each parser, and export the path as environment variable `LEF_ROOT` and `DEF_ROOT`.
+* Si2 LEF/DEF parser, a mirror can be found [here](https://github.com/asyncvlsi/lefdef).
 * [ACT](https://github.com/asyncvlsi/act): environment variable `ACT_HOME` determines the installation destination of this package
 
 ### Clone, compile, and install
@@ -20,6 +20,3 @@
     $ make
     $ make install
 this will create a folder `phydb` under folder `$ACT_HOME/include`, and a static library `libphydb.a` under folder `$ACT_HOME/lib`.
-
-### Notice
-* The LEF parser linked above has a memory leak. This LEF parser is a modified version of the original LEF parser from Si2; the original parser does not have this issue, and you can obtain that from Si2 directly.

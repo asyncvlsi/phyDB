@@ -78,37 +78,48 @@ endif ()
 # Check if the galois_eda library is installed
 ############################################################################
 message(STATUS "Detecting Galois libraries...")
+set(Galois_FOUND TRUE)
 find_library(
     GALOIS_EDA_LIBRARY
     NAMES galois_eda
     PATHS $ENV{ACT_HOME}/lib
 )
+set(Galois_LIBRARIES ${GALOIS_EDA_LIBRARY})
+if (GALOIS_EDA_LIBRARY)
+    message(STATUS "Found libgalois_eda.a: " ${GALOIS_EDA_LIBRARY})
+else()
+    message(STATUS "Cannot find libgalois_eda.a")
+    set(Galois_FOUND FALSE)
+endif()
 find_library(
     GALOIS_SHMEM_LIBRARY
     NAMES galois_shmem
     PATHS $ENV{ACT_HOME}/lib
 )
-find_library(
-    NUMA_LIBRARY
-    NAMES numa
-)
-if (GALOIS_EDA_LIBRARY AND GALOIS_SHMEM_LIBRARY AND NUMA_LIBRARY)
-    set(PHYDB_USE_GALOIS 1)
-    message(STATUS "Found libgalois_eda.a: " ${GALOIS_EDA_LIBRARY})
+set(Galois_LIBRARIES ${Galois_LIBRARIES} ${GALOIS_SHMEM_LIBRARY})
+if (GALOIS_SHMEM_LIBRARY)
     message(STATUS "Found libgalois_shmem.a: " ${GALOIS_SHMEM_LIBRARY})
-    message(STATUS "Found libnuma: " ${NUMA_LIBRARY})
+else()
+    message(STATUS "Cannot find libgalois_shmem.a")
+    set(Galois_FOUND FALSE)
+endif()
+if (UNIX)
+    find_library(
+        NUMA_LIBRARY
+        NAMES numa
+    )
+    set(Galois_LIBRARIES ${Galois_LIBRARIES} ${NUMA_LIBRARY})
+    if (NUMA_LIBRARY)
+        message(STATUS "Found libnuma: " ${NUMA_LIBRARY})
+    else()
+        message(STATUS "Cannot find libnuma")
+        set(Galois_FOUND FALSE)
+    endif()
+endif()
+if (Galois_FOUND)
+    set(PHYDB_USE_GALOIS 1)
 else ()
     set(PHYDB_USE_GALOIS 0)
-    set(GALOIS_EDA_LIBRARY "")
-    if (NOT GALOIS_EDA_LIBRARY)
-        message(STATUS "Cannot find libgalois_eda.a")
-    endif()
-    if (NOT GALOIS_SHMEM_LIBRARY)
-        message(STATUS "Cannot find libgalois_shmem.a")
-    endif()
-    if (NOT NUMA_LIBRARY)
-        message(STATUS "Cannot find libnuma")
-    endif()
 endif ()
 configure_file(${INC_DIR}/config.h.in ${INC_DIR}/config.h)
 
@@ -159,7 +170,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 
 # Set compilation flags
-add_compile_options(-Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic)
+add_compile_options(-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Werror=return-type -pedantic)
 set(CMAKE_CXX_FLAGS_DEBUG "-O3 -g -fPIC")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -fPIC")
 
@@ -190,7 +201,7 @@ target_link_libraries(
     phydb
     lef def
     ${Boost_LIBRARIES}
-    ${GALOIS_EDA_LIBRARY} ${GALOIS_SHMEM_LIBRARY} ${NUMA_LIBRARY}
+    ${Galois_LIBRARIES}
 )
 
 add_executable(PhyDB_test test/test.cpp)
