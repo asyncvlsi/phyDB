@@ -152,7 +152,7 @@ add_custom_target(flex_target ALL DEPENDS ${SRC_DIR}/scanner.cpp)
 # Add a bison dependency
 ############################################################################
 message(STATUS "Detecting bison...")
-find_package(BISON 3.2.0 REQUIRED)
+find_package(BISON 3.3.0 REQUIRED)
 add_custom_command(
     OUTPUT ${SRC_DIR}/parser.cpp
     COMMAND ${BISON_EXECUTABLE} -o ${SRC_DIR}/parser.cpp ${INC_DIR}/parser.y

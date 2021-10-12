@@ -5,8 +5,8 @@
 * GNU Compiler Collection (GCC), version >= 4.8.5
 
 ### Pre-requisite libraries
-* Boost, version >= 1.61.0
-* Bison, version >= 3.2.0
+* Boost, version >= 1.71.0
+* Bison, version >= 3.5.1 (lower versions may also work, not tested) 
 * Flex, version >= 2.6.4 (lower versions may also work, not tested)
 * Si2 LEF/DEF parser, a mirror can be found [here](https://github.com/asyncvlsi/lefdef).
 * [ACT](https://github.com/asyncvlsi/act): environment variable `ACT_HOME` determines the installation destination of this package
