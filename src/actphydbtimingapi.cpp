@@ -257,8 +257,8 @@ void ActPhyDBTimingAPI::GetWitness(
 
     GetWitnessCB(tc_num, act_fast_path, act_slow_path);
 
-    Translate(act_fast_path, phydb_fast_path);
-    Translate(act_slow_path, phydb_slow_path);
+    TranslateActPathToPhydbPath(act_fast_path, phydb_fast_path);
+    TranslateActPathToPhydbPath(act_slow_path, phydb_slow_path);
 }
 
 void ActPhyDBTimingAPI::GetViolatedTimingConstraints(std::vector<int> &violated_tc_nums) {
@@ -267,7 +267,7 @@ void ActPhyDBTimingAPI::GetViolatedTimingConstraints(std::vector<int> &violated_
     GetViolatedTimingConstraintsCB(violated_tc_nums);
 }
 
-void ActPhyDBTimingAPI::Translate(
+void ActPhyDBTimingAPI::TranslateActPathToPhydbPath(
     std::vector<ActEdge> &act_path,
     PhydbPath &phydb_path
 ) {

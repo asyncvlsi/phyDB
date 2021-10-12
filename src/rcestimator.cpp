@@ -43,18 +43,18 @@ void StarPiModelEstimator::PushNetRCToManager() {
                 cap
             );
             load_node->setC(libs[0], maxMode, cap / 2.0);
-            std::cout << "Set C for load pin: " << load_name << " " << cap / 2.0 << "\n";
+            //std::cout << "Set C for load pin: " << load_name << " " << cap / 2.0 << "\n";
             driver_cap += cap / 2.0;
             auto edge = spef_manager->findEdge(driver_node, load_node);
             PhyDBExpects(edge!=nullptr, "Cannot find edge!");
             edge->setR(libs[0], maxMode, 0.12345);
-            std::cout << "Set R for edge, "
-                      << "driver: " << driver_name << ", "
-                      << "load: " << load_name << ", "
-                      << res << "\n";
+            //std::cout << "Set R for edge, "
+            //          << "driver: " << driver_name << ", "
+            //          << "load: " << load_name << ", "
+            //          << res << "\n";
         }
         driver_node->setC(libs[0], maxMode, driver_cap);
-        std::cout << "Set C for driver pin: " << driver_name << " " << driver_cap << "\n";
+        //std::cout << "Set C for driver pin: " << driver_name << " " << driver_cap << "\n";
     }
     //std::cout << "after adding\n";
     //spef_manager->dump();
@@ -82,9 +82,9 @@ void StarPiModelEstimator::AddEdgesToManager() {
             auto load_node = timing_api.PhyDBPinToSpefNode(load);
             auto ret = spef_manager->addEdge(driver_node, load_node);
             PhyDBExpects(ret != nullptr, "Fail to add an edge\n");
-            std::cout << "Add an edge to spef_manager, "
-                      << "driver: " << driver_name << ", "
-                      << "load: " << load_name << "\n";
+            //std::cout << "Add an edge to spef_manager, "
+            //          << "driver: " << driver_name << ", "
+            //          << "load: " << load_name << "\n";
         }
     }
 #endif

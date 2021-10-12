@@ -179,8 +179,8 @@ int WriteNets(defwCallbackType_e type, defiUserData data) {
                 phydb_ptr->GetDesignPtr()->components_[pin.comp_id].GetMacro()->GetName();
             Macro *macro_ptr = phydb_ptr->GetMacroPtr(macro_name);
             PhyDBExpects(macro_ptr != nullptr, "Macro does not exist");
-            std::string
-                pin_name = macro_ptr->GetPinsRef()[pin.pin_id].GetName();
+            std::string pin_name =
+                macro_ptr->GetPinsRef()[pin.pin_id].GetName();
             defwNetConnection(component_name.c_str(), pin_name.c_str(), 0);
         }
         defwNetEndOneNet();

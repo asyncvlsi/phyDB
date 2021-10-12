@@ -197,7 +197,7 @@ class ActPhyDBTimingAPI {
     galois::eda::utility::ExtNetlistAdaptor *adaptor_;
 #endif
 
-    void Translate(std::vector<ActEdge> &act_path, PhydbPath &phydb_path);
+    void TranslateActPathToPhydbPath(std::vector<ActEdge> &act_path, PhydbPath &phydb_path);
 };
 
 }
