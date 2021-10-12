@@ -103,7 +103,7 @@ else()
     message(STATUS "Cannot find libgalois_shmem.a")
     set(Galois_FOUND FALSE)
 endif()
-if (UNIX)
+if (UNIX AND (NOT APPLE))
     find_library(
         NUMA_LIBRARY
         NAMES numa
