@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+include_directories(include)
 
 ############################################################################
 # Detect if the environment variable ACT_HOME can be found
@@ -180,7 +181,6 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 # Set the output directory of executables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
-include_directories(include)
 FILE(GLOB SOURCES "src/*.cpp")
 add_subdirectory(test)
 

@@ -11,9 +11,7 @@
 
 namespace phydb {
 
-PhyDB::~PhyDB() {
-    delete rc_estimator_;
-}
+PhyDB::~PhyDB() = default;
 
 Tech *PhyDB::GetTechPtr() {
     return &tech_;
@@ -673,23 +671,6 @@ void PhyDB::AddNetsAndCompPinsToSpefManager() {
     }
 }
 
-void PhyDB::InitializeRCEstimator(RCEstimatorType rc_estimator_type) {
-    switch (rc_estimator_type) {
-        case 0: {
-            rc_estimator_ = new StarPiModelEstimator(this);
-            break;
-        }
-        default: {
-            PhyDBExpects(false, "Unknown RCEstimatorType");
-        }
-    }
-}
-
-void PhyDB::PushRCToSpefManager() {
-    PhyDBExpects(rc_estimator_ != nullptr, "RC estimator is a nullptr");
-    rc_estimator_->PushNetRCToManager();
-}
-
 #endif
 
 bool PhyDB::IsDriverPin(PhydbPin &phydb_pin) {
@@ -701,7 +682,7 @@ bool PhyDB::IsDriverPin(PhydbPin &phydb_pin) {
 
 std::string PhyDB::GetFullCompPinName(
     PhydbPin &phydb_pin,
-    const char delimiter
+    char delimiter
 ) {
     int comp_id = phydb_pin.comp_id;
     int pin_id = phydb_pin.pin_id;

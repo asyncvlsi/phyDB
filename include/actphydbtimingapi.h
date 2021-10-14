@@ -157,6 +157,7 @@ class ActPhyDBTimingAPI {
 #endif
 
     //APIs for Dali and SPRoute
+    bool ReadyForTimingDriven();
     bool IsActNetPtrExisting(void *act_net);
     int ActNetPtr2Id(void *act_net);
     void *PhydbNetId2ActPtr(int net_id);

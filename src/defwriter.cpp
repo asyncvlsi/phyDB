@@ -172,7 +172,7 @@ int WriteNets(defwCallbackType_e type, defiUserData data) {
             defwNetConnection(pin_str, iopin_names[i].c_str(), 0);
         }
 
-        for (auto &pin: net.pins_) {
+        for (auto &pin: net.GetPinsRef()) {
             std::string component_name =
                 phydb_ptr->GetDesignPtr()->components_[pin.comp_id].GetName();
             std::string macro_name =

@@ -51,6 +51,7 @@ class Tech {
     int GetLayerId(std::string const &layer_name);
     const std::string &GetLayerName(int layerID);
     std::vector<Layer> &GetLayersRef();
+    std::vector<Layer *> &GetMetalLayersRef();
 
     bool IsMacroExisting(std::string const &macro_name);
     Macro *AddMacro(std::string &macro_name);

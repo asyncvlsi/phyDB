@@ -97,6 +97,21 @@ void TimingDAG::AddFastPath(PhydbPath &fast_path) {
     }
 }
 
+bool ActPhyDBTimingAPI::ReadyForTimingDriven() {
+#if PHYDB_USE_GALOIS == 0
+    return false;
+#elif PHYDB_USE_GALOIS == 1
+    if (GetNumConstraintsCB == nullptr) return false;
+    if (UpdateTimingIncrementalCB == nullptr) return false;
+    if (GetSlackCB == nullptr) return false;
+    if (GetWitnessCB == nullptr) return false;
+    if (GetViolatedTimingConstraintsCB == nullptr) return false;
+#else
+    PhyDBExpects(false, "This is not supposed to happen!");
+#endif
+    return true;
+}
+
 bool ActPhyDBTimingAPI::IsActNetPtrExisting(void *act_net) {
     return net_act_2_id_.find(act_net) != net_act_2_id_.end();
 }

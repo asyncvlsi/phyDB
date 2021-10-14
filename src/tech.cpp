@@ -126,6 +126,10 @@ std::vector<Layer> &Tech::GetLayersRef() {
     return layers_;
 }
 
+std::vector<Layer *> &Tech::GetMetalLayersRef() {
+    return metal_layers_;
+}
+
 bool Tech::IsMacroExisting(std::string const &macro_name) {
     return macro_2_id_.find(macro_name) != macro_2_id_.end();
 }

@@ -3,12 +3,9 @@
 
 #include "actphydbtimingapi.h"
 #include "design.h"
-#include "rcestimator.h"
 #include "tech.h"
 
 namespace phydb {
-
-class RCEstimator;
 
 class PhyDB {
   public:
@@ -186,7 +183,7 @@ class PhyDB {
         void (*callback_function)(std::vector<int> &)
     );
     bool IsDriverPin(PhydbPin &phydb_pin);
-    std::string GetFullCompPinName(PhydbPin &phydb_pin, const char delimiter = ':');
+    std::string GetFullCompPinName(PhydbPin &phydb_pin, char delimiter = ':');
     ActPhyDBTimingAPI &GetTimingApi();
 #if PHYDB_USE_GALOIS
     void SetParaManager(galois::eda::parasitics::Manager *manager);
@@ -198,8 +195,6 @@ class PhyDB {
 
     void CreatePhydbActAdaptor();
     void AddNetsAndCompPinsToSpefManager();
-    void InitializeRCEstimator(RCEstimatorType rc_estimator_type);
-    void PushRCToSpefManager();
 #endif
 
     /************************************************
@@ -264,7 +259,6 @@ class PhyDB {
     Tech tech_;
     Design design_;
     ActPhyDBTimingAPI timing_api_;
-    RCEstimator *rc_estimator_ = nullptr;
 };
 
 }
