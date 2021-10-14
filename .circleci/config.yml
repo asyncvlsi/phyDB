@@ -9,7 +9,7 @@ jobs:
           name: "Install ACT"
           command: |
             apt-get -q update -y
-            apt-get -q install -y libedit-dev zlib1g-dev m4 build-essential
+            apt-get -q install -y libedit-dev zlib1g-dev m4 build-essential git
             git clone https://github.com/asyncvlsi/act.git
             cd act
             mkdir install
