@@ -3,9 +3,6 @@
 
 #include <vector>
 
-#include "scanner.h"
-#include "parser.hpp"
-
 namespace phydb {
 
 /****
@@ -20,9 +17,9 @@ namespace phydb {
  *
  * A unit length is usually 1 micrometer.
  */
-struct CapEntry {
+struct TableEntry {
   public:
-    CapEntry(
+    TableEntry(
         double distance,
         double coupling_cap,
         double fringe_cap,
@@ -40,6 +37,17 @@ struct CapEntry {
     void Report() const;
 };
 
+enum TableType {
+    RES_OVER = 0,
+    CAP_OVER = 1,
+    CAP_UNDER = 2,
+    CAP_DIAGUNDER = 3,
+    CAP_OVERUNDER = 4,
+    BAD_TABLE_TYPE = 5
+};
+
+
+
 /****
  * @brief A structure containing a resistance table.
  *
@@ -50,11 +58,13 @@ struct CapEntry {
  * in this table really is:
  * distance_1, distance_2, 0, resistance
  */
-struct ResOverTable {
+struct ConfigTable {
   public:
-    ResOverTable(int layer_index, int over_index) :
+    ConfigTable(TableType type, int layer_index, int index0, int index1 = 0) :
+        type_(type),
         layer_index_(layer_index),
-        over_index_(over_index) {}
+        index0_(index0),
+        index1_(index1) {}
 
     void AddEntry(
         double distance,
@@ -65,139 +75,21 @@ struct ResOverTable {
 
     void FixLastEntryIfWrong();
     void SetWidth(double width);
+    TableType Type() const;
     double Width() const;
     int LayerIndex() const;
-    int OverIndex() const;
-    std::vector<CapEntry> &GetTable();
+    int Index0() const;
+    int Index1() const;
+    std::vector<TableEntry> &GetTable();
 
     void Report() const;
   private:
+    TableType type_;
     double width_ = -1;
-    int layer_index_;
-    int over_index_;
-    std::vector<CapEntry> table_;
-};
-
-/****
- * @brief A structure containing a table for storing capacitance if a model layer
- * is over another layer.
- *
- */
-struct CapOverTable {
-  public:
-    CapOverTable(int layer_index, int over_index) :
-        layer_index_(layer_index),
-        over_index_(over_index) {}
-
-    void AddEntry(
-        double distance,
-        double coupling_cap,
-        double fringe_cap,
-        double res
-    );
-    void SetWidth(double width);
-    double Width() const;
-    int LayerIndex() const;
-    int OverIndex() const;
-    std::vector<CapEntry> &GetTable();
-    void Report() const;
-  private:
-    double width_ = -1;
-    int layer_index_;
-    int over_index_;
-    std::vector<CapEntry> table_;
-};
-
-/****
- * @brief A structure containing a table for storing capacitance if a model layer
- * is under another layer.
- *
- */
-class CapUnderTable {
-  public:
-    CapUnderTable(int layer_index, int under_index) :
-        layer_index_(layer_index),
-        under_index_(under_index) {}
-
-    void AddEntry(
-        double distance,
-        double coupling_cap,
-        double fringe_cap,
-        double res
-    );
-    void SetWidth(double width);
-    double Width() const;
-    int LayerIndex() const;
-    int UnderIndex() const;
-    std::vector<CapEntry> &GetTable();
-    void Report();
-  private:
-    double width_ = -1;
-    int layer_index_;
-    int under_index_;
-    std::vector<CapEntry> table_;
-};
-
-/****
- * @brief A structure containing a table for storing capacitance if a model layer
- * is diagunder another layer.
- *
- */
-class CapDiagUnderTable {
-  public:
-    CapDiagUnderTable(int layer_index, int diagunder_index) :
-        layer_index_(layer_index),
-        diagunder_index_(diagunder_index) {}
-
-    void AddEntry(
-        double distance,
-        double coupling_cap,
-        double fringe_cap,
-        double res
-    );
-    void SetWidth(double width);
-    double Width() const;
-    int LayerIndex() const;
-    int DiagUnderIndex() const;
-    std::vector<CapEntry> &GetTable();
-    void Report();
-  private:
-    double width_ = -1;
-    int layer_index_;
-    int diagunder_index_;
-    std::vector<CapEntry> table_;
-};
-
-/****
- * @brief A structure containing a table for storing capacitance if a model layer
- * is over one layer and under another layer.
- */
-class CapOverUnderTable {
-  public:
-    CapOverUnderTable(int layer_index, int over_index, int under_index) :
-        layer_index_(layer_index),
-        over_index_(over_index),
-        under_index_(under_index) {}
-
-    void AddEntry(
-        double distance,
-        double coupling_cap,
-        double fringe_cap,
-        double res
-    );
-    void SetWidth(double width);
-    double Width() const;
-    int LayerIndex() const;
-    int OverIndex() const;
-    int UnderIndex() const;
-    std::vector<CapEntry> &GetTable();
-    void Report();
-  private:
-    double width_ = -1;
-    int layer_index_;
-    int over_index_;
-    int under_index_;
-    std::vector<CapEntry> table_;
+    int layer_index_ = -1;
+    int index0_ = -1;
+    int index1_ = -1;
+    std::vector<TableEntry> table_;
 };
 
 class TechConfig {

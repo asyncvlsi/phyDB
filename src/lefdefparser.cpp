@@ -1010,7 +1010,7 @@ int getDefDivider(defrCallbackType_e type,
     return 0;
 }
 
-void Si2ReadLef(PhyDB *phy_db_ptr, std::string const &lefFileName) {
+void Si2ReadLef(PhyDB *phy_db_ptr, std::string const &lef_file_name) {
     FILE *f;
     int res;
 
@@ -1030,12 +1030,12 @@ void Si2ReadLef(PhyDB *phy_db_ptr, std::string const &lefFileName) {
     lefrSetViaCbk(getLefVias);
     lefrSetViaRuleCbk(getLefViaRuleGenerates);
 
-    if ((f = fopen(lefFileName.c_str(), "r")) == nullptr) {
+    if ((f = fopen(lef_file_name.c_str(), "r")) == nullptr) {
         std::cout << "Couldn't open lef file" << std::endl;
         exit(2);
     }
 
-    res = lefrRead(f, lefFileName.c_str(), (lefiUserData) phy_db_ptr);
+    res = lefrRead(f, lef_file_name.c_str(), (lefiUserData) phy_db_ptr);
     if (res != 0) {
         std::cout << "LEF parser returns an error!" << std::endl;
         exit(2);
@@ -1045,7 +1045,7 @@ void Si2ReadLef(PhyDB *phy_db_ptr, std::string const &lefFileName) {
     lefrClear();
 }
 
-void Si2ReadDef(PhyDB *phy_db_ptr, std::string const &defFileName) {
+void Si2ReadDef(PhyDB *phy_db_ptr, std::string const &def_file_name) {
     FILE *f;
     int res;
 
@@ -1081,12 +1081,12 @@ void Si2ReadDef(PhyDB *phy_db_ptr, std::string const &defFileName) {
     defrSetViaCbk(getDefVias);
     defrSetGcellGridCbk(getDefGcellGrid);
 
-    if ((f = fopen(defFileName.c_str(), "r")) == 0) {
+    if ((f = fopen(def_file_name.c_str(), "r")) == 0) {
         std::cout << "Couldn't open def file" << std::endl;
         exit(2);
     }
 
-    res = defrRead(f, defFileName.c_str(), (defiUserData) phy_db_ptr, 1);
+    res = defrRead(f, def_file_name.c_str(), (defiUserData) phy_db_ptr, 1);
     if (res != 0) {
         std::cout << "DEF parser returns an error!" << std::endl;
         exit(2);
@@ -1173,10 +1173,10 @@ int LoadDefComponentLoc(defrCallbackType_e type,
  * because Dali does not support detailed placement and legalization for multi-height standard cells.
  *
  * @param phy_db_ptr, the pointer to the PhyDB database.
- * @param defFileName, the DEF file name which contains new component locations.
+ * @param def_file_name, the DEF file name which contains new component locations.
  * @return void.
  */
-void Si2LoadPlacedDef(PhyDB *phy_db_ptr, std::string const &defFileName) {
+void Si2LoadPlacedDef(PhyDB *phy_db_ptr, std::string const &def_file_name) {
     FILE *f;
     int res;
 
@@ -1192,12 +1192,12 @@ void Si2LoadPlacedDef(PhyDB *phy_db_ptr, std::string const &defFileName) {
     defrSetComponentStartCbk(getDefCountNumber);
     defrSetComponentCbk(LoadDefComponentLoc);
 
-    if ((f = fopen(defFileName.c_str(), "r")) == nullptr) {
+    if ((f = fopen(def_file_name.c_str(), "r")) == nullptr) {
         std::cout << "Couldn't open def file" << std::endl;
         exit(2);
     }
 
-    res = defrRead(f, defFileName.c_str(), (defiUserData) phy_db_ptr, 1);
+    res = defrRead(f, def_file_name.c_str(), (defiUserData) phy_db_ptr, 1);
     if (res != 0) {
         std::cout << "DEF parser returns an error!" << std::endl;
         exit(2);

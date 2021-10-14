@@ -97,12 +97,15 @@ class Tech {
 
     void FindAllMetalLayers();
     TechConfig &GetTechConfigRef();
+    void SetTechConfigLayerCount(int number_of_layers);
     void AddTechConfigCorner(int corner_index);
-    void AddResOverTable(ResOverTable *res_over_table);
-    void AddCapOverTable(CapOverTable *cap_over_table);
-    void AddCapUnderTable(CapUnderTable *cap_under_table);
-    void AddCapDiagUnderTable(CapDiagUnderTable *cap_diag_under_table);
-    void AddCapOverUnderTable(CapOverUnderTable *cap_over_under_table);
+    ConfigTable &InitConfigTable(
+        TableType type,
+        int layer_index,
+        int index0,
+        int index1,
+        int corner_index
+    );
     void FixResOverTable();
     void SetResistanceUnit(bool from_tech_config, bool is_report);
     void SetCapacitanceUnit(bool from_tech_config, bool is_report);

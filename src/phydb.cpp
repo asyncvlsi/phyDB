@@ -722,15 +722,9 @@ void PhyDB::OverrideComponentLocsFromDef(std::string const &def_file_name) {
 
 void PhyDB::ReadCell(std::string const &cell_file_name) {
     std::ifstream ist(cell_file_name.c_str());
-    if (ist.is_open()) {
-        //std::cout << "Loading CELL file: " << cellFileName << "\n";
-    } else {
-        std::cout << "ERROR: cannot open input file " << cell_file_name
-                  << std::endl;
-        exit(1);
-    }
-    std::string line;
+    PhyDBExpects(ist.is_open(), "Cannot open input file " + cell_file_name);
 
+    std::string line;
     while (!ist.eof()) {
         getline(ist, line);
         if (line.empty()) continue;
@@ -944,25 +938,10 @@ void PhyDB::ReadCluster(std::string const &cluster_file_name) {
 bool PhyDB::ReadTechConfigFile(std::string const &tech_config_file_name) {
     // resistance and capacitance information will be saved into metal layers,
     // so we need to make sure metal layers are in the database
-    if (tech_.layers_.empty()) {
-        std::cout
-            << "Layers are missing in PhyDB, cannot load technology configuration file\n";
-        return false;
-    }
+    PhyDBExpects(!tech_.layers_.empty(),
+                 "Layers in PhyDB are needed for loading technology configuration file");
 
-    // check if we can open the input file or not
-    TechConfigParser interpreter(&tech_);
-    std::ifstream ist(tech_config_file_name);
-    if (!ist.is_open()) {
-        std::cout << "Cannot open technology configuration file: "
-                  << tech_config_file_name << "\n";
-        return false;
-    }
-
-    // parse the file
-    std::istream *s = &ist;
-    interpreter.SetInputStream(s);
-    interpreter.Parse();
+    ReadTechnologyConfigurationFile(this, tech_config_file_name);
 
     // fix the last entry in the resistance over table
     // and use this technology configuration table to set r/c units
@@ -980,7 +959,7 @@ bool PhyDB::ReadTechConfigFile(int argc, char **argv) {
     }
 
     std::string file_name(argv[1]);
-    if (file_name == "__fake__") {
+    if (file_name == "__manual__") {
         if (argc < 5) {
             std::cout
                 << "Please provide unit resistance and unit capacitance\n";

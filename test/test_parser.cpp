@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
 
     phy_db.GetTechPtr()->ReportLayersTechConfig();
     phy_db.GetTechPtr()->SetResistanceUnit(true, true);
-    //phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
+    phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
 
     return 0;
 }

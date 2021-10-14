@@ -39,9 +39,9 @@ int getDefVias(defrCallbackType_e, defiVia *, defiUserData);
 int getDefGcellGrid(defrCallbackType_e, defiGcellGrid *, defiUserData);
 int getDefRow(defrCallbackType_e, defiRow *, defiUserData);
 
-void Si2ReadLef(PhyDB *phy_db_ptr, std::string const &lefFileName);
-void Si2ReadDef(PhyDB *phy_db_ptr, std::string const &defFileName);
-void Si2LoadPlacedDef(PhyDB *phy_db_ptr, std::string const &defFileName);
+void Si2ReadLef(PhyDB *phy_db_ptr, std::string const &lef_file_name);
+void Si2ReadDef(PhyDB *phy_db_ptr, std::string const &def_file_name);
+void Si2LoadPlacedDef(PhyDB *phy_db_ptr, std::string const &def_file_name);
 
 }
 

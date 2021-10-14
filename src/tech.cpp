@@ -302,60 +302,49 @@ TechConfig &Tech::GetTechConfigRef() {
     return tech_config_;
 }
 
-void Tech::AddTechConfigCorner(int corner_index) {
+void Tech::SetTechConfigLayerCount(int number_of_layers) {
     if (metal_layers_.empty()) {
         FindAllMetalLayers();
     }
+    PhyDBExpects(number_of_layers = (int) metal_layers_.size(),
+                 "metal layers given in the technology configuration file does not match those in the database");
+    tech_config_.SetLayerCount(number_of_layers);
+}
 
+void Tech::AddTechConfigCorner(int corner_index) {
     for (auto &metal_ptr: metal_layers_) {
         metal_ptr->AddTechConfigCorner(corner_index);
     }
 }
 
-void Tech::AddResOverTable(ResOverTable *res_over_table) {
-    if (res_over_table == nullptr) return;
-    int layer_index = res_over_table->LayerIndex();
+ConfigTable &Tech::InitConfigTable(
+    TableType type,
+    int layer_index,
+    int index0,
+    int index1,
+    int corner_index
+) {
     auto metal_ptr = metal_layers_[layer_index];
-    auto corner = metal_ptr->GetLayerTechConfig()->GetLastCorner();
-    corner->AddResOverTable(res_over_table);
-}
-
-void Tech::AddCapOverTable(CapOverTable *cap_over_table) {
-    if (cap_over_table == nullptr) return;
-    int layer_index = cap_over_table->LayerIndex();
-    auto metal_ptr = metal_layers_[layer_index];
-    auto corner = metal_ptr->GetLayerTechConfig()->GetLastCorner();
-    corner->AddCapOverTable(cap_over_table);
-}
-
-void Tech::AddCapUnderTable(CapUnderTable *cap_under_table) {
-    if (cap_under_table == nullptr) return;
-    int layer_index = cap_under_table->LayerIndex();
-    auto metal_ptr = metal_layers_[layer_index];
-    auto corner = metal_ptr->GetLayerTechConfig()->GetLastCorner();
-    corner->AddCapUnderTable(cap_under_table);
-}
-
-void Tech::AddCapDiagUnderTable(CapDiagUnderTable *cap_diag_under_table) {
-    if (cap_diag_under_table == nullptr) return;
-    int layer_index = cap_diag_under_table->LayerIndex();
-    auto metal_ptr = metal_layers_[layer_index];
-    auto corner = metal_ptr->GetLayerTechConfig()->GetLastCorner();
-    corner->AddCapDiagUnderTable(cap_diag_under_table);
-}
-
-void Tech::AddCapOverUnderTable(CapOverUnderTable *cap_over_under_table) {
-    if (cap_over_under_table == nullptr) return;
-    int layer_index = cap_over_under_table->LayerIndex();
-    auto metal_ptr = metal_layers_[layer_index];
-    auto corner = metal_ptr->GetLayerTechConfig()->GetLastCorner();
-    corner->AddCapOverUnderTable(cap_over_under_table);
+    auto &corner = metal_ptr->GetLayerTechConfig()->CornersRef()[corner_index];
+    if (type == RES_OVER) {
+        return corner.InitResOverTable(layer_index, index0);
+    } else if (type == CAP_OVER) {
+        return corner.InitCapOverTable(layer_index, index0);
+    } else if (type == CAP_UNDER) {
+        return corner.InitCapUnderTable(layer_index, index0);
+    } else if (type == CAP_DIAGUNDER) {
+        return corner.InitCapDiagUnderTable(layer_index, index0);
+    } else {
+        return corner.InitCapOverUnderTable(layer_index, index0, index1);
+    }
 }
 
 void Tech::FixResOverTable() {
     for (auto &metal_ptr: metal_layers_) {
         auto layer_tech_config = metal_ptr->GetLayerTechConfig();
-        layer_tech_config->FixResOverTable();
+        if (layer_tech_config != nullptr) {
+            layer_tech_config->FixResOverTable();
+        }
     }
 }
 
@@ -418,7 +407,12 @@ void Tech::ReportLayersTechConfig() {
     for (auto &layer: layers_) {
         if (layer.GetType() == ROUTING) {
             auto tech_config = layer.GetLayerTechConfig();
-            tech_config->Report();
+            if (tech_config != nullptr) {
+                tech_config->Report();
+            } else {
+                std::cout << layer.GetName()
+                          << " does not contain a tech_config\n";
+            }
         }
     }
 }

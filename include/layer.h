@@ -20,18 +20,25 @@ class LayerTechConfigCorner {
     explicit LayerTechConfigCorner(int model_index)
         : model_index_(model_index) {}
 
-    void AddResOverTable(ResOverTable *res_over_table);
-    void AddCapOverTable(CapOverTable *cap_over_table);
-    void AddCapUnderTable(CapUnderTable *cap_under_table);
-    void AddCapDiagUnderTable(CapDiagUnderTable *cap_diag_under_table);
-    void AddCapOverUnderTable(CapOverUnderTable *cap_over_under_table);
+    ConfigTable &InitResOverTable(int layer_index, int over_index);
+    ConfigTable &InitCapOverTable(int layer_index, int over_index);
+    ConfigTable &InitCapUnderTable(int layer_index, int under_index);
+    ConfigTable &InitCapDiagUnderTable(
+        int layer_index,
+        int diagunder_index
+    );
+    ConfigTable &InitCapOverUnderTable(
+        int layer_index,
+        int over_index,
+        int under_index
+    );
 
     /**** getters for raw data ****/
-    std::vector<ResOverTable> &GetResOverRef();
-    std::vector<CapOverTable> &GetCapOverRef();
-    std::vector<CapUnderTable> &GetCapUnderRef();
-    std::vector<CapDiagUnderTable> &GetCapDiagUnderRef();
-    std::vector<CapOverUnderTable> &GetCapOverUnderRef();
+    std::vector<ConfigTable> &GetResOverRef();
+    std::vector<ConfigTable> &GetCapOverRef();
+    std::vector<ConfigTable> &GetCapUnderRef();
+    std::vector<ConfigTable> &GetCapDiagUnderRef();
+    std::vector<ConfigTable> &GetCapOverUnderRef();
 
     int ModelIndex() const;
     void FixResOverTableLastEntry();
@@ -42,11 +49,11 @@ class LayerTechConfigCorner {
   private:
     int model_index_;
     /**** raw data from technology configuration file ****/
-    std::vector<ResOverTable> res_over_;
-    std::vector<CapOverTable> cap_over_;
-    std::vector<CapUnderTable> cap_under_;
-    std::vector<CapDiagUnderTable> cap_diagunder_;
-    std::vector<CapOverUnderTable> cap_overunder_;
+    std::vector<ConfigTable> res_over_;
+    std::vector<ConfigTable> cap_over_;
+    std::vector<ConfigTable> cap_under_;
+    std::vector<ConfigTable> cap_diagunder_;
+    std::vector<ConfigTable> cap_overunder_;
 };
 
 class LayerTechConfig {

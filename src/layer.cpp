@@ -2,104 +2,69 @@
 
 namespace phydb {
 
-void LayerTechConfigCorner::AddResOverTable(ResOverTable *res_over_table) {
-    int layer_index = res_over_table->LayerIndex();
-    int over_index = res_over_table->OverIndex();
-    res_over_.emplace_back(layer_index, over_index);
-    auto &last_table = res_over_.back();
-    last_table.SetWidth(res_over_table->Width());
-    for (auto &entry: res_over_table->GetTable()) {
-        last_table.GetTable().emplace_back(
-            entry.distance_,
-            entry.coupling_cap_,
-            entry.fringe_cap_,
-            entry.res_
-        );
-    }
+ConfigTable &LayerTechConfigCorner::InitResOverTable(
+    int layer_index,
+    int over_index
+) {
+    res_over_.emplace_back(RES_OVER, layer_index, over_index);
+    return res_over_.back();
 }
 
-void LayerTechConfigCorner::AddCapOverTable(CapOverTable *cap_over_table) {
-    int layer_index = cap_over_table->LayerIndex();
-    int over_index = cap_over_table->OverIndex();
-    cap_over_.emplace_back(layer_index, over_index);
-    auto &last_table = cap_over_.back();
-    last_table.SetWidth(cap_over_table->Width());
-    for (auto &entry: cap_over_table->GetTable()) {
-        last_table.GetTable().emplace_back(
-            entry.distance_,
-            entry.coupling_cap_,
-            entry.fringe_cap_,
-            entry.res_
-        );
-    }
+ConfigTable &LayerTechConfigCorner::InitCapOverTable(
+    int layer_index,
+    int over_index
+) {
+    cap_over_.emplace_back(CAP_OVER, layer_index, over_index);
+    return cap_over_.back();
 }
 
-void LayerTechConfigCorner::AddCapUnderTable(CapUnderTable *cap_under_table) {
-    int layer_index = cap_under_table->LayerIndex();
-    int under_index = cap_under_table->UnderIndex();
-    cap_under_.emplace_back(layer_index, under_index);
-    auto &last_table = cap_under_.back();
-    last_table.SetWidth(cap_under_table->Width());
-    for (auto &entry: cap_under_table->GetTable()) {
-        last_table.GetTable().emplace_back(
-            entry.distance_,
-            entry.coupling_cap_,
-            entry.fringe_cap_,
-            entry.res_
-        );
-    }
+ConfigTable &LayerTechConfigCorner::InitCapUnderTable(
+    int layer_index,
+    int under_index
+) {
+    cap_under_.emplace_back(CAP_UNDER, layer_index, under_index);
+    return cap_under_.back();
 }
 
-void LayerTechConfigCorner::AddCapDiagUnderTable(CapDiagUnderTable *cap_diag_under_table) {
-    int layer_index = cap_diag_under_table->LayerIndex();
-    int diagunder_index = cap_diag_under_table->DiagUnderIndex();
-    cap_diagunder_.emplace_back(layer_index, diagunder_index);
-    auto &last_table = cap_diagunder_.back();
-    last_table.SetWidth(cap_diag_under_table->Width());
-    for (auto &entry: cap_diag_under_table->GetTable()) {
-        last_table.GetTable().emplace_back(
-            entry.distance_,
-            entry.coupling_cap_,
-            entry.fringe_cap_,
-            entry.res_
-        );
-    }
+ConfigTable &LayerTechConfigCorner::InitCapDiagUnderTable(
+    int layer_index,
+    int diagunder_index
+) {
+    cap_diagunder_.emplace_back(CAP_DIAGUNDER, layer_index, diagunder_index);
+    return cap_diagunder_.back();
 }
 
-void LayerTechConfigCorner::AddCapOverUnderTable(CapOverUnderTable *cap_over_under_table) {
-    int layer_index = cap_over_under_table->LayerIndex();
-    int over_index = cap_over_under_table->OverIndex();
-    int under_index = cap_over_under_table->UnderIndex();
-    cap_overunder_.emplace_back(layer_index, over_index, under_index);
-    auto &last_table = cap_overunder_.back();
-    last_table.SetWidth(cap_over_under_table->Width());
-    for (auto &entry: cap_over_under_table->GetTable()) {
-        last_table.GetTable().emplace_back(
-            entry.distance_,
-            entry.coupling_cap_,
-            entry.fringe_cap_,
-            entry.res_
-        );
-    }
+ConfigTable &LayerTechConfigCorner::InitCapOverUnderTable(
+    int layer_index,
+    int over_index,
+    int under_index
+) {
+    cap_overunder_.emplace_back(
+        CAP_OVERUNDER,
+        layer_index,
+        over_index,
+        under_index
+    );
+    return cap_overunder_.back();
 }
 
-std::vector<ResOverTable> &LayerTechConfigCorner::GetResOverRef() {
+std::vector<ConfigTable> &LayerTechConfigCorner::GetResOverRef() {
     return res_over_;
 }
 
-std::vector<CapOverTable> &LayerTechConfigCorner::GetCapOverRef() {
+std::vector<ConfigTable> &LayerTechConfigCorner::GetCapOverRef() {
     return cap_over_;
 }
 
-std::vector<CapUnderTable> &LayerTechConfigCorner::GetCapUnderRef() {
+std::vector<ConfigTable> &LayerTechConfigCorner::GetCapUnderRef() {
     return cap_under_;
 }
 
-std::vector<CapDiagUnderTable> &LayerTechConfigCorner::GetCapDiagUnderRef() {
+std::vector<ConfigTable> &LayerTechConfigCorner::GetCapDiagUnderRef() {
     return cap_diagunder_;
 }
 
-std::vector<CapOverUnderTable> &LayerTechConfigCorner::GetCapOverUnderRef() {
+std::vector<ConfigTable> &LayerTechConfigCorner::GetCapOverUnderRef() {
     return cap_overunder_;
 }
 
@@ -128,7 +93,7 @@ void LayerTechConfigCorner::FixResOverTableLastEntry() {
 double LayerTechConfigCorner::GetOverSubstrateNoSurroundingWireRes() {
     double res = -1;
     for (auto &table: res_over_) {
-        if (table.OverIndex() == -1) {
+        if (table.Index0() == -1) {
             if (!table.GetTable().empty()) {
                 res = table.GetTable()[0].res_;
                 break;
@@ -153,7 +118,7 @@ double LayerTechConfigCorner::GetOverSubstrateNoSurroundingWireRes() {
 double LayerTechConfigCorner::GetOverSubstrateNoSurroundingWireCap() {
     double res = -1;
     for (auto &table: cap_over_) {
-        if (table.OverIndex() == -1) {
+        if (table.Index0() == -1) {
             if (!table.GetTable().empty()) {
                 res = table.GetTable().back().fringe_cap_;
                 break;

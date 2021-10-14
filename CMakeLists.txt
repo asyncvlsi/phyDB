@@ -135,33 +135,6 @@ message(STATUS "Boost library path: ${Boost_LIBRARY_DIRS}")
 message(STATUS "Boost libs: ${Boost_LIBRARIES}")
 include_directories(${Boost_INCLUDE_DIRS})
 
-############################################################################
-# Add a flex dependency
-############################################################################
-message(STATUS "Detecting flex...")
-find_package(FLEX 2.5.0 REQUIRED)
-add_custom_command(
-    OUTPUT ${SRC_DIR}/scanner.cpp
-    COMMAND ${FLEX_EXECUTABLE} -o ${SRC_DIR}/scanner.cpp ${INC_DIR}/scanner.l
-    COMMAND sed 's/register//g' ${SRC_DIR}/scanner.cpp > ${SRC_DIR}/scanner.cppx # if flex 2.6.4 is used, then this command can be removed
-    COMMAND mv -f ${SRC_DIR}/scanner.cppx ${SRC_DIR}/scanner.cpp # if flex 2.6.4 is used, then this command can be removed
-    DEPENDS ${INC_DIR}/scanner.l
-)
-add_custom_target(flex_target ALL DEPENDS ${SRC_DIR}/scanner.cpp)
-
-############################################################################
-# Add a bison dependency
-############################################################################
-message(STATUS "Detecting bison...")
-find_package(BISON 3.3.0 REQUIRED)
-add_custom_command(
-    OUTPUT ${SRC_DIR}/parser.cpp
-    COMMAND ${BISON_EXECUTABLE} -o ${SRC_DIR}/parser.cpp ${INC_DIR}/parser.y
-    COMMAND mv ${SRC_DIR}/parser.hpp ${INC_DIR}/parser.hpp
-    DEPENDS ${INC_DIR}/parser.y
-)
-add_custom_target(bison_target ALL DEPENDS ${SRC_DIR}/parser.cpp)
-
 # Set a default build type if none was specified
 set(default_build_type "RELEASE")
 if (NOT CMAKE_BUILD_TYPE)
@@ -189,13 +162,6 @@ add_library(
     phydb
     STATIC
     ${SOURCES}
-    ${SRC_DIR}/scanner.cpp
-    ${SRC_DIR}/parser.cpp
-)
-add_dependencies(
-    phydb
-    flex_target
-    bison_target
 )
 target_link_libraries(
     phydb

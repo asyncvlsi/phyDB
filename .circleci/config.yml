@@ -1,8 +1,7 @@
 version: 2.1
 
 jobs:
-  ubuntu18:
-    # Ubuntu 18
+  ubuntu18: # Ubuntu 18
     docker:
       - image: ubuntu:18.04
     steps:
@@ -26,13 +25,13 @@ jobs:
             make install
       - checkout
       - run:
-            name: "Install PhyDB"
-            command: |
-              apt-get install -y flex bison
-              mkdir build
-              cd build
-              cmake ..
-              make install
+          name: "Install PhyDB"
+          command: |
+            apt-get install -y libboost-all-dev
+            mkdir build
+            cd build
+            cmake ..
+            make install
 workflows:
   build:
     jobs:
