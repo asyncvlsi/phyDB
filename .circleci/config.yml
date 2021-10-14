@@ -1,0 +1,39 @@
+version: 2.1
+
+jobs:
+  ubuntu18:
+    # Ubuntu 18
+    docker:
+      - image: ubuntu:18.04
+    steps:
+      - run:
+          name: "Install ACT"
+          command: |
+            apt-get -q update -y
+            apt-get -q install -y libedit-dev zlib1g-dev m4 build-essential
+            git clone https://github.com/asyncvlsi/act.git
+            cd act
+            mkdir install
+            export VLSI_TOOLS_SRC=`pwd`
+            export ACT_HOME=$VLSI_TOOLS_SRC/install
+            ./configure $ACT_HOME
+            ./build
+      - run:
+          name: "Install Si2 LEF/DEF parser"
+          command: |
+            git clone https://github.com/asyncvlsi/lefdef.git
+            cd lefdef
+            make install
+      - checkout
+      - run:
+            name: "Install PhyDB"
+            command: |
+              apt-get install -y flex bison
+              mkdir build
+              cd build
+              cmake ..
+              make install
+workflows:
+  build:
+    jobs:
+      - ubuntu18
