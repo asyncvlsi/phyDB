@@ -84,8 +84,8 @@ find_library(
     NAMES galois_eda
     PATHS $ENV{ACT_HOME}/lib
 )
-set(Galois_LIBRARIES ${GALOIS_EDA_LIBRARY})
 if (GALOIS_EDA_LIBRARY)
+    set(Galois_LIBRARIES ${GALOIS_EDA_LIBRARY})
     message(STATUS "Found libgalois_eda.a: " ${GALOIS_EDA_LIBRARY})
 else()
     message(STATUS "Cannot find libgalois_eda.a")
@@ -96,8 +96,8 @@ find_library(
     NAMES galois_shmem
     PATHS $ENV{ACT_HOME}/lib
 )
-set(Galois_LIBRARIES ${Galois_LIBRARIES} ${GALOIS_SHMEM_LIBRARY})
 if (GALOIS_SHMEM_LIBRARY)
+    set(Galois_LIBRARIES ${Galois_LIBRARIES} ${GALOIS_SHMEM_LIBRARY})
     message(STATUS "Found libgalois_shmem.a: " ${GALOIS_SHMEM_LIBRARY})
 else()
     message(STATUS "Cannot find libgalois_shmem.a")
@@ -108,8 +108,8 @@ if (UNIX AND (NOT APPLE))
         NUMA_LIBRARY
         NAMES numa
     )
-    set(Galois_LIBRARIES ${Galois_LIBRARIES} ${NUMA_LIBRARY})
     if (NUMA_LIBRARY)
+        set(Galois_LIBRARIES ${Galois_LIBRARIES} ${NUMA_LIBRARY})
         message(STATUS "Found libnuma: " ${NUMA_LIBRARY})
     else()
         message(STATUS "Cannot find libnuma")
