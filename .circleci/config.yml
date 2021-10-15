@@ -41,7 +41,55 @@ jobs:
             cd build
             cmake ..
             make install
+  macos11:
+    macos:
+      xcode: 11.3.0
+    steps:
+      - run:
+          name: "Install Xcode and Homebrew"
+          command: |
+            xcode-select --install
+            xcodebuild -version
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - run:
+          name: "Install ACT"
+          command: |
+            brew install libedit
+            brew install zlib
+            brew install m4
+            git clone https://github.com/asyncvlsi/act.git
+            cd act
+            mkdir install
+            export VLSI_TOOLS_SRC=`pwd`
+            export ACT_HOME=$VLSI_TOOLS_SRC/install
+            echo export VLSI_TOOLS_SRC=`pwd` >> $BASH_ENV
+            echo export ACT_HOME=$VLSI_TOOLS_SRC/install >> $BASH_ENV
+            ./configure $ACT_HOME
+            ./build
+            make install
+      - run:
+          name: "Install Si2 LEF/DEF parser"
+          command: |
+            brew install bison
+            git clone https://github.com/asyncvlsi/lefdef.git
+            cd lefdef
+            echo '$ACT_HOME' $ACT_HOME
+            make
+            make install
+      - run:
+          name: "Install phyDB"
+          command: |
+            brew install cmake
+            brew install boost
+            echo '$ACT_HOME' $ACT_HOME
+            git clone https://github.com/asyncvlsi/phyDB.git
+            cd phyDB
+            mkdir build
+            cd build
+            cmake ..
+            make install
 workflows:
   build:
     jobs:
+      - macos11
       - ubuntu18
