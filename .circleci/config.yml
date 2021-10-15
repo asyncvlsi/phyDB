@@ -6,24 +6,16 @@ jobs:
       - image: ubuntu:18.04
     steps:
       - run:
-          name: "Install gcc git"
+          name: "Install gcc git cmake"
           command: |
             apt update -y
-            apt install -y build-essential git
-      - run:
-          name: "Install CMake"
-          command: |
-            apt install -y libssl-dev
-            git clone https://github.com/Kitware/CMake.git
-            cd CMake
-            ./bootstrap
-            make
-            make install
+            apt install -y build-essential git cmake
       - run:
           name: "Install boost"
           command: |
-            git clone https://github.com/boostorg/boost.git
+            git clone --recursive https://github.com/boostorg/boost.git
             cd boost
+            git checkout tags/boost-1.77.0
             ./bootstrap.sh
             ./b2 install
       - run:
