@@ -15,19 +15,30 @@ jobs:
             mkdir install
             export VLSI_TOOLS_SRC=`pwd`
             export ACT_HOME=$VLSI_TOOLS_SRC/install
+            echo export VLSI_TOOLS_SRC=`pwd` >> $BASH_ENV
+            echo export ACT_HOME=$VLSI_TOOLS_SRC/install >> $BASH_ENV
             ./configure $ACT_HOME
             ./build
+            make install
       - run:
           name: "Install Si2 LEF/DEF parser"
           command: |
             git clone https://github.com/asyncvlsi/lefdef.git
+            apt-get install -y flex bison
             cd lefdef
+            echo '$ACT_HOME' $ACT_HOME
+            make
             make install
-      - checkout
       - run:
           name: "Install PhyDB"
           command: |
-            apt-get install -y libboost-all-dev
+            apt update -y
+            apt install -y snapd
+            snap install cmake --classic
+            apt install -y libboost-all-dev
+            echo '$ACT_HOME' $ACT_HOME
+            git clone https://github.com/asyncvlsi/phyDB.git
+            cd phyDB
             mkdir build
             cd build
             cmake ..

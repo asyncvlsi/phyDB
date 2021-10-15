@@ -1,4 +1,5 @@
 # PhyDB
+[![CircleCI](https://circleci.com/gh/asyncvlsi/phyDB.svg?style=svg)](https://circleci.com/gh/asyncvlsi/phyDB)
 
 ### Recommended toolchain
 * Ubuntu 20.04
