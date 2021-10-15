@@ -6,10 +6,30 @@ jobs:
       - image: ubuntu:18.04
     steps:
       - run:
+          name: "Install gcc git"
+          command: |
+            apt update -y
+            apt install -y build-essential git
+      - run:
+          name: "Install CMake"
+          command: |
+            apt install -y libssl-dev
+            git clone https://github.com/Kitware/CMake.git
+            cd CMake
+            ./bootstrap
+            make
+            make install
+      - run:
+          name: "Install boost"
+          command: |
+            git clone https://github.com/boostorg/boost.git
+            cd boost
+            ./bootstrap.sh
+            ./b2 install
+      - run:
           name: "Install ACT"
           command: |
-            apt-get -q update -y
-            apt-get -q install -y libedit-dev zlib1g-dev m4 build-essential git
+            apt install -y libedit-dev zlib1g-dev m4
             git clone https://github.com/asyncvlsi/act.git
             cd act
             mkdir install
@@ -30,12 +50,8 @@ jobs:
             make
             make install
       - run:
-          name: "Install PhyDB"
+          name: "Install phyDB"
           command: |
-            apt update -y
-            apt install -y snapd
-            snap install cmake --classic
-            apt install -y libboost-all-dev
             echo '$ACT_HOME' $ACT_HOME
             git clone https://github.com/asyncvlsi/phyDB.git
             cd phyDB
