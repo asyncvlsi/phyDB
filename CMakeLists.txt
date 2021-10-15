@@ -129,7 +129,7 @@ configure_file(${INC_DIR}/config.h.in ${INC_DIR}/config.h)
 ############################################################################
 message(STATUS "Detecting Boost libraries...")
 #set(Boost_USE_STATIC_LIBS ON) # turn on/off static linking
-find_package(Boost 1.71.0 COMPONENTS log_setup log filesystem REQUIRED)
+find_package(Boost 1.60.0 COMPONENTS log_setup log filesystem REQUIRED)
 message(STATUS "Boost include path: ${Boost_INCLUDE_DIR}")
 message(STATUS "Boost library path: ${Boost_LIBRARY_DIRS}")
 message(STATUS "Boost libs: ${Boost_LIBRARIES}")

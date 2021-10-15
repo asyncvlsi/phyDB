@@ -6,21 +6,10 @@ jobs:
       - image: ubuntu:18.04
     steps:
       - run:
-          name: "Install gcc git cmake"
-          command: |
-            apt update -y
-            apt install -y build-essential git cmake
-      - run:
-          name: "Install boost"
-          command: |
-            git clone --recursive https://github.com/boostorg/boost.git
-            cd boost
-            git checkout tags/boost-1.77.0
-            ./bootstrap.sh
-            ./b2 install
-      - run:
           name: "Install ACT"
           command: |
+            apt update -y
+            apt install -y build-essential git
             apt install -y libedit-dev zlib1g-dev m4
             git clone https://github.com/asyncvlsi/act.git
             cd act
@@ -44,6 +33,7 @@ jobs:
       - run:
           name: "Install phyDB"
           command: |
+            apt install -y cmake libboost-all-dev
             echo '$ACT_HOME' $ACT_HOME
             git clone https://github.com/asyncvlsi/phyDB.git
             cd phyDB
