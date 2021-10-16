@@ -1,9 +1,9 @@
 version: 2.1
 
 jobs:
-  ubuntu18: # Ubuntu 18
+  ubuntu20: # Ubuntu 20
     docker:
-      - image: ubuntu:18.04
+      - image: ubuntu:20.04
     steps:
       - run:
           name: "Install ACT"
@@ -44,6 +44,7 @@ jobs:
   macos11:
     macos:
       xcode: 11.3.0
+      # This may or may not work because it is not free to test the following commands on macOS
     steps:
       - run:
           name: "Install Xcode and Homebrew"
@@ -92,4 +93,4 @@ workflows:
   build:
     jobs:
       - macos11
-      - ubuntu18
+      - ubuntu20

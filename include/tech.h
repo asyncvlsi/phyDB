@@ -39,7 +39,7 @@ class Tech {
     bool GetPlacementGrids(
         double &placement_grid_value_x,
         double &placement_grid_value_y
-    );
+    ) const;
 
     bool IsLayerExisting(std::string const &layer_name);
     Layer *AddLayer(

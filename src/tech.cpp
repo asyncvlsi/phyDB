@@ -55,10 +55,12 @@ double Tech::GetManufacturingGrid() const {
     return manufacturing_grid_;
 }
 
-void Tech::AddSite(std::string const &name,
-                   std::string const &class_name,
-                   double width,
-                   double height) {
+void Tech::AddSite(
+    std::string const &name,
+    std::string const &class_name,
+    double width,
+    double height
+) {
     sites_.emplace_back(name, class_name, width, height);
 }
 
@@ -66,8 +68,10 @@ std::vector<Site> &Tech::GetSitesRef() {
     return sites_;
 }
 
-void Tech::SetPlacementGrids(double placement_grid_value_x,
-                             double placement_grid_value_y) {
+void Tech::SetPlacementGrids(
+    double placement_grid_value_x,
+    double placement_grid_value_y
+) {
     PhyDBExpects(placement_grid_value_x > 0 && placement_grid_value_y > 0,
                  "negative placement grid value not allowed");
     placement_grid_value_x_ = placement_grid_value_x;
@@ -75,8 +79,10 @@ void Tech::SetPlacementGrids(double placement_grid_value_x,
     is_placement_grid_set_ = true;
 }
 
-bool Tech::GetPlacementGrids(double &placement_grid_value_x,
-                             double &placement_grid_value_y) {
+bool Tech::GetPlacementGrids(
+    double &placement_grid_value_x,
+    double &placement_grid_value_y
+) const {
     placement_grid_value_x = placement_grid_value_x_;
     placement_grid_value_y = placement_grid_value_y_;
     return is_placement_grid_set_;
@@ -91,7 +97,7 @@ Layer *Tech::AddLayer(std::string &layer_name,
                       MetalDirection direction) {
     PhyDBExpects(!IsLayerExisting(layer_name),
                  "LAYER name_ exists, cannot use again: " + layer_name);
-    int id = layers_.size();
+    int id = (int) layers_.size();
     layers_.emplace_back(layer_name, type, direction);
     layer_2_id_[layer_name] = id;
     layers_[id].SetID(id);
@@ -306,7 +312,7 @@ void Tech::SetTechConfigLayerCount(int number_of_layers) {
     if (metal_layers_.empty()) {
         FindAllMetalLayers();
     }
-    PhyDBExpects(number_of_layers = (int) metal_layers_.size(),
+    PhyDBExpects(number_of_layers == (int) metal_layers_.size(),
                  "metal layers given in the technology configuration file does not match those in the database");
     tech_config_.SetLayerCount(number_of_layers);
 }
@@ -410,8 +416,9 @@ void Tech::ReportLayersTechConfig() {
             if (tech_config != nullptr) {
                 tech_config->Report();
             } else {
-                std::cout << layer.GetName()
-                          << " does not contain a tech_config\n";
+                std::cout
+                    << layer.GetName()
+                    << " does not contain a tech_config\n";
             }
         }
     }
@@ -490,11 +497,11 @@ void Tech::Report() {
     std::cout << "MANUFACTURINGGRID " << manufacturing_grid_ << ";\n";
     std::cout << "CLEARANCEMEASURE " << clearance_measure_ << ";\n\n";
 
-    //ReportSites();
-    //ReportLayers();
-    ReportVias(); // TODO : Vias not reported, maybe they are not added using callback functions
-    //ReportMacros();
-    //ReportMacroWell();
+    ReportSites();
+    ReportLayers();
+    ReportVias();
+    ReportMacros();
+    ReportMacroWell();
 }
 
 }
