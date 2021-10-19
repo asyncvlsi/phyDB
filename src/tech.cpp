@@ -137,7 +137,7 @@ std::vector<Layer *> &Tech::GetMetalLayersRef() {
 }
 
 bool Tech::IsMacroExisting(std::string const &macro_name) {
-    return macro_2_id_.find(macro_name) != macro_2_id_.end();
+    return macro_2_ptr_.find(macro_name) != macro_2_ptr_.end();
 }
 
 Macro *Tech::AddMacro(std::string &macro_name) {
@@ -145,19 +145,19 @@ Macro *Tech::AddMacro(std::string &macro_name) {
                  "Macro name_ exists, cannot use it again: " + macro_name);
     int id = (int) macros_.size();
     macros_.emplace_back(macro_name);
-    macro_2_id_[macro_name] = id;
-    return &(macros_[id]);
+    
+    macro_2_ptr_[macro_name] = &macros_.back();
+    return &(macros_.back());
 }
 
 Macro *Tech::GetMacroPtr(std::string const &macro_name) {
     if (!IsMacroExisting(macro_name)) {
         return nullptr;
     }
-    int id = macro_2_id_[macro_name];
-    return &(macros_[id]);
+    return macro_2_ptr_[macro_name];
 }
 
-std::vector<Macro> &Tech::GetMacrosRef() {
+std::list<Macro> &Tech::GetMacrosRef() {
     return macros_;
 }
 

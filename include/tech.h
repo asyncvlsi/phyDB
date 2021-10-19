@@ -56,7 +56,7 @@ class Tech {
     bool IsMacroExisting(std::string const &macro_name);
     Macro *AddMacro(std::string &macro_name);
     Macro *GetMacroPtr(std::string const &macro_name);
-    std::vector<Macro> &GetMacrosRef();
+    std::list<Macro> &GetMacrosRef();
 
     bool IsLefViaExisting(std::string const &via_name);
     LefVia *AddLefVia(std::string &via_name);
@@ -136,12 +136,12 @@ class Tech {
 
     std::vector<Site> sites_;
     std::vector<Layer> layers_;
-    std::vector<Macro> macros_;
+    std::list<Macro> macros_;
     std::vector<LefVia> vias_;
     std::vector<ViaRuleGenerate> via_rule_generates_;
 
     std::unordered_map<std::string, int> layer_2_id_;
-    std::unordered_map<std::string, int> macro_2_id_;
+    std::unordered_map<std::string, Macro* > macro_2_ptr_;
     std::unordered_map<std::string, int> via_2_id_;
     std::unordered_map<std::string, int> via_rule_generate_2_id_;
 

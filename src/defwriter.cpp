@@ -115,7 +115,7 @@ int WriteComponents(defwCallbackType_e type, defiUserData data) {
     defwStartComponents(components.size());
 
     for (auto comp: components) {
-        defwComponentStr(comp.GetName().c_str(),
+	defwComponentStr(comp.GetName().c_str(),
                          comp.GetMacro()->GetName().c_str(),
                          0,
                          NULL, NULL, NULL, NULL, NULL,

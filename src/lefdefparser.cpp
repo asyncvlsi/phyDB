@@ -38,7 +38,7 @@ int getLefMacrosBegin(
     auto *phy_db_ptr = (PhyDB *) data;
     std::string tmpMacroName(str);
     phy_db_ptr->AddMacro(tmpMacroName); //add an empty macro
-
+    
     return 0;
 }
 
