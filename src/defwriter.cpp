@@ -193,7 +193,6 @@ int WriteNets(defwCallbackType_e type, defiUserData data) {
 
 int WriteSNets(defwCallbackType_e c, defiUserData ud) {
 
-    double coorX[3], coorY[3];
     auto snet_vec = ((PhyDB *) ud)->GetSNetRef();
 
     if (snet_vec.size())
@@ -207,7 +206,25 @@ int WriteSNets(defwCallbackType_e c, defiUserData ud) {
         defwSpecialNetConnection("*", snet.GetName().c_str(), 0);
         defwSpecialNetUse(SignalUseStr(snet.GetUse()).c_str());
 
-        auto paths = snet.GetPathRef();
+        auto polygons = snet.GetPolygonsRef();
+        for(int i = 0; i < polygons.size(); i++) {
+            auto routing_points = polygons[i].GetRoutingPointsRef();
+            double* x = new double [routing_points.size()];
+            double* y = new double [routing_points.size()];
+
+            for(int j = 0; j <  routing_points.size(); j++) {
+                x[j] = routing_points[j].x;
+                y[j] = routing_points[j].y;
+            }
+            std::string layer_name = polygons[i].GetLayerName();
+
+            defwSpecialNetPolygon(layer_name.c_str(), routing_points.size(), x, y);
+
+            delete[] x;
+            delete[] y;
+        }
+
+        auto paths = snet.GetPathsRef();
         for (int i = 0; i < paths.size(); i++) {
             auto path = paths[i];
 
@@ -219,18 +236,20 @@ int WriteSNets(defwCallbackType_e c, defiUserData ud) {
             defwSpecialNetPathLayer(path.GetLayerName().c_str());
             defwSpecialNetPathWidth(path.GetWidth());
             defwSpecialNetPathShape("STRIPE");
-            int num_path_point = (path.HasEndPoint()) ? 2 : 1;
-            coorX[0] = path.GetBegin().x;
-            coorY[0] = path.GetBegin().y;
-            if (num_path_point == 2) {
-                coorX[1] = path.GetEnd().x;
-                coorY[1] = path.GetEnd().y;
-            } else {
-                coorX[1] = -1;
-                coorY[1] = -1;
+
+            auto routing_points = path.GetRoutingPointsRef();
+            double x, y, ext;
+            
+            for(int j = 0; j < routing_points.size(); j++) {
+                x = routing_points[j].x;
+                y = routing_points[j].y;
+                ext = routing_points[j].z;
+                if(ext == -1) 
+                    defwSpecialNetPathPoint(1, &x, &y);
+                else 
+                    defwSpecialNetPathPointWithWireExt(1, &x, &y, &ext);
             }
-            defwSpecialNetPathPoint(num_path_point, coorX, coorY);
-            if (num_path_point == 1)
+            if (path.GetViaName() != "")
                 defwSpecialNetPathVia(path.GetViaName().c_str());
         }
         defwSpecialNetPathEnd();

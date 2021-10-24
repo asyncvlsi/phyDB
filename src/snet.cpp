@@ -2,6 +2,36 @@
 
 namespace phydb {
 
+void Polygon::SetLayerName(std::string layer_name) {
+    layer_name_ = layer_name;
+}
+
+void Polygon::AddRoutingPoint(Point2D<int> p) {
+    routing_points_.push_back(p);
+}
+
+void Polygon::AddRoutingPoint(int x, int y) {
+    routing_points_.emplace_back(x, y);
+}
+
+std::vector<Point2D<int>>& Polygon::GetRoutingPointsRef() {
+    return routing_points_;
+}
+
+std::string Polygon::GetLayerName() const {
+    return layer_name_;
+}
+
+void Polygon::Report() const {
+    std::cout << "POLYGON " << layer_name_ << " ";
+
+    for(int i = 0; i < routing_points_.size(); i++) {
+        std::cout << " ( " << routing_points_[i].x << " " << routing_points_[i].y << " ) ";
+    }
+    std::cout << std::endl;
+
+}
+
 void Path::SetLayerName(std::string &layer_name) {
     layer_name_ = layer_name;
 }
@@ -18,31 +48,20 @@ void Path::SetViaName(std::string &via_name) {
     via_name_ = via_name;
 }
 
-void Path::SetBeginExt(int begin_ext) {
-    begin_ext_ = begin_ext;
-}
-
-void Path::SetEndExt(int end_ext) {
-    end_ext_ = end_ext;
-}
-
 void Path::SetRect(int lx, int ly, int ux, int uy) {
-    rect_ = Rect2D<int>(lx, ly, ux, uy);
+    via_rect_ = Rect2D<int>(lx, ly, ux, uy);
 }
 
 void Path::SetRect(Rect2D<int> rect) {
-    rect_ = rect;
+    via_rect_ = rect;
 }
 
-void Path::SetBegin(int x, int y) {
-    begin_.x = x;
-    begin_.y = y;
+void Path::AddRoutingPoint(Point3D<int> p) {
+    routing_points_.push_back(p);
 }
 
-void Path::SetEnd(int x, int y) {
-    has_end_point_ = true;
-    end_.x = x;
-    end_.y = y;
+void Path::AddRoutingPoint(int x, int y, int ext) {
+    routing_points_.emplace_back(x, y, ext);
 }
 
 std::string Path::GetLayerName() const {
@@ -61,44 +80,33 @@ std::string Path::GetViaName() const {
     return via_name_;
 }
 
-int Path::GetBeginExt() const {
-    return begin_ext_;
-}
-
-int Path::GetEndExt() const {
-    return end_ext_;
-}
-
 Rect2D<int> Path::GetRect() const {
-    return rect_;
+    return via_rect_;
 }
 
-Point2D<int> Path::GetBegin() const {
-    return begin_;
-}
-
-Point2D<int> Path::GetEnd() const {
-    return end_;
-}
-
-bool Path::HasEndPoint() const {
-    return has_end_point_;
+std::vector<Point3D<int>>& Path::GetRoutingPointsRef() {
+    return routing_points_;
 }
 
 void Path::Report() {
     std::cout << " NEW " << layer_name_ << " " << width_ << " + SHAPE "
               << shape_;
-    if (!rect_.IsEmpty())
-        std::cout << " (" << rect_.ll.x << " " << rect_.ll.y << " "
-                  << rect_.ur.x << " " << rect_.ur.y << ")";
-    if (!begin_.IsEmpty())
-        std::cout << " (" << begin_.x << " " << begin_.y << " ) ";
-    if (!end_.IsEmpty())
-        std::cout << " (" << end_.x << " " << end_.y << " ) ";
-    if (begin_ext_ != 0 || end_ext_ != 0)
-        std::cout << " EXT " << begin_ext_ << " " << end_ext_;
+
+
+    for(int i = 0; i < routing_points_.size(); i++) {
+        if(routing_points_[i].z != -1)
+            std::cout << " ( " << routing_points_[i].x << " " << routing_points_[i].y << " " << routing_points_[i].z << " ) ";
+        else 
+            std::cout << " ( " << routing_points_[i].x << " " << routing_points_[i].y << " ) ";
+    }
+
+    if (!via_rect_.IsEmpty())
+        std::cout << " (" << via_rect_.ll.x << " " << via_rect_.ll.y << " "
+                  << via_rect_.ur.x << " " << via_rect_.ur.y << ")";
     if (!via_name_.empty())
         std::cout << via_name_;
+
+    
     std::cout << "\n";
 }
 
@@ -118,10 +126,16 @@ Path *SNet::AddPath() {
     return &paths_[id];
 }
 
-Path *SNet::AddPath(std::string &layer_name, int width, std::string shape) {
+Path *SNet::AddPath(std::string &layer_name, std::string shape, int width) {
     int id = (int) paths_.size();
-    paths_.emplace_back(layer_name, width, shape);
+    paths_.emplace_back(layer_name, shape, width);
     return &paths_[id];
+}
+
+Polygon *SNet::AddPolygon(std::string layer_name) {
+    int id = (int) polygons_.size();
+    polygons_.emplace_back(layer_name);
+    return &polygons_[id];
 }
 
 std::string SNet::GetName() const {
@@ -132,8 +146,12 @@ SignalUse SNet::GetUse() const {
     return use_;
 }
 
-std::vector<Path> &SNet::GetPathRef() {
+std::vector<Path> &SNet::GetPathsRef() {
     return paths_;
+}
+
+std::vector<Polygon> &SNet::GetPolygonsRef() {
+    return polygons_;
 }
 
 void SNet::Report() {

@@ -762,6 +762,15 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
 
     auto *phydb_snet = phy_db_ptr->AddSNet(name, use);
 
+    for(int i = 0; i < (int) net->numPolygons(); i++) {
+        std::string layer_name = net->polygonName(i);
+        auto points = net->getPolygon(i);
+        auto phydb_polygon = phydb_snet->AddPolygon(layer_name);
+        for(int j = 0; j < points.numPoints; j++) {
+            phydb_polygon->AddRoutingPoint(points.x[j], points.y[j]);
+        }
+    }
+
     // read pre-route
     for (int i = 0; i < (int) net->numWires(); i++) {
         defiWire *tmpWire = net->wire(i);
@@ -792,31 +801,15 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
                         break;
                     }
                     case DEFIPATH_POINT: {
-                        if (!hasBeginPoint) {
-                            int beginX, beginY;
-                            path->getPoint(&beginX, &beginY);
-                            phydb_path->SetBegin(beginX, beginY);
-                            hasBeginPoint = true;
-                        } else {
-                            int endX, endY;
-                            path->getPoint(&endX, &endY);
-                            phydb_path->SetEnd(endX, endY);
-                        }
+                        int X, Y;
+                        path->getPoint(&X, &Y);
+                        phydb_path->AddRoutingPoint(X, Y);
                         break;
                     }
                     case DEFIPATH_FLUSHPOINT: {
-                        if (!hasBeginPoint) {
-                            int beginX, beginY, begin_ext;
-                            path->getFlushPoint(&beginX, &beginY, &begin_ext);
-                            hasBeginPoint = true;
-                            phydb_path->SetBegin(beginX, beginY);
-                            phydb_path->SetBeginExt(begin_ext);
-                        } else {
-                            int endX, endY, end_ext;
-                            path->getFlushPoint(&endX, &endY, &end_ext);
-                            phydb_path->SetEnd(endX, endY);
-                            phydb_path->SetEndExt(end_ext);
-                        }
+                        int X, Y, ext;
+                        path->getFlushPoint(&X, &Y, &ext);
+                        phydb_path->AddRoutingPoint(X, Y, ext);
                         break;
                     }
                     case DEFIPATH_SHAPE: {
@@ -836,16 +829,9 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
                         break;
                     }
                     case DEFIPATH_VIRTUALPOINT: {
-                        if (!hasBeginPoint) {
-                            int beginX, beginY;
-                            path->getPoint(&beginX, &beginY);
-                            phydb_path->SetBegin(beginX, beginY);
-                            hasBeginPoint = true;
-                        } else {
-                            int endX, endY;
-                            path->getPoint(&endX, &endY);
-                            phydb_path->SetEnd(endX, endY);
-                        }
+                        int X, Y;
+                        path->getPoint(&X, &Y);
+                        phydb_path->AddRoutingPoint(X, Y);
                         break;
                     }
                     default : {
@@ -856,28 +842,6 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
                     }
                 }
             }
-
-
-            // add via
-            /*if (via_name_ != "") {
-              if (((io::Parser*)data)->phy_db_ptr->name2via.find(via_name_) == ((io::Parser*)data)->phy_db_ptr->name2via.end_()) {
-                if (VERBOSE > -1) {
-                  cout <<"Error: unsupported via: " <<via_name_ <<endl;
-                }
-              } else {
-                frPoint p;
-                if (hasEndPoint) {
-                  p.Set(endX, endY);
-                } else {
-                  p.Set(beginX, beginY);
-                }
-                auto viaDef = ((io::Parser*)data)->phy_db_ptr->name2via[via_name_];
-                auto tmpP = make_unique<frVia>(viaDef);
-                tmpP->SetOrigin(p);
-                tmpP->addToNet(netIn);
-                netIn->addVia(tmpP);
-              }
-            }*/
         } // end_ path
     } // end_ wire
 

@@ -7,6 +7,26 @@
 
 namespace phydb {
 
+class Polygon {
+  private:
+    std::string layer_name_;
+    std::vector<Point2D<int>> routing_points_;
+  
+  public:
+    Polygon() {}
+    Polygon(std::string layer_name) : layer_name_(layer_name) {}
+    
+    void SetLayerName(std::string layer_name);
+    void AddRoutingPoint(Point2D<int> p);
+    void AddRoutingPoint(int x, int y);
+
+    std::string GetLayerName() const;
+    std::vector<Point2D<int>>& GetRoutingPointsRef();
+
+    void Report() const;
+
+};
+
 class Path {
   private:
     std::string layer_name_;
@@ -14,42 +34,34 @@ class Path {
     std::string shape_;
     std::string via_name_;
 
-    int begin_ext_;
-    int end_ext_;
-    Rect2D<int> rect_;
-    Point2D<int> begin_;
-    Point2D<int> end_;
-    bool has_end_point_ = false;
+    Rect2D<int> via_rect_;
+    std::vector<Point3D<int>> routing_points_;
+
   public:
-    Path() : width_(0), begin_ext_(0), end_ext_(0), has_end_point_(false) {}
-    Path(std::string &layer_name, int width, std::string &shape) :
+    Path() : width_(0) {}
+    Path(std::string &layer_name, std::string &shape, int width) :
         layer_name_(layer_name),
         width_(width),
-        shape_(shape),
-        begin_ext_(0),
-        end_ext_(0) {}
+        shape_(shape)
+        {}
 
     void SetLayerName(std::string &);
     void SetWidth(int);
     void SetShape(std::string &);
     void SetViaName(std::string &);
-    void SetBeginExt(int);
-    void SetEndExt(int);
     void SetRect(int lx, int ly, int ux, int uy);
     void SetRect(Rect2D<int> rect);
-    void SetBegin(int x, int y);
-    void SetEnd(int x, int y);
+    void AddRoutingPoint(Point3D<int> p);
+    void AddRoutingPoint(int x, int y, int ext = -1);
 
     std::string GetLayerName() const;
     int GetWidth() const;
     std::string GetShape() const;
     std::string GetViaName() const;
-    int GetBeginExt() const;
-    int GetEndExt() const;
+    
     Rect2D<int> GetRect() const;
-    Point2D<int> GetBegin() const;
-    Point2D<int> GetEnd() const;
-    bool HasEndPoint() const;
+    std::vector<Point3D<int>>& GetRoutingPointsRef();
+ 
 
     void Report();
 };
@@ -59,6 +71,7 @@ class SNet {
     std::string name_;
     SignalUse use_; // POWER or GROUND
     std::vector<Path> paths_;
+    std::vector<Polygon> polygons_;
   public:
     SNet() {}
     SNet(std::string &name) : name_(name) {}
@@ -67,11 +80,13 @@ class SNet {
     void SetName(std::string &);
     void SetUse(SignalUse);
     Path *AddPath();
-    Path *AddPath(std::string &layer_name, int width, std::string shape);
+    Path *AddPath(std::string &layer_name, std::string shape, int width);
+    Polygon *AddPolygon(std::string layer_name);
 
     std::string GetName() const;
     SignalUse GetUse() const;
-    std::vector<Path> &GetPathRef();
+    std::vector<Path> &GetPathsRef();
+    std::vector<Polygon> &GetPolygonsRef();
 
     void Report();
 };

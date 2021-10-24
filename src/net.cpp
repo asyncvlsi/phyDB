@@ -14,6 +14,18 @@ void Net::AddRoutingGuide(int llx, int lly, int urx, int ury, int layerID) {
     guides_.emplace_back(llx, lly, layerID, urx, ury, layerID);
 }
 
+Path *Net::AddPath() {
+    int id = (int) paths_.size();
+    paths_.emplace_back();
+    return &paths_[id];
+}
+
+Path *Net::AddPath(std::string &layer_name, std::string shape, int width) {
+    int id = (int) paths_.size();
+    paths_.emplace_back(layer_name, shape, width);
+    return &paths_[id];
+}
+
 const std::string &Net::GetName() const {
     return name_;
 }
