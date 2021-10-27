@@ -1,3 +1,24 @@
+/*******************************************************************************
+ *
+ * Copyright (c) 2021 Jiayuan He, Yihang Yang
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA  02110-1301, USA.
+ *
+ ******************************************************************************/
+
 #include "layer.h"
 
 namespace phydb {
@@ -6,32 +27,32 @@ ConfigTable &LayerTechConfigCorner::InitResOverTable(
     int layer_index,
     int over_index
 ) {
-    res_over_.emplace_back(RES_OVER, layer_index, over_index);
-    return res_over_.back();
+  res_over_.emplace_back(RES_OVER, layer_index, over_index);
+  return res_over_.back();
 }
 
 ConfigTable &LayerTechConfigCorner::InitCapOverTable(
     int layer_index,
     int over_index
 ) {
-    cap_over_.emplace_back(CAP_OVER, layer_index, over_index);
-    return cap_over_.back();
+  cap_over_.emplace_back(CAP_OVER, layer_index, over_index);
+  return cap_over_.back();
 }
 
 ConfigTable &LayerTechConfigCorner::InitCapUnderTable(
     int layer_index,
     int under_index
 ) {
-    cap_under_.emplace_back(CAP_UNDER, layer_index, under_index);
-    return cap_under_.back();
+  cap_under_.emplace_back(CAP_UNDER, layer_index, under_index);
+  return cap_under_.back();
 }
 
 ConfigTable &LayerTechConfigCorner::InitCapDiagUnderTable(
     int layer_index,
     int diagunder_index
 ) {
-    cap_diagunder_.emplace_back(CAP_DIAGUNDER, layer_index, diagunder_index);
-    return cap_diagunder_.back();
+  cap_diagunder_.emplace_back(CAP_DIAGUNDER, layer_index, diagunder_index);
+  return cap_diagunder_.back();
 }
 
 ConfigTable &LayerTechConfigCorner::InitCapOverUnderTable(
@@ -39,43 +60,43 @@ ConfigTable &LayerTechConfigCorner::InitCapOverUnderTable(
     int over_index,
     int under_index
 ) {
-    cap_overunder_.emplace_back(
-        CAP_OVERUNDER,
-        layer_index,
-        over_index,
-        under_index
-    );
-    return cap_overunder_.back();
+  cap_overunder_.emplace_back(
+      CAP_OVERUNDER,
+      layer_index,
+      over_index,
+      under_index
+  );
+  return cap_overunder_.back();
 }
 
 std::vector<ConfigTable> &LayerTechConfigCorner::GetResOverRef() {
-    return res_over_;
+  return res_over_;
 }
 
 std::vector<ConfigTable> &LayerTechConfigCorner::GetCapOverRef() {
-    return cap_over_;
+  return cap_over_;
 }
 
 std::vector<ConfigTable> &LayerTechConfigCorner::GetCapUnderRef() {
-    return cap_under_;
+  return cap_under_;
 }
 
 std::vector<ConfigTable> &LayerTechConfigCorner::GetCapDiagUnderRef() {
-    return cap_diagunder_;
+  return cap_diagunder_;
 }
 
 std::vector<ConfigTable> &LayerTechConfigCorner::GetCapOverUnderRef() {
-    return cap_overunder_;
+  return cap_overunder_;
 }
 
 int LayerTechConfigCorner::ModelIndex() const {
-    return model_index_;
+  return model_index_;
 }
 
 void LayerTechConfigCorner::FixResOverTableLastEntry() {
-    for (auto &res_over_table: res_over_) {
-        res_over_table.FixLastEntryIfWrong();
-    }
+  for (auto &res_over_table: res_over_) {
+    res_over_table.FixLastEntryIfWrong();
+  }
 }
 
 /****
@@ -91,16 +112,16 @@ void LayerTechConfigCorner::FixResOverTableLastEntry() {
  * @return unit resistance
  */
 double LayerTechConfigCorner::GetOverSubstrateNoSurroundingWireRes() {
-    double res = -1;
-    for (auto &table: res_over_) {
-        if (table.Index0() == -1) {
-            if (!table.GetTable().empty()) {
-                res = table.GetTable()[0].res_;
-                break;
-            }
-        }
+  double res = -1;
+  for (auto &table: res_over_) {
+    if (table.Index0() == -1) {
+      if (!table.GetTable().empty()) {
+        res = table.GetTable()[0].res_;
+        break;
+      }
     }
-    return res;
+  }
+  return res;
 }
 
 /****
@@ -116,197 +137,197 @@ double LayerTechConfigCorner::GetOverSubstrateNoSurroundingWireRes() {
  * @return unit fringe capacitance
  */
 double LayerTechConfigCorner::GetOverSubstrateNoSurroundingWireCap() {
-    double res = -1;
-    for (auto &table: cap_over_) {
-        if (table.Index0() == -1) {
-            if (!table.GetTable().empty()) {
-                res = table.GetTable().back().fringe_cap_;
-                break;
-            }
-        }
+  double res = -1;
+  for (auto &table: cap_over_) {
+    if (table.Index0() == -1) {
+      if (!table.GetTable().empty()) {
+        res = table.GetTable().back().fringe_cap_;
+        break;
+      }
     }
-    return res;
+  }
+  return res;
 }
 
 void LayerTechConfigCorner::Report() {
-    for (auto &table: res_over_) {
-        table.Report();
-    }
-    for (auto &table: cap_over_) {
-        table.Report();
-    }
-    for (auto &table: cap_under_) {
-        table.Report();
-    }
-    for (auto &table: cap_diagunder_) {
-        table.Report();
-    }
-    for (auto &table: cap_overunder_) {
-        table.Report();
-    }
+  for (auto &table: res_over_) {
+    table.Report();
+  }
+  for (auto &table: cap_over_) {
+    table.Report();
+  }
+  for (auto &table: cap_under_) {
+    table.Report();
+  }
+  for (auto &table: cap_diagunder_) {
+    table.Report();
+  }
+  for (auto &table: cap_overunder_) {
+    table.Report();
+  }
 }
 
 void LayerTechConfig::AddCorner(int corner_index) {
-    corners_.emplace_back(corner_index);
+  corners_.emplace_back(corner_index);
 }
 
 std::vector<LayerTechConfigCorner> &LayerTechConfig::CornersRef() {
-    return corners_;
+  return corners_;
 }
 
 LayerTechConfigCorner *LayerTechConfig::GetLastCorner() {
-    if (corners_.empty()) {
-        return nullptr;
-    }
-    return &corners_.back();
+  if (corners_.empty()) {
+    return nullptr;
+  }
+  return &corners_.back();
 }
 
 void LayerTechConfig::FixResOverTable() {
-    for (auto &corner: corners_) {
-        corner.FixResOverTableLastEntry();
-    }
+  for (auto &corner: corners_) {
+    corner.FixResOverTableLastEntry();
+  }
 }
 
 void LayerTechConfig::Report() {
-    for (auto &corner: corners_) {
-        corner.Report();
-    }
+  for (auto &corner: corners_) {
+    corner.Report();
+  }
 }
 
 Layer::~Layer() {
-    delete layer_tech_config_;
+  delete layer_tech_config_;
 }
 
 void Layer::SetName(std::string &name) {
-    name_ = name;
+  name_ = name;
 }
 
 void Layer::SetType(LayerType type) {
-    type_ = type;
+  type_ = type;
 }
 
 void Layer::SetID(int id) {
-    id_ = id;
+  id_ = id;
 }
 
 void Layer::SetDirection(MetalDirection direction) {
-    direction_ = direction;
+  direction_ = direction;
 }
 
 void Layer::SetWidth(double width) {
-    width_ = width;
+  width_ = width;
 }
 
 void Layer::SetMinWidth(double min_width) {
-    min_width_ = min_width;
+  min_width_ = min_width;
 }
 
 void Layer::SetPitch(double pitch_x, double pitch_y) {
-    pitchx_ = pitch_x;
-    pitchy_ = pitch_y;
+  pitchx_ = pitch_x;
+  pitchy_ = pitch_y;
 }
 
 void Layer::SetOffset(double offset) {
-    offset_ = offset;
+  offset_ = offset;
 }
 
 void Layer::SetArea(double area) {
-    area_ = area;
+  area_ = area;
 }
 
 void Layer::SetSpacing(double spacing) {
-    spacing_ = spacing;
+  spacing_ = spacing;
 }
 
 void Layer::SetCPerSqDist(double cpersqdist) {
-    PhyDBExpects(cpersqdist > 0, "Negative capacitance per square distance?");
-    capacitance_cpersqdist_ = cpersqdist;
+  PhyDBExpects(cpersqdist > 0, "Negative capacitance per square distance?");
+  capacitance_cpersqdist_ = cpersqdist;
 }
 
 void Layer::SetCapMultiplier(double capmultiplier) {
-    PhyDBExpects(capmultiplier > 0, "Negative capacitance multiplier?");
-    capmultiplier_ = capmultiplier;
+  PhyDBExpects(capmultiplier > 0, "Negative capacitance multiplier?");
+  capmultiplier_ = capmultiplier;
 }
 
 void Layer::SetEdgeCPerDist(double edgecapacitance) {
-    PhyDBExpects(edgecapacitance > 0, "Negative peripheral capacitance?");
-    edgecapacitance_ = edgecapacitance;
+  PhyDBExpects(edgecapacitance > 0, "Negative peripheral capacitance?");
+  edgecapacitance_ = edgecapacitance;
 }
 
 void Layer::SetRPerSqUnit(double rpersq) {
-    PhyDBExpects(rpersq > 0, "Negative resistance per square unit?");
-    resistance_rpersq_ = rpersq;
+  PhyDBExpects(rpersq > 0, "Negative resistance per square unit?");
+  resistance_rpersq_ = rpersq;
 }
 
 const std::string &Layer::GetName() {
-    return name_;
+  return name_;
 }
 
 int Layer::GetID() const {
-    return id_;
+  return id_;
 }
 
 LayerType Layer::GetType() const {
-    return type_;
+  return type_;
 }
 
 MetalDirection Layer::GetDirection() const {
-    return direction_;
+  return direction_;
 }
 
 double Layer::GetWidth() const {
-    return width_;
+  return width_;
 }
 
 double Layer::GetMinWidth() const {
-    return min_width_;
+  return min_width_;
 }
 
 void Layer::GetPitch(double &pitch_x, double &pitch_y) const {
-    pitch_x = pitchx_;
-    pitch_y = pitchy_;
+  pitch_x = pitchx_;
+  pitch_y = pitchy_;
 }
 
 double Layer::GetPitchX() const {
-    return pitchx_;
+  return pitchx_;
 }
 
 double Layer::GetPitchY() const {
-    return pitchy_;
+  return pitchy_;
 
 }
 
 double Layer::GetOffset() const {
-    return offset_;
+  return offset_;
 }
 
 double Layer::GetArea() const {
-    return area_;
+  return area_;
 }
 
 double Layer::GetSpacing() const {
-    return spacing_;
+  return spacing_;
 }
 
 double Layer::GetCPerSqDist() const {
-    return capacitance_cpersqdist_;
+  return capacitance_cpersqdist_;
 }
 
 double Layer::GetCapMultiplier() const {
-    return capmultiplier_;
+  return capmultiplier_;
 }
 
 double Layer::GetEdgeCPerDist() const {
-    return edgecapacitance_;
+  return edgecapacitance_;
 }
 
 double Layer::GetRPerSqUnit() const {
-    return resistance_rpersq_;
+  return resistance_rpersq_;
 }
 
 SpacingTable *Layer::SetSpacingTable(SpacingTable &st) {
-    spacing_table_ = st;
-    return &spacing_table_;
+  spacing_table_ = st;
+  return &spacing_table_;
 }
 
 SpacingTable *Layer::SetSpacingTable(
@@ -316,9 +337,9 @@ SpacingTable *Layer::SetSpacingTable(
     const std::vector<double> &v_width,
     const std::vector<double> &v_spacing
 ) {
-    spacing_table_ =
-        SpacingTable(n_col, n_row, v_parallel_run_length, v_width, v_spacing);
-    return &spacing_table_;
+  spacing_table_ =
+      SpacingTable(n_col, n_row, v_parallel_run_length, v_width, v_spacing);
+  return &spacing_table_;
 }
 
 SpacingTableInfluence *Layer::AddSpacingTableInfluence(
@@ -326,8 +347,8 @@ SpacingTableInfluence *Layer::AddSpacingTableInfluence(
     double within,
     double spacing
 ) {
-    spacing_table_influences_.emplace_back(width, within, spacing);
-    return &spacing_table_influences_.back();
+  spacing_table_influences_.emplace_back(width, within, spacing);
+  return &spacing_table_influences_.back();
 }
 
 EolSpacing *Layer::AddEolSpacing(
@@ -337,13 +358,13 @@ EolSpacing *Layer::AddEolSpacing(
     double par_edge,
     double par_within
 ) {
-    eol_spacings_.emplace_back(spacing, width, within, par_edge, par_within);
-    return &eol_spacings_.back();
+  eol_spacings_.emplace_back(spacing, width, within, par_edge, par_within);
+  return &eol_spacings_.back();
 }
 
 CornerSpacing *Layer::SetCornerSpacing(CornerSpacing &cornerSpacing) {
-    corner_spacing_ = cornerSpacing;
-    return &corner_spacing_;
+  corner_spacing_ = cornerSpacing;
+  return &corner_spacing_;
 }
 
 AdjacentCutSpacing *Layer::SetAdjCutSpacing(
@@ -351,44 +372,44 @@ AdjacentCutSpacing *Layer::SetAdjCutSpacing(
     int adjacent_cuts,
     int cut_within
 ) {
-    adjacent_cut_spacing_ =
-        AdjacentCutSpacing(spacing, adjacent_cuts, cut_within);
-    return &adjacent_cut_spacing_;
+  adjacent_cut_spacing_ =
+      AdjacentCutSpacing(spacing, adjacent_cuts, cut_within);
+  return &adjacent_cut_spacing_;
 }
 
 SpacingTable *Layer::GetSpacingTable() {
-    return &spacing_table_;
+  return &spacing_table_;
 }
 
 std::vector<EolSpacing> *Layer::GetEolSpacings() {
-    return &eol_spacings_;
+  return &eol_spacings_;
 }
 
 std::vector<SpacingTableInfluence> *Layer::GetSpacingTableInfluences() {
-    return &spacing_table_influences_;
+  return &spacing_table_influences_;
 }
 
 CornerSpacing *Layer::GetCornerSpacing() {
-    return &corner_spacing_;
+  return &corner_spacing_;
 }
 
 AdjacentCutSpacing *Layer::GetAdjCutSpacing() {
-    return &adjacent_cut_spacing_;
+  return &adjacent_cut_spacing_;
 }
 
 void Layer::InitLayerTechConfig() {
-    layer_tech_config_ = new LayerTechConfig;
+  layer_tech_config_ = new LayerTechConfig;
 }
 
 LayerTechConfig *Layer::GetLayerTechConfig() {
-    return layer_tech_config_;
+  return layer_tech_config_;
 }
 
 void Layer::AddTechConfigCorner(int corner_index) {
-    if (layer_tech_config_ == nullptr) {
-        InitLayerTechConfig();
-    }
-    layer_tech_config_->AddCorner(corner_index);
+  if (layer_tech_config_ == nullptr) {
+    InitLayerTechConfig();
+  }
+  layer_tech_config_->AddCorner(corner_index);
 }
 
 /****
@@ -406,26 +427,26 @@ void Layer::AddTechConfigCorner(int corner_index) {
  * @return nothing
  */
 void Layer::SetResistanceUnitFromTechConfig() {
-    PhyDBExpects(layer_tech_config_ != nullptr,
-                 "Cannot find RC extraction parameters from technology configuration file: "
-                     + name_);
-    size_t number_of_corners = layer_tech_config_->CornersRef().size();
-    unit_res_.assign(number_of_corners, 0);
+  PhyDBExpects(layer_tech_config_ != nullptr,
+               "Cannot find RC extraction parameters from technology configuration file: "
+                   + name_);
+  size_t number_of_corners = layer_tech_config_->CornersRef().size();
+  unit_res_.assign(number_of_corners, 0);
 
-    for (size_t i = 0; i < number_of_corners; ++i) {
-        auto corner = layer_tech_config_->CornersRef()[i];
-        double unit_res = corner.GetOverSubstrateNoSurroundingWireRes();
-        PhyDBExpects(unit_res >= 0,
-                     "Cannot find unit resistance for corner: " + name_ + " "
-                         + std::to_string(corner.ModelIndex()));
-        unit_res_[i] = unit_res * width_;
-    }
+  for (size_t i = 0; i < number_of_corners; ++i) {
+    auto corner = layer_tech_config_->CornersRef()[i];
+    double unit_res = corner.GetOverSubstrateNoSurroundingWireRes();
+    PhyDBExpects(unit_res >= 0,
+                 "Cannot find unit resistance for corner: " + name_ + " "
+                     + std::to_string(corner.ModelIndex()));
+    unit_res_[i] = unit_res * width_;
+  }
 }
 
 void Layer::SetResistanceUnitFromLef() {
-    PhyDBWarns(resistance_rpersq_ <= 0,
-               "resistance_rpersq_ not set: " + name_);
-    unit_res_.assign(1, resistance_rpersq_);
+  PhyDBWarns(resistance_rpersq_ <= 0,
+             "resistance_rpersq_ not set: " + name_);
+  unit_res_.assign(1, resistance_rpersq_);
 }
 
 /****
@@ -450,30 +471,30 @@ void Layer::SetResistanceUnitFromLef() {
  * @return nothing
  */
 void Layer::SetCapacitanceUnitFromTechConfig() {
-    PhyDBExpects(layer_tech_config_ != nullptr,
-                 "Cannot find RC extraction parameters from technology configuration file: "
-                     + name_);
-    size_t number_of_corners = layer_tech_config_->CornersRef().size();
-    unit_area_cap_.assign(number_of_corners, 0);
-    unit_edge_cap_.assign(number_of_corners, 0);
+  PhyDBExpects(layer_tech_config_ != nullptr,
+               "Cannot find RC extraction parameters from technology configuration file: "
+                   + name_);
+  size_t number_of_corners = layer_tech_config_->CornersRef().size();
+  unit_area_cap_.assign(number_of_corners, 0);
+  unit_edge_cap_.assign(number_of_corners, 0);
 
-    for (size_t i = 0; i < number_of_corners; ++i) {
-        auto corner = layer_tech_config_->CornersRef()[i];
-        double unit_cap = corner.GetOverSubstrateNoSurroundingWireCap();
-        PhyDBExpects(unit_cap >= 0,
-                     "Cannot find unit capacitance for corner: " + name_ + " "
-                         + std::to_string(corner.ModelIndex()));
-        unit_edge_cap_[i] = unit_cap;
-    }
+  for (size_t i = 0; i < number_of_corners; ++i) {
+    auto corner = layer_tech_config_->CornersRef()[i];
+    double unit_cap = corner.GetOverSubstrateNoSurroundingWireCap();
+    PhyDBExpects(unit_cap >= 0,
+                 "Cannot find unit capacitance for corner: " + name_ + " "
+                     + std::to_string(corner.ModelIndex()));
+    unit_edge_cap_[i] = unit_cap;
+  }
 }
 
 void Layer::SetCapacitanceUnitFromLef() {
-    PhyDBWarns(capacitance_cpersqdist_ <= 0,
-               "capacitance_cpersqdist_ not set: " + name_);
-    PhyDBWarns(edgecapacitance_ <= 0,
-               "edgecapacitance_ not set: " + name_);
-    unit_area_cap_.assign(1, capacitance_cpersqdist_ * capmultiplier_);
-    unit_edge_cap_.assign(1, edgecapacitance_ * capmultiplier_);
+  PhyDBWarns(capacitance_cpersqdist_ <= 0,
+             "capacitance_cpersqdist_ not set: " + name_);
+  PhyDBWarns(edgecapacitance_ <= 0,
+             "edgecapacitance_ not set: " + name_);
+  unit_area_cap_.assign(1, capacitance_cpersqdist_ * capmultiplier_);
+  unit_edge_cap_.assign(1, edgecapacitance_ * capmultiplier_);
 }
 
 /****
@@ -493,9 +514,9 @@ double Layer::GetResistance(
     double length,
     int corner_index
 ) {
-    assert(corner_index < (int) unit_res_.size());
-    //std::cout << length << " " << width << "\n";
-    return unit_res_[corner_index] * length / width;
+  assert(corner_index < (int) unit_res_.size());
+  //std::cout << length << " " << width << "\n";
+  return unit_res_[corner_index] * length / width;
 }
 
 /****
@@ -516,8 +537,8 @@ double Layer::GetAreaCapacitance(
     double length,
     int corner_index
 ) {
-    assert(corner_index < (int) unit_area_cap_.size());
-    return unit_area_cap_[corner_index] * width * length;
+  assert(corner_index < (int) unit_area_cap_.size());
+  return unit_area_cap_[corner_index] * width * length;
 }
 
 /****
@@ -537,89 +558,89 @@ double Layer::GetFringeCapacitance(
     double length,
     int corner_index
 ) {
-    assert(corner_index < (int) unit_edge_cap_.size());
-    //std::cout << length << " " << width << "\n";
-    return unit_edge_cap_[corner_index] * 2 * (width + length);
+  assert(corner_index < (int) unit_edge_cap_.size());
+  //std::cout << length << " " << width << "\n";
+  return unit_edge_cap_[corner_index] * 2 * (width + length);
 }
 
 std::ostream &operator<<(std::ostream &os, const Layer &l) {
-    os << l.name_ << " " << LayerTypeStr(l.type_) << " "
-       << l.id_ << " " << MetalDirectionStr(l.direction_) << std::endl;
-    os << l.pitchx_ << " " << l.pitchy_ << " " << l.width_ << " " << l.area_
-       << std::endl;
-    os << l.min_width_ << " " << l.offset_ << std::endl;
-    os << l.spacing_ << std::endl;
-    return os;
+  os << l.name_ << " " << LayerTypeStr(l.type_) << " "
+     << l.id_ << " " << MetalDirectionStr(l.direction_) << std::endl;
+  os << l.pitchx_ << " " << l.pitchy_ << " " << l.width_ << " " << l.area_
+     << std::endl;
+  os << l.min_width_ << " " << l.offset_ << std::endl;
+  os << l.spacing_ << std::endl;
+  return os;
 }
 
 void Layer::Report() {
-    std::cout << "------------------------------" << std::endl;
-    std::cout << "Layer: " << name_ << " type: " << LayerTypeStr(type_)
-              << " direction: " << MetalDirectionStr(direction_) << " idx_: "
-              << id_ << std::endl;
-    std::cout << "pitch: " << pitchx_ << " " << pitchy_ << " Width:" << width_
-              << " area: " << area_ << std::endl;
-    std::cout << "minWidth: " << min_width_ << " offset: " << offset_
-              << " GetSpacing: " << spacing_ << std::endl;
-    /*
-    if (spacingTable.parallelRunLength.size())
-        spacingTable.print();
-    for (auto spacing : spacings) {
-        GetSpacing.print();
-    }
-    if (cornerSpacing.GetWidth.size())
-        cornerSpacing.print();
-    */
+  std::cout << "------------------------------" << std::endl;
+  std::cout << "Layer: " << name_ << " type: " << LayerTypeStr(type_)
+            << " direction: " << MetalDirectionStr(direction_) << " idx_: "
+            << id_ << std::endl;
+  std::cout << "pitch: " << pitchx_ << " " << pitchy_ << " Width:" << width_
+            << " area: " << area_ << std::endl;
+  std::cout << "minWidth: " << min_width_ << " offset: " << offset_
+            << " GetSpacing: " << spacing_ << std::endl;
+  /*
+  if (spacingTable.parallelRunLength.size())
+      spacingTable.print();
+  for (auto spacing : spacings) {
+      GetSpacing.print();
+  }
+  if (cornerSpacing.GetWidth.size())
+      cornerSpacing.print();
+  */
 }
 
 double WellLayer::GetWidth() const {
-    return width_;
+  return width_;
 }
 
 double WellLayer::GetSpacing() const {
-    return spacing_;
+  return spacing_;
 }
 
 double WellLayer::GetOpSpacing() const {
-    return op_spacing_;
+  return op_spacing_;
 }
 
 double WellLayer::GetMaxPlugDist() const {
-    return max_plug_dist_;
+  return max_plug_dist_;
 }
 
 double WellLayer::GetOverhang() const {
-    return overhang_;
+  return overhang_;
 }
 
 void WellLayer::SetWidth(double width) {
-    PhyDBExpects(width >= 0,
-                 "Negative Width not allowed: WellLayer::SetWidth()");
-    width_ = width;
+  PhyDBExpects(width >= 0,
+               "Negative Width not allowed: WellLayer::SetWidth()");
+  width_ = width;
 }
 
 void WellLayer::SetSpacing(double spacing) {
-    PhyDBExpects(spacing >= 0,
-                 "Negative GetSpacing not allowed: WellLayer::SetSpacing()");
-    spacing_ = spacing;
+  PhyDBExpects(spacing >= 0,
+               "Negative GetSpacing not allowed: WellLayer::SetSpacing()");
+  spacing_ = spacing;
 }
 
 void WellLayer::SetOpSpacing(double op_spacing) {
-    PhyDBExpects(op_spacing >= 0,
-                 "Negative opposite GetSpacing not allowed: Layer::SetOpSpacing()");
-    op_spacing_ = op_spacing;
+  PhyDBExpects(op_spacing >= 0,
+               "Negative opposite GetSpacing not allowed: Layer::SetOpSpacing()");
+  op_spacing_ = op_spacing;
 }
 
 void WellLayer::SetMaxPlugDist(double max_plug_dist) {
-    PhyDBExpects(max_plug_dist >= 0,
-                 "Negative max plug distance not allowed: WellLayer::SetMaxPlugDist()");
-    max_plug_dist_ = max_plug_dist;
+  PhyDBExpects(max_plug_dist >= 0,
+               "Negative max plug distance not allowed: WellLayer::SetMaxPlugDist()");
+  max_plug_dist_ = max_plug_dist;
 }
 
 void WellLayer::SetOverhang(double overhang) {
-    PhyDBExpects(overhang >= 0,
-                 "Negative well/diffusion GetOverhang not allowed: WellLayer::SetOverhang()");
-    overhang_ = overhang;
+  PhyDBExpects(overhang >= 0,
+               "Negative well/diffusion GetOverhang not allowed: WellLayer::SetOverhang()");
+  overhang_ = overhang;
 }
 
 void WellLayer::SetParams(
@@ -629,20 +650,20 @@ void WellLayer::SetParams(
     double max_plug_dist,
     double overhang
 ) {
-    SetWidth(width);
-    SetSpacing(spacing);
-    SetOpSpacing(op_spacing);
-    SetMaxPlugDist(max_plug_dist);
-    SetOverhang(overhang);
+  SetWidth(width);
+  SetSpacing(spacing);
+  SetOpSpacing(op_spacing);
+  SetMaxPlugDist(max_plug_dist);
+  SetOverhang(overhang);
 }
 
 void WellLayer::Report() const {
-    std::cout
-        << "    MINWIDTH:    " << width_ << " um\n"
-        << "    SPACING:     " << spacing_ << " um\n"
-        << "    OPPOSPACING: " << op_spacing_ << " um\n"
-        << "    MAXPLUGDIST: " << max_plug_dist_ << " um\n"
-        << "    OVERHANG:    " << overhang_ << " um\n";
+  std::cout
+      << "    MINWIDTH:    " << width_ << " um\n"
+      << "    SPACING:     " << spacing_ << " um\n"
+      << "    OPPOSPACING: " << op_spacing_ << " um\n"
+      << "    MAXPLUGDIST: " << max_plug_dist_ << " um\n"
+      << "    OVERHANG:    " << overhang_ << " um\n";
 }
 
 }

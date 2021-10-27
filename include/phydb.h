@@ -1,3 +1,24 @@
+/*******************************************************************************
+ *
+ * Copyright (c) 2021 Jiayuan He, Yihang Yang
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA  02110-1301, USA.
+ *
+ ******************************************************************************/
+
 #ifndef PHYDB_INCLUDE_PHYDB_H_
 #define PHYDB_INCLUDE_PHYDB_H_
 
@@ -8,257 +29,256 @@
 namespace phydb {
 
 class PhyDB {
-  public:
-    PhyDB() = default;
-    ~PhyDB();
+ public:
+  PhyDB() = default;
+  ~PhyDB();
 
-    Tech *GetTechPtr();
-    Tech &tech();
-    Design *GetDesignPtr();
-    Design &design();
+  Tech *GetTechPtr();
+  Tech &tech();
+  Design *GetDesignPtr();
+  Design &design();
 
+  /************************************************
+  * The following APIs are for information in LEF
+  * ************************************************/
+  void SetDatabaseMicron(int database_micron);
+  void SetManufacturingGrid(double manufacture_grid);
+  void AddSite(
+      std::string const &name,
+      std::string const &class_name,
+      double width,
+      double height
+  );
+  void SetPlacementGrids(
+      double placement_grid_value_x_,
+      double placement_grid_value_y_
+  );
 
-    /************************************************
-    * The following APIs are for information in LEF
-    * ************************************************/
-    void SetDatabaseMicron(int database_micron);
-    void SetManufacturingGrid(double manufacture_grid);
-    void AddSite(
-        std::string const &name,
-        std::string const &class_name,
-        double width,
-        double height
-    );
-    void SetPlacementGrids(
-        double placement_grid_value_x_,
-        double placement_grid_value_y_
-    );
+  bool IsLayerExisting(std::string const &layer_name);
+  Layer *AddLayer(
+      std::string &layer_name,
+      LayerType type,
+      MetalDirection direction = HORIZONTAL
+  );
+  Layer *GetLayerPtr(std::string const &layer_name);
+  std::vector<Layer> &GetLayersRef();
 
-    bool IsLayerExisting(std::string const &layer_name);
-    Layer *AddLayer(
-        std::string &layer_name,
-        LayerType type,
-        MetalDirection direction = HORIZONTAL
-    );
-    Layer *GetLayerPtr(std::string const &layer_name);
-    std::vector<Layer> &GetLayersRef();
+  bool IsMacroExisting(std::string const &macro_name);
+  Macro *AddMacro(std::string &macro_name);
+  Macro *GetMacroPtr(std::string const &macro_name);
 
-    bool IsMacroExisting(std::string const &macro_name);
-    Macro *AddMacro(std::string &macro_name);
-    Macro *GetMacroPtr(std::string const &macro_name);
+  bool IsLefViaExisting(std::string const &name);
+  LefVia *AddLefVia(std::string &name);
+  LefVia *GetLefViaPtr(std::string const &name);
 
-    bool IsLefViaExisting(std::string const &name);
-    LefVia *AddLefVia(std::string &name);
-    LefVia *GetLefViaPtr(std::string const &name);
+  /************************************************
+  * The following APIs are for information in DEF
+  * ************************************************/
+  void SetDefName(std::string &name);
+  void SetDefVersion(double version);
+  void SetDefDividerChar(std::string &divider_char);
+  void SetDefBusBitChar(std::string &bus_bit_chars);
 
-    /************************************************
-    * The following APIs are for information in DEF
-    * ************************************************/
-    void SetDefName(std::string &name);
-    void SetDefVersion(double version);
-    void SetDefDividerChar(std::string &divider_char);
-    void SetDefBusBitChar(std::string &bus_bit_chars);
+  std::string GetDefName() const;
+  double GetDefVersion() const;
+  std::string GetDefDividerChar() const;
+  std::string GetDefBusBitChar() const;
 
-    std::string GetDefName() const;
-    double GetDefVersion() const;
-    std::string GetDefDividerChar() const;
-    std::string GetDefBusBitChar() const;
+  void SetUnitsDistanceMicrons(int distance_microns);
+  void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
+  Rect2D<int> GetDieArea() const;
 
-    void SetUnitsDistanceMicrons(int distance_microns);
-    void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
-    Rect2D<int> GetDieArea() const;
+  Track *AddTrack(
+      XYDirection direction,
+      int start,
+      int nTracks,
+      int step,
+      std::vector<std::string> &layer_names
+  );
+  std::vector<Track> &GetTracksRef();
 
-    Track *AddTrack(
-        XYDirection direction,
-        int start,
-        int nTracks,
-        int step,
-        std::vector<std::string> &layer_names
-    );
-    std::vector<Track> &GetTracksRef();
+  Row *AddRow(
+      std::string &name,
+      std::string &site_name,
+      std::string &site_orient,
+      int origX,
+      int origY,
+      int numX,
+      int numY,
+      int stepX,
+      int stepY
+  );
+  std::vector<Row> &GetRowVec();
 
-    Row *AddRow(
-        std::string &name,
-        std::string &site_name,
-        std::string &site_orient,
-        int origX,
-        int origY,
-        int numX,
-        int numY,
-        int stepX,
-        int stepY
-    );
-    std::vector<Row> &GetRowVec();
+  bool IsViaRuleGenerateExisting(std::string const &name);
+  ViaRuleGenerate *AddViaRuleGenerate(std::string &name);
+  ViaRuleGenerate *GetViaRuleGeneratePtr(std::string const &name);
 
-    bool IsViaRuleGenerateExisting(std::string const &name);
-    ViaRuleGenerate *AddViaRuleGenerate(std::string &name);
-    ViaRuleGenerate *GetViaRuleGeneratePtr(std::string const &name);
+  bool IsDefViaExisting(std::string const &name);
+  DefVia *AddDefVia(std::string &name);
+  DefVia *GetDefViaPtr(std::string const &name);
 
-    bool IsDefViaExisting(std::string const &name);
-    DefVia *AddDefVia(std::string &name);
-    DefVia *GetDefViaPtr(std::string const &name);
+  void SetComponentCount(int count);
+  bool IsComponentExisting(std::string &component_name);
+  Component *AddComponent(
+      std::string &comp_name,
+      Macro *macro_ptr,
+      PlaceStatus place_status,
+      int llx,
+      int lly,
+      CompOrient orient
+  );
+  Component *GetComponentPtr(std::string &comp_name);
+  int GetComponentId(std::string &comp_name);
 
-    void SetComponentCount(int count);
-    bool IsComponentExisting(std::string &component_name);
-    Component *AddComponent(
-        std::string &comp_name,
-        Macro *macro_ptr,
-        PlaceStatus place_status,
-        int llx,
-        int lly,
-        CompOrient orient
-    );
-    Component *GetComponentPtr(std::string &comp_name);
-    int GetComponentId(std::string &comp_name);
+  void SetIoPinCount(int count);
+  bool IsIoPinExisting(std::string &iopin_name);
+  IOPin *AddIoPin(
+      std::string &iopin_name,
+      SignalDirection signal_direction,
+      SignalUse signal_use
+  );
+  IOPin *GetIoPinPtr(std::string &iopin_name);
 
-    void SetIoPinCount(int count);
-    bool IsIoPinExisting(std::string &iopin_name);
-    IOPin *AddIoPin(
-        std::string &iopin_name,
-        SignalDirection signal_direction,
-        SignalUse signal_use
-    );
-    IOPin *GetIoPinPtr(std::string &iopin_name);
+  void SetNetCount(int count);
+  bool IsNetExisting(std::string &net_name);
+  Net *AddNet(
+      std::string &net_name,
+      double weight = 1,
+      void *act_net_ptr = nullptr
+  );
+  Net *GetNetPtr(std::string &net_name);
+  int GetNetId(std::string &net_name);
+  void AddIoPinToNet(
+      std::string &iopin_name,
+      std::string &net_name,
+      void *act_io_pin_ptr = nullptr
+  );
+  void AddCompPinToNet(
+      std::string &comp_name,
+      std::string &pin_name,
+      std::string &net_name
+  );
+  void BindPhydbPinToActPin(
+      std::string &comp_name,
+      std::string &pin_name,
+      void *act_comp_pin_ptr
+  );
+  void AddCompPinToNetWithActPtr(
+      std::string &comp_name,
+      std::string &pin_name,
+      std::string &net_name,
+      void *act_comp_pin_ptr = nullptr
+  );
 
-    void SetNetCount(int count);
-    bool IsNetExisting(std::string &net_name);
-    Net *AddNet(
-        std::string &net_name,
-        double weight = 1,
-        void *act_net_ptr = nullptr
-    );
-    Net *GetNetPtr(std::string &net_name);
-    int GetNetId(std::string &net_name);
-    void AddIoPinToNet(
-        std::string &iopin_name,
-        std::string &net_name,
-        void *act_io_pin_ptr = nullptr
-    );
-    void AddCompPinToNet(
-        std::string &comp_name,
-        std::string &pin_name,
-        std::string &net_name
-    );
-    void BindPhydbPinToActPin(
-        std::string &comp_name,
-        std::string &pin_name,
-        void *act_comp_pin_ptr
-    );
-    void AddCompPinToNetWithActPtr(
-        std::string &comp_name,
-        std::string &pin_name,
-        std::string &net_name,
-        void *act_comp_pin_ptr = nullptr
-    );
+  SNet *AddSNet(std::string &net_name, SignalUse use);
+  SNet *GetSNet(std::string &net_name);
+  std::vector<SNet> &GetSNetRef();
 
-    SNet *AddSNet(std::string &net_name, SignalUse use);
-    SNet *GetSNet(std::string &net_name);
-    std::vector<SNet> &GetSNetRef();
+  GcellGrid *AddGcellGrid(
+      XYDirection direction,
+      int start,
+      int nBoundaries,
+      int step
+  );
+  std::vector<GcellGrid> &GetGcellGridsRef();
 
-    GcellGrid *AddGcellGrid(
-        XYDirection direction,
-        int start,
-        int nBoundaries,
-        int step
-    );
-    std::vector<GcellGrid> &GetGcellGridsRef();
-
-    /************************************************
-    * The following APIs are for setting up callback functions for timing-driven flow
-    * and pointers of parasitic manager, cell libs, adaptor
-    * ************************************************/
-    void SetGetNumConstraintsCB(int (*callback_function)());
-    void SetUpdateTimingIncrementalCB(void (*callback_function)());
-    void SetGetSlackCB(
-        std::vector<double> (*callback_function)(const std::vector<int> &)
-    );
-    void SetGetWitnessCB(
-        void (*callback_function)(
-            int,
-            std::vector<ActEdge> &,
-            std::vector<ActEdge> &
-        )
-    );
-    void SetGetViolatedTimingConstraintsCB(
-        void (*callback_function)(std::vector<int> &)
-    );
-    bool IsDriverPin(PhydbPin &phydb_pin);
-    std::string GetFullCompPinName(PhydbPin &phydb_pin, char delimiter = ':');
-    ActPhyDBTimingAPI &GetTimingApi();
+  /************************************************
+  * The following APIs are for setting up callback functions for timing-driven flow
+  * and pointers of parasitic manager, cell libs, adaptor
+  * ************************************************/
+  void SetGetNumConstraintsCB(int (*callback_function)());
+  void SetUpdateTimingIncrementalCB(void (*callback_function)());
+  void SetGetSlackCB(
+      std::vector<double> (*callback_function)(const std::vector<int> &)
+  );
+  void SetGetWitnessCB(
+      void (*callback_function)(
+          int,
+          std::vector<ActEdge> &,
+          std::vector<ActEdge> &
+      )
+  );
+  void SetGetViolatedTimingConstraintsCB(
+      void (*callback_function)(std::vector<int> &)
+  );
+  bool IsDriverPin(PhydbPin &phydb_pin);
+  std::string GetFullCompPinName(PhydbPin &phydb_pin, char delimiter = ':');
+  ActPhyDBTimingAPI &GetTimingApi();
 #if PHYDB_USE_GALOIS
-    void SetParaManager(galois::eda::parasitics::Manager *manager);
-    void AddCellLib(galois::eda::liberty::CellLib *lib);
-    void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor);
-    galois::eda::parasitics::Manager *GetParaManager();
-    std::vector<galois::eda::liberty::CellLib *> &GetCellLibs();
-    galois::eda::utility::ExtNetlistAdaptor *GetNetlistAdaptor();
+  void SetParaManager(galois::eda::parasitics::Manager *manager);
+  void AddCellLib(galois::eda::liberty::CellLib *lib);
+  void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor);
+  galois::eda::parasitics::Manager *GetParaManager();
+  std::vector<galois::eda::liberty::CellLib *> &GetCellLibs();
+  galois::eda::utility::ExtNetlistAdaptor *GetNetlistAdaptor();
 
-    void CreatePhydbActAdaptor();
-    void AddNetsAndCompPinsToSpefManager();
+  void CreatePhydbActAdaptor();
+  void AddNetsAndCompPinsToSpefManager();
 #endif
 
-    /************************************************
-    * The following APIs are for information in CELL
-    * ************************************************/
-    void SetNwellLayer(
-        double width,
-        double spacing,
-        double op_spacing,
-        double max_plug_dist,
-        double overhang
-    );
-    void SetPwellLayer(
-        double width,
-        double spacing,
-        double op_spacing,
-        double max_plug_dist,
-        double overhang
-    );
-    void SetNpwellSpacing(double same_spacing, double any_spacing);
-    MacroWell *AddMacrowell(std::string &macro_name);
+  /************************************************
+  * The following APIs are for information in CELL
+  * ************************************************/
+  void SetNwellLayer(
+      double width,
+      double spacing,
+      double op_spacing,
+      double max_plug_dist,
+      double overhang
+  );
+  void SetPwellLayer(
+      double width,
+      double spacing,
+      double op_spacing,
+      double max_plug_dist,
+      double overhang
+  );
+  void SetNpwellSpacing(double same_spacing, double any_spacing);
+  MacroWell *AddMacrowell(std::string &macro_name);
 
-    /************************************************
-    * The following APIs are for information in clusters,
-    * N/P wells, and nplus/pplus layers
-    * ************************************************/
+  /************************************************
+  * The following APIs are for information in clusters,
+  * N/P wells, and nplus/pplus layers
+  * ************************************************/
 
-    ClusterCol *AddClusterCol(std::string &name, std::string &bot_signal);
-    std::vector<ClusterCol> &GetClusterColsRef();
-    SpecialMacroRectLayout *CreatePpNpMacroAndComponent(
-        int llx,
-        int lly,
-        int urx,
-        int ury
-    );
-    void SavePpNpToRectFile(std::string &file_name);
-    SpecialMacroRectLayout *CreateWellLayerMacroAndComponent(
-        int llx,
-        int lly,
-        int urx,
-        int ury
-    );
-    void SaveWellToRectFile(std::string &file_name);
+  ClusterCol *AddClusterCol(std::string &name, std::string &bot_signal);
+  std::vector<ClusterCol> &GetClusterColsRef();
+  SpecialMacroRectLayout *CreatePpNpMacroAndComponent(
+      int llx,
+      int lly,
+      int urx,
+      int ury
+  );
+  void SavePpNpToRectFile(std::string &file_name);
+  SpecialMacroRectLayout *CreateWellLayerMacroAndComponent(
+      int llx,
+      int lly,
+      int urx,
+      int ury
+  );
+  void SaveWellToRectFile(std::string &file_name);
 
-    /************************************************
-    * The following APIs are for file IO
-    * ************************************************/
+  /************************************************
+  * The following APIs are for file IO
+  * ************************************************/
 
-    void ReadLef(std::string const &lef_file_name);
-    void ReadDef(std::string const &def_file_name);
-    void OverrideComponentLocsFromDef(std::string const &def_file_name);
-    void ReadCell(std::string const &cell_file_name);
-    void ReadCluster(std::string const &cluster_file_name);
-    bool ReadTechConfigFile(std::string const &tech_config_file_name);
-    bool ReadTechConfigFile(int argc, char **argv);
+  void ReadLef(std::string const &lef_file_name);
+  void ReadDef(std::string const &def_file_name);
+  void OverrideComponentLocsFromDef(std::string const &def_file_name);
+  void ReadCell(std::string const &cell_file_name);
+  void ReadCluster(std::string const &cluster_file_name);
+  bool ReadTechConfigFile(std::string const &tech_config_file_name);
+  bool ReadTechConfigFile(int argc, char **argv);
 
-    void WriteDef(std::string const &def_file_name);
-    void WriteCluster(std::string const &cluster_file_name);
-    void WriteGuide(std::string const &guide_file_name);
+  void WriteDef(std::string const &def_file_name);
+  void WriteCluster(std::string const &cluster_file_name);
+  void WriteGuide(std::string const &guide_file_name);
 
-  private:
-    Tech tech_;
-    Design design_;
-    ActPhyDBTimingAPI timing_api_;
+ private:
+  Tech tech_;
+  Design design_;
+  ActPhyDBTimingAPI timing_api_;
 };
 
 }
