@@ -105,6 +105,18 @@ double SpacingTable::GetSpacingAt(int col, int row) const {
   return spacing_[col + n_col_ * row];
 }
 
+double SpacingTable::GetSpacingForWidth(double width) const {
+  assert(width > 0);
+  int i = 0;
+  for(; i < n_row_ - 1; i++) {
+    if(width >= width_[i] && width < width_[i + 1]) 
+      break;
+  }
+  if(width >= width_[n_row_ - 1])
+    i = n_row_ - 1;
+  return GetSpacingAt(n_col_ - 1, i);//for wire of infinite length
+}
+
 std::ostream &operator<<(std::ostream &os, const SpacingTable &st) {
   int nCol = st.GetNCol();
   int nRow = st.GetNRow();

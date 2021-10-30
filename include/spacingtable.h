@@ -75,6 +75,7 @@ class SpacingTable {
   double GetWidthAt(int row) const;
   double GetSpacingAt(int col, int row) const;
 
+  double GetSpacingForWidth(double width) const;
 };
 
 std::ostream &operator<<(std::ostream &, const SpacingTable &);
