@@ -95,7 +95,7 @@ void SpecialMacroRectLayout::AddRectSignalLayer(
   rects_.emplace_back(signal_name, layer_name, llx, lly, urx, ury);
 }
 
-void SpecialMacroRectLayout::SaveToRectFile(std::string &file_name) const {
+void SpecialMacroRectLayout::SaveToRectFile(std::string const &file_name) const {
   std::ofstream ost(file_name.c_str());
   PhyDBExpects(ost.is_open(), "Cannot open output file: " + file_name);
 

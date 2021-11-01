@@ -187,7 +187,7 @@ class Design {
       int urx,
       int ury
   );
-  void SavePpNpToRectFile(std::string &file_name);
+  void SavePpNpToRectFile(std::string const &file_name);
   SpecialMacroRectLayout *CreateWellLayerMacroAndComponent(
       Macro *macro_ptr,
       int llx,
@@ -195,7 +195,7 @@ class Design {
       int urx,
       int ury
   );
-  void SaveWellToRectFile(std::string &file_name);
+  void SaveWellToRectFile(std::string const &file_name);
 
   void ReportTracks();
   void ReportRows();

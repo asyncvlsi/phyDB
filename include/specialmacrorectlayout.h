@@ -80,7 +80,7 @@ struct SpecialMacroRectLayout {
       int urx,
       int ury
   );
-  void SaveToRectFile(std::string &file_name) const;
+  void SaveToRectFile(std::string const &file_name) const;
 };
 
 }

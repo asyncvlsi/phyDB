@@ -342,7 +342,7 @@ SpecialMacroRectLayout *Design::CreatePpNpMacroAndComponent(
   return plus_filling_;
 }
 
-void Design::SavePpNpToRectFile(std::string &file_name) {
+void Design::SavePpNpToRectFile(std::string const &file_name) {
   if (plus_filling_ != nullptr) {
     plus_filling_->SaveToRectFile(file_name);
   }
@@ -366,7 +366,7 @@ SpecialMacroRectLayout *Design::CreateWellLayerMacroAndComponent(
   return well_filling_;
 }
 
-void Design::SaveWellToRectFile(std::string &file_name) {
+void Design::SaveWellToRectFile(std::string const &file_name) {
   if (well_filling_ != nullptr) {
     well_filling_->SaveToRectFile(file_name);
   }

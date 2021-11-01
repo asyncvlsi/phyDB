@@ -250,14 +250,14 @@ class PhyDB {
       int urx,
       int ury
   );
-  void SavePpNpToRectFile(std::string &file_name);
+  void SavePpNpToRectFile(std::string const &file_name);
   SpecialMacroRectLayout *CreateWellLayerMacroAndComponent(
       int llx,
       int lly,
       int urx,
       int ury
   );
-  void SaveWellToRectFile(std::string &file_name);
+  void SaveWellToRectFile(std::string const &file_name);
 
   /************************************************
   * The following APIs are for file IO

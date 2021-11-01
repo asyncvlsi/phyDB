@@ -507,7 +507,7 @@ SpecialMacroRectLayout *PhyDB::CreatePpNpMacroAndComponent(
   );
 }
 
-void PhyDB::SavePpNpToRectFile(std::string &file_name) {
+void PhyDB::SavePpNpToRectFile(std::string const &file_name) {
   design_.SavePpNpToRectFile(file_name);
 }
 
@@ -541,7 +541,7 @@ SpecialMacroRectLayout *PhyDB::CreateWellLayerMacroAndComponent(
   );
 }
 
-void PhyDB::SaveWellToRectFile(std::string &file_name) {
+void PhyDB::SaveWellToRectFile(std::string const &file_name) {
   design_.SaveWellToRectFile(file_name);
 }
 
