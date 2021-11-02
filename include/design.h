@@ -18,12 +18,11 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_INCLUDE_DESIGN_H_
 #define PHYDB_INCLUDE_DESIGN_H_
 
-#include <set>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "clustercol.h"
 #include "component.h"
@@ -67,7 +66,7 @@ class Design {
   std::unordered_map<std::string, int> net_2_id_;
   std::unordered_map<std::string, int> snet_2_id_;
   std::unordered_map<std::string, int> via_2_id_;
-  std::set<std::string> row_set_;
+  std::unordered_set<std::string> row_set_;
 
   /****DEF file name****/
   std::string def_name_;
@@ -187,7 +186,7 @@ class Design {
       int urx,
       int ury
   );
-  void SavePpNpToRectFile(std::string const &file_name);
+  void SavePpNpToRectFile(std::string const &file_name) const;
   SpecialMacroRectLayout *CreateWellLayerMacroAndComponent(
       Macro *macro_ptr,
       int llx,
@@ -195,7 +194,7 @@ class Design {
       int urx,
       int ury
   );
-  void SaveWellToRectFile(std::string const &file_name);
+  void SaveWellToRectFile(std::string const &file_name) const;
 
   void ReportTracks();
   void ReportRows();

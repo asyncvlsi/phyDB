@@ -107,7 +107,7 @@ Row *Design::AddRow(
     int stepX,
     int stepY
 ) {
-  int id = rows_.size();
+  size_t id = rows_.size();
   PhyDBExpects(!IsRowExist(name),
                name + " row name_ exists, cannot use it again");
   rows_.emplace_back(
@@ -199,9 +199,11 @@ bool Design::IsIoPinExist(std::string &iopin_name) {
   return iopin_2_id_.find(iopin_name) != iopin_2_id_.end();
 }
 
-IOPin *Design::AddIoPin(std::string &iopin_name,
-                        SignalDirection signal_direction,
-                        SignalUse signal_use) {
+IOPin *Design::AddIoPin(
+    std::string &iopin_name,
+    SignalDirection signal_direction,
+    SignalUse signal_use
+) {
   PhyDBExpects(!IsIoPinExist(iopin_name),
                "IOPin name_ exists, cannot use it again");
   int id = (int) iopins_.size();
@@ -218,8 +220,10 @@ IOPin *Design::GetIoPinPtr(std::string &iopin_name) {
   return &(iopins_[id]);
 }
 
-void Design::SetNetCount(int count,
-                         double redundancy_factor) { // redundancy_factor for buffer insertion
+void Design::SetNetCount(
+    int count,
+    double redundancy_factor
+) { // redundancy_factor for buffer insertion
   if (redundancy_factor < 1) redundancy_factor = 1;
   int actual_count = (int) std::ceil(count * redundancy_factor);
   nets_.reserve(actual_count);
@@ -342,7 +346,7 @@ SpecialMacroRectLayout *Design::CreatePpNpMacroAndComponent(
   return plus_filling_;
 }
 
-void Design::SavePpNpToRectFile(std::string const &file_name) {
+void Design::SavePpNpToRectFile(std::string const &file_name) const {
   if (plus_filling_ != nullptr) {
     plus_filling_->SaveToRectFile(file_name);
   }
@@ -366,7 +370,7 @@ SpecialMacroRectLayout *Design::CreateWellLayerMacroAndComponent(
   return well_filling_;
 }
 
-void Design::SaveWellToRectFile(std::string const &file_name) {
+void Design::SaveWellToRectFile(std::string const &file_name) const {
   if (well_filling_ != nullptr) {
     well_filling_->SaveToRectFile(file_name);
   }
