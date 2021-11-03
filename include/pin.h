@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_INCLUDE_PIN_H_
 #define PHYDB_INCLUDE_PIN_H_
 
@@ -41,15 +40,17 @@ class Pin {
  public:
   Pin() : name_(""), direction_(INPUT), use_(SIGNAL), shape_(""),
           antenna_diff_area_layer_(""), antenna_diff_area_(0) {}
-  Pin(std::string &name, SignalDirection direction, SignalUse use) :
+  Pin(std::string const &name, SignalDirection direction, SignalUse use) :
       name_(name), direction_(direction), use_(use) {}
-  Pin(std::string name,
+  Pin(
+      std::string const &name,
       SignalDirection direction,
       SignalUse use,
-      std::string shape,
-      std::string antennaDiffAreaLayer,
+      std::string const &shape,
+      std::string const &antennaDiffAreaLayer,
       double antennaDiffArea,
-      std::vector<LayerRect> layerRects) :
+      std::vector<LayerRect> layerRects
+  ) :
       name_(name),
       direction_(direction),
       use_(use),

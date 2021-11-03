@@ -248,14 +248,12 @@ int getLefCornerSpacing(void *data, const std::string &stringProp) {
 }
 
 int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
-
   if (type != lefrLayerCbkType) {
     std::cout << "Type is not lefrLayerCbkType!" << std::endl;
     exit(1);
   }
 
   auto *phy_db_ptr = (PhyDB *) data;
-  //Layer &last_layer = phy_db_ptr->GetTechPtr()->GetLayersRef().back(); //write to the last one
 
   if (strcmp(layer->type(), "ROUTING") == 0) {
     std::string metal_layer_name(layer->name());

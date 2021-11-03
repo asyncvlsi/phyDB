@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_INCLUDE_LEFDEFPARSER_H_
 #define PHYDB_INCLUDE_LEFDEFPARSER_H_
 
@@ -32,13 +31,9 @@
 namespace phydb {
 
 int getLefSite(lefrCallbackType_e type, lefiSite *site, lefiUserData data);
-int getLefMacrosBegin(lefrCallbackType_e type,
-                      const char *str,
-                      lefiUserData data);
+int getLefMacrosBegin(lefrCallbackType_e type, const char *str, lefiUserData data);
 int getLefMacros(lefrCallbackType_e, lefiMacro *, lefiUserData);
-int getLefMacrosEnd(lefrCallbackType_e type,
-                    const char *str,
-                    lefiUserData data);
+int getLefMacrosEnd(lefrCallbackType_e type, const char *str, lefiUserData data);
 int getLefString(lefrCallbackType_e, const char *, lefiUserData);
 int getLefUnits(lefrCallbackType_e, lefiUnits *, lefiUserData);
 int getLefManufacturingGrid(lefrCallbackType_e, double, lefiUserData);

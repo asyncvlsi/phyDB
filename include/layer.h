@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_INCLUDE_LAYER_H_
 #define PHYDB_INCLUDE_LAYER_H_
 
@@ -92,12 +91,13 @@ class LayerTechConfig {
 class Layer {
   friend class Tech;
  public:
-  Layer(std::string &name, LayerType type, MetalDirection direction) :
-      name_(name), type_(type), direction_(direction) {}
+  Layer(std::string const &name, LayerType type, MetalDirection direction) :
+      name_(name), type_(type), direction_(direction) {
+  }
 
   //constructor for metal layer
   Layer(
-      std::string &name,
+      std::string const &name,
       LayerType type,
       MetalDirection direction,
       double pitch_x,
@@ -116,32 +116,11 @@ class Layer {
       width_(width),
       area_(area),
       min_width_(min_width),
-      offset_(offset) {}
-
-  Layer(
-      std::string name,
-      LayerType type,
-      MetalDirection direction,
-      double pitch_x,
-      double pitch_y,
-      double width,
-      double area,
-      double min_width,
-      double offset
-  ) :
-      name_(std::move(name)),
-      type_(type),
-      id_(-1),
-      direction_(direction),
-      pitchx_(pitch_x),
-      pitchy_(pitch_y),
-      width_(width),
-      area_(area),
-      min_width_(min_width),
-      offset_(offset) {}
+      offset_(offset) {
+  }
 
   //constructor for cut layer
-  Layer(std::string &name, LayerType type, double spacing) :
+  Layer(std::string const &name, LayerType type, double spacing) :
       name_(name),
       type_(type),
       id_(-1),

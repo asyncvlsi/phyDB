@@ -30,18 +30,18 @@ Design::~Design() {
   delete well_filling_;
 }
 
-void Design::SetName(std::string &name) {
+void Design::SetName(std::string const &name) {
   name_ = name;
 }
 
 void Design::SetVersion(double version) {
   version_ = version;
 }
-void Design::SetDividerChar(std::string &divider_char) {
+void Design::SetDividerChar(std::string const &divider_char) {
   divider_char_ = divider_char;
 }
 
-void Design::SetBusBitChar(std::string &bus_bit_chars) {
+void Design::SetBusBitChar(std::string const &bus_bit_chars) {
   bus_bit_char_ = bus_bit_chars;
 }
 
@@ -92,14 +92,14 @@ std::vector<Track> &Design::GetTracksRef() {
   return tracks_;
 }
 
-bool Design::IsRowExist(std::string &row_name) {
+bool Design::IsRowExisting(std::string const &row_name) {
   return (row_set_.find(row_name) != row_set_.end());
 }
 
 Row *Design::AddRow(
-    std::string &name,
-    std::string &site_name,
-    std::string &site_orient,
+    std::string const &name,
+    std::string const &site_name,
+    std::string const &site_orient,
     int origX,
     int origY,
     int numX,
@@ -108,7 +108,7 @@ Row *Design::AddRow(
     int stepY
 ) {
   size_t id = rows_.size();
-  PhyDBExpects(!IsRowExist(name),
+  PhyDBExpects(!IsRowExisting(name),
                name + " row name_ exists, cannot use it again");
   rows_.emplace_back(
       name,
@@ -135,12 +135,12 @@ void Design::SetComponentCount(int count, double redundancy_factor) {
   components_.reserve(actual_count);
 }
 
-bool Design::IsComponentExisting(std::string &comp_name) {
+bool Design::IsComponentExisting(std::string const &comp_name) {
   return component_2_id_.find(comp_name) != component_2_id_.end();
 }
 
 Component *Design::AddComponent(
-    std::string &comp_name,
+    std::string const &comp_name,
     Macro *macro_ptr,
     PlaceStatus place_status,
     int llx,
@@ -162,7 +162,7 @@ Component *Design::AddComponent(
   return &(components_[id]);
 }
 
-Component *Design::GetComponentPtr(std::string &comp_name) {
+Component *Design::GetComponentPtr(std::string const &comp_name) {
   if (!IsComponentExisting(comp_name)) {
     return nullptr;
   }
@@ -170,12 +170,12 @@ Component *Design::GetComponentPtr(std::string &comp_name) {
   return &(components_[id]);
 }
 
-bool Design::IsDefViaExist(std::string const &via_name) {
-  return def_via_2_id_.find(via_name) != def_via_2_id_.end();
+bool Design::IsDefViaExisting(std::string const &name) {
+  return def_via_2_id_.find(name) != def_via_2_id_.end();
 }
 
-DefVia *Design::AddDefVia(std::string &via_name) {
-  PhyDBExpects(!IsDefViaExist(via_name),
+DefVia *Design::AddDefVia(std::string const &via_name) {
+  PhyDBExpects(!IsDefViaExisting(via_name),
                "Macro name_ exists, cannot use it again");
   int id = (int) vias_.size();
   vias_.emplace_back(via_name);
@@ -184,7 +184,7 @@ DefVia *Design::AddDefVia(std::string &via_name) {
 }
 
 DefVia *Design::GetDefViaPtr(std::string const &via_name) {
-  if (!IsDefViaExist(via_name)) {
+  if (!IsDefViaExisting(via_name)) {
     return nullptr;
   }
   int id = via_2_id_[via_name];
@@ -195,16 +195,16 @@ void Design::SetIoPinCount(int count) {
   iopins_.reserve(count);
 }
 
-bool Design::IsIoPinExist(std::string &iopin_name) {
+bool Design::IsIoPinExisting(std::string const &iopin_name) {
   return iopin_2_id_.find(iopin_name) != iopin_2_id_.end();
 }
 
 IOPin *Design::AddIoPin(
-    std::string &iopin_name,
+    std::string const &iopin_name,
     SignalDirection signal_direction,
     SignalUse signal_use
 ) {
-  PhyDBExpects(!IsIoPinExist(iopin_name),
+  PhyDBExpects(!IsIoPinExisting(iopin_name),
                "IOPin name_ exists, cannot use it again");
   int id = (int) iopins_.size();
   iopins_.emplace_back(iopin_name, signal_direction, signal_use);
@@ -212,8 +212,8 @@ IOPin *Design::AddIoPin(
   return &(iopins_[id]);
 }
 
-IOPin *Design::GetIoPinPtr(std::string &iopin_name) {
-  if (!IsIoPinExist(iopin_name)) {
+IOPin *Design::GetIoPinPtr(std::string const &iopin_name) {
+  if (!IsIoPinExisting(iopin_name)) {
     return nullptr;
   }
   int id = iopin_2_id_[iopin_name];
@@ -229,19 +229,23 @@ void Design::SetNetCount(
   nets_.reserve(actual_count);
 }
 
-bool Design::IsNetExist(std::string &net_name) {
+bool Design::IsNetExisting(std::string const &net_name) {
   return net_2_id_.find(net_name) != net_2_id_.end();
 }
 
-Net *Design::AddNet(std::string &net_name, double weight) {
-  PhyDBExpects(!IsNetExist(net_name), "Net name exists, cannot use it again");
+Net *Design::AddNet(std::string const &net_name, double weight) {
+  PhyDBExpects(!IsNetExisting(net_name),
+               "Net name exists, cannot use it again");
   int id = (int) nets_.size();
   nets_.emplace_back(net_name, weight);
   net_2_id_[net_name] = id;
   return &(nets_[id]);
 }
 
-void Design::AddIoPinToNet(std::string &iopin_name, std::string &net_name) {
+void Design::AddIoPinToNet(
+    std::string const &iopin_name,
+    std::string const &net_name
+) {
   IOPin *iopin_ptr = GetIoPinPtr(iopin_name);
   PhyDBExpects(iopin_ptr != nullptr,
                "Cannot add a nonexistent IOPIN to a net");
@@ -257,15 +261,15 @@ void Design::AddCompPinToNet(int comp_id, int pin_id, int net_id) {
   nets_[net_id].AddCompPin(comp_id, pin_id);
 }
 
-Net *Design::GetNetPtr(std::string &net_name) {
-  if (!IsNetExist(net_name)) {
+Net *Design::GetNetPtr(std::string const &net_name) {
+  if (!IsNetExisting(net_name)) {
     return nullptr;
   }
   int id = net_2_id_[net_name];
   return &(nets_[id]);
 }
 
-SNet *Design::AddSNet(std::string &net_name, SignalUse use) {
+SNet *Design::AddSNet(std::string const &net_name, SignalUse use) {
   bool e = (use == GROUND || use == POWER);
   PhyDBExpects(e, "special net use should be POWER or GROUND");
   int id = (int) snets_.size();
@@ -274,7 +278,7 @@ SNet *Design::AddSNet(std::string &net_name, SignalUse use) {
   return &snets_[id];
 }
 
-SNet *Design::GetSNet(std::string &net_name) {
+SNet *Design::GetSNet(std::string const &net_name) {
   bool e = (snet_2_id_.find(net_name) != snet_2_id_.end());
   PhyDBExpects(e, "snet is not found");
   return &snets_[snet_2_id_[net_name]];
@@ -284,7 +288,10 @@ std::vector<SNet> &Design::GetSNetRef() {
   return snets_;
 }
 
-ClusterCol *Design::AddClusterCol(std::string &name, std::string &bot_signal) {
+ClusterCol *Design::AddClusterCol(
+    std::string const &name,
+    std::string const &bot_signal
+) {
   int id = (int) cluster_cols_.size();
   cluster_cols_.emplace_back(name, bot_signal);
   return &cluster_cols_[id];

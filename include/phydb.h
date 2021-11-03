@@ -56,7 +56,7 @@ class PhyDB {
 
   bool IsLayerExisting(std::string const &layer_name);
   Layer *AddLayer(
-      std::string &layer_name,
+      std::string const &layer_name,
       LayerType type,
       MetalDirection direction = HORIZONTAL
   );
@@ -64,20 +64,20 @@ class PhyDB {
   std::vector<Layer> &GetLayersRef();
 
   bool IsMacroExisting(std::string const &macro_name);
-  Macro *AddMacro(std::string &macro_name);
+  Macro *AddMacro(std::string const &macro_name);
   Macro *GetMacroPtr(std::string const &macro_name);
 
   bool IsLefViaExisting(std::string const &name);
-  LefVia *AddLefVia(std::string &name);
+  LefVia *AddLefVia(std::string const &name);
   LefVia *GetLefViaPtr(std::string const &name);
 
   /************************************************
   * The following APIs are for information in DEF
   * ************************************************/
-  void SetDefName(std::string &name);
+  void SetDefName(std::string const &name);
   void SetDefVersion(double version);
-  void SetDefDividerChar(std::string &divider_char);
-  void SetDefBusBitChar(std::string &bus_bit_chars);
+  void SetDefDividerChar(std::string const &divider_char);
+  void SetDefBusBitChar(std::string const &bus_bit_chars);
 
   std::string GetDefName() const;
   double GetDefVersion() const;
@@ -98,9 +98,9 @@ class PhyDB {
   std::vector<Track> &GetTracksRef();
 
   Row *AddRow(
-      std::string &name,
-      std::string &site_name,
-      std::string &site_orient,
+      std::string const &name,
+      std::string const &site_name,
+      std::string const &site_orient,
       int origX,
       int origY,
       int numX,
@@ -111,68 +111,68 @@ class PhyDB {
   std::vector<Row> &GetRowVec();
 
   bool IsViaRuleGenerateExisting(std::string const &name);
-  ViaRuleGenerate *AddViaRuleGenerate(std::string &name);
+  ViaRuleGenerate *AddViaRuleGenerate(std::string const &name);
   ViaRuleGenerate *GetViaRuleGeneratePtr(std::string const &name);
 
   bool IsDefViaExisting(std::string const &name);
-  DefVia *AddDefVia(std::string &name);
+  DefVia *AddDefVia(std::string const &name);
   DefVia *GetDefViaPtr(std::string const &name);
 
   void SetComponentCount(int count);
-  bool IsComponentExisting(std::string &component_name);
+  bool IsComponentExisting(std::string const &component_name);
   Component *AddComponent(
-      std::string &comp_name,
+      std::string const &comp_name,
       Macro *macro_ptr,
       PlaceStatus place_status,
       int llx,
       int lly,
       CompOrient orient
   );
-  Component *GetComponentPtr(std::string &comp_name);
-  int GetComponentId(std::string &comp_name);
+  Component *GetComponentPtr(std::string const &comp_name);
+  int GetComponentId(std::string const &comp_name);
 
   void SetIoPinCount(int count);
-  bool IsIoPinExisting(std::string &iopin_name);
+  bool IsIoPinExisting(std::string const &iopin_name);
   IOPin *AddIoPin(
-      std::string &iopin_name,
+      std::string const &iopin_name,
       SignalDirection signal_direction,
       SignalUse signal_use
   );
-  IOPin *GetIoPinPtr(std::string &iopin_name);
+  IOPin *GetIoPinPtr(std::string const &iopin_name);
 
   void SetNetCount(int count);
-  bool IsNetExisting(std::string &net_name);
+  bool IsNetExisting(std::string const &net_name);
   Net *AddNet(
-      std::string &net_name,
+      std::string const &net_name,
       double weight = 1,
       void *act_net_ptr = nullptr
   );
-  Net *GetNetPtr(std::string &net_name);
-  int GetNetId(std::string &net_name);
+  Net *GetNetPtr(std::string const &net_name);
+  int GetNetId(std::string const &net_name);
   void AddIoPinToNet(
-      std::string &iopin_name,
-      std::string &net_name,
+      std::string const &iopin_name,
+      std::string const &net_name,
       void *act_io_pin_ptr = nullptr
   );
   void AddCompPinToNet(
-      std::string &comp_name,
-      std::string &pin_name,
-      std::string &net_name
+      std::string const &comp_name,
+      std::string const &pin_name,
+      std::string const &net_name
   );
   void BindPhydbPinToActPin(
-      std::string &comp_name,
-      std::string &pin_name,
+      std::string const &comp_name,
+      std::string const &pin_name,
       void *act_comp_pin_ptr
   );
   void AddCompPinToNetWithActPtr(
-      std::string &comp_name,
-      std::string &pin_name,
-      std::string &net_name,
+      std::string const &comp_name,
+      std::string const &pin_name,
+      std::string const &net_name,
       void *act_comp_pin_ptr = nullptr
   );
 
-  SNet *AddSNet(std::string &net_name, SignalUse use);
-  SNet *GetSNet(std::string &net_name);
+  SNet *AddSNet(std::string const &net_name, SignalUse use);
+  SNet *GetSNet(std::string const &net_name);
   std::vector<SNet> &GetSNetRef();
 
   GcellGrid *AddGcellGrid(
@@ -235,14 +235,17 @@ class PhyDB {
       double overhang
   );
   void SetNpwellSpacing(double same_spacing, double any_spacing);
-  MacroWell *AddMacrowell(std::string &macro_name);
+  MacroWell *AddMacrowell(std::string const &macro_name);
 
   /************************************************
   * The following APIs are for information in clusters,
   * N/P wells, and nplus/pplus layers
   * ************************************************/
 
-  ClusterCol *AddClusterCol(std::string &name, std::string &bot_signal);
+  ClusterCol *AddClusterCol(
+      std::string const &name,
+      std::string const &bot_signal
+  );
   std::vector<ClusterCol> &GetClusterColsRef();
   SpecialMacroRectLayout *CreatePpNpMacroAndComponent(
       int llx,

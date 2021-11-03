@@ -94,8 +94,8 @@ class SNet {
   std::vector<Polygon> polygons_;
  public:
   SNet() {}
-  SNet(std::string &name) : name_(name) {}
-  SNet(std::string &name, SignalUse use) : name_(name), use_(use) {}
+  SNet(std::string const &name) : name_(name) {}
+  SNet(std::string const &name, SignalUse use) : name_(name), use_(use) {}
 
   void SetName(std::string &);
   void SetUse(SignalUse);

@@ -43,9 +43,9 @@ class Component {
 
   Component() {}
   Component(
-      std::string name,
+      std::string const &name,
       Macro *macroName,
-      std::string source,
+      std::string const &source,
       PlaceStatus place_status,
       CompOrient orient,
       int weight,
@@ -58,7 +58,7 @@ class Component {
       weight_(weight),
       location_(location) {}
   Component(
-      std::string &comp_name,
+      std::string const &comp_name,
       Macro *macro_name,
       PlaceStatus place_status,
       int llx,

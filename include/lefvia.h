@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_INCLUDE_LEFVIA_H_
 #define PHYDB_INCLUDE_LEFVIA_H_
 
@@ -35,19 +34,18 @@ class LefVia {
   std::vector<LayerRect> layer_rects_;
  public:
   LefVia() : is_default_(false) {}
-  explicit LefVia(std::string &name) : name_(name) {}
+  explicit LefVia(std::string const &name) : name_(name) {}
 
   std::string GetName() const;
   void SetDefault();
   void UnsetDefault();
   void SetLayerRect(
       const std::string &layer_name0,
-      const std::vector<Rect2D < double>>
-  &rect0,
-  const std::string &layer_name1,
-  const std::vector<Rect2D < double>> &rect1,
-  const std::string &layer_name2,
-  const std::vector<Rect2D < double>> &rect2
+      const std::vector<Rect2D<double>> &rects0,
+      const std::string &layer_name1,
+      const std::vector<Rect2D<double>> &rects1,
+      const std::string &layer_name2,
+      const std::vector<Rect2D<double>> &rects2
   );
 
   std::vector<LayerRect> &GetLayerRectsRef();

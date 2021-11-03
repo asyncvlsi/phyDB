@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_INCLUDE_MACRO_H_
 #define PHYDB_INCLUDE_MACRO_H_
 
@@ -51,14 +50,14 @@ class Macro {
 
  public:
   Macro() : name_("") {}
-  Macro(std::string &name) : name_(name) {
+  Macro(std::string const &name) : name_(name) {
     size_.x = 0;
     size_.y = 0;
     origin_.x = 0;
     origin_.y = 0;
   }
   Macro(
-      std::string name,
+      std::string const &name,
       Point2D<double> origin,
       Point2D<double> size,
       std::vector<Pin> pins,
@@ -70,7 +69,7 @@ class Macro {
       pins_(pins),
       obs_(obs) {}
 
-  void SetName(std::string &name);
+  void SetName(std::string const &name);
   void SetClass(MacroClass macro_class);
   void SetOrigin(Point2D<double> _origin);
   void SetOrigin(double x, double y);
@@ -78,13 +77,13 @@ class Macro {
   void SetSize(double width, double height);
 
   // APIs for adding PINs to this MACRO
-  bool IsPinExist(std::string pin_name);
+  bool IsPinExisting(std::string const &pin_name);
   Pin *AddPin(
-      std::string &pin_name,
+      std::string const &pin_name,
       SignalDirection direction,
       SignalUse use
   );
-  int GetPinId(std::string &pin_name);
+  int GetPinId(std::string const &pin_name);
 
   // APIs for adding OBS to this MACRO
   //void SetObs(OBS &obs); // TODO: change this API to return a pointer
@@ -104,7 +103,7 @@ class Macro {
   double GetHeight() const;
   std::vector<Pin> GetPinVec() const;
   std::vector<Pin> &GetPinsRef();
-  bool GetPin(std::string pinName, Pin &pin) const;
+  bool GetPin(std::string const pinName, Pin &pin) const; // TODO: what is this?
   //bool GetObs(OBS &) const;
   OBS *GetObs();
   MacroWell *GetWellPtr();

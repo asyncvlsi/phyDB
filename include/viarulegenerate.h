@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_INCLUDE_VIARULEGENERATE_H
 #define PHYDB_INCLUDE_VIARULEGENERATE_H
 
@@ -34,7 +33,8 @@ class ViaRuleGenerateLayer {
   Size2D<double> enclosure_;
 
   ViaRuleGenerateLayer() {}
-  ViaRuleGenerateLayer(std::string &layerName) : layer_name_(layerName) {}
+  explicit ViaRuleGenerateLayer(std::string const &layer_name) :
+      layer_name_(layer_name) {}
 
   void SetLayerName(const std::string &layer_name);
   void SetRect(double lx, double ly, double ux, double uy);
@@ -54,7 +54,7 @@ class ViaRuleGenerate {
   ViaRuleGenerateLayer layers_[3];
 
   ViaRuleGenerate() : is_default_(false) {}
-  ViaRuleGenerate(std::string &name) : name_(name), is_default_(false) {}
+  ViaRuleGenerate(std::string const &name) : name_(name), is_default_(false) {}
 
   void SetDefault();
   void UnsetDefault();

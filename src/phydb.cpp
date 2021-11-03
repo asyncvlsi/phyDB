@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #include "phydb.h"
 
 #include <cmath>
@@ -79,7 +78,7 @@ bool PhyDB::IsLayerExisting(std::string const &layer_name) {
 }
 
 Layer *PhyDB::AddLayer(
-    std::string &layer_name,
+    std::string const &layer_name,
     LayerType type,
     MetalDirection direction
 ) {
@@ -98,7 +97,7 @@ bool PhyDB::IsMacroExisting(std::string const &macro_name) {
   return tech_.IsMacroExisting(macro_name);
 }
 
-Macro *PhyDB::AddMacro(std::string &macro_name) {
+Macro *PhyDB::AddMacro(std::string const &macro_name) {
   return tech_.AddMacro(macro_name);
 }
 
@@ -110,7 +109,7 @@ bool PhyDB::IsLefViaExisting(std::string const &name) {
   return tech_.IsLefViaExisting(name);
 }
 
-LefVia *PhyDB::AddLefVia(std::string &via_name) {
+LefVia *PhyDB::AddLefVia(std::string const &via_name) {
   return tech_.AddLefVia(via_name);
 }
 
@@ -122,7 +121,7 @@ bool PhyDB::IsViaRuleGenerateExisting(std::string const &name) {
   return tech_.IsViaRuleGenerateExisting(name);
 }
 
-ViaRuleGenerate *PhyDB::AddViaRuleGenerate(std::string &name) {
+ViaRuleGenerate *PhyDB::AddViaRuleGenerate(std::string const &name) {
   return tech_.AddViaRuleGenerate(name);
 }
 
@@ -130,7 +129,7 @@ ViaRuleGenerate *PhyDB::GetViaRuleGeneratePtr(std::string const &name) {
   return tech_.GetViaRuleGeneratePtr(name);
 }
 
-void PhyDB::SetDefName(std::string &name) {
+void PhyDB::SetDefName(std::string const &name) {
   design_.SetName(name);
 }
 
@@ -138,11 +137,11 @@ void PhyDB::SetDefVersion(double version) {
   design_.SetVersion(version);
 }
 
-void PhyDB::SetDefDividerChar(std::string &divider_char) {
+void PhyDB::SetDefDividerChar(std::string const &divider_char) {
   design_.SetDividerChar(divider_char);
 }
 
-void PhyDB::SetDefBusBitChar(std::string &bus_bit_char) {
+void PhyDB::SetDefBusBitChar(std::string const &bus_bit_char) {
   design_.SetBusBitChar(bus_bit_char);
 }
 
@@ -178,8 +177,37 @@ void PhyDB::SetComponentCount(int count) {
   design_.SetComponentCount(count);
 }
 
-bool PhyDB::IsComponentExisting(std::string &component_name) {
+bool PhyDB::IsComponentExisting(std::string const &component_name) {
   return design_.IsComponentExisting(component_name);
+}
+
+Component *PhyDB::AddComponent(
+    std::string const &comp_name,
+    Macro *macro_ptr,
+    PlaceStatus place_status,
+    int llx,
+    int lly,
+    CompOrient orient
+) {
+  return design_.AddComponent(
+      comp_name,
+      macro_ptr,
+      place_status,
+      llx,
+      lly,
+      orient
+  );
+}
+
+Component *PhyDB::GetComponentPtr(std::string const &comp_name) {
+  return design_.GetComponentPtr(comp_name);
+}
+
+int PhyDB::GetComponentId(std::string const &comp_name) {
+  auto res = design_.component_2_id_.find(comp_name);
+  PhyDBExpects(res != design_.component_2_id_.end(),
+               "Component does not exist: " + comp_name);
+  return res->second;
 }
 
 Track *PhyDB::AddTrack(
@@ -197,9 +225,9 @@ std::vector<Track> &PhyDB::GetTracksRef() {
 }
 
 Row *PhyDB::AddRow(
-    std::string &name,
-    std::string &site_name,
-    std::string &site_orient,
+    std::string const &name,
+    std::string const &site_name,
+    std::string const &site_orient,
     int origX,
     int origY,
     int numX,
@@ -224,48 +252,31 @@ std::vector<Row> &PhyDB::GetRowVec() {
   return design_.GetRowVec();
 }
 
-Component *PhyDB::AddComponent(
-    std::string &comp_name,
-    Macro *macro_ptr,
-    PlaceStatus place_status,
-    int llx,
-    int lly,
-    CompOrient orient
-) {
-  return design_.AddComponent(
-      comp_name,
-      macro_ptr,
-      place_status,
-      llx,
-      lly,
-      orient
-  );
-}
-
-Component *PhyDB::GetComponentPtr(std::string &comp_name) {
-  return design_.GetComponentPtr(comp_name);
-}
-
-int PhyDB::GetComponentId(std::string &comp_name) {
-  auto res = design_.component_2_id_.find(comp_name);
-  PhyDBExpects(res != design_.component_2_id_.end(),
-               "Component does not exist: " + comp_name);
-  return res->second;
-}
-
 void PhyDB::SetIoPinCount(int count) {
   design_.SetIoPinCount(count);
 }
 
-bool PhyDB::IsIoPinExisting(std::string &iopin_name) {
-  return design_.IsIoPinExist(iopin_name);
+bool PhyDB::IsIoPinExisting(std::string const &iopin_name) {
+  return design_.IsIoPinExisting(iopin_name);
+}
+
+IOPin *PhyDB::AddIoPin(
+    std::string const &iopin_name,
+    SignalDirection signal_direction,
+    SignalUse signal_use
+) {
+  return design_.AddIoPin(iopin_name, signal_direction, signal_use);
+}
+
+IOPin *PhyDB::GetIoPinPtr(std::string const &iopin_name) {
+  return design_.GetIoPinPtr(iopin_name);
 }
 
 bool PhyDB::IsDefViaExisting(std::string const &name) {
-  return design_.IsDefViaExist(name);
+  return design_.IsDefViaExisting(name);
 }
 
-DefVia *PhyDB::AddDefVia(std::string &via_name) {
+DefVia *PhyDB::AddDefVia(std::string const &via_name) {
   return design_.AddDefVia(via_name);
 }
 
@@ -273,35 +284,26 @@ DefVia *PhyDB::GetDefViaPtr(std::string const &via_name) {
   return design_.GetDefViaPtr(via_name);
 }
 
-IOPin *PhyDB::AddIoPin(
-    std::string &iopin_name,
-    SignalDirection signal_direction,
-    SignalUse signal_use
-) {
-  return design_.AddIoPin(iopin_name, signal_direction, signal_use);
-}
-
-IOPin *PhyDB::GetIoPinPtr(std::string &iopin_name) {
-  return design_.GetIoPinPtr(iopin_name);
-}
-
 void PhyDB::SetNetCount(int count) {
   design_.SetNetCount(count);
 }
 
-bool PhyDB::IsNetExisting(std::string &net_name) {
-  return design_.IsNetExist(net_name);
+bool PhyDB::IsNetExisting(std::string const &net_name) {
+  return design_.IsNetExisting(net_name);
 }
 
-Net *PhyDB::AddNet(std::string &net_name, double weight, void *act_net_ptr) {
+Net *PhyDB::AddNet(
+    std::string const &net_name,
+    double weight,
+    void *act_net_ptr
+) {
   auto *ret = design_.AddNet(net_name, weight);
 
   if (act_net_ptr != nullptr) {
     if (timing_api_.IsActNetPtrExisting(act_net_ptr)) {
       int id = timing_api_.ActNetPtr2Id(act_net_ptr);
-      std::string error_msg =
-          "Net " + design_.nets_[id].GetName()
-              + " has the same Act pointer as " + net_name;
+      std::string error_msg = "Net " + design_.nets_[id].GetName()
+          + " has the same Act pointer as " + net_name;
       PhyDBExpects(false, error_msg);
     }
     int id = (int) design_.nets_.size() - 1;
@@ -311,11 +313,11 @@ Net *PhyDB::AddNet(std::string &net_name, double weight, void *act_net_ptr) {
   return ret;
 }
 
-Net *PhyDB::GetNetPtr(std::string &net_name) {
+Net *PhyDB::GetNetPtr(std::string const &net_name) {
   return design_.GetNetPtr(net_name);
 }
 
-int PhyDB::GetNetId(std::string &net_name) {
+int PhyDB::GetNetId(std::string const &net_name) {
   auto res = design_.net_2_id_.find(net_name);
   if (res == design_.net_2_id_.end()) {
     PhyDBExpects(false, "Net does not exist: " + net_name);
@@ -324,8 +326,8 @@ int PhyDB::GetNetId(std::string &net_name) {
 }
 
 void PhyDB::AddIoPinToNet(
-    std::string &iopin_name,
-    std::string &net_name,
+    std::string const &iopin_name,
+    std::string const &net_name,
     void *act_io_pin_ptr
 ) {
   PhyDBExpects(IsIoPinExisting(iopin_name),
@@ -336,9 +338,9 @@ void PhyDB::AddIoPinToNet(
 }
 
 void PhyDB::AddCompPinToNet(
-    std::string &comp_name,
-    std::string &pin_name,
-    std::string &net_name
+    std::string const &comp_name,
+    std::string const &pin_name,
+    std::string const &net_name
 ) {
   PhyDBExpects(IsNetExisting(net_name),
                "Cannot add a component pin to a nonexistent Net: "
@@ -348,7 +350,7 @@ void PhyDB::AddCompPinToNet(
   Component *comp_ptr = GetComponentPtr(comp_name);
   std::string macro_name = comp_ptr->GetMacro()->GetName();
   Macro *macro_ptr = GetMacroPtr(macro_name);
-  PhyDBExpects(macro_ptr->IsPinExist(pin_name),
+  PhyDBExpects(macro_ptr->IsPinExisting(pin_name),
                "Macro " + macro_name + " does not contain a pin with name "
                    + pin_name);
 
@@ -359,15 +361,15 @@ void PhyDB::AddCompPinToNet(
 }
 
 void PhyDB::BindPhydbPinToActPin(
-    std::string &comp_name,
-    std::string &pin_name,
+    std::string const &comp_name,
+    std::string const &pin_name,
     void *act_comp_pin_ptr
 ) {
   PhyDBExpects(IsComponentExisting(comp_name),
                "Cannot find component: " + comp_name);
   Component *comp_ptr = GetComponentPtr(comp_name);
   Macro *macro_ptr = comp_ptr->GetMacro();
-  PhyDBExpects(macro_ptr->IsPinExist(pin_name),
+  PhyDBExpects(macro_ptr->IsPinExisting(pin_name),
                "Macro " + macro_ptr->GetName()
                    + " does not contain a pin with name " + pin_name);
 
@@ -388,9 +390,9 @@ void PhyDB::BindPhydbPinToActPin(
 }
 
 void PhyDB::AddCompPinToNetWithActPtr(
-    std::string &comp_name,
-    std::string &pin_name,
-    std::string &net_name,
+    std::string const &comp_name,
+    std::string const &pin_name,
+    std::string const &net_name,
     void *act_comp_pin_ptr
 ) {
   PhyDBExpects(IsNetExisting(net_name),
@@ -401,7 +403,7 @@ void PhyDB::AddCompPinToNetWithActPtr(
   Component *comp_ptr = GetComponentPtr(comp_name);
   std::string macro_name = comp_ptr->GetMacro()->GetName();
   Macro *macro_ptr = GetMacroPtr(macro_name);
-  PhyDBExpects(macro_ptr->IsPinExist(pin_name),
+  PhyDBExpects(macro_ptr->IsPinExisting(pin_name),
                "Macro " + macro_name + " does not contain a pin with name "
                    + pin_name);
 
@@ -424,11 +426,11 @@ void PhyDB::AddCompPinToNetWithActPtr(
   timing_api_.AddActCompPinPtrIdPair(act_comp_pin_ptr, comp_id, pin_id);
 }
 
-SNet *PhyDB::AddSNet(std::string &net_name, SignalUse use) {
+SNet *PhyDB::AddSNet(std::string const &net_name, SignalUse use) {
   return design_.AddSNet(net_name, use);
 }
 
-SNet *PhyDB::GetSNet(std::string &net_name) {
+SNet *PhyDB::GetSNet(std::string const &net_name) {
   return design_.GetSNet(net_name);
 }
 
@@ -460,7 +462,7 @@ void PhyDB::SetNpwellSpacing(double same_spacing, double any_spacing) {
   tech_.SetNpwellSpacing(same_spacing, any_spacing);
 }
 
-MacroWell *PhyDB::AddMacrowell(std::string &macro_name) {
+MacroWell *PhyDB::AddMacrowell(std::string const &macro_name) {
   Macro *macro_ptr = GetMacroPtr(macro_name);
   PhyDBExpects(macro_ptr != nullptr,
                "Macro does not exist, cannot add well info: " + macro_name);
@@ -469,7 +471,10 @@ MacroWell *PhyDB::AddMacrowell(std::string &macro_name) {
   return macro_ptr->GetWellPtr();
 }
 
-ClusterCol *PhyDB::AddClusterCol(std::string &name, std::string &bot_signal) {
+ClusterCol *PhyDB::AddClusterCol(
+    std::string const &name,
+    std::string const &bot_signal
+) {
   return design_.AddClusterCol(name, bot_signal);
 }
 
@@ -927,7 +932,7 @@ void PhyDB::ReadCluster(std::string const &cluster_file_name) {
 
   std::string tmp1, tmp2, tmp3;
   int lx, ux, ly, uy;
-  ClusterCol *col;
+  ClusterCol *col = nullptr;
   while (!infile.eof()) {
     infile >> tmp1 >> tmp2;
     if (tmp1 == "STRIP") {
@@ -935,7 +940,7 @@ void PhyDB::ReadCluster(std::string const &cluster_file_name) {
       col = AddClusterCol(tmp2, tmp3);
       col->SetXRange(lx, ux);
     } else if (tmp1 == "END") {
-      assert(tmp2 == col->GetName());
+      assert(col != nullptr && tmp2 == col->GetName());
     } else {
       try {
         ly = stoi(tmp1);

@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #include "tech.h"
 
 #include <cstring>
@@ -113,9 +112,11 @@ bool Tech::IsLayerExisting(std::string const &layer_name) {
   return layer_2_id_.find(layer_name) != layer_2_id_.end();
 }
 
-Layer *Tech::AddLayer(std::string &layer_name,
-                      LayerType type,
-                      MetalDirection direction) {
+Layer *Tech::AddLayer(
+    std::string const &layer_name,
+    LayerType type,
+    MetalDirection direction
+) {
   PhyDBExpects(!IsLayerExisting(layer_name),
                "LAYER name_ exists, cannot use again: " + layer_name);
   int id = (int) layers_.size();
@@ -161,7 +162,7 @@ bool Tech::IsMacroExisting(std::string const &macro_name) {
   return macro_2_ptr_.find(macro_name) != macro_2_ptr_.end();
 }
 
-Macro *Tech::AddMacro(std::string &macro_name) {
+Macro *Tech::AddMacro(std::string const &macro_name) {
   PhyDBExpects(!IsMacroExisting(macro_name),
                "Macro name_ exists, cannot use it again: " + macro_name);
   int id = (int) macros_.size();
@@ -186,7 +187,7 @@ bool Tech::IsLefViaExisting(std::string const &via_name) {
   return via_2_id_.find(via_name) != via_2_id_.end();
 }
 
-LefVia *Tech::AddLefVia(std::string &via_name) {
+LefVia *Tech::AddLefVia(std::string const &via_name) {
   PhyDBExpects(!IsLefViaExisting(via_name),
                "VIA name_ exists, cannot use it again: " + via_name);
   int id = (int) vias_.size();
@@ -211,7 +212,7 @@ bool Tech::IsViaRuleGenerateExisting(std::string const &name) {
   return via_rule_generate_2_id_.find(name) != via_rule_generate_2_id_.end();
 }
 
-ViaRuleGenerate *Tech::AddViaRuleGenerate(std::string &name) {
+ViaRuleGenerate *Tech::AddViaRuleGenerate(std::string const &name) {
   PhyDBExpects(!IsViaRuleGenerateExisting(name),
                "Macro name_ exists, cannot use it again");
   int id = (int) via_rule_generates_.size();

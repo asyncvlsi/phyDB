@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_INCLUDE_DEFVIA_H_
 #define PHYDB_INCLUDE_DEFVIA_H_
 
@@ -46,7 +45,7 @@ class DefVia {
   std::string pattern_;
  public:
   DefVia() {}
-  DefVia(std::string &name) : name_(name) {}
+  DefVia(std::string const &name) : name_(name) {}
 
   void Reset() {
     name_ = "";

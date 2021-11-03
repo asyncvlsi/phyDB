@@ -78,10 +78,10 @@ class Design {
   Design() = default;
   ~Design();
 
-  void SetName(std::string &name);
+  void SetName(std::string const &name);
   void SetVersion(double version);
-  void SetDividerChar(std::string &divider_char);
-  void SetBusBitChar(std::string &bus_bit_chars);
+  void SetDividerChar(std::string const &divider_char);
+  void SetBusBitChar(std::string const &bus_bit_chars);
 
   std::string GetName() const;
   double GetVersion() const;
@@ -103,11 +103,11 @@ class Design {
   );
   std::vector<Track> &GetTracksRef();
 
-  bool IsRowExist(std::string &name);
+  bool IsRowExisting(std::string const &row_name);
   Row *AddRow(
-      std::string &name,
-      std::string &site_name,
-      std::string &site_orient,
+      std::string const &name,
+      std::string const &site_name,
+      std::string const &site_orient,
       int origX,
       int origY,
       int numX,
@@ -118,46 +118,52 @@ class Design {
   std::vector<Row> &GetRowVec();
 
   void SetComponentCount(int count, double redundancy_factor = 1.4);
-  bool IsComponentExisting(std::string &comp_name);
+  bool IsComponentExisting(std::string const &comp_name);
   Component *AddComponent(
-      std::string &comp_name,
+      std::string const &comp_name,
       Macro *macro_ptr,
       PlaceStatus place_status,
       int llx,
       int lly,
       CompOrient orient
   );
-  Component *GetComponentPtr(std::string &comp_name);
+  Component *GetComponentPtr(std::string const &comp_name);
   std::vector<Component> &GetComponentsRef() { return components_; }
 
-  bool IsDefViaExist(std::string const &name);
-  DefVia *AddDefVia(std::string &name);
+  bool IsDefViaExisting(std::string const &name);
+  DefVia *AddDefVia(std::string const &name);
   DefVia *GetDefViaPtr(std::string const &name);
   std::vector<DefVia> &GetDefViasRef() { return vias_; }
 
   void SetIoPinCount(int count);
-  bool IsIoPinExist(std::string &iopin_name);
+  bool IsIoPinExisting(std::string const &iopin_name);
   IOPin *AddIoPin(
-      std::string &iopin_name,
+      std::string const &iopin_name,
       SignalDirection signal_direction,
       SignalUse signal_use
   );
-  IOPin *GetIoPinPtr(std::string &iopin_name);
+  IOPin *GetIoPinPtr(std::string const &iopin_name);
   std::vector<IOPin> &GetIoPinsRef() { return iopins_; }
 
   void SetNetCount(int count, double redundancy_factor = 1.4);
-  bool IsNetExist(std::string &net_name);
-  Net *AddNet(std::string &net_name, double weight = 1);
-  void AddIoPinToNet(std::string &iopin_name, std::string &net_name);
+  bool IsNetExisting(std::string const &net_name);
+  Net *AddNet(std::string const &net_name, double weight = 1);
+  void AddIoPinToNet(
+      std::string const &iopin_name,
+      std::string const &net_name
+  );
   void AddCompPinToNet(int comp_id, int pin_id, int net_id);
-  Net *GetNetPtr(std::string &net_name);
+  Net *GetNetPtr(std::string const &net_name);
   std::vector<Net> &GetNetsRef() { return nets_; }
 
-  SNet *AddSNet(std::string &net_name, SignalUse use);
-  SNet *GetSNet(std::string &net_name);
+  SNet *AddSNet(std::string const &net_name, SignalUse use);
+  SNet *GetSNet(std::string const &net_name);
   std::vector<SNet> &GetSNetRef();
 
-  ClusterCol *AddClusterCol(std::string &name, std::string &bot_signal);
+  ClusterCol *AddClusterCol(
+      std::string const &name,
+      std::string const &bot_signal
+  );
   std::vector<ClusterCol> &GetClusterColsRef();
 
   GcellGrid *AddGcellGrid(

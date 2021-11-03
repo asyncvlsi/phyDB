@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_INCLUDE_IOPIN_H_
 #define PHYDB_INCLUDE_IOPIN_H_
 
@@ -44,17 +43,25 @@ class IOPin {
   PlaceStatus place_status_ = UNPLACED;
 
   IOPin() : id_(-1) {}
-  IOPin(std::string &name, SignalDirection direction, SignalUse use) :
-      name_(name), direction_(direction), use_(use) {}
-  IOPin(std::string name,
-        std::string netName,
-        SignalDirection direction,
-        SignalUse use,
-        std::string layerName,
-        Rect2D<int> rect,
-        Point2D<int> location,
-        CompOrient orient,
-        PlaceStatus status) :
+  IOPin(
+      std::string const &name,
+      SignalDirection direction,
+      SignalUse use
+  ) :
+      name_(name),
+      direction_(direction),
+      use_(use) {}
+  IOPin(
+      std::string const &name,
+      std::string const &netName,
+      SignalDirection direction,
+      SignalUse use,
+      std::string const &layerName,
+      Rect2D<int> rect,
+      Point2D<int> location,
+      CompOrient orient,
+      PlaceStatus status
+  ) :
       name_(name),
       net_name_(netName),
       direction_(direction),
@@ -67,10 +74,12 @@ class IOPin {
 
   void SetNetName(std::string const &net_name);
   void SetShape(std::string &layer_name, int lx, int ly, int ux, int uy);
-  void SetPlacement(PlaceStatus place_status,
-                    int x,
-                    int y,
-                    CompOrient orient);
+  void SetPlacement(
+      PlaceStatus place_status,
+      int x,
+      int y,
+      CompOrient orient
+  );
   void SetPlacementStatus(PlaceStatus place_status);
 
   const std::string &GetName();

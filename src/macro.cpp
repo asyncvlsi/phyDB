@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #include "macro.h"
 
 namespace phydb {
@@ -27,7 +26,7 @@ const std::string &Macro::GetName() {
   return name_;
 }
 
-void Macro::SetName(std::string &name) {
+void Macro::SetName(std::string const &name) {
   name_ = name;
 }
 
@@ -53,14 +52,16 @@ void Macro::SetSize(double width, double height) {
   size_.y = height;
 }
 
-bool Macro::IsPinExist(std::string pin_name) {
+bool Macro::IsPinExisting(std::string const &pin_name) {
   return pin_2_id_.find(pin_name) != pin_2_id_.end();
 }
 
-Pin *Macro::AddPin(std::string &pin_name,
-                   SignalDirection direction,
-                   SignalUse use) {
-  PhyDBExpects(!IsPinExist(pin_name),
+Pin *Macro::AddPin(
+    std::string const &pin_name,
+    SignalDirection direction,
+    SignalUse use
+) {
+  PhyDBExpects(!IsPinExisting(pin_name),
                "Pin " + pin_name + " exists in Macro " + GetName()
                    + ", cannot add it again");
   int id = (int) pins_.size();
@@ -69,7 +70,7 @@ Pin *Macro::AddPin(std::string &pin_name,
   return &(pins_.back());
 }
 
-int Macro::GetPinId(std::string &pin_name) {
+int Macro::GetPinId(std::string const &pin_name) {
   if (pin_2_id_.find(pin_name) != pin_2_id_.end()) {
     return pin_2_id_[pin_name];
   }

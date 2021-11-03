@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_INCLUDE_TECH_H_
 #define PHYDB_INCLUDE_TECH_H_
 
@@ -64,7 +63,7 @@ class Tech {
 
   bool IsLayerExisting(std::string const &layer_name);
   Layer *AddLayer(
-      std::string &layer_name,
+      std::string const &layer_name,
       LayerType type,
       MetalDirection direction = HORIZONTAL
   );
@@ -75,17 +74,17 @@ class Tech {
   std::vector<Layer *> &GetMetalLayersRef();
 
   bool IsMacroExisting(std::string const &macro_name);
-  Macro *AddMacro(std::string &macro_name);
+  Macro *AddMacro(std::string const &macro_name);
   Macro *GetMacroPtr(std::string const &macro_name);
   std::list<Macro> &GetMacrosRef();
 
   bool IsLefViaExisting(std::string const &via_name);
-  LefVia *AddLefVia(std::string &via_name);
+  LefVia *AddLefVia(std::string const &via_name);
   LefVia *GetLefViaPtr(std::string const &via_name);
   std::vector<LefVia> &GetLefViasRef();
 
   bool IsViaRuleGenerateExisting(std::string const &name);
-  ViaRuleGenerate *AddViaRuleGenerate(std::string &name);
+  ViaRuleGenerate *AddViaRuleGenerate(std::string const &name);
   ViaRuleGenerate *GetViaRuleGeneratePtr(std::string const &name);
   std::vector<ViaRuleGenerate> &GetViaRuleGeneratesRef();
 

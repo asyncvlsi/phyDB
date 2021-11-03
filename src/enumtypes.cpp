@@ -25,7 +25,7 @@
 
 namespace phydb {
 
-LayerType StrToLayerType(std::string &str_layer_type) {
+LayerType StrToLayerType(std::string const &str_layer_type) {
   LayerType layer_type = ROUTING;
   if (str_layer_type == "ROUTING") {
     layer_type = ROUTING;
@@ -53,7 +53,7 @@ std::string LayerTypeStr(LayerType layer_type) {
   return s;
 }
 
-MetalDirection StrToMetalDirection(std::string &str_metal_direction) {
+MetalDirection StrToMetalDirection(std::string const &str_metal_direction) {
   MetalDirection metal_direction = HORIZONTAL;
   if (str_metal_direction == "HORIZONTAL") {
     metal_direction = HORIZONTAL;
@@ -91,7 +91,7 @@ std::string MetalDirectionStr(MetalDirection metal_direction) {
   return s;
 }
 
-XYDirection StrToXYDirection(std::string &direction) {
+XYDirection StrToXYDirection(std::string const &direction) {
   XYDirection dir = XYDirection::X;
   if (direction == "X")
     dir = XYDirection::X;
@@ -127,7 +127,7 @@ std::string XYDirectionStr(XYDirection dir) {
   return XYDirectionToStr(dir);
 }
 
-CompOrient StrToCompOrient(std::string &str_orient) {
+CompOrient StrToCompOrient(std::string const &str_orient) {
   CompOrient orient = N;
   if (str_orient == "N" || str_orient == "R0") {
     orient = N;
@@ -182,7 +182,7 @@ std::string CompOrientStr(CompOrient orient) {
   return s;
 }
 
-PlaceStatus StrToPlaceStatus(std::string &str_place_status) {
+PlaceStatus StrToPlaceStatus(std::string const &str_place_status) {
   PlaceStatus place_status = UNPLACED;
   if (str_place_status == "COVER") {
     place_status = COVER;
@@ -220,7 +220,7 @@ std::string PlaceStatusStr(PlaceStatus place_status) {
   return s;
 }
 
-SignalDirection StrToSignalDirection(std::string &str_signal_direction) {
+SignalDirection StrToSignalDirection(std::string const &str_signal_direction) {
   SignalDirection signal_direction = INPUT;
   if (str_signal_direction == "INPUT") {
     signal_direction = INPUT;
@@ -262,7 +262,7 @@ std::string SignalDirectionStr(SignalDirection signal_direction) {
   return s;
 }
 
-SignalUse StrToSignalUse(std::string &str_signal_use) {
+SignalUse StrToSignalUse(std::string const &str_signal_use) {
   SignalUse signal_use = SIGNAL;
   if (str_signal_use == "SIGNAL") {
     signal_use = SIGNAL;
@@ -315,7 +315,7 @@ std::string SignalUseStr(SignalUse signal_use) {
   return s;
 }
 
-MacroClass StrToMacroClass(std::string &str_macro_class) {
+MacroClass StrToMacroClass(std::string const &str_macro_class) {
   MacroClass macro_class;
   if (str_macro_class == "CORE") {
     macro_class = CORE_;
