@@ -136,7 +136,7 @@ void SNet::SetName(std::string &name) {
 }
 
 void SNet::SetUse(SignalUse use) {
-  bool e = (use == GROUND || use == POWER);
+  bool e = (use == phydb::SignalUse::GROUND || use == phydb::SignalUse::POWER);
   PhyDBExpects(e, "special net use should be POWER or GROUND");
   use_ = use;
 }
@@ -176,7 +176,8 @@ std::vector<Polygon> &SNet::GetPolygonsRef() {
 }
 
 void SNet::Report() {
-  std::cout << "SNET: " << name_ << " use: " << use_ << "\n";
+  std::cout << "SNET: " << name_
+            << " use: " << SignalUseStr(use_) << "\n";
   for (auto p: paths_) {
     p.Report();
   }

@@ -44,7 +44,7 @@ std::vector<std::string> &Track::GetLayerNames() {
 }
 
 std::ostream &operator<<(std::ostream &os, const Track &t) {
-  os << "direction: " << XYDirectionToStr(t.direction_);
+  os << "direction: " << XYDirectionStr(t.direction_);
   os << " start: " << t.start_ << " numTracks:" << t.n_tracks_ << " step: "
      << t.step_;
 

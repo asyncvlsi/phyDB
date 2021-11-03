@@ -40,6 +40,14 @@ const std::string &Component::GetName() {
   return name_;
 }
 
+CompSource Component::GetSource() const {
+  return source_;
+}
+
+std::string Component::GetSourceStr() const {
+  return CompSourceStr(source_);
+}
+
 Macro *Component::GetMacro() {
   return macro_ptr_;
 }
@@ -48,8 +56,16 @@ PlaceStatus Component::GetPlacementStatus() {
   return place_status_;
 }
 
+std::string Component::GetPlacementStatusStr() const {
+  return PlaceStatusStr(place_status_);
+}
+
 CompOrient Component::GetOrientation() {
   return orient_;
+}
+
+std::string Component::GetOrientationStr() const {
+  return CompOrientStr(orient_);
 }
 
 Point2D<int> Component::GetLocation() {
@@ -58,8 +74,8 @@ Point2D<int> Component::GetLocation() {
 
 std::ostream &operator<<(std::ostream &os, const Component &c) {
   os << c.name_ << " " << c.macro_ptr_ << " "
-     << c.source_ << " " << PlaceStatusStr(c.place_status_) << " "
-     << CompOrientStr(c.orient_) << std::endl;
+     << c.GetSourceStr() << " " << c.GetPlacementStatusStr() << " "
+     << c.GetOrientationStr() << std::endl;
   os << "weight: " << c.weight_ << " location: " << c.location_ << std::endl;
   return os;
 }

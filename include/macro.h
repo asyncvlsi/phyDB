@@ -37,7 +37,7 @@ class Macro {
  private:
   std::string name_;
 
-  MacroClass class_ = CORE_;
+  MacroClass class_ = MacroClass::CORE;
 
   Point2D<double> origin_;
   Point2D<double> size_;

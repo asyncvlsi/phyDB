@@ -227,7 +227,7 @@ class Layer {
   int id_ = -1;
 
   //metal layer
-  MetalDirection direction_ = VERTICAL;
+  MetalDirection direction_ = MetalDirection::VERTICAL;
   double pitchx_ = -1;
   double pitchy_ = -1;
   double width_ = -1;

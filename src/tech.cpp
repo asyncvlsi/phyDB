@@ -320,7 +320,7 @@ void Tech::SetLefName(std::string const &lef_file_name) {
 
 void Tech::FindAllMetalLayers() {
   for (auto &layer: layers_) {
-    if (layer.GetType() == ROUTING) {
+    if (layer.GetType() == phydb::LayerType::ROUTING) {
       metal_layers_.emplace_back(&layer);
     }
   }
@@ -433,7 +433,7 @@ void Tech::SetCapacitanceUnit(bool from_tech_config, bool is_report) {
 
 void Tech::ReportLayersTechConfig() {
   for (auto &layer: layers_) {
-    if (layer.GetType() == ROUTING) {
+    if (layer.GetType() == phydb::LayerType::ROUTING) {
       auto tech_config = layer.GetLayerTechConfig();
       if (tech_config != nullptr) {
         tech_config->Report();

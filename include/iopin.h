@@ -39,8 +39,8 @@ class IOPin {
   Rect2D<int> rect_;
 
   Point2D<int> location_;
-  CompOrient orient_ = N;
-  PlaceStatus place_status_ = UNPLACED;
+  CompOrient orient_ = CompOrient::N;
+  PlaceStatus place_status_ = PlaceStatus::UNPLACED;
 
   IOPin() : id_(-1) {}
   IOPin(

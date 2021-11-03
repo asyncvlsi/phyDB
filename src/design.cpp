@@ -145,7 +145,8 @@ Component *Design::AddComponent(
     PlaceStatus place_status,
     int llx,
     int lly,
-    CompOrient orient
+    CompOrient orient,
+    CompSource source
 ) {
   PhyDBExpects(!IsComponentExisting(comp_name),
                "Component name_ exists, cannot use it again");
@@ -270,7 +271,7 @@ Net *Design::GetNetPtr(std::string const &net_name) {
 }
 
 SNet *Design::AddSNet(std::string const &net_name, SignalUse use) {
-  bool e = (use == GROUND || use == POWER);
+  bool e = (use == phydb::SignalUse::GROUND || use == phydb::SignalUse::POWER);
   PhyDBExpects(e, "special net use should be POWER or GROUND");
   int id = (int) snets_.size();
   snets_.emplace_back(net_name, use);

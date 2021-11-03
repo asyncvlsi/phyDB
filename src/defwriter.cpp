@@ -18,9 +18,17 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
+#include "defwriter.h"
+
 #include <ctime>
 
-#include "defwriter.h"
+#include <def/defrReader.hpp>
+#include <def/defwWriter.hpp>
+#include <def/defwWriterCalls.hpp>
+#include <lef/lefrReader.hpp>
+#include <lef/lefwWriter.hpp>
+#include <lef/lefwWriterCalls.hpp>
+
 #include "logging.h"
 
 namespace phydb {
@@ -85,15 +93,17 @@ int WriteRows(defwCallbackType_e type, defiUserData data) {
   int status;
   auto rows = ((PhyDB *) data)->GetRowVec();
   for (auto row: rows) {
-    status = defwRowStr(row.name_.c_str(),
-                        row.site_name_.c_str(),
-                        row.orig_x_,
-                        row.orig_y_,
-                        row.site_orient_.c_str(),
-                        row.num_x_,
-                        row.num_y_,
-                        row.step_x_,
-                        row.step_y_);
+    status = defwRowStr(
+        row.name_.c_str(),
+        row.site_name_.c_str(),
+        row.orig_x_,
+        row.orig_y_,
+        row.site_orient_.c_str(),
+        row.num_x_,
+        row.num_y_,
+        row.step_x_,
+        row.step_y_
+    );
   }
 
   return 0;
@@ -106,12 +116,14 @@ int WriteTracks(defwCallbackType_e type, defiUserData data) {
     const char **layer_names = new const char *[nlayers];
     for (int i = 0; i < nlayers; i++)
       layer_names[i] = track.GetLayerNames()[i].c_str();
-    defwTracks(XYDirectionToStr(track.GetDirection()).c_str(),
-               track.GetStart(),
-               track.GetNTracks(),
-               track.GetStep(),
-               nlayers,
-               layer_names);
+    defwTracks(
+        XYDirectionStr(track.GetDirection()).c_str(),
+        track.GetStart(),
+        track.GetNTracks(),
+        track.GetStep(),
+        nlayers,
+        layer_names
+    );
 
   }
   defwNewLine();
@@ -121,10 +133,12 @@ int WriteTracks(defwCallbackType_e type, defiUserData data) {
 int WriteGcellGrids(defwCallbackType_e type, defiUserData data) {
   auto gcell_grids = ((PhyDB *) data)->GetGcellGridsRef();
   for (auto gcellgrid: gcell_grids) {
-    defwGcellGrid(XYDirectionToStr(gcellgrid.GetDirection()).c_str(),
-                  gcellgrid.GetStart(),
-                  gcellgrid.GetNBoundaries(),
-                  gcellgrid.GetStep());
+    defwGcellGrid(
+        XYDirectionStr(gcellgrid.GetDirection()).c_str(),
+        gcellgrid.GetStart(),
+        gcellgrid.GetNBoundaries(),
+        gcellgrid.GetStep()
+    );
   }
   defwNewLine();
   return 0;
@@ -135,19 +149,22 @@ int WriteComponents(defwCallbackType_e type, defiUserData data) {
   defwStartComponents(components.size());
 
   for (auto comp: components) {
-    defwComponentStr(comp.GetName().c_str(),
-                     comp.GetMacro()->GetName().c_str(),
-                     0,
-                     NULL, NULL, NULL, NULL, NULL,
-                     0,
-                     NULL, NULL, NULL, NULL,
-                     PlaceStatusStr(comp.GetPlacementStatus()).c_str(),
-                     comp.GetLocation().x, comp.GetLocation().y,
-                     CompOrientStr(comp.GetOrientation()).c_str(),
-                     0,
-                     NULL,
-                     0, 0,
-                     0, 0);
+    defwComponentStr(
+        comp.GetName().c_str(),
+        comp.GetMacro()->GetName().c_str(),
+        0,
+        NULL, NULL, NULL, NULL,
+        comp.GetSourceStr().c_str(),
+        0,
+        NULL, NULL, NULL, NULL,
+        PlaceStatusStr(comp.GetPlacementStatus()).c_str(),
+        comp.GetLocation().x, comp.GetLocation().y,
+        CompOrientStr(comp.GetOrientation()).c_str(),
+        0,
+        NULL,
+        0, 0,
+        0, 0
+    );
   }
   defwEndComponents();
   return 0;
@@ -158,20 +175,21 @@ int WriteIOPins(defwCallbackType_e type, defiUserData data) {
   defwStartPins(iopins.size());
 
   for (auto pin: iopins) {
-    defwPinStr(pin.GetName().c_str(),
-               pin.GetNetName().c_str(),
-               0,
-               SignalDirectionStr(pin.GetDirection()).c_str(),
-               SignalUseStr(pin.GetUse()).c_str(),
-               PlaceStatusStr(pin.GetPlacementStatus()).c_str(),
-               pin.GetLocation().x,
-               pin.GetLocation().y,
-               CompOrientStr(pin.GetOrientation()).c_str(),
-               pin.GetLayerName().c_str(),
-               pin.GetRect().LLX(),
-               pin.GetRect().LLY(),
-               pin.GetRect().URX(),
-               pin.GetRect().URY()
+    defwPinStr(
+        pin.GetName().c_str(),
+        pin.GetNetName().c_str(),
+        0,
+        SignalDirectionStr(pin.GetDirection()).c_str(),
+        SignalUseStr(pin.GetUse()).c_str(),
+        PlaceStatusStr(pin.GetPlacementStatus()).c_str(),
+        pin.GetLocation().x,
+        pin.GetLocation().y,
+        CompOrientStr(pin.GetOrientation()).c_str(),
+        pin.GetLayerName().c_str(),
+        pin.GetRect().LLX(),
+        pin.GetRect().LLY(),
+        pin.GetRect().URX(),
+        pin.GetRect().URY()
     );
   }
   defwEndPins();
@@ -322,7 +340,7 @@ void Si2WriteDef(PhyDB *phy_db_ptr, std::string const &defFileName) {
 
   fprintf(f, "###########################\n");
   fprintf(f, "# Written by PhyDB at ");
-  fprintf(f, GetCurrentDateTime().c_str());
+  fprintf(f, "%s", GetCurrentDateTime().c_str());
   fprintf(f, "\n");
   fprintf(f, "###########################\n");
 

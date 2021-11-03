@@ -638,27 +638,32 @@ int getDefComponents(
   int llx = comp->placementX();
   int lly = comp->placementY();
 
-  PlaceStatus place_status = UNPLACED;
+  PlaceStatus place_status = phydb::PlaceStatus::UNPLACED;
   if (comp->isPlaced()) {
-    place_status = PLACED;
+    place_status = phydb::PlaceStatus::PLACED;
   } else if (comp->isFixed()) {
-    place_status = FIXED;
+    place_status = phydb::PlaceStatus::FIXED;
   } else if (comp->isUnplaced()) {
-    place_status = UNPLACED;
+    place_status = phydb::PlaceStatus::UNPLACED;
     llx = 0;
     lly = 0;
   } else if (comp->isCover()) {
-    place_status = COVER;
+    place_status = phydb::PlaceStatus::COVER;
   } else {
     llx = 0;
     lly = 0;
   }
 
   std::string orient;
-  if (place_status == UNPLACED) {
+  if (place_status == phydb::PlaceStatus::UNPLACED) {
     orient = "N";
   } else {
     orient = comp->placementOrientStr();
+  }
+
+  std::string source = "NETLIST";
+  if (comp->hasSource()) {
+    source = comp->source();
   }
 
   auto *phy_db_ptr = (PhyDB *) data;
@@ -668,7 +673,8 @@ int getDefComponents(
   phy_db_ptr->AddComponent(
       comp_name, macro_ptr,
       place_status, llx, lly,
-      StrToCompOrient(orient)
+      StrToCompOrient(orient),
+      StrToCompSource(source)
   );
 
   return 0;
@@ -697,24 +703,24 @@ int getDefIOPins(defrCallbackType_e type, defiPin *pin, defiUserData data) {
 
   int iopin_x = 0;
   int iopin_y = 0;
-  PlaceStatus place_status = UNPLACED;
-  CompOrient orient = N;
+  PlaceStatus place_status = phydb::PlaceStatus::UNPLACED;
+  CompOrient orient = phydb::CompOrient::N;
   if (pin->isPlaced()) {
-    place_status = PLACED;
+    place_status = phydb::PlaceStatus::PLACED;
     iopin_x = pin->placementX();
     iopin_y = pin->placementY();
     std::string str_orient(pin->orientStr());
     orient = StrToCompOrient(str_orient);
   } else if (pin->isUnplaced()) {
-    place_status = UNPLACED;
+    place_status = phydb::PlaceStatus::UNPLACED;
   } else if (pin->isFixed()) {
-    place_status = FIXED;
+    place_status = phydb::PlaceStatus::FIXED;
     iopin_x = pin->placementX();
     iopin_y = pin->placementY();
     std::string str_orient(pin->orientStr());
     orient = StrToCompOrient(str_orient);
   } else if (pin->isCover()) {
-    place_status = COVER;
+    place_status = phydb::PlaceStatus::COVER;
     iopin_x = pin->placementX();
     iopin_y = pin->placementY();
     std::string str_orient(pin->orientStr());
@@ -1120,17 +1126,17 @@ int LoadDefComponentLoc(defrCallbackType_e type,
   int llx = comp->placementX();
   int lly = comp->placementY();
 
-  PlaceStatus place_status = UNPLACED;
+  PlaceStatus place_status = phydb::PlaceStatus::UNPLACED;
   if (comp->isPlaced()) {
-    place_status = PLACED;
+    place_status = phydb::PlaceStatus::PLACED;
   } else if (comp->isFixed()) {
-    place_status = FIXED;
+    place_status = phydb::PlaceStatus::FIXED;
   } else if (comp->isUnplaced()) {
-    place_status = UNPLACED;
+    place_status = phydb::PlaceStatus::UNPLACED;
     llx = 0;
     lly = 0;
   } else if (comp->isCover()) {
-    place_status = COVER;
+    place_status = phydb::PlaceStatus::COVER;
   } else {
     llx = 0;
     lly = 0;

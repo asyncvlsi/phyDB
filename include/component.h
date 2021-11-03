@@ -34,7 +34,7 @@ class Component {
   int id_;
   std::string name_;
   Macro *macro_ptr_;
-  std::string source_;
+  CompSource source_;
   PlaceStatus place_status_;
   CompOrient orient_;
 
@@ -45,7 +45,7 @@ class Component {
   Component(
       std::string const &name,
       Macro *macroName,
-      std::string const &source,
+      CompSource source,
       PlaceStatus place_status,
       CompOrient orient,
       int weight,
@@ -66,20 +66,26 @@ class Component {
       CompOrient orient
   ) : name_(comp_name),
       macro_ptr_(macro_name),
+      source_(CompSource::NETLIST),
       place_status_(place_status),
       orient_(orient) {
     location_.x = llx;
     location_.y = lly;
   }
 
+  void SetSource(CompSource source);
   void SetPlacementStatus(PlaceStatus status);
   void SetOrientation(CompOrient orient);
   void SetLocation(int lx, int ly);
 
   const std::string &GetName();
+  CompSource GetSource() const;
+  std::string GetSourceStr() const;
   Macro *GetMacro();
   PlaceStatus GetPlacementStatus();
+  std::string GetPlacementStatusStr() const;
   CompOrient GetOrientation();
+  std::string GetOrientationStr() const;
   Point2D<int> GetLocation();
   int GetWeight() { return weight_; }
 };

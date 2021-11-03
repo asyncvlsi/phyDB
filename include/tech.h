@@ -65,7 +65,7 @@ class Tech {
   Layer *AddLayer(
       std::string const &layer_name,
       LayerType type,
-      MetalDirection direction = HORIZONTAL
+      MetalDirection direction = MetalDirection::HORIZONTAL
   );
   Layer *GetLayerPtr(std::string const &layer_name);
   int GetLayerId(std::string const &layer_name);

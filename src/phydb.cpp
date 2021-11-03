@@ -187,7 +187,8 @@ Component *PhyDB::AddComponent(
     PlaceStatus place_status,
     int llx,
     int lly,
-    CompOrient orient
+    CompOrient orient,
+    CompSource source
 ) {
   return design_.AddComponent(
       comp_name,
@@ -195,7 +196,8 @@ Component *PhyDB::AddComponent(
       place_status,
       llx,
       lly,
-      orient
+      orient,
+      source
   );
 }
 
@@ -490,7 +492,7 @@ SpecialMacroRectLayout *PhyDB::CreatePpNpMacroAndComponent(
 ) {
   std::string plus_filling_macro_name("circuitppnp");
   Macro *plus_filling_macro = AddMacro(plus_filling_macro_name);
-  plus_filling_macro->SetClass(COVER_);
+  plus_filling_macro->SetClass(MacroClass::COVER);
   plus_filling_macro->SetOrigin(0, 0);
   plus_filling_macro->SetSize(urx - llx, ury - lly);
 
@@ -498,10 +500,10 @@ SpecialMacroRectLayout *PhyDB::CreatePpNpMacroAndComponent(
   AddComponent(
       plus_filling_component_name,
       plus_filling_macro,
-      COVER,
+      PlaceStatus::COVER,
       llx,
       lly,
-      N
+      CompOrient::N
   );
   return design_.CreatePpNpMacroAndComponent(
       plus_filling_macro,
@@ -524,7 +526,7 @@ SpecialMacroRectLayout *PhyDB::CreateWellLayerMacroAndComponent(
 ) {
   std::string well_filling_macro_name("circuitwell");
   Macro *well_filling_macro = AddMacro(well_filling_macro_name);
-  well_filling_macro->SetClass(COVER_);
+  well_filling_macro->SetClass(MacroClass::COVER);
   well_filling_macro->SetOrigin(0, 0);
   well_filling_macro->SetSize(urx - llx, ury - lly);
 
@@ -532,10 +534,10 @@ SpecialMacroRectLayout *PhyDB::CreateWellLayerMacroAndComponent(
   AddComponent(
       well_filling_component_name,
       well_filling_macro,
-      COVER,
+      PlaceStatus::COVER,
       llx,
       lly,
-      N
+      CompOrient::N
   );
   return design_.CreateWellLayerMacroAndComponent(
       well_filling_macro,

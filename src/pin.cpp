@@ -45,7 +45,8 @@ SignalDirection Pin::GetDirection() {
 }
 
 bool Pin::IsDriverPin() const {
-  return direction_ == OUTPUT || direction_ == OUTPUT_TRISTATE;
+  return direction_ == phydb::SignalDirection::OUTPUT
+      || direction_ == phydb::SignalDirection::OUTPUT_TRISTATE;
 }
 
 SignalUse Pin::GetUse() {

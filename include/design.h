@@ -125,7 +125,8 @@ class Design {
       PlaceStatus place_status,
       int llx,
       int lly,
-      CompOrient orient
+      CompOrient orient,
+      CompSource source
   );
   Component *GetComponentPtr(std::string const &comp_name);
   std::vector<Component> &GetComponentsRef() { return components_; }

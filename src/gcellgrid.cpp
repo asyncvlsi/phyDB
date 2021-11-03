@@ -24,7 +24,7 @@
 namespace phydb {
 
 void GcellGrid::SetDirection(XYDirection direction) {
-  bool e = (direction == X) || (direction == Y);
+  bool e = (direction == XYDirection::X) || (direction == XYDirection::Y);
   PhyDBExpects(e, "gcellgrid direction is not X or Y");
   direction_ = direction;
 }
@@ -59,7 +59,7 @@ int GcellGrid::GetStep() const {
 
 void GcellGrid::Report() const {
   std::cout << "GCELLGRID: "
-            << " dir: " << direction_
+            << " dir: " << XYDirectionStr(direction_)
             << " start: " << start_
             << " numBoundaries: " << numBoundaries_
             << " step: " << step_

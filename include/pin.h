@@ -38,8 +38,13 @@ class Pin {
   std::vector<LayerRect> layer_rects_;
 
  public:
-  Pin() : name_(""), direction_(INPUT), use_(SIGNAL), shape_(""),
-          antenna_diff_area_layer_(""), antenna_diff_area_(0) {}
+  Pin() :
+      name_(""),
+      direction_(SignalDirection::INPUT),
+      use_(SignalUse::SIGNAL),
+      shape_(""),
+      antenna_diff_area_layer_(""),
+      antenna_diff_area_(0) {}
   Pin(std::string const &name, SignalDirection direction, SignalUse use) :
       name_(name), direction_(direction), use_(use) {}
   Pin(

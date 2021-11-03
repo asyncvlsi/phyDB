@@ -18,19 +18,20 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #include "enumtypes.h"
 
-#include "iostream"
+#include <iostream>
+
+#include "logging.h"
 
 namespace phydb {
 
 LayerType StrToLayerType(std::string const &str_layer_type) {
-  LayerType layer_type = ROUTING;
+  LayerType layer_type = phydb::LayerType::ROUTING;
   if (str_layer_type == "ROUTING") {
-    layer_type = ROUTING;
+    layer_type = phydb::LayerType::ROUTING;
   } else if (str_layer_type == "CUT") {
-    layer_type = CUT;
+    layer_type = phydb::LayerType::CUT;
   } else {
     std::cout << "Unknown LayerType: " << str_layer_type << std::endl;
     exit(1);
@@ -41,9 +42,9 @@ LayerType StrToLayerType(std::string const &str_layer_type) {
 std::string LayerTypeStr(LayerType layer_type) {
   std::string s;
   switch (layer_type) {
-    case ROUTING: { s = "ROUTING"; }
+    case phydb::LayerType::ROUTING: { s = "ROUTING"; }
       break;
-    case CUT: { s = "CUT"; }
+    case phydb::LayerType::CUT: { s = "CUT"; }
       break;
     default: {
       std::cout << "LayerType error! This should never happen!" << std::endl;
@@ -54,15 +55,15 @@ std::string LayerTypeStr(LayerType layer_type) {
 }
 
 MetalDirection StrToMetalDirection(std::string const &str_metal_direction) {
-  MetalDirection metal_direction = HORIZONTAL;
+  MetalDirection metal_direction = phydb::MetalDirection::HORIZONTAL;
   if (str_metal_direction == "HORIZONTAL") {
-    metal_direction = HORIZONTAL;
+    metal_direction = phydb::MetalDirection::HORIZONTAL;
   } else if (str_metal_direction == "VERTICAL") {
-    metal_direction = VERTICAL;
+    metal_direction = phydb::MetalDirection::VERTICAL;
   } else if (str_metal_direction == "DIAG45") {
-    metal_direction = DIAG45;
+    metal_direction = phydb::MetalDirection::DIAG45;
   } else if (str_metal_direction == "DIAG135") {
-    metal_direction = DIAG135;
+    metal_direction = phydb::MetalDirection::DIAG135;
   } else {
     std::cout << "Unknown MetalLayer direction: " << str_metal_direction
               << std::endl;
@@ -74,13 +75,13 @@ MetalDirection StrToMetalDirection(std::string const &str_metal_direction) {
 std::string MetalDirectionStr(MetalDirection metal_direction) {
   std::string s;
   switch (metal_direction) {
-    case HORIZONTAL: { s = "HORIZONTAL"; }
+    case phydb::MetalDirection::HORIZONTAL: { s = "HORIZONTAL"; }
       break;
-    case VERTICAL: { s = "VERTICAL"; }
+    case phydb::MetalDirection::VERTICAL: { s = "VERTICAL"; }
       break;
-    case DIAG45: { s = "DIAG45"; }
+    case phydb::MetalDirection::DIAG45: { s = "DIAG45"; }
       break;
-    case DIAG135: { s = "DIAG135"; }
+    case phydb::MetalDirection::DIAG135: { s = "DIAG135"; }
       break;
     default: {
       std::cout << "MetalLayer direction error! This should never happen!"
@@ -104,14 +105,14 @@ XYDirection StrToXYDirection(std::string const &direction) {
   return dir;
 }
 
-std::string XYDirectionToStr(XYDirection dir) {
+std::string XYDirectionStr(XYDirection dir) {
   std::string direction = "X";
   switch (dir) {
-    case X: {
+    case XYDirection::X: {
       direction = "X";
       break;
     }
-    case Y: {
+    case XYDirection::Y: {
       direction = "Y";
       break;
     }
@@ -123,30 +124,26 @@ std::string XYDirectionToStr(XYDirection dir) {
   return direction;
 }
 
-std::string XYDirectionStr(XYDirection dir) {
-  return XYDirectionToStr(dir);
-}
-
 CompOrient StrToCompOrient(std::string const &str_orient) {
-  CompOrient orient = N;
+  CompOrient orient = CompOrient::N;
   if (str_orient == "N" || str_orient == "R0") {
-    orient = N;
+    orient = CompOrient::N;
   } else if (str_orient == "S" || str_orient == "R180") {
-    orient = S;
+    orient = CompOrient::S;
   } else if (str_orient == "W" || str_orient == "R90") {
-    orient = W;
+    orient = CompOrient::W;
   } else if (str_orient == "E" || str_orient == "R270") {
-    orient = E;
+    orient = CompOrient::E;
   } else if (str_orient == "FN" || str_orient == "MY") {
-    orient = FN;
+    orient = CompOrient::FN;
   } else if (str_orient == "FS" || str_orient == "MX") {
-    orient = FS;
+    orient = CompOrient::FS;
   } else if (str_orient == "FW" || str_orient == "MX90"
       || str_orient == "MXR90") {
-    orient = FW;
+    orient = CompOrient::FW;
   } else if (str_orient == "FE" || str_orient == "MY90"
       || str_orient == "MYR90") {
-    orient = FE;
+    orient = CompOrient::FE;
   } else {
     std::cout << "Unknown Block orientation: " << str_orient << std::endl;
     exit(1);
@@ -157,21 +154,21 @@ CompOrient StrToCompOrient(std::string const &str_orient) {
 std::string CompOrientStr(CompOrient orient) {
   std::string s;
   switch (orient) {
-    case N: { s = "N"; }
+    case CompOrient::N: { s = "N"; }
       break;
-    case S: { s = "S"; }
+    case CompOrient::S: { s = "S"; }
       break;
-    case W: { s = "W"; }
+    case CompOrient::W: { s = "W"; }
       break;
-    case E: { s = "E"; }
+    case CompOrient::E: { s = "E"; }
       break;
-    case FN: { s = "FN"; }
+    case CompOrient::FN: { s = "FN"; }
       break;
-    case FS: { s = "FS"; }
+    case CompOrient::FS: { s = "FS"; }
       break;
-    case FW: { s = "FW"; }
+    case CompOrient::FW: { s = "FW"; }
       break;
-    case FE: { s = "FE"; }
+    case CompOrient::FE: { s = "FE"; }
       break;
     default: {
       std::cout << "Block orientation error! This should never happen!"
@@ -182,17 +179,50 @@ std::string CompOrientStr(CompOrient orient) {
   return s;
 }
 
+CompSource StrToCompSource(std::string const &str_comp_source) {
+  if (str_comp_source == "NETLIST") {
+    return CompSource::NETLIST;
+  } else if (str_comp_source == "DIST") {
+    return CompSource::DIST;
+  } else if (str_comp_source == "USER") {
+    return CompSource::USER;
+  } else if (str_comp_source == "TIMING") {
+    return CompSource::TIMING;
+  } else {
+    PhyDBExpects(false, "Unknown component source");
+  }
+  return CompSource::NETLIST;
+}
+
+std::string CompSourceStr(CompSource comp_source) {
+  std::string res;
+  switch (comp_source) {
+    case CompSource::NETLIST: { res = "NETLIST"; }
+      break;
+    case CompSource::DIST: { res = "DIST"; }
+      break;
+    case CompSource::USER: { res = "USER"; }
+      break;
+    case CompSource::TIMING: { res = "TIMING"; }
+      break;
+    default: {
+      PhyDBExpects(false, "This should never happen");
+    }
+  }
+  return res;
+}
+
 PlaceStatus StrToPlaceStatus(std::string const &str_place_status) {
-  PlaceStatus place_status = UNPLACED;
+  PlaceStatus place_status = PlaceStatus::UNPLACED;
   if (str_place_status == "COVER") {
-    place_status = COVER;
+    place_status = PlaceStatus::COVER;
   } else if (str_place_status == "FIXED" || str_place_status == "LOCKED"
       || str_place_status == "FIRM") {
-    place_status = FIXED;
+    place_status = PlaceStatus::FIXED;
   } else if (str_place_status == "PLACED" || str_place_status == "SUGGESTED") {
-    place_status = PLACED;
+    place_status = PlaceStatus::PLACED;
   } else if (str_place_status == "UNPLACED" || str_place_status == "NONE") {
-    place_status = UNPLACED;
+    place_status = PlaceStatus::UNPLACED;
   } else {
     std::cout << "Unknown placement status: " << str_place_status << std::endl;
     exit(1);
@@ -203,13 +233,13 @@ PlaceStatus StrToPlaceStatus(std::string const &str_place_status) {
 std::string PlaceStatusStr(PlaceStatus place_status) {
   std::string s;
   switch (place_status) {
-    case COVER: { s = "COVER"; }
+    case PlaceStatus::COVER: { s = "COVER"; }
       break;
-    case FIXED: { s = "FIXED"; }
+    case PlaceStatus::FIXED: { s = "FIXED"; }
       break;
-    case PLACED: { s = "PLACED"; }
+    case PlaceStatus::PLACED: { s = "PLACED"; }
       break;
-    case UNPLACED: { s = "UNPLACED"; }
+    case PlaceStatus::UNPLACED: { s = "UNPLACED"; }
       break;
     default: {
       std::cout << "Unit placement state error! This should never happen!"
@@ -221,17 +251,17 @@ std::string PlaceStatusStr(PlaceStatus place_status) {
 }
 
 SignalDirection StrToSignalDirection(std::string const &str_signal_direction) {
-  SignalDirection signal_direction = INPUT;
+  SignalDirection signal_direction = SignalDirection::INPUT;
   if (str_signal_direction == "INPUT") {
-    signal_direction = INPUT;
+    signal_direction = SignalDirection::INPUT;
   } else if (str_signal_direction == "OUTPUT") {
-    signal_direction = OUTPUT;
+    signal_direction = SignalDirection::OUTPUT;
   } else if (str_signal_direction == "INOUT") {
-    signal_direction = INOUT;
+    signal_direction = SignalDirection::INOUT;
   } else if (str_signal_direction == "FEEDTHRU") {
-    signal_direction = FEEDTHRU;
+    signal_direction = SignalDirection::FEEDTHRU;
   } else if (str_signal_direction == "OUTPUT TRISTATE") {
-    signal_direction = OUTPUT_TRISTATE;
+    signal_direction = SignalDirection::OUTPUT_TRISTATE;
   } else {
     std::cout << "Unknown SignalDirection: " << str_signal_direction
               << std::endl;
@@ -243,15 +273,15 @@ SignalDirection StrToSignalDirection(std::string const &str_signal_direction) {
 std::string SignalDirectionStr(SignalDirection signal_direction) {
   std::string s;
   switch (signal_direction) {
-    case INPUT: { s = "INPUT"; }
+    case SignalDirection::INPUT: { s = "INPUT"; }
       break;
-    case OUTPUT: { s = "OUTPUT"; }
+    case SignalDirection::OUTPUT: { s = "OUTPUT"; }
       break;
-    case INOUT: { s = "INOUT"; }
+    case SignalDirection::INOUT: { s = "INOUT"; }
       break;
-    case FEEDTHRU: { s = "FEEDTHRU"; }
+    case SignalDirection::FEEDTHRU: { s = "FEEDTHRU"; }
       break;
-    case OUTPUT_TRISTATE: { s = "OUTPUT TRISTATE"; }
+    case SignalDirection::OUTPUT_TRISTATE: { s = "OUTPUT TRISTATE"; }
       break;
     default: {
       std::cout << "IOPIN signal direction error! This should never happen!"
@@ -263,23 +293,23 @@ std::string SignalDirectionStr(SignalDirection signal_direction) {
 }
 
 SignalUse StrToSignalUse(std::string const &str_signal_use) {
-  SignalUse signal_use = SIGNAL;
+  SignalUse signal_use = SignalUse::SIGNAL;
   if (str_signal_use == "SIGNAL") {
-    signal_use = SIGNAL;
+    signal_use = SignalUse::SIGNAL;
   } else if (str_signal_use == "POWER") {
-    signal_use = POWER;
+    signal_use = SignalUse::POWER;
   } else if (str_signal_use == "GROUND") {
-    signal_use = GROUND;
+    signal_use = SignalUse::GROUND;
   } else if (str_signal_use == "CLOCK") {
-    signal_use = CLOCK;
+    signal_use = SignalUse::CLOCK;
   } else if (str_signal_use == "TIEOFF") {
-    signal_use = TIEOFF;
+    signal_use = SignalUse::TIEOFF;
   } else if (str_signal_use == "ANALOG") {
-    signal_use = ANALOG;
+    signal_use = SignalUse::ANALOG;
   } else if (str_signal_use == "SCAN") {
-    signal_use = SCAN;
+    signal_use = SignalUse::SCAN;
   } else if (str_signal_use == "RESET") {
-    signal_use = RESET;
+    signal_use = SignalUse::RESET;
   } else {
     std::cout << "Unknown SignalUse: " << str_signal_use << std::endl;
     exit(0);
@@ -290,21 +320,21 @@ SignalUse StrToSignalUse(std::string const &str_signal_use) {
 std::string SignalUseStr(SignalUse signal_use) {
   std::string s;
   switch (signal_use) {
-    case SIGNAL: { s = "SIGNAL"; }
+    case SignalUse::SIGNAL: { s = "SIGNAL"; }
       break;
-    case POWER: { s = "POWER"; }
+    case SignalUse::POWER: { s = "POWER"; }
       break;
-    case GROUND: { s = "GROUND"; }
+    case SignalUse::GROUND: { s = "GROUND"; }
       break;
-    case CLOCK: { s = "CLOCK"; }
+    case SignalUse::CLOCK: { s = "CLOCK"; }
       break;
-    case TIEOFF: { s = "TIEOFF"; }
+    case SignalUse::TIEOFF: { s = "TIEOFF"; }
       break;
-    case ANALOG: { s = "ANALOG"; }
+    case SignalUse::ANALOG: { s = "ANALOG"; }
       break;
-    case SCAN: { s = "SCAN"; }
+    case SignalUse::SCAN: { s = "SCAN"; }
       break;
-    case RESET: { s = "RESET"; }
+    case SignalUse::RESET: { s = "RESET"; }
       break;
     default: {
       std::cout << "IOPIN signal use error! This should never happen!"
@@ -318,57 +348,57 @@ std::string SignalUseStr(SignalUse signal_use) {
 MacroClass StrToMacroClass(std::string const &str_macro_class) {
   MacroClass macro_class;
   if (str_macro_class == "CORE") {
-    macro_class = CORE_;
+    macro_class = MacroClass::CORE;
   } else if (str_macro_class == "CORE WELLTAP") {
-    macro_class = CORE_WELLTAP;
+    macro_class = MacroClass::CORE_WELLTAP;
   } else if (str_macro_class == "CORE FEEDTHRU") {
-    macro_class = CORE_FEEDTHRU;
+    macro_class = MacroClass::CORE_FEEDTHRU;
   } else if (str_macro_class == "CORE TIEHIGH") {
-    macro_class = CORE_TIEHIGH;
+    macro_class = MacroClass::CORE_TIEHIGH;
   } else if (str_macro_class == "CORE TIELOW") {
-    macro_class = CORE_TIELOW;
+    macro_class = MacroClass::CORE_TIELOW;
   } else if (str_macro_class == "CORE SPACER") {
-    macro_class = CORE_SPACER;
+    macro_class = MacroClass::CORE_SPACER;
   } else if (str_macro_class == "CORE ANTENNACELL") {
-    macro_class = CORE_ANTENNACELL;
+    macro_class = MacroClass::CORE_ANTENNACELL;
   } else if (str_macro_class == "COVER") {
-    macro_class = COVER_;
+    macro_class = MacroClass::COVER;
   } else if (str_macro_class == "COVER BUMP") {
-    macro_class = COVER_BUMP;
+    macro_class = MacroClass::COVER_BUMP;
   } else if (str_macro_class == "RING") {
-    macro_class = RING_;
+    macro_class = MacroClass::RING;
   } else if (str_macro_class == "BLOCK") {
-    macro_class = BLOCK_;
+    macro_class = MacroClass::BLOCK;
   } else if (str_macro_class == "BLOCK BLACKBOX") {
-    macro_class = BLOCK_BLACKBOX;
+    macro_class = MacroClass::BLOCK_BLACKBOX;
   } else if (str_macro_class == "BLOCK SOFT") {
-    macro_class = BLOCK_SOFT;
+    macro_class = MacroClass::BLOCK_SOFT;
   } else if (str_macro_class == "PAD") {
-    macro_class = PAD_;
+    macro_class = MacroClass::PAD;
   } else if (str_macro_class == "PAD INPUT") {
-    macro_class = PAD_INPUT;
+    macro_class = MacroClass::PAD_INPUT;
   } else if (str_macro_class == "PAD OUTPUT") {
-    macro_class = PAD_OUTPUT;
+    macro_class = MacroClass::PAD_OUTPUT;
   } else if (str_macro_class == "PAD INOUT") {
-    macro_class = PAD_INOUT;
+    macro_class = MacroClass::PAD_INOUT;
   } else if (str_macro_class == "PAD POWER") {
-    macro_class = PAD_POWER;
+    macro_class = MacroClass::PAD_POWER;
   } else if (str_macro_class == "PAD SPACER") {
-    macro_class = PAD_SPACER;
+    macro_class = MacroClass::PAD_SPACER;
   } else if (str_macro_class == "PAD AREAIO") {
-    macro_class = PAD_AREAIO;
+    macro_class = MacroClass::PAD_AREAIO;
   } else if (str_macro_class == "ENDCAP PRE") {
-    macro_class = ENDCAP_PRE;
+    macro_class = MacroClass::ENDCAP_PRE;
   } else if (str_macro_class == "ENDCAP POST") {
-    macro_class = ENDCAP_POST;
+    macro_class = MacroClass::ENDCAP_POST;
   } else if (str_macro_class == "ENDCAP TOPLEFT") {
-    macro_class = ENDCAP_TOPLEFT;
+    macro_class = MacroClass::ENDCAP_TOPLEFT;
   } else if (str_macro_class == "ENDCAP TOPRIGHT") {
-    macro_class = ENDCAP_TOPRIGHT;
+    macro_class = MacroClass::ENDCAP_TOPRIGHT;
   } else if (str_macro_class == "ENDCAP BOTTOMLEFT") {
-    macro_class = ENDCAP_BOTTOMLEFT;
+    macro_class = MacroClass::ENDCAP_BOTTOMLEFT;
   } else if (str_macro_class == "ENDCAP BOTTOMRIGHT") {
-    macro_class = ENDCAP_BOTTOMRIGHT;
+    macro_class = MacroClass::ENDCAP_BOTTOMRIGHT;
   } else {
     std::cout << "Unknown MacroClass: " << str_macro_class << std::endl;
     exit(0);
@@ -379,57 +409,57 @@ MacroClass StrToMacroClass(std::string const &str_macro_class) {
 std::string MacroClassStr(MacroClass macro_class) {
   std::string s;
   switch (macro_class) {
-    case COVER_: { s = "COVER"; }
+    case MacroClass::COVER: { s = "COVER"; }
       break;
-    case COVER_BUMP: { s = "COVER BUMP"; }
+    case MacroClass::COVER_BUMP: { s = "COVER BUMP"; }
       break;
-    case RING_: { s = "RING"; }
+    case MacroClass::RING: { s = "RING"; }
       break;
-    case BLOCK_: { s = "BLOCK"; }
+    case MacroClass::BLOCK: { s = "BLOCK"; }
       break;
-    case BLOCK_BLACKBOX: { s = "BLOCK BLACKBOX"; }
+    case MacroClass::BLOCK_BLACKBOX: { s = "BLOCK BLACKBOX"; }
       break;
-    case BLOCK_SOFT: { s = "BLOCK SOFT"; }
+    case MacroClass::BLOCK_SOFT: { s = "BLOCK SOFT"; }
       break;
-    case PAD_: { s = "PAD"; }
+    case MacroClass::PAD: { s = "PAD"; }
       break;
-    case PAD_INPUT: { s = "PAD INPUT"; }
+    case MacroClass::PAD_INPUT: { s = "PAD INPUT"; }
       break;
-    case PAD_OUTPUT: { s = "PAD OUTPUT"; }
+    case MacroClass::PAD_OUTPUT: { s = "PAD OUTPUT"; }
       break;
-    case PAD_INOUT: { s = "PAD INOUT"; }
+    case MacroClass::PAD_INOUT: { s = "PAD INOUT"; }
       break;
-    case PAD_POWER: { s = "PAD POWER"; }
+    case MacroClass::PAD_POWER: { s = "PAD POWER"; }
       break;
-    case PAD_SPACER: { s = "PAD SPACER"; }
+    case MacroClass::PAD_SPACER: { s = "PAD SPACER"; }
       break;
-    case PAD_AREAIO: { s = "PAD AREAIO"; }
+    case MacroClass::PAD_AREAIO: { s = "PAD AREAIO"; }
       break;
-    case CORE_: { s = "CORE"; }
+    case MacroClass::CORE: { s = "CORE"; }
       break;
-    case CORE_FEEDTHRU: { s = "CORE FEEDTHRU"; }
+    case MacroClass::CORE_FEEDTHRU: { s = "CORE FEEDTHRU"; }
       break;
-    case CORE_TIEHIGH: { s = "CORE TIEHIGH"; }
+    case MacroClass::CORE_TIEHIGH: { s = "CORE TIEHIGH"; }
       break;
-    case CORE_TIELOW: { s = "CORE TIELOW"; }
+    case MacroClass::CORE_TIELOW: { s = "CORE TIELOW"; }
       break;
-    case CORE_SPACER: { s = "CORE SPACER"; }
+    case MacroClass::CORE_SPACER: { s = "CORE SPACER"; }
       break;
-    case CORE_ANTENNACELL: { s = "CORE ANTENNACELL"; }
+    case MacroClass::CORE_ANTENNACELL: { s = "CORE ANTENNACELL"; }
       break;
-    case CORE_WELLTAP: { s = "CORE WELLTAP"; }
+    case MacroClass::CORE_WELLTAP: { s = "CORE WELLTAP"; }
       break;
-    case ENDCAP_PRE: { s = "ENDCAP PRE"; }
+    case MacroClass::ENDCAP_PRE: { s = "ENDCAP PRE"; }
       break;
-    case ENDCAP_POST: { s = "ENDCAP POST"; }
+    case MacroClass::ENDCAP_POST: { s = "ENDCAP POST"; }
       break;
-    case ENDCAP_TOPLEFT: { s = "ENDCAP TOPLEFT"; }
+    case MacroClass::ENDCAP_TOPLEFT: { s = "ENDCAP TOPLEFT"; }
       break;
-    case ENDCAP_TOPRIGHT: { s = "ENDCAP TOPRIGHT"; }
+    case MacroClass::ENDCAP_TOPRIGHT: { s = "ENDCAP TOPRIGHT"; }
       break;
-    case ENDCAP_BOTTOMLEFT: { s = "ENDCAP BOTTOMLEFT"; }
+    case MacroClass::ENDCAP_BOTTOMLEFT: { s = "ENDCAP BOTTOMLEFT"; }
       break;
-    case ENDCAP_BOTTOMRIGHT: { s = "ENDCAP BOTTOMRIGHT"; }
+    case MacroClass::ENDCAP_BOTTOMRIGHT: { s = "ENDCAP BOTTOMRIGHT"; }
       break;
     default: {
       std::cout << "IOPIN signal use error! This should never happen!"

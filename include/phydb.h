@@ -58,7 +58,7 @@ class PhyDB {
   Layer *AddLayer(
       std::string const &layer_name,
       LayerType type,
-      MetalDirection direction = HORIZONTAL
+      MetalDirection direction = MetalDirection::HORIZONTAL
   );
   Layer *GetLayerPtr(std::string const &layer_name);
   std::vector<Layer> &GetLayersRef();
@@ -126,7 +126,8 @@ class PhyDB {
       PlaceStatus place_status,
       int llx,
       int lly,
-      CompOrient orient
+      CompOrient orient,
+      CompSource source = CompSource::NETLIST
   );
   Component *GetComponentPtr(std::string const &comp_name);
   int GetComponentId(std::string const &comp_name);
