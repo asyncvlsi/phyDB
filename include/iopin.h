@@ -73,7 +73,7 @@ class IOPin {
       place_status_(status) {}
 
   void SetNetName(std::string const &net_name);
-  void SetShape(std::string &layer_name, int lx, int ly, int ux, int uy);
+  void SetShape(std::string const &layer_name, int lx, int ly, int ux, int uy);
   void SetPlacement(
       PlaceStatus place_status,
       int x,

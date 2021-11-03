@@ -27,15 +27,17 @@ void IOPin::SetNetName(std::string const &net_name) {
   net_name_ = net_name;
 }
 
-void IOPin::SetShape(std::string &layer_name, int lx, int ly, int ux, int uy) {
+void IOPin::SetShape(std::string const &layer_name, int lx, int ly, int ux, int uy) {
   layer_name_ = layer_name;
   rect_.Set(lx, ly, ux, uy);
 }
 
-void IOPin::SetPlacement(PlaceStatus place_status,
-                         int x,
-                         int y,
-                         CompOrient orient) {
+void IOPin::SetPlacement(
+    PlaceStatus place_status,
+    int x,
+    int y,
+    CompOrient orient
+) {
   place_status_ = place_status;
   location_.x = x;
   location_.y = y;
