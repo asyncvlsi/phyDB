@@ -690,9 +690,10 @@ int getDefIOPins(defrCallbackType_e type, defiPin *pin, defiUserData data) {
   std::string signal_direction;
   if (pin->hasDirection())
     signal_direction = std::string(pin->direction());
-  std::string signal_use;
-  if (pin->hasUse())
+  std::string signal_use = "SIGNAL";
+  if (pin->hasUse()) {
     signal_use = std::string(pin->use());
+  }
 
   auto *phy_db_ptr = (PhyDB *) data;
   IOPin *io_pin_ptr = phy_db_ptr->AddIoPin(
