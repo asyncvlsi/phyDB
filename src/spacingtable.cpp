@@ -117,6 +117,27 @@ double SpacingTable::GetSpacingForWidth(double width) const {
   return GetSpacingAt(n_col_ - 1, i);//for wire of infinite length
 }
 
+double SpacingTable::GetSpacingFor(double w, double l) const {
+   assert(w > 0 && l > 0);
+   int col = 0, row = 0;
+   for(; row < n_row_ - 1; row++) {
+      if(w >= width_[row] && w < width_[row + 1])
+         break;
+   }
+   if(w >= width_[n_row_ - 1])
+      row = n_row_ - 1;
+
+   for(; col < n_col_ - 1; col++) {
+      if(l >= parallel_run_length_[col] && l < parallel_run_length_[col + 1]) 
+	  break;
+   }
+   if(l >= parallel_run_length_[n_col_ - 1])
+      col = n_col_ - 1;
+
+   return GetSpacingAt(col, row);
+
+}
+
 std::ostream &operator<<(std::ostream &os, const SpacingTable &st) {
   int nCol = st.GetNCol();
   int nRow = st.GetNRow();
