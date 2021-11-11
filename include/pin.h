@@ -66,8 +66,6 @@ class Pin {
 
   void SetName(std::string &name);
   void SetUse(SignalUse &use);
-  void SetLayerRect(std::vector<LayerRect>);
-
   LayerRect *AddLayerRect(std::string &layer_name);
 
   const std::string &GetName();
@@ -76,6 +74,7 @@ class Pin {
   SignalUse GetUse();
   std::vector<LayerRect> &GetLayerRectRef();
   std::vector<LayerRect> GetLayerRectCpy();
+  Rect2D<double> GetBoundingBox();
 
   friend std::ostream &operator<<(std::ostream &, const Pin &);
 };

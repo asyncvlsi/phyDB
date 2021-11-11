@@ -18,8 +18,9 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #include "pin.h"
+
+#include <cfloat>
 
 namespace phydb {
 
@@ -59,6 +60,23 @@ std::vector<LayerRect> &Pin::GetLayerRectRef() {
 
 std::vector<LayerRect> Pin::GetLayerRectCpy() {
   return layer_rects_;
+}
+
+Rect2D<double> Pin::GetBoundingBox() {
+  PhyDBExpects(!layer_rects_.empty(),
+               "Compute bounding box for 0 layer_rects?");
+  double min_x = DBL_MAX;
+  double min_y = DBL_MAX;
+  double max_x = -DBL_MAX;
+  double max_y = -DBL_MAX;
+  for (auto &layer_rect: layer_rects_) {
+    auto rect = layer_rect.GetBoundingBox();
+    min_x = std::min(min_x, rect.LLX());
+    min_y = std::min(min_y, rect.LLY());
+    max_x = std::max(max_x, rect.URX());
+    max_y = std::max(max_y, rect.URY());
+  }
+  return {min_x, min_y, max_x, max_y};
 }
 
 std::ostream &operator<<(std::ostream &os, const Pin &p) {

@@ -125,25 +125,26 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
     exit(1);
   }
 
-  Macro &last_macro =
-      phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); // last macro
+  // last macro
+  Macro &last_macro = phy_db_ptr->GetTechPtr()->GetMacrosRef().back();
 
-  std::string macro_name = last_macro.GetName();
   std::string pin_name(pin->name());
   std::string pin_direction(pin->direction());
   std::string pin_use(pin->use());
-  Pin *pin_ptr = last_macro.AddPin(pin_name,
-                                   StrToSignalDirection(pin_direction),
-                                   StrToSignalUse(pin_use));
+  Pin *pin_ptr = last_macro.AddPin(
+      pin_name,
+      StrToSignalDirection(pin_direction),
+      StrToSignalUse(pin_use)
+  );
 
   int numPorts = pin->numPorts();
-  PhyDBExpects(numPorts > 0,
-               "No physical pins, Macro: " + last_macro.GetName() + ", pin: "
-                   + pin_name);
+  if (numPorts <= 0) {
+    PhyDBExpects(false, "No physical ports? Macro: " +
+        last_macro.GetName() + ", pin: " + pin_name);
+  }
 
   for (int i = 0; i < numPorts; ++i) {
     int numItems = pin->port(i)->numItems();
-
     LayerRect *layer_rect_ptr = nullptr;
     for (int j = 0; j < numItems; ++j) {
       int itemType = pin->port(i)->itemType(j);
@@ -155,19 +156,16 @@ int getLefPins(lefrCallbackType_e type, lefiPin *pin, lefiUserData data) {
         double y1 = pin->port(i)->getRect(j)->yl;
         double x2 = pin->port(i)->getRect(j)->xh;
         double y2 = pin->port(i)->getRect(j)->yh;
-        PhyDBExpects(layer_rect_ptr != nullptr,
-                     "unexpected error in getLefPins()");
+        PhyDBExpects(layer_rect_ptr != nullptr, "unexpected error");
         layer_rect_ptr->AddRect(
             std::min(x1, x2),
             std::min(y1, y2),
             std::max(x1, x2),
             std::max(y1, y2)
         );
-
       } else {
         std::cout << "unsupported lefiGeometries!\n";
         continue;
-        // exit(2);
       }
     }
   }
@@ -286,9 +284,8 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
     }
 
     if (layer->numProps() > 1) {
-      std::cout << "Error: enable to handle more than one properties:"
+      std::cout << "ignore some unsupported properties for layer:"
                 << layer->name() << std::endl;
-      exit(1);
     }
     for (int i = 0; i < layer->numProps(); i++) {
       if (std::string(layer->propName(i)) == "LEF58_CORNERSPACING"
@@ -296,8 +293,7 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
         getLefCornerSpacing(data, layer->propValue(i));
       } else {
         std::cout << "WARNING: UNSUPPORTED PROPERTY: "
-                  << layer->propName(i)
-                  << "\n";
+                  << layer->propName(i) << "\n";
       }
     }
 
@@ -367,8 +363,8 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
               influence->spacing(entry));
         }
       } else {
-        std::cout << "unsupported spacing table!" << std::endl;
-        exit(1);
+        std::cout << "ignore unsupported spacing table!" << std::endl;
+        //exit(1);
       }
     }
 

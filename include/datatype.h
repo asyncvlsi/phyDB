@@ -236,29 +236,19 @@ class LayerRect {
 
   LayerRect() : layer_name_("") {}
   explicit LayerRect(std::string &layer_name) : layer_name_(layer_name) {}
-  LayerRect(const std::string &layerName,
-            const std::vector<Rect2D<double>> &rects) :
-      layer_name_(layerName),
+  LayerRect(
+      const std::string &layer_name,
+      const std::vector<Rect2D<double>> &rects
+  ) :
+      layer_name_(layer_name),
       rects_(rects) {}
 
   // API to add LayerRect
-  void AddRect(double llx, double lly, double urx, double ury) {
-    rects_.emplace_back(llx, lly, urx, ury);
-  }
-
-  std::vector<Rect2D<double>> &GetRects() { return rects_; }
-
-  void Reset() {
-    layer_name_ = "";
-    rects_.clear();
-  }
-  void Report() {
-    std::cout << "Name: " << layer_name_ << "\n";
-    for (auto &rect_2d: rects_) {
-      std::cout << "  " << rect_2d.ll.Str() << " " << rect_2d.ur.Str()
-                << "\n";
-    }
-  }
+  void AddRect(double llx, double lly, double urx, double ury);
+  std::vector<Rect2D<double>> &GetRects();
+  Rect2D<double> GetBoundingBox();
+  void Reset();
+  void Report();
 };
 
 template<typename T>

@@ -18,8 +18,9 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #include "datatype.h"
+
+#include <cfloat>
 
 namespace phydb {
 
@@ -28,6 +29,43 @@ std::ostream &operator<<(std::ostream &os, const LayerRect &lr) {
   for (auto rect: lr.rects_)
     os << rect << std::endl;
   return os;
+}
+
+void LayerRect::AddRect(double llx, double lly, double urx, double ury) {
+  rects_.emplace_back(llx, lly, urx, ury);
+}
+
+std::vector<Rect2D<double>> &LayerRect::GetRects() {
+  return rects_;
+}
+
+Rect2D<double> LayerRect::GetBoundingBox() {
+  PhyDBExpects(!rects_.empty(),
+               "Compute bounding box for 0 rects?");
+  double min_x = DBL_MAX;
+  double min_y = DBL_MAX;
+  double max_x = -DBL_MAX;
+  double max_y = -DBL_MAX;
+  for (auto &rect: rects_) {
+    min_x = std::min(min_x, rect.LLX());
+    min_y = std::min(min_y, rect.LLY());
+    max_x = std::max(max_x, rect.URX());
+    max_y = std::max(max_y, rect.URY());
+  }
+
+  return {min_x, min_y, max_x, max_y};
+}
+
+void LayerRect::Reset() {
+  layer_name_ = "";
+  rects_.clear();
+}
+
+void LayerRect::Report() {
+  std::cout << "Name: " << layer_name_ << "\n";
+  for (auto &rect_2d: rects_) {
+    std::cout << "  " << rect_2d.ll.Str() << " " << rect_2d.ur.Str() << "\n";
+  }
 }
 
 }
