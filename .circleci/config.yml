@@ -27,14 +27,13 @@ jobs:
             git clone https://github.com/asyncvlsi/lefdef.git
             apt-get install -y flex bison
             cd lefdef
-            echo '$ACT_HOME' $ACT_HOME
             make
             make install
       - run:
           name: "Install phyDB"
           command: |
+            echo export DEBIAN_FRONTEND=noninteractive >> $BASH_ENV
             apt install -y cmake libboost-all-dev
-            echo '$ACT_HOME' $ACT_HOME
             git clone https://github.com/asyncvlsi/phyDB.git
             cd phyDB
             mkdir build
