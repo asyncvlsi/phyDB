@@ -91,5 +91,5 @@ jobs:
 workflows:
   build:
     jobs:
-      - macos11
       - ubuntu20
+      # - macos11
