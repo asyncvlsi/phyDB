@@ -11,6 +11,7 @@ jobs:
             apt update -y
             apt install -y build-essential git
             apt install -y libedit-dev zlib1g-dev m4
+            DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt install -y tzdata
             git clone https://github.com/asyncvlsi/act.git
             cd act
             mkdir install
@@ -32,7 +33,6 @@ jobs:
       - run:
           name: "Install phyDB"
           command: |
-            echo export DEBIAN_FRONTEND=noninteractive >> $BASH_ENV
             apt install -y cmake libboost-all-dev
             git clone https://github.com/asyncvlsi/phyDB.git
             cd phyDB
