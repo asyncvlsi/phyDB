@@ -871,17 +871,16 @@ int getDefSNets(defrCallbackType_e type, defiNet *net, defiUserData data) {
 }
 
 int getDefVias(defrCallbackType_e type, defiVia *via, defiUserData data) {
-  /* TODO: This can be handle later since ACT does not provide defVia
   //bool enableOutput = true;
   bool enableOutput = false;
   if ((type != defrViaCbkType)) {
-      cout <<"Type is not defrViaCbkType!" <<endl;
+      std::cout <<"Type is not defrViaCbkType!" << std::endl;
       exit(1);
   }
 
-  parser::DefVia tmpVia;
-  tmpVia.name_ = via->name_();
-
+  auto *phy_db_ptr = (PhyDB *) data;
+  std::string via_name = via->name();
+  DefVia &last_via = *(phy_db_ptr->AddDefVia(via_name));
   // viaRule defined via
   if (via->hasViaRule()) {
       char* via_rule_name_;
@@ -892,23 +891,23 @@ int getDefVias(defrCallbackType_e type, defiVia *via, defiUserData data) {
 
       via->viaRule(&via_rule_name_, &xSize, &ySize, &botLayer, &cutLayer, &topLayer,
                    &xCutSpacing, &yCutSpacing, &xBotEnc, &yBotEnc, &xTopEnc, &yTopEnc);
-      tmpVia.via_rule_name_ = via_rule_name_;
-      tmpVia.cut_size_.set(xSize, ySize);
-      tmpVia.layers_[0] = string(botLayer);
-      tmpVia.layers_[1] = string(cutLayer);
-      tmpVia.layers_[2] = string(topLayer);
+      last_via.via_rule_name_ = via_rule_name_;
+      last_via.cut_size_.Set(xSize, ySize);
+      last_via.layers_[0] = std::string(botLayer);
+      last_via.layers_[1] = std::string(cutLayer);
+      last_via.layers_[2] = std::string(topLayer);
 
-      tmpVia.cut_spacing_.set(xCutSpacing, yCutSpacing);
+      last_via.cut_spacing_.Set(xCutSpacing, yCutSpacing);
 
-      tmpVia.bot_enc_.set(xBotEnc, yBotEnc);
-      tmpVia.top_enc_.Set(xTopEnc, yTopEnc);
+      last_via.bot_enc_.Set(xBotEnc, yBotEnc);
+      last_via.top_enc_.Set(xTopEnc, yTopEnc);
 
       int xOrigin = 0;
       int yOrigin = 0;
       if (via->hasOrigin()) {
-          via->origin_(&xOrigin, &yOrigin);
+          via->origin(&xOrigin, &yOrigin);
       }
-      tmpVia.origin_.Set(xOrigin, yOrigin);
+      last_via.origin_.Set(xOrigin, yOrigin);
 
       int xBotOffset = 0;
       int yBotOffset = 0;
@@ -917,23 +916,23 @@ int getDefVias(defrCallbackType_e type, defiVia *via, defiUserData data) {
       if (via->hasOffset()) {
           via->offset(&xBotOffset, &yBotOffset, &xTopOffset, &yTopOffset);
       }
-      tmpVia.bot_offset_.Set(xBotOffset, yBotOffset);
-      tmpVia.top_offset_.Set(xTopOffset, yTopOffset);
+      last_via.bot_offset_.Set(xBotOffset, yBotOffset);
+      last_via.top_offset_.Set(xTopOffset, yTopOffset);
 
       int num_cut_rows_ = 1;
       int num_cut_cols_ = 1;
       if (via->hasRowCol()) {
           via->rowCol(&num_cut_rows_, &num_cut_cols_);
       }
-      tmpVia.num_cut_rows_ = num_cut_rows_;
-      tmpVia.num_cut_cols_ = num_cut_cols_;
+      last_via.num_cut_rows_ = num_cut_rows_;
+      last_via.num_cut_cols_ = num_cut_cols_;
 
 
   }
   else // RECT defined via
   {
       if (via->numPolygons()) {
-          cout <<"Error: unsupport polygon in def via" <<endl;
+          std::cout <<"Error: unsupport polygon in def via" << std::endl;
           exit(1);
       }
       char* layer_name_;
@@ -944,18 +943,13 @@ int getDefVias(defrCallbackType_e type, defiVia *via, defiUserData data) {
 
       for (int i = 0; i < via->numLayers(); ++i) {
           via->layer(i, &layer_name_, &xl, &yl, &xh, &yh);
-          parser::Rect2DLayer<int> tmpRect2DLayer;
-          tmpRect2DLayer.Set(layer_name_, xl, yl, xh, yh);
+          Rect2DLayer<int> tmpRect2DLayer;
+          std::string layer_name(layer_name_);
+          tmpRect2DLayer.Set(layer_name, xl, yl, xh, yh);
       }
+      //TODO:
   }
-
-  tmpVia.idx_ = ((parser::defDataBase*) data)->vias.size();
-  ((parser::defDataBase*) data)->defVia2idx.insert( pair<string, int> (tmpVia.name_, tmpVia.idx_));
-  ((parser::defDataBase*) data)->vias.push_back(tmpVia);
-
-  if(enableOutput)
-      tmpVia.print();
-  */
+  
   return 0;
 }
 

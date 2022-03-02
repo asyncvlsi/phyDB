@@ -26,7 +26,8 @@
 namespace phydb {
 
 class DefVia {
- private:
+  //TODO: This can better be private, needs APIs
+ public:
   std::string name_;
   //int idx_;
   std::string via_rule_name_;
@@ -37,13 +38,13 @@ class DefVia {
   Size2D<int> top_enc_;
   int num_cut_rows_;
   int num_cut_cols_;
-  Size2D<int> origin_;
+  Point2D<int> origin_;
   Size2D<int> bot_offset_;
   Size2D<int> top_offset_;
 
   std::vector<Rect2DLayer < int>> rect2d_layers;
   std::string pattern_;
- public:
+ 
   DefVia() {}
   DefVia(std::string const &name) : name_(name) {}
 

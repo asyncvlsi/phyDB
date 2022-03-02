@@ -175,8 +175,8 @@ class Rect2DLayer : public Rect2D<T> {
   Rect2DLayer() : Rect2D<T>() {}
   void Set(std::string &layer_init, T llx, T lly, T urx, T ury) {
     this->layer = layer_init;
-    this->lowerLeft.Set(llx, lly);
-    this->upperRight.Set(urx, ury);
+    this->ll.Set(llx, lly);
+    this->ur.Set(urx, ury);
   }
 };
 
