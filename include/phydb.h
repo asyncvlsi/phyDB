@@ -74,28 +74,19 @@ class PhyDB {
   /************************************************
   * The following APIs are for information in DEF
   * ************************************************/
-  void SetDefName(std::string const &name);
   void SetDefVersion(double version);
   void SetDefDividerChar(std::string const &divider_char);
   void SetDefBusBitChar(std::string const &bus_bit_chars);
+  void SetDefName(std::string const &name);
 
-  std::string GetDefName() const;
   double GetDefVersion() const;
   std::string GetDefDividerChar() const;
   std::string GetDefBusBitChar() const;
+  std::string GetDefName() const;
 
   void SetUnitsDistanceMicrons(int distance_microns);
   void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
   Rect2D<int> GetDieArea() const;
-
-  Track *AddTrack(
-      XYDirection direction,
-      int start,
-      int nTracks,
-      int step,
-      std::vector<std::string> &layer_names
-  );
-  std::vector<Track> &GetTracksRef();
 
   Row *AddRow(
       std::string const &name,
@@ -109,6 +100,23 @@ class PhyDB {
       int stepY
   );
   std::vector<Row> &GetRowVec();
+
+  Track *AddTrack(
+      XYDirection direction,
+      int start,
+      int nTracks,
+      int step,
+      std::vector<std::string> &layer_names
+  );
+  std::vector<Track> &GetTracksRef();
+
+  GcellGrid *AddGcellGrid(
+      XYDirection direction,
+      int start,
+      int nBoundaries,
+      int step
+  );
+  std::vector<GcellGrid> &GetGcellGridsRef();
 
   bool IsViaRuleGenerateExisting(std::string const &name);
   ViaRuleGenerate *AddViaRuleGenerate(std::string const &name);
@@ -140,6 +148,9 @@ class PhyDB {
       SignalUse signal_use
   );
   IOPin *GetIoPinPtr(std::string const &iopin_name);
+
+  void SetBlockageCount(int count);
+  Blockage *AddBlockage();
 
   void SetNetCount(int count);
   bool IsNetExisting(std::string const &net_name);
@@ -175,14 +186,6 @@ class PhyDB {
   SNet *AddSNet(std::string const &net_name, SignalUse use);
   SNet *GetSNet(std::string const &net_name);
   std::vector<SNet> &GetSNetRef();
-
-  GcellGrid *AddGcellGrid(
-      XYDirection direction,
-      int start,
-      int nBoundaries,
-      int step
-  );
-  std::vector<GcellGrid> &GetGcellGridsRef();
 
   /************************************************
   * The following APIs are for setting up callback functions for timing-driven flow

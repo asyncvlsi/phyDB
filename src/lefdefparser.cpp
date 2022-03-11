@@ -874,8 +874,8 @@ int getDefVias(defrCallbackType_e type, defiVia *via, defiUserData data) {
   //bool enableOutput = true;
   bool enableOutput = false;
   if ((type != defrViaCbkType)) {
-      std::cout <<"Type is not defrViaCbkType!" << std::endl;
-      exit(1);
+    std::cout << "Type is not defrViaCbkType!" << std::endl;
+    exit(1);
   }
 
   auto *phy_db_ptr = (PhyDB *) data;
@@ -883,73 +883,82 @@ int getDefVias(defrCallbackType_e type, defiVia *via, defiUserData data) {
   DefVia &last_via = *(phy_db_ptr->AddDefVia(via_name));
   // viaRule defined via
   if (via->hasViaRule()) {
-      char* via_rule_name_;
-      char* botLayer;
-      char* cutLayer;
-      char* topLayer;
-      int xSize, ySize, xCutSpacing, yCutSpacing, xBotEnc, yBotEnc, xTopEnc, yTopEnc;
+    char *via_rule_name_;
+    char *botLayer;
+    char *cutLayer;
+    char *topLayer;
+    int xSize, ySize, xCutSpacing, yCutSpacing, xBotEnc, yBotEnc, xTopEnc,
+        yTopEnc;
 
-      via->viaRule(&via_rule_name_, &xSize, &ySize, &botLayer, &cutLayer, &topLayer,
-                   &xCutSpacing, &yCutSpacing, &xBotEnc, &yBotEnc, &xTopEnc, &yTopEnc);
-      last_via.via_rule_name_ = via_rule_name_;
-      last_via.cut_size_.Set(xSize, ySize);
-      last_via.layers_[0] = std::string(botLayer);
-      last_via.layers_[1] = std::string(cutLayer);
-      last_via.layers_[2] = std::string(topLayer);
+    via->viaRule(&via_rule_name_,
+                 &xSize,
+                 &ySize,
+                 &botLayer,
+                 &cutLayer,
+                 &topLayer,
+                 &xCutSpacing,
+                 &yCutSpacing,
+                 &xBotEnc,
+                 &yBotEnc,
+                 &xTopEnc,
+                 &yTopEnc);
+    last_via.via_rule_name_ = via_rule_name_;
+    last_via.cut_size_.Set(xSize, ySize);
+    last_via.layers_[0] = std::string(botLayer);
+    last_via.layers_[1] = std::string(cutLayer);
+    last_via.layers_[2] = std::string(topLayer);
 
-      last_via.cut_spacing_.Set(xCutSpacing, yCutSpacing);
+    last_via.cut_spacing_.Set(xCutSpacing, yCutSpacing);
 
-      last_via.bot_enc_.Set(xBotEnc, yBotEnc);
-      last_via.top_enc_.Set(xTopEnc, yTopEnc);
+    last_via.bot_enc_.Set(xBotEnc, yBotEnc);
+    last_via.top_enc_.Set(xTopEnc, yTopEnc);
 
-      int xOrigin = 0;
-      int yOrigin = 0;
-      if (via->hasOrigin()) {
-          via->origin(&xOrigin, &yOrigin);
-      }
-      last_via.origin_.Set(xOrigin, yOrigin);
+    int xOrigin = 0;
+    int yOrigin = 0;
+    if (via->hasOrigin()) {
+      via->origin(&xOrigin, &yOrigin);
+    }
+    last_via.origin_.Set(xOrigin, yOrigin);
 
-      int xBotOffset = 0;
-      int yBotOffset = 0;
-      int xTopOffset = 0;
-      int yTopOffset = 0;
-      if (via->hasOffset()) {
-          via->offset(&xBotOffset, &yBotOffset, &xTopOffset, &yTopOffset);
-      }
-      last_via.bot_offset_.Set(xBotOffset, yBotOffset);
-      last_via.top_offset_.Set(xTopOffset, yTopOffset);
+    int xBotOffset = 0;
+    int yBotOffset = 0;
+    int xTopOffset = 0;
+    int yTopOffset = 0;
+    if (via->hasOffset()) {
+      via->offset(&xBotOffset, &yBotOffset, &xTopOffset, &yTopOffset);
+    }
+    last_via.bot_offset_.Set(xBotOffset, yBotOffset);
+    last_via.top_offset_.Set(xTopOffset, yTopOffset);
 
-      int num_cut_rows_ = 1;
-      int num_cut_cols_ = 1;
-      if (via->hasRowCol()) {
-          via->rowCol(&num_cut_rows_, &num_cut_cols_);
-      }
-      last_via.num_cut_rows_ = num_cut_rows_;
-      last_via.num_cut_cols_ = num_cut_cols_;
+    int num_cut_rows_ = 1;
+    int num_cut_cols_ = 1;
+    if (via->hasRowCol()) {
+      via->rowCol(&num_cut_rows_, &num_cut_cols_);
+    }
+    last_via.num_cut_rows_ = num_cut_rows_;
+    last_via.num_cut_cols_ = num_cut_cols_;
 
-
-  }
-  else // RECT defined via
+  } else // RECT defined via
   {
-      if (via->numPolygons()) {
-          std::cout <<"Error: unsupport polygon in def via" << std::endl;
-          exit(1);
-      }
-      char* layer_name_;
-      int xl;
-      int yl;
-      int xh;
-      int yh;
+    if (via->numPolygons()) {
+      std::cout << "Error: unsupport polygon in def via" << std::endl;
+      exit(1);
+    }
+    char *layer_name_;
+    int xl;
+    int yl;
+    int xh;
+    int yh;
 
-      for (int i = 0; i < via->numLayers(); ++i) {
-          via->layer(i, &layer_name_, &xl, &yl, &xh, &yh);
-          Rect2DLayer<int> tmpRect2DLayer;
-          std::string layer_name(layer_name_);
-          tmpRect2DLayer.Set(layer_name, xl, yl, xh, yh);
-      }
-      //TODO:
+    for (int i = 0; i < via->numLayers(); ++i) {
+      via->layer(i, &layer_name_, &xl, &yl, &xh, &yh);
+      Rect2DLayer<int> tmpRect2DLayer;
+      std::string layer_name(layer_name_);
+      tmpRect2DLayer.Set(layer_name, xl, yl, xh, yh);
+    }
+    //TODO:
   }
-  
+
   return 0;
 }
 
@@ -973,19 +982,122 @@ int getDefVersion(defrCallbackType_e type, double version, defiUserData data) {
   return 0;
 }
 
-int getDefBusBit(defrCallbackType_e type,
-                 const char *BusBit,
-                 defiUserData data) {
-  std::string bus_bit_char(BusBit);
-  ((PhyDB *) data)->SetDefBusBitChar(bus_bit_char);
+int getDefBlockageStart(
+    defrCallbackType_e type,
+    int num,
+    defiUserData data
+) {
+  PhyDBExpects(type == defrBlockageStartCbkType,
+               "Type is not defrBlockageStartCbkType!");
+  auto *phy_db_ptr = (PhyDB *) data;
+  PhyDBExpects(num >= 0, "Negative number of blockages?");
+  phy_db_ptr->SetBlockageCount(num);
   return 0;
 }
 
-int getDefDivider(defrCallbackType_e type,
-                  const char *divider,
-                  defiUserData data) {
+int getDefBlockage(
+    defrCallbackType_e type,
+    defiBlockage *defi_blockage,
+    defiUserData data
+) {
+  PhyDBExpects(type == defrBlockageCbkType, "Type is not defrBlockageCbkType!");
+  auto *phydb_ptr = (PhyDB *) data;
+  Blockage *blockage = phydb_ptr->AddBlockage();
+
+  if (defi_blockage->hasLayer()) {
+    std::string layer_name(defi_blockage->layerName());
+    Layer *layer_ptr = phydb_ptr->GetLayerPtr(layer_name);
+    PhyDBExpects(layer_ptr != nullptr, "Cannot find layer: " + layer_name);
+    blockage->SetLayer(layer_ptr);
+
+    if (defi_blockage->hasSlots()) {
+      blockage->SetSlots();
+    }
+    if (defi_blockage->hasFills()) {
+      blockage->SetFills();
+    }
+    if (defi_blockage->hasPushdown()) {
+      blockage->SetPushdown();
+    }
+    if (defi_blockage->hasExceptpgnet()) {
+      blockage->SetExceptpgnet();
+    }
+    if (defi_blockage->hasComponent()) {
+      std::string comp_name(defi_blockage->layerComponentName());
+      Component *comp_ptr = phydb_ptr->GetComponentPtr(comp_name);
+      PhyDBExpects(comp_ptr != nullptr, "Cannot find component: " + comp_name);
+      blockage->SetComponent(comp_ptr);
+    }
+    if (defi_blockage->hasSpacing()) {
+      blockage->SetSpacing(defi_blockage->minSpacing());
+    }
+    if (defi_blockage->hasDesignRuleWidth()) {
+      blockage->SetDesignRuleWidth(defi_blockage->designRuleWidth());
+    }
+    if (defi_blockage->hasMask()) {
+      blockage->SetMaskNum(defi_blockage->mask());
+    }
+  } else if (defi_blockage->hasPlacement()) {
+    blockage->SetPlacement();
+    if (defi_blockage->hasSoft()) {
+      blockage->SetSoft();
+    }
+    if (defi_blockage->hasPartial()) {
+      blockage->SetPartial(defi_blockage->placementMaxDensity());
+    }
+    if (defi_blockage->hasPushdown()) {
+      blockage->SetPushdown();
+    }
+    if (defi_blockage->hasComponent()) {
+      std::string comp_name(defi_blockage->placementComponentName());
+      Component *comp_ptr = phydb_ptr->GetComponentPtr(comp_name);
+      PhyDBExpects(comp_ptr != nullptr, "Cannot find component: " + comp_name);
+      blockage->SetComponent(comp_ptr);
+    }
+  } else {
+    PhyDBExpects(false, "This blockage has no layer and placement?");
+  }
+
+  int num_rects = defi_blockage->numRectangles();
+  for (int i = 0; i < num_rects; ++i) {
+    int lx = defi_blockage->xl(i);
+    int ly = defi_blockage->yl(i);
+    int ux = defi_blockage->xh(i);
+    int uy = defi_blockage->yh(i);
+    blockage->AddRect(lx, ly, ux, uy);
+  }
+  int num_polygons = defi_blockage->numPolygons();
+  for (int i = 0; i < num_polygons; ++i) {
+    auto defi_polygon = defi_blockage->getPolygon(i);
+    auto &polygon = blockage->AddPolygon();;
+    int num_points = defi_polygon.numPoints;
+    for (int j = 0; j < num_points; ++j) {
+      polygon.AddPoint(defi_polygon.x[j], defi_polygon.y[j]);
+    }
+  }
+
+  return 0;
+}
+
+int getDefBusBit(
+    defrCallbackType_e type,
+    const char *BusBit,
+    defiUserData data
+) {
+  auto *phy_db_ptr = (PhyDB *) data;
+  std::string bus_bit_char(BusBit);
+  phy_db_ptr->SetDefBusBitChar(bus_bit_char);
+  return 0;
+}
+
+int getDefDivider(
+    defrCallbackType_e type,
+    const char *divider,
+    defiUserData data
+) {
+  auto *phy_db_ptr = (PhyDB *) data;
   std::string divider_chars(divider);
-  ((PhyDB *) data)->SetDefDividerChar(divider_chars);
+  phy_db_ptr->SetDefDividerChar(divider_chars);
   return 0;
 }
 
@@ -1051,6 +1163,9 @@ void Si2ReadDef(PhyDB *phy_db_ptr, std::string const &def_file_name) {
 
   defrSetStartPinsCbk(getDefCountNumber);
   defrSetPinCbk(getDefIOPins);
+
+  defrSetBlockageStartCbk(getDefBlockageStart);
+  defrSetBlockageCbk(getDefBlockage);
 
   defrSetNetStartCbk(getDefCountNumber);
   defrSetSNetCbk(getDefSNets);

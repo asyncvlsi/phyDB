@@ -24,6 +24,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "blockage.h"
 #include "clustercol.h"
 #include "component.h"
 #include "defvia.h"
@@ -58,6 +59,7 @@ class Design {
   std::vector<DefVia> vias_;
   std::vector<ClusterCol> cluster_cols_;
   std::vector<GcellGrid> gcell_grids_;
+  std::vector<Blockage> blockages_;
 
   std::unordered_map<std::string, int> component_2_id_;
   std::unordered_map<std::string, int> iopin_2_id_;
@@ -78,30 +80,21 @@ class Design {
   Design() = default;
   ~Design();
 
-  void SetName(std::string const &name);
   void SetVersion(double version);
   void SetDividerChar(std::string const &divider_char);
   void SetBusBitChar(std::string const &bus_bit_chars);
+  void SetName(std::string const &name);
 
-  std::string GetName() const;
   double GetVersion() const;
   std::string GetDividerChar() const;
   std::string GetBusBitChar() const;
+  std::string GetName() const;
 
   void SetUnitsDistanceMicrons(int distance_microns);
   void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
 
   int GetUnitsDistanceMicrons() const { return unit_distance_micron_; }
   Rect2D<int> GetDieArea() const { return die_area_; }
-
-  Track *AddTrack(
-      XYDirection direction,
-      int start,
-      int num_tracks,
-      int step,
-      std::vector<std::string> &layer_names
-  );
-  std::vector<Track> &GetTracksRef();
 
   bool IsRowExisting(std::string const &row_name);
   Row *AddRow(
@@ -117,6 +110,36 @@ class Design {
   );
   std::vector<Row> &GetRowVec();
 
+  Track *AddTrack(
+      XYDirection direction,
+      int start,
+      int num_tracks,
+      int step,
+      std::vector<std::string> &layer_names
+  );
+  std::vector<Track> &GetTracksRef();
+
+  GcellGrid *AddGcellGrid(
+      XYDirection direction,
+      int start,
+      int nBoundaries,
+      int step
+  );
+  std::vector<GcellGrid> &GetGcellGridsRef();
+  void InsertRoutingGuide(
+      int netID,
+      int llx,
+      int lly,
+      int urx,
+      int ury,
+      int layerID
+  );
+
+  bool IsDefViaExisting(std::string const &name);
+  DefVia *AddDefVia(std::string const &name);
+  DefVia *GetDefViaPtr(std::string const &name);
+  std::vector<DefVia> &GetDefViasRef() { return vias_; }
+
   void SetComponentCount(int count, double redundancy_factor = 1.4);
   bool IsComponentExisting(std::string const &comp_name);
   Component *AddComponent(
@@ -131,11 +154,6 @@ class Design {
   Component *GetComponentPtr(std::string const &comp_name);
   std::vector<Component> &GetComponentsRef() { return components_; }
 
-  bool IsDefViaExisting(std::string const &name);
-  DefVia *AddDefVia(std::string const &name);
-  DefVia *GetDefViaPtr(std::string const &name);
-  std::vector<DefVia> &GetDefViasRef() { return vias_; }
-
   void SetIoPinCount(int count);
   bool IsIoPinExisting(std::string const &iopin_name);
   IOPin *AddIoPin(
@@ -145,6 +163,10 @@ class Design {
   );
   IOPin *GetIoPinPtr(std::string const &iopin_name);
   std::vector<IOPin> &GetIoPinsRef() { return iopins_; }
+
+  void SetBlockageCount(int count);
+  Blockage *AddBlockage();
+  std::vector<Blockage> &GetBlockagesRef();
 
   void SetNetCount(int count, double redundancy_factor = 1.4);
   bool IsNetExisting(std::string const &net_name);
@@ -166,22 +188,6 @@ class Design {
       std::string const &bot_signal
   );
   std::vector<ClusterCol> &GetClusterColsRef();
-
-  GcellGrid *AddGcellGrid(
-      XYDirection direction,
-      int start,
-      int nBoundaries,
-      int step
-  );
-  std::vector<GcellGrid> &GetGcellGridsRef();
-  void InsertRoutingGuide(
-      int netID,
-      int llx,
-      int lly,
-      int urx,
-      int ury,
-      int layerID
-  );
 
   std::string GetDefName() const;
   void SetDefName(std::string const &def_file_name);
@@ -207,6 +213,7 @@ class Design {
   void ReportRows();
   void ReportComponents();
   void ReportIoPins();
+  void ReportBlockages();
   void ReportNets();
   void ReportSNets();
   void ReportClusterCols();

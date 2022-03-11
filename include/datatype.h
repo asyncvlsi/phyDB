@@ -252,6 +252,18 @@ class LayerRect {
 };
 
 template<typename T>
+class Points2D {
+ public:
+  void AddPoint(T x, T y) {
+    points_.emplace_back(x, y);
+  }
+  Point2D<T> &GetPoint(int index) { return points_[index]; }
+  std::vector<Point2D<T>> &GetPointsRef() { return points_; }
+ private:
+  std::vector<Point2D<T>> points_;
+};
+
+template<typename T>
 std::ostream &operator<<(std::ostream &os, const Point2D<T> &p) {
   os << "(" << p.x << ", " << p.y << ") ";
   return os;
