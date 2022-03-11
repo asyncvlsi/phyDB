@@ -31,11 +31,11 @@
 
 #include "logging.h"
 
-#define CHECK_STATUS(status) \
-  if (status) {\
-    defwPrintError(status); \
-    return(status); \
+void CheckStatus(int status) {
+  if (status) {
+    defwPrintError(status);
   }
+}
 
 namespace phydb {
 
@@ -213,53 +213,61 @@ int WriteBlockages(defwCallbackType_e type, defiUserData data) {
     if (blockage.GetLayer() != nullptr) {
       std::string layer_name = blockage.GetLayer()->GetName();
       status = defwBlockagesLayer(layer_name.c_str());
+      CheckStatus(status);
       if (blockage.IsSlots()) {
         status = defwBlockagesLayerSlots();
-      }
-      if (blockage.IsFills()) {
+        CheckStatus(status);
+      } else if (blockage.IsFills()) {
         status = defwBlockagesLayerFills();
+        CheckStatus(status);
       }
       if (blockage.IsPushdown()) {
         status = defwBlockagesLayerPushdown();
+        CheckStatus(status);
       }
       if (blockage.IsExceptpgnet()) {
         status = defwBlockagesLayerExceptpgnet();
+        CheckStatus(status);
       }
       if (blockage.GetComponent() != nullptr) {
         std::string comp_name = blockage.GetComponent()->GetName();
         status = defwBlockagesLayerComponent(comp_name.c_str());
+        CheckStatus(status);
       }
-      CHECK_STATUS(status);
 
       if (blockage.GetMaskNum() > 0) {
         status = defwBlockagesLayerMask(blockage.GetMaskNum());
+        CheckStatus(status);
       }
-      CHECK_STATUS(status);
 
       if (blockage.GetSpacing() >= 0) {
         status = defwBlockagesLayerSpacing(blockage.GetSpacing());
+        CheckStatus(status);
       } else if (blockage.GetDesignRuleWidth() >= 0) {
         status =
             defwBlockagesLayerDesignRuleWidth(blockage.GetDesignRuleWidth());
+        CheckStatus(status);
       }
-      CHECK_STATUS(status);
     } else if (blockage.IsPlacement()) {
       status = defwBlockagesPlacement();
+      CheckStatus(status);
       if (blockage.IsSoft()) {
         status = defwBlockagesPlacementSoft();
-      }
-      if (blockage.GetMaxPlacementDensity() > 0) {
+        CheckStatus(status);
+      } else if (blockage.GetMaxPlacementDensity() > 0) {
         status =
             defwBlockagesPlacementPartial(blockage.GetMaxPlacementDensity());
+        CheckStatus(status);
       }
       if (blockage.IsPushdown()) {
         status = defwBlockagesPlacementPushdown();
+        CheckStatus(status);
       }
       if (blockage.GetComponent() != nullptr) {
         status =
             defwBlockagesPlacementComponent(blockage.GetComponent()->GetName().c_str());
+        CheckStatus(status);
       }
-      CHECK_STATUS(status);
     } else {
       PhyDBExpects(false, "blockage has no layer and placement?");
     }
@@ -267,7 +275,7 @@ int WriteBlockages(defwCallbackType_e type, defiUserData data) {
     for (auto &rect: blockage.GetRectsRef()) {
       status =
           defwBlockagesRect(rect.LLX(), rect.LLY(), rect.URX(), rect.URY());
-      CHECK_STATUS(status);
+      CheckStatus(status);
     }
     for (auto &polygon: blockage.GetPolygonRef()) {
       int num_points = static_cast<int>(polygon.GetPointsRef().size());
@@ -281,11 +289,11 @@ int WriteBlockages(defwCallbackType_e type, defiUserData data) {
       status = defwBlockagesPolygon(num_points, x, y);
       free(x);
       free(y);
-      CHECK_STATUS(status);
+      CheckStatus(status);
     }
   }
   status = defwEndBlockages();
-  CHECK_STATUS(status);
+  CheckStatus(status);
   return 0;
 }
 

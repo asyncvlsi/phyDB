@@ -37,14 +37,32 @@ Blockage::Blockage() :
     max_density_(-1.0) {}
 
 void Blockage::SetLayer(Layer *layer_ptr) {
+  if (is_placement_) {
+    is_placement_ = false;
+    std::cout << "WARNING:"
+              << "  only LAYER or PLACEMENT is allowed per Blockage!\n"
+              << "  PLACEMENT is removed to add LAYER\n";
+  }
   layer_ptr_ = layer_ptr;
 }
 
 void Blockage::SetSlots(bool is_slots) {
+  if (is_fills_) {
+    is_fills_ = false;
+    std::cout << "WARNING:"
+              << "  only at most one of SLOTS and FILLS is allowed per LAYER!\n"
+              << "  FILLS is removed to add SLOTS\n";
+  }
   is_slots_ = is_slots;
 }
 
 void Blockage::SetFills(bool is_fills) {
+  if (is_slots_) {
+    is_slots_ = false;
+    std::cout << "WARNING:"
+              << "  only at most one of SLOTS and FILLS is allowed per LAYER!\n"
+              << "  SLOTS is removed to add FILLS\n";
+  }
   is_fills_ = is_fills;
 }
 
@@ -61,10 +79,22 @@ void Blockage::SetComponent(Component *component_ptr) {
 }
 
 void Blockage::SetSpacing(int min_spacing) {
+  if (effective_width_ > 0) {
+    effective_width_ = -1.0;
+    std::cout << "WARNING:"
+              << "  only at most one of SPACING and DESIGNRULEWIDTH is allowed per LAYER!\n"
+              << "  DESIGNRULEWIDTH is removed to add SPACING\n";
+  }
   min_spacing_ = min_spacing;
 }
 
 void Blockage::SetDesignRuleWidth(int effective_width) {
+  if (min_spacing_ > 0) {
+    min_spacing_ = -1.0;
+    std::cout << "WARNING:"
+              << "  only at most one of SPACING and DESIGNRULEWIDTH is allowed per LAYER!\n"
+              << "  SPACING is removed to add DESIGNRULEWIDTH\n";
+  }
   effective_width_ = effective_width;
 }
 
@@ -73,14 +103,32 @@ void Blockage::SetMaskNum(int mask_num) {
 }
 
 void Blockage::SetPlacement(bool is_placement) {
+  if (layer_ptr_ != nullptr) {
+    layer_ptr_ = nullptr;
+    std::cout << "WARNING:"
+              << "  only LAYER or PLACEMENT is allowed per Blockage!\n"
+              << "  LAYER is removed to add PLACEMENT\n";
+  }
   is_placement_ = is_placement;
 }
 
 void Blockage::SetSoft(bool is_soft) {
+  if (max_density_ > 0) {
+    max_density_ = -1.0;
+    std::cout << "WARNING:"
+              << "  only at most one of SOFT and PARTIAL is allowed per PLACEMENT!\n"
+              << "  PARTIAL is removed to add SOFT\n";
+  }
   is_soft_ = is_soft;
 }
 
 void Blockage::SetPartial(double max_density) {
+  if (is_soft_) {
+    is_soft_ = false;
+    std::cout << "WARNING:"
+              << "  only at most one of SOFT and PARTIAL is allowed per PLACEMENT!\n"
+              << "  SOFT is removed to add PARTIAL\n";
+  }
   max_density_ = max_density;
 }
 
@@ -154,8 +202,7 @@ void Blockage::Report() {
     std::cout << "- LAYER " << GetLayer()->GetName();
     if (IsSlots()) {
       std::cout << " + SLOTS";
-    }
-    if (IsFills()) {
+    } else if (IsFills()) {
       std::cout << " + FILLS";
     }
     if (IsPushdown()) {
@@ -166,8 +213,7 @@ void Blockage::Report() {
     }
     if (GetSpacing() > 0) {
       std::cout << " + SPACING " << GetSpacing();
-    }
-    if (GetDesignRuleWidth() > 0) {
+    } else if (GetDesignRuleWidth() > 0) {
       std::cout << " + DESIGNRULEWIDTH " << GetDesignRuleWidth();
     }
     if (GetMaskNum() > 0) {
@@ -182,8 +228,7 @@ void Blockage::Report() {
     std::cout << "- PLACEMENT";
     if (IsSoft()) {
       std::cout << " + SOFT";
-    }
-    if (GetMaxPlacementDensity() > 0) {
+    } else if (GetMaxPlacementDensity() > 0) {
       std::cout << " + PARTIAL " << GetMaxPlacementDensity();
     }
     if (IsPushdown()) {
