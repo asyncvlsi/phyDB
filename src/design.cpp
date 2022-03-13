@@ -221,6 +221,19 @@ IOPin *Design::GetIoPinPtr(std::string const &iopin_name) {
   return &(iopins_[id]);
 }
 
+void Design::SetBlockageCount(int count) {
+  blockages_.reserve(count);
+}
+
+Blockage *Design::AddBlockage() {
+  blockages_.emplace_back();
+  return &(blockages_.back());
+}
+
+std::vector<Blockage> &Design::GetBlockagesRef() {
+  return blockages_;
+}
+
 void Design::SetNetCount(
     int count,
     double redundancy_factor
@@ -416,6 +429,14 @@ void Design::ReportIoPins() {
   std::cout << "\n";
 }
 
+void Design::ReportBlockages() {
+  std::cout << "Total blockages: " << blockages_.size() << "\n";
+  for (auto &blockage: blockages_) {
+    blockage.Report();
+  }
+  std::cout << "\n";
+}
+
 void Design::ReportNets() {
   std::cout << "Total net: " << nets_.size() << "\n";
   for (auto &net: nets_) {
@@ -459,10 +480,11 @@ void Design::Report() {
   //ReportRows(); // TODO : rows not loaded
   //ReportComponents();
   //ReportIoPins();
+  ReportBlockages();
   //ReportNets();
   //ReportClusterCols();
   //ReportGcellGrids();
-  ReportSNets();
+  //ReportSNets();
 }
 
 }

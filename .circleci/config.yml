@@ -11,6 +11,7 @@ jobs:
             apt update -y
             apt install -y build-essential git
             apt install -y libedit-dev zlib1g-dev m4
+            DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt install -y tzdata
             git clone https://github.com/asyncvlsi/act.git
             cd act
             mkdir install
@@ -27,14 +28,12 @@ jobs:
             git clone https://github.com/asyncvlsi/lefdef.git
             apt-get install -y flex bison
             cd lefdef
-            echo '$ACT_HOME' $ACT_HOME
             make
             make install
       - run:
           name: "Install phyDB"
           command: |
             apt install -y cmake libboost-all-dev
-            echo '$ACT_HOME' $ACT_HOME
             git clone https://github.com/asyncvlsi/phyDB.git
             cd phyDB
             mkdir build
@@ -92,5 +91,5 @@ jobs:
 workflows:
   build:
     jobs:
-      - macos11
       - ubuntu20
+      # - macos11

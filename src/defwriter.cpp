@@ -31,6 +31,12 @@
 
 #include "logging.h"
 
+void CheckStatus(int status) {
+  if (status) {
+    defwPrintError(status);
+  }
+}
+
 namespace phydb {
 
 int WriteVersion(defwCallbackType_e c, defiUserData ud) {
@@ -195,7 +201,100 @@ int WriteIOPins(defwCallbackType_e type, defiUserData data) {
   defwEndPins();
 
   return 0;
+}
 
+int WriteBlockages(defwCallbackType_e type, defiUserData data) {
+  auto phydb_ptr = ((PhyDB *) data);
+  auto blockages = phydb_ptr->design().GetBlockagesRef();
+  if (blockages.empty()) return 0;
+  defwStartBlockages(static_cast<int>(blockages.size()));
+  int status;
+  for (auto &blockage: blockages) {
+    if (blockage.GetLayer() != nullptr) {
+      std::string layer_name = blockage.GetLayer()->GetName();
+      status = defwBlockagesLayer(layer_name.c_str());
+      CheckStatus(status);
+      if (blockage.IsSlots()) {
+        status = defwBlockagesLayerSlots();
+        CheckStatus(status);
+      } else if (blockage.IsFills()) {
+        status = defwBlockagesLayerFills();
+        CheckStatus(status);
+      }
+      if (blockage.IsPushdown()) {
+        status = defwBlockagesLayerPushdown();
+        CheckStatus(status);
+      }
+      if (blockage.IsExceptpgnet()) {
+        status = defwBlockagesLayerExceptpgnet();
+        CheckStatus(status);
+      }
+      if (blockage.GetComponent() != nullptr) {
+        std::string comp_name = blockage.GetComponent()->GetName();
+        status = defwBlockagesLayerComponent(comp_name.c_str());
+        CheckStatus(status);
+      }
+
+      if (blockage.GetMaskNum() > 0) {
+        status = defwBlockagesLayerMask(blockage.GetMaskNum());
+        CheckStatus(status);
+      }
+
+      if (blockage.GetSpacing() >= 0) {
+        status = defwBlockagesLayerSpacing(blockage.GetSpacing());
+        CheckStatus(status);
+      } else if (blockage.GetDesignRuleWidth() >= 0) {
+        status =
+            defwBlockagesLayerDesignRuleWidth(blockage.GetDesignRuleWidth());
+        CheckStatus(status);
+      }
+    } else if (blockage.IsPlacement()) {
+      status = defwBlockagesPlacement();
+      CheckStatus(status);
+      if (blockage.IsSoft()) {
+        status = defwBlockagesPlacementSoft();
+        CheckStatus(status);
+      } else if (blockage.GetMaxPlacementDensity() > 0) {
+        status =
+            defwBlockagesPlacementPartial(blockage.GetMaxPlacementDensity());
+        CheckStatus(status);
+      }
+      if (blockage.IsPushdown()) {
+        status = defwBlockagesPlacementPushdown();
+        CheckStatus(status);
+      }
+      if (blockage.GetComponent() != nullptr) {
+        status =
+            defwBlockagesPlacementComponent(blockage.GetComponent()->GetName().c_str());
+        CheckStatus(status);
+      }
+    } else {
+      PhyDBExpects(false, "blockage has no layer and placement?");
+    }
+
+    for (auto &rect: blockage.GetRectsRef()) {
+      status =
+          defwBlockagesRect(rect.LLX(), rect.LLY(), rect.URX(), rect.URY());
+      CheckStatus(status);
+    }
+    for (auto &polygon: blockage.GetPolygonRef()) {
+      int num_points = static_cast<int>(polygon.GetPointsRef().size());
+      int *x = (int *) malloc(sizeof(int) * num_points);
+      int *y = (int *) malloc(sizeof(int) * num_points);
+      for (int i = 0; i < num_points; ++i) {
+        Point2D<int> &point = polygon.GetPoint(i);
+        x[i] = point.x;
+        y[i] = point.y;
+      }
+      status = defwBlockagesPolygon(num_points, x, y);
+      free(x);
+      free(y);
+      CheckStatus(status);
+    }
+  }
+  status = defwEndBlockages();
+  CheckStatus(status);
+  return 0;
 }
 
 int WriteNets(defwCallbackType_e type, defiUserData data) {
@@ -335,6 +434,7 @@ void Si2WriteDef(PhyDB *phy_db_ptr, std::string const &defFileName) {
   defwSetGcellGridCbk(WriteGcellGrids);
   defwSetComponentCbk(WriteComponents);
   defwSetPinCbk(WriteIOPins);
+  defwSetBlockageCbk(WriteBlockages);
   defwSetNetCbk(WriteNets);
   defwSetSNetCbk(WriteSNets);
 

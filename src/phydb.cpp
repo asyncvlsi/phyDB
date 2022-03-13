@@ -274,6 +274,14 @@ IOPin *PhyDB::GetIoPinPtr(std::string const &iopin_name) {
   return design_.GetIoPinPtr(iopin_name);
 }
 
+void PhyDB::SetBlockageCount(int count) {
+  design_.SetBlockageCount(count);
+}
+
+Blockage *PhyDB::AddBlockage() {
+  return design_.AddBlockage();
+}
+
 bool PhyDB::IsDefViaExisting(std::string const &name) {
   return design_.IsDefViaExisting(name);
 }

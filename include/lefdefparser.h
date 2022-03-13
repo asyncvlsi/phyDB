@@ -44,6 +44,8 @@ int getLefVias(lefrCallbackType_e, lefiVia *, lefiUserData);
 int getLefViaRuleGenerates(lefrCallbackType_e, lefiViaRule *, lefiUserData);
 
 int getDefVersion(defrCallbackType_e, double, defiUserData);
+int getDefBlockageStart(defrCallbackType_e, int, defiUserData);
+int getDefBlockage(defrCallbackType_e, defiBlockage*, defiUserData);
 int getDefBusBit(defrCallbackType_e, const char *, defiUserData);
 int getDefDivider(defrCallbackType_e, const char *, defiUserData);
 int getDefString(defrCallbackType_e, const char *, defiUserData);
