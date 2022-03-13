@@ -222,26 +222,27 @@ int getLefObs(
   return 0;
 }
 
-int getLefCornerSpacing(void *data, const std::string &stringProp) {
-//TODO: This function is for the ISPD2018/19 benchmarks, we can handle this later
-  /*istringstream istr(stringProp);
-  string token;
+int getLefCornerSpacing(PhyDB* phy_db_ptr, const std::string &stringProp) {
+  std::istringstream istr(stringProp);
+  std::string token;
   Layer &last_layer = phy_db_ptr->GetTechPtr()->GetLayersRef().back(); //write to the last one
-
+  auto corner_spacing = last_layer.GetCornerSpacing();
   while (!istr.eof()) {
       istr >> token;
       if (token == "EXCEPTEOL") {
-          istr >> tmpLayer.cornerSpacing.eolWidth;
+          double eol_width;
+          istr >> eol_width;
+          corner_spacing->SetEOLWidth(eol_width);
       } else if (token == "WIDTH") {
-          double width_;
-          istr >> width_;
-          tmpLayer.cornerSpacing.width_.push_back(GetWidth);
+          double width;
+          istr >> width;
+          corner_spacing->AddWidth(width);
       } else if (token == "SPACING") {
           double spacing;
           istr >> spacing;
-          tmpLayer.cornerSpacing.spacing.push_back(GetSpacing);
+          corner_spacing->AddSpacing(spacing);
       }
-  }*/
+  }
   return 0;
 }
 
@@ -290,7 +291,7 @@ int getLefLayers(lefrCallbackType_e type, lefiLayer *layer, lefiUserData data) {
     for (int i = 0; i < layer->numProps(); i++) {
       if (std::string(layer->propName(i)) == "LEF58_CORNERSPACING"
           && layer->propIsString(i)) {
-        getLefCornerSpacing(data, layer->propValue(i));
+        getLefCornerSpacing(phy_db_ptr, layer->propValue(i));
       } else {
         std::cout << "WARNING: UNSUPPORTED PROPERTY: "
                   << layer->propName(i) << "\n";

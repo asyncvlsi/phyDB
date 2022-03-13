@@ -44,6 +44,15 @@ class CornerSpacing {
       width_(width),
       spacing_(spacing) {}
 
+  void SetEOLWidth(double eol_width) { eol_width_ = eol_width; }
+  void AddWidth(double width) { width_.push_back(width); }
+  void AddSpacing(double spacing) { spacing_.push_back(spacing); }
+
+
+  double GetEOLWidth() { return eol_width_;}
+  std::vector<double> GetWidth() {return width_;}
+  std::vector<double> GetSpacing() { return spacing_;}
+
   void Reset();
 };
 
