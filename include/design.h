@@ -166,6 +166,7 @@ class Design {
 
   void SetBlockageCount(int count);
   Blockage *AddBlockage();
+  Blockage *GetBlockage(int index);
   std::vector<Blockage> &GetBlockagesRef();
 
   void SetNetCount(int count, double redundancy_factor = 1.4);

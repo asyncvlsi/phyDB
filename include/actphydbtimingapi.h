@@ -151,6 +151,7 @@ class ActPhyDBTimingAPI {
   void AddActCompPinPtrIdPair(void *act_pin, int comp_id, int pin_id);
 
   void SetGetNumConstraintsCB(int (*callback_function)());
+  void SetSpecifyTopKCB(void (*callback_function)(int));
   void SetUpdateTimingIncrementalCB(void (*callback_function)());
   void SetGetSlackCB(
       std::vector<double> (*callback_function)(const std::vector<int> &)
@@ -186,6 +187,7 @@ class ActPhyDBTimingAPI {
   PhydbPin ActCompPinPtr2Id(void *act_pin);
   void *PhydbCompPin2ActPtr(PhydbPin phydb_pin);
   int GetNumConstraints();
+  void SpecifyTopK(int k);
   void UpdateTimingIncremental();
   double GetSlack(int tc_num);
   void GetWitness(
@@ -197,6 +199,7 @@ class ActPhyDBTimingAPI {
 
  private:
   int (*GetNumConstraintsCB)() = nullptr;
+  void (*SpecifyTopKCB)(int) = nullptr;
   void (*UpdateTimingIncrementalCB)() = nullptr;
   std::vector<double> (*GetSlackCB)(const std::vector<int> &) = nullptr;
   void (*GetWitnessCB)(
@@ -219,8 +222,10 @@ class ActPhyDBTimingAPI {
   galois::eda::utility::ExtNetlistAdaptor *adaptor_;
 #endif
 
-  void TranslateActPathToPhydbPath(std::vector<ActEdge> &act_path,
-                                   PhydbPath &phydb_path);
+  void TranslateActPathToPhydbPath(
+      std::vector<ActEdge> &act_path,
+      PhydbPath &phydb_path
+  );
 };
 
 }

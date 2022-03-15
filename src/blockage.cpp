@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- * Copyright (c) 2021 Jiayuan He, Yihang Yang
+ * Copyright (c) 2022 Jiayuan He, Yihang Yang
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,7 +41,7 @@ void Blockage::SetLayer(Layer *layer_ptr) {
     is_placement_ = false;
     std::cout << "WARNING:"
               << "  only LAYER or PLACEMENT is allowed per Blockage!\n"
-              << "  PLACEMENT is removed to add LAYER\n";
+              << "  PLACEMENT is removed for adding LAYER\n";
   }
   layer_ptr_ = layer_ptr;
 }
@@ -51,7 +51,7 @@ void Blockage::SetSlots(bool is_slots) {
     is_fills_ = false;
     std::cout << "WARNING:"
               << "  only at most one of SLOTS and FILLS is allowed per LAYER!\n"
-              << "  FILLS is removed to add SLOTS\n";
+              << "  FILLS is removed for adding SLOTS\n";
   }
   is_slots_ = is_slots;
 }
@@ -61,7 +61,7 @@ void Blockage::SetFills(bool is_fills) {
     is_slots_ = false;
     std::cout << "WARNING:"
               << "  only at most one of SLOTS and FILLS is allowed per LAYER!\n"
-              << "  SLOTS is removed to add FILLS\n";
+              << "  SLOTS is removed for adding FILLS\n";
   }
   is_fills_ = is_fills;
 }
@@ -83,7 +83,7 @@ void Blockage::SetSpacing(int min_spacing) {
     effective_width_ = -1.0;
     std::cout << "WARNING:"
               << "  only at most one of SPACING and DESIGNRULEWIDTH is allowed per LAYER!\n"
-              << "  DESIGNRULEWIDTH is removed to add SPACING\n";
+              << "  DESIGNRULEWIDTH is removed for adding SPACING\n";
   }
   min_spacing_ = min_spacing;
 }
@@ -93,7 +93,7 @@ void Blockage::SetDesignRuleWidth(int effective_width) {
     min_spacing_ = -1.0;
     std::cout << "WARNING:"
               << "  only at most one of SPACING and DESIGNRULEWIDTH is allowed per LAYER!\n"
-              << "  SPACING is removed to add DESIGNRULEWIDTH\n";
+              << "  SPACING is removed for adding DESIGNRULEWIDTH\n";
   }
   effective_width_ = effective_width;
 }
@@ -107,7 +107,7 @@ void Blockage::SetPlacement(bool is_placement) {
     layer_ptr_ = nullptr;
     std::cout << "WARNING:"
               << "  only LAYER or PLACEMENT is allowed per Blockage!\n"
-              << "  LAYER is removed to add PLACEMENT\n";
+              << "  LAYER is removed for adding PLACEMENT\n";
   }
   is_placement_ = is_placement;
 }
@@ -117,7 +117,7 @@ void Blockage::SetSoft(bool is_soft) {
     max_density_ = -1.0;
     std::cout << "WARNING:"
               << "  only at most one of SOFT and PARTIAL is allowed per PLACEMENT!\n"
-              << "  PARTIAL is removed to add SOFT\n";
+              << "  PARTIAL is removed for adding SOFT\n";
   }
   is_soft_ = is_soft;
 }
@@ -127,7 +127,7 @@ void Blockage::SetPartial(double max_density) {
     is_soft_ = false;
     std::cout << "WARNING:"
               << "  only at most one of SOFT and PARTIAL is allowed per PLACEMENT!\n"
-              << "  SOFT is removed to add PARTIAL\n";
+              << "  SOFT is removed for adding PARTIAL\n";
   }
   max_density_ = max_density;
 }

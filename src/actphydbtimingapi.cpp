@@ -206,6 +206,10 @@ void ActPhyDBTimingAPI::SetGetNumConstraintsCB(int (*callback_function)()) {
   GetNumConstraintsCB = callback_function;
 }
 
+void ActPhyDBTimingAPI::SetSpecifyTopKCB(void (*callback_function)(int)) {
+  SpecifyTopKCB = callback_function;
+}
+
 void ActPhyDBTimingAPI::SetUpdateTimingIncrementalCB(void (*callback_function)()) {
   UpdateTimingIncrementalCB = callback_function;
 }
@@ -267,6 +271,12 @@ int ActPhyDBTimingAPI::GetNumConstraints() {
   PhyDBExpects(GetNumConstraintsCB != nullptr,
                "Callback function for GetNumConstraints() is not set");
   return GetNumConstraintsCB();
+}
+
+void ActPhyDBTimingAPI::SpecifyTopK(int k) {
+  PhyDBExpects(SpecifyTopKCB != nullptr,
+               "Callback function for SpecifyTopK() is not set");
+  SpecifyTopKCB(k);
 }
 
 void ActPhyDBTimingAPI::UpdateTimingIncremental() {

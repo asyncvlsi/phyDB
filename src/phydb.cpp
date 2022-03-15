@@ -282,6 +282,14 @@ Blockage *PhyDB::AddBlockage() {
   return design_.AddBlockage();
 }
 
+Blockage *PhyDB::GetBlockage(int index) {
+  return design_.GetBlockage(index);
+}
+
+std::vector<Blockage> &PhyDB::GetBlockagesRef() {
+  return design_.GetBlockagesRef();
+}
+
 bool PhyDB::IsDefViaExisting(std::string const &name) {
   return design_.IsDefViaExisting(name);
 }
@@ -575,6 +583,10 @@ std::vector<GcellGrid> &PhyDB::GetGcellGridsRef() {
 
 void PhyDB::SetGetNumConstraintsCB(int (*callback_function)()) {
   timing_api_.SetGetNumConstraintsCB(callback_function);
+}
+
+void PhyDB::SetSpecifyTopKCB(void (*callback_function)(int)) {
+  timing_api_.SetSpecifyTopKCB(callback_function);
 }
 
 void PhyDB::SetUpdateTimingIncrementalCB(void (*callback_function)()) {

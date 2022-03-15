@@ -151,6 +151,8 @@ class PhyDB {
 
   void SetBlockageCount(int count);
   Blockage *AddBlockage();
+  Blockage *GetBlockage(int index);
+  std::vector<Blockage> &GetBlockagesRef();
 
   void SetNetCount(int count);
   bool IsNetExisting(std::string const &net_name);
@@ -192,6 +194,7 @@ class PhyDB {
   * and pointers of parasitic manager, cell libs, adaptor
   * ************************************************/
   void SetGetNumConstraintsCB(int (*callback_function)());
+  void SetSpecifyTopKCB(void (*callback_function)(int));
   void SetUpdateTimingIncrementalCB(void (*callback_function)());
   void SetGetSlackCB(
       std::vector<double> (*callback_function)(const std::vector<int> &)

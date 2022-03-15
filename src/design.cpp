@@ -230,6 +230,13 @@ Blockage *Design::AddBlockage() {
   return &(blockages_.back());
 }
 
+Blockage *Design::GetBlockage(int index) {
+  if (static_cast<int>(blockages_.size()) > index) {
+    return nullptr;
+  }
+  return &blockages_[index];
+}
+
 std::vector<Blockage> &Design::GetBlockagesRef() {
   return blockages_;
 }
