@@ -19,10 +19,6 @@
  *
  ******************************************************************************/
 
-//
-// Created by yihang on 4/18/21.
-//
-
 #include "actphydbtimingapi.h"
 
 #include "logging.h"
@@ -234,6 +230,7 @@ void ActPhyDBTimingAPI::SetGetViolatedTimingConstraintsCB(
 ) {
   GetViolatedTimingConstraintsCB = callback_function;
 }
+
 #if PHYDB_USE_GALOIS
 void ActPhyDBTimingAPI::SetParaManager(galois::eda::parasitics::Manager *manager) {
   para_manager_ = manager;
@@ -264,7 +261,6 @@ galois::eda::parasitics::Node *ActPhyDBTimingAPI::PhyDBPinToSpefNode(PhydbPin ph
   PhyDBExpects(node != nullptr, "Cannot map ACT pin to SPEF node?");
   return node;
 }
-
 #endif
 
 int ActPhyDBTimingAPI::GetNumConstraints() {
@@ -296,6 +292,7 @@ void ActPhyDBTimingAPI::GetWitness(
     PhydbPath &phydb_fast_path,
     PhydbPath &phydb_slow_path
 ) {
+#if PHYDB_USE_GALOIS
   PhyDBExpects(GetWitnessCB != nullptr,
                "Callback GetWitness for GetSlack() is not set");
   std::vector<ActEdge> act_fast_path;
@@ -305,6 +302,7 @@ void ActPhyDBTimingAPI::GetWitness(
 
   TranslateActPathToPhydbPath(act_fast_path, phydb_fast_path);
   TranslateActPathToPhydbPath(act_slow_path, phydb_slow_path);
+#endif
 }
 
 void ActPhyDBTimingAPI::GetViolatedTimingConstraints(std::vector<int> &violated_tc_nums) {
@@ -317,18 +315,28 @@ void ActPhyDBTimingAPI::TranslateActPathToPhydbPath(
     std::vector<ActEdge> &act_path,
     PhydbPath &phydb_path
 ) {
+#if PHYDB_USE_GALOIS
   phydb_path.Clear();
 
   size_t sz = act_path.size();
 
   for (size_t i = 0; i < sz; ++i) {
     ActEdge &act_edge = act_path[i];
-    PhyDBExpects(IsActComPinPtrExisting(act_edge.source),
-                 "Cannot translate ActEdge to PhydbEdge, ActEdge not in the database");
-    PhyDBExpects(IsActComPinPtrExisting(act_edge.target),
-                 "Cannot translate ActEdge to PhydbEdge, ActEdge not in the database");
-    PhyDBExpects(IsActNetPtrExisting(act_edge.net_ptr),
-                 "Cannot translate ActEdge to PhydbEdge, ActEdge not in the database");
+    if (!IsActComPinPtrExisting(act_edge.source)) {
+      std::cout << "before getFullName4Pin() for source" << std::endl;
+      std::string pin_name = adaptor_->getFullName4Pin(act_edge.source);
+      PhyDBExpects(false, "ActEdge source pin, " + pin_name + " corresponds to no PhyDB pin");
+    }
+    if (!IsActComPinPtrExisting(act_edge.target)) {
+      std::cout << "before getFullName4Pin() for target" << std::endl;
+      std::string pin_name = adaptor_->getFullName4Pin(act_edge.target);
+      PhyDBExpects(false, "ActEdge target pin, " + pin_name + " corresponds to no PhyDB pin");
+    }
+    if ((act_edge.net_ptr!=nullptr)&&!IsActNetPtrExisting(act_edge.net_ptr)) {
+      std::cout << "before getFullName4Net()" << std::endl;
+      std::string net_name = adaptor_->getFullName4Net(act_edge.net_ptr);
+      PhyDBExpects(false, "ActEdge net_ptr, " + net_name + " corresponds to no PhyDB net");
+    }
     PhyDBExpects(act_edge.delay >= 0, "Negative delay?");
 
     if (i == 0) {
@@ -341,6 +349,7 @@ void ActPhyDBTimingAPI::TranslateActPathToPhydbPath(
     double delay = act_edge.delay;
     phydb_path.AddEdge(source, target, net_index, delay, 1);
   }
+#endif
 }
 
 }

@@ -316,7 +316,7 @@ Net *PhyDB::AddNet(
     void *act_net_ptr
 ) {
   auto *ret = design_.AddNet(net_name, weight);
-
+#if PHYDB_USE_GALOIS
   if (act_net_ptr != nullptr) {
     if (timing_api_.IsActNetPtrExisting(act_net_ptr)) {
       int id = timing_api_.ActNetPtr2Id(act_net_ptr);
@@ -327,7 +327,7 @@ Net *PhyDB::AddNet(
     int id = (int) design_.nets_.size() - 1;
     timing_api_.AddActNetPtrIdPair(act_net_ptr, id);
   }
-
+#endif
   return ret;
 }
 
@@ -615,6 +615,33 @@ void PhyDB::SetGetViolatedTimingConstraintsCB(
   timing_api_.SetGetViolatedTimingConstraintsCB(callback_function);
 }
 
+bool PhyDB::IsDriverPin(PhydbPin &phydb_pin) {
+  int comp_id = phydb_pin.comp_id;
+  Macro *macro_ptr = design_.components_[comp_id].GetMacro();
+  int pin_id = phydb_pin.pin_id;
+  return macro_ptr->GetPinsRef()[pin_id].IsDriverPin();
+}
+
+std::string PhyDB::GetFullCompPinName(
+    PhydbPin &phydb_pin,
+    char delimiter
+) {
+  int comp_id = phydb_pin.comp_id;
+  int pin_id = phydb_pin.pin_id;
+  Component &comp = design_.components_[comp_id];
+  const std::string &comp_name = comp.GetName();
+  const std::string &pin_name =
+      comp.GetMacro()->GetPinsRef()[pin_id].GetName();
+  std::string full_name(comp_name);
+  full_name.push_back(delimiter);
+  full_name.append(pin_name);
+  return full_name;
+}
+
+ActPhyDBTimingAPI &PhyDB::GetTimingApi() {
+  return timing_api_;
+}
+
 #if PHYDB_USE_GALOIS
 void PhyDB::SetParaManager(galois::eda::parasitics::Manager *manager) {
   timing_api_.SetParaManager(manager);
@@ -644,7 +671,7 @@ void PhyDB::CreatePhydbActAdaptor() {
   auto *timer_adaptor = GetNetlistAdaptor();
   PhyDBExpects(timer_adaptor != nullptr,
                "Timer netlist adaptor no found! Cannot build phydb-act adaptor");
-  int number_of_nets = (int) design_.nets_.size();
+  int number_of_nets = static_cast<int>(design_.nets_.size());
   for (int i = 0; i < number_of_nets; ++i) {
     Net &net = design_.nets_[i];
     void *act_net = timer_adaptor->getNetFromFullName(net.GetName(), '.');
@@ -716,35 +743,7 @@ void PhyDB::AddNetsAndCompPinsToSpefManager() {
     }
   }
 }
-
 #endif
-
-bool PhyDB::IsDriverPin(PhydbPin &phydb_pin) {
-  int comp_id = phydb_pin.comp_id;
-  Macro *macro_ptr = design_.components_[comp_id].GetMacro();
-  int pin_id = phydb_pin.pin_id;
-  return macro_ptr->GetPinsRef()[pin_id].IsDriverPin();
-}
-
-std::string PhyDB::GetFullCompPinName(
-    PhydbPin &phydb_pin,
-    char delimiter
-) {
-  int comp_id = phydb_pin.comp_id;
-  int pin_id = phydb_pin.pin_id;
-  Component &comp = design_.components_[comp_id];
-  const std::string &comp_name = comp.GetName();
-  const std::string &pin_name =
-      comp.GetMacro()->GetPinsRef()[pin_id].GetName();
-  std::string full_name(comp_name);
-  full_name.push_back(delimiter);
-  full_name.append(pin_name);
-  return full_name;
-}
-
-ActPhyDBTimingAPI &PhyDB::GetTimingApi() {
-  return timing_api_;
-}
 
 void PhyDB::ReadLef(std::string const &lef_file_name) {
   tech_.SetLefName(lef_file_name);
