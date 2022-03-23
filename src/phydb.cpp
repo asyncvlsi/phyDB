@@ -585,7 +585,16 @@ void PhyDB::SetGetNumConstraintsCB(int (*callback_function)()) {
   timing_api_.SetGetNumConstraintsCB(callback_function);
 }
 
-void PhyDB::SetSpecifyTopKCB(void (*callback_function)(int)) {
+void PhyDB::SetSpecifyTopKsCB(void (*callback_function)(int)) {
+  timing_api_.SetSpecifyTopKsCB(callback_function);
+}
+
+void PhyDB::SetSpecifyTopKCB(
+    void (*callback_function)(
+        int timing_constraint_id,
+        int top_k
+    )
+) {
   timing_api_.SetSpecifyTopKCB(callback_function);
 }
 
@@ -599,20 +608,80 @@ void PhyDB::SetGetSlackCB(
   timing_api_.SetGetSlackCB(callback_function);
 }
 
-void PhyDB::SetGetWitnessCB(
-    void (*callback_function)(
-        int,
-        std::vector<ActEdge> &,
-        std::vector<ActEdge> &
-    )
-) {
-  timing_api_.SetGetWitnessCB(callback_function);
-}
-
 void PhyDB::SetGetViolatedTimingConstraintsCB(
     void (*callback_function)(std::vector<int> &)
 ) {
   timing_api_.SetGetViolatedTimingConstraintsCB(callback_function);
+}
+
+void PhyDB::SetGetWitnessCB(
+    void (*callback_function)(
+        int timing_constraint_id,
+        std::vector<ActEdge> &fast_path,
+        std::vector<ActEdge> &slow_path
+    )
+) {
+  std::cout
+      << "\033[0;34m"
+      << "WARNING:" << "\n"
+      << "    " << __FUNCTION__ << " will be removed after April 1st, 2022"
+      << "\033[0m" << std::endl;
+  timing_api_.SetGetWitnessCB(callback_function);
+}
+
+void PhyDB::SetGetSlowWitnessCB(
+    void (*callback_function)(
+        int timing_constraint_id,
+        std::vector<ActEdge> &path
+    )
+) {
+  timing_api_.SetGetSlowWitnessCB(callback_function);
+}
+
+void PhyDB::SetGetFastWitnessCB(
+    void (*callback_function)(
+        int timing_constraint_id,
+        std::vector<ActEdge> &path
+    )
+) {
+  timing_api_.SetGetFastWitnessCB(callback_function);
+}
+
+void PhyDB::SetGetCriticalPerformanceSlackCB(
+    double (*callback_function)()
+) {
+  timing_api_.SetGetCriticalPerformanceSlackCB(callback_function);
+}
+
+void PhyDB::SetGetCriticalPerformanceWitnessCB(
+    void (*callback_function)(std::vector<ActEdge> &path)
+) {
+  timing_api_.SetGetCriticalPerformanceWitnessCB(callback_function);
+}
+
+void PhyDB::SetGetNumPerformanceConstraintsCB(int (*callback_function)()) {
+  timing_api_.SetGetNumPerformanceConstraintsCB(callback_function);
+}
+
+void PhyDB::SetGetPerformanceSlack(
+    double (*callback_function)(int performance_id)
+) {
+  timing_api_.SetGetPerformanceSlackCB(callback_function);
+}
+
+void PhyDB::SetGetViolatedPerformanceConstraintsCB(
+    void (*callback_function)(std::vector<int> &)
+) {
+  timing_api_.SetGetViolatedPerformanceConstraintsCB(callback_function);
+}
+
+void PhyDB::SetGetPerformanceWitnessCB(
+    void (*callback_function)(
+        int timing_constraint_id,
+        std::vector<ActEdge> &path
+    )
+) {
+  timing_api_.SetGetPerformanceWitnessCB(callback_function);
 }
 
 bool PhyDB::IsDriverPin(PhydbPin &phydb_pin) {

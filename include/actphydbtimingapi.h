@@ -151,20 +151,52 @@ class ActPhyDBTimingAPI {
   void AddActCompPinPtrIdPair(void *act_pin, int comp_id, int pin_id);
 
   void SetGetNumConstraintsCB(int (*callback_function)());
-  void SetSpecifyTopKCB(void (*callback_function)(int));
+  void SetSpecifyTopKsCB(void (*callback_function)(int));
+  void SetSpecifyTopKCB(void (*callback_function)(int, int));
   void SetUpdateTimingIncrementalCB(void (*callback_function)());
   void SetGetSlackCB(
       std::vector<double> (*callback_function)(const std::vector<int> &)
   );
-  void SetGetWitnessCB(
-      void (*callback_function)(
-          int,
-          std::vector<ActEdge> &,
-          std::vector<ActEdge> &
-      )
-  );
   void SetGetViolatedTimingConstraintsCB(
       void (*callback_function)(std::vector<int> &)
+  );
+  void SetGetWitnessCB(
+      void (*callback_function)(
+          int timing_constraint_id,
+          std::vector<ActEdge> &fast_path,
+          std::vector<ActEdge> &slow_path
+      )
+  );
+  void SetGetSlowWitnessCB(
+      void (*callback_function)(
+          int timing_constraint_id,
+          std::vector<ActEdge> &path
+      )
+  );
+  void SetGetFastWitnessCB(
+      void (*callback_function)(
+          int timing_constraint_id,
+          std::vector<ActEdge> &path
+      )
+  );
+  void SetGetCriticalPerformanceSlackCB(
+      double (*callback_function)()
+  );
+  void SetGetCriticalPerformanceWitnessCB(
+      void (*callback_function)(std::vector<ActEdge> &path)
+  );
+  void SetGetNumPerformanceConstraintsCB(int (*callback_function)());
+  void SetGetPerformanceSlackCB(
+      double (*callback_function)(int performance_id)
+  );
+  void SetGetViolatedPerformanceConstraintsCB(
+      void (*callback_function)(std::vector<int> &)
+  );
+  void SetGetPerformanceWitnessCB(
+      void (*callback_function)(
+          int performance_id,
+          std::vector<ActEdge> &path
+      )
   );
 #if PHYDB_USE_GALOIS
   void SetParaManager(galois::eda::parasitics::Manager *manager);
@@ -187,27 +219,66 @@ class ActPhyDBTimingAPI {
   PhydbPin ActCompPinPtr2Id(void *act_pin);
   void *PhydbCompPin2ActPtr(PhydbPin phydb_pin);
   int GetNumConstraints();
-  void SpecifyTopK(int k);
+  void SpecifyTopKs(int k);
+  void SpecifyTopK(int tc_num, int k);
   void UpdateTimingIncremental();
   double GetSlack(int tc_num);
+  void GetViolatedTimingConstraints(std::vector<int> &violated_tc_nums);
   void GetWitness(
       int tc_num,
       PhydbPath &phydb_fast_path,
       PhydbPath &phydb_slow_path
   );
-  void GetViolatedTimingConstraints(std::vector<int> &violated_tc_nums);
-
+  void GetSlowWitness(
+      int tc_num,
+      PhydbPath &phydb_path
+  );
+  void GetFastWitness(
+      int tc_num,
+      PhydbPath &phydb_path
+  );
+  double GetCriticalPerformanceSlack();
+  void GetCriticalPerformanceWitness(PhydbPath &phydb_path) ;
+  int GetNumPerformanceConstraints();
+  double GetPerformanceSlack(int performance_id);
+  void GetViolatedPerformanceConstraints(std::vector<int> &performance_ids);
+  void GetPerformanceWitness(
+      int performance_id,
+      PhydbPath &phydb_path
+  );
  private:
   int (*GetNumConstraintsCB)() = nullptr;
-  void (*SpecifyTopKCB)(int) = nullptr;
+  void (*SpecifyTopKsCB)(int) = nullptr;
+  void (*SpecifyTopKCB)(int, int) = nullptr;
   void (*UpdateTimingIncrementalCB)() = nullptr;
   std::vector<double> (*GetSlackCB)(const std::vector<int> &) = nullptr;
+  void (*GetViolatedTimingConstraintsCB)(std::vector<int> &) = nullptr;
   void (*GetWitnessCB)(
       int,
       std::vector<ActEdge> &,
       std::vector<ActEdge> &
   ) = nullptr;
-  void (*GetViolatedTimingConstraintsCB)(std::vector<int> &) = nullptr;
+  void (*GetSlowWitnessCB)(
+      int timing_constraint_id,
+      std::vector<ActEdge> &path
+  ) = nullptr;
+  void (*GetFastWitnessCB)(
+      int timing_constraint_id,
+      std::vector<ActEdge> &path
+  ) = nullptr;
+  double (*GetCriticalPerformanceSlackCB)() = nullptr;
+  void (*GetCriticalPerformanceWitnessCB)(
+      std::vector<ActEdge> &path
+  ) = nullptr;
+  int (*GetNumPerformanceConstraintsCB)() = nullptr;
+  double (*GetPerformanceSlackCB)(int performance_id) = nullptr;
+  void (*GetViolatedPerformanceConstraintsCB)(
+      std::vector<int> &performance_ids
+  ) = nullptr;
+  void (*GetPerformanceWitnessCB)(
+      int performance_id,
+      std::vector<ActEdge> &path
+  ) = nullptr;
 
   // act net pointer <=> phydb net index
   std::unordered_map<void *, int> net_act_2_id_;

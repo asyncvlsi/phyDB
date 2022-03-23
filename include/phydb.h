@@ -194,20 +194,65 @@ class PhyDB {
   * and pointers of parasitic manager, cell libs, adaptor
   * ************************************************/
   void SetGetNumConstraintsCB(int (*callback_function)());
-  void SetSpecifyTopKCB(void (*callback_function)(int));
+  void SetSpecifyTopKsCB(void (*callback_function)(int top_k)); // top-k applied to all constraints
+  void SetSpecifyTopKCB( // top-k for a specific constraint
+      void (*callback_function)(
+          int timing_constraint_id,
+          int top_k
+      )
+  );
   void SetUpdateTimingIncrementalCB(void (*callback_function)());
   void SetGetSlackCB(
-      std::vector<double> (*callback_function)(const std::vector<int> &)
-  );
-  void SetGetWitnessCB(
-      void (*callback_function)(
-          int,
-          std::vector<ActEdge> &,
-          std::vector<ActEdge> &
+      std::vector<double> (*callback_function)(
+          const std::vector<int> &timing_constraint_ids
       )
   );
   void SetGetViolatedTimingConstraintsCB(
       void (*callback_function)(std::vector<int> &)
+  );
+  /* given a timing fork r : a < b
+      The fast end paths are paths from r to a.
+      The slow end paths are from r to b
+  */
+  void SetGetWitnessCB(
+      void (*callback_function)(
+          int timing_constraint_id,
+          std::vector<ActEdge> &fast_path,
+          std::vector<ActEdge> &slow_path
+      )
+  );
+  void SetGetSlowWitnessCB(
+      void (*callback_function)(
+          int timing_constraint_id,
+          std::vector<ActEdge> &path
+      )
+  );
+  void SetGetFastWitnessCB(
+      void (*callback_function)(
+          int timing_constraint_id,
+          std::vector<ActEdge> &path
+      )
+  );
+  // the following APIs are for the most critical cycle
+  void SetGetCriticalPerformanceSlackCB(
+      double (*callback_function)()
+  );
+  void SetGetCriticalPerformanceWitnessCB(
+      void (*callback_function)(std::vector<ActEdge> &path)
+  );
+  // the following APIs are for "performance constraints" specified manually (future work)
+  void SetGetNumPerformanceConstraintsCB(int (*callback_function)());
+  void SetGetPerformanceSlack(
+      double (*callback_function)(int performance_id)
+  );
+  void SetGetViolatedPerformanceConstraintsCB(
+      void (*callback_function)(std::vector<int> &)
+  );
+  void SetGetPerformanceWitnessCB(
+      void (*callback_function)(
+          int performance_id,
+          std::vector<ActEdge> &path
+      )
   );
   bool IsDriverPin(PhydbPin &phydb_pin);
   std::string GetFullCompPinName(PhydbPin &phydb_pin, char delimiter = ':');

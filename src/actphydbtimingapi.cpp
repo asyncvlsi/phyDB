@@ -202,7 +202,11 @@ void ActPhyDBTimingAPI::SetGetNumConstraintsCB(int (*callback_function)()) {
   GetNumConstraintsCB = callback_function;
 }
 
-void ActPhyDBTimingAPI::SetSpecifyTopKCB(void (*callback_function)(int)) {
+void ActPhyDBTimingAPI::SetSpecifyTopKsCB(void (*callback_function)(int)) {
+  SpecifyTopKsCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetSpecifyTopKCB(void (*callback_function)(int, int)) {
   SpecifyTopKCB = callback_function;
 }
 
@@ -215,6 +219,12 @@ void ActPhyDBTimingAPI::SetGetSlackCB(std::vector<double> (*callback_function)(
   GetSlackCB = callback_function;
 }
 
+void ActPhyDBTimingAPI::SetGetViolatedTimingConstraintsCB(
+    void (*callback_function)(std::vector<int> &)
+) {
+  GetViolatedTimingConstraintsCB = callback_function;
+}
+
 void ActPhyDBTimingAPI::SetGetWitnessCB(
     void (*callback_function)(
         int,
@@ -225,10 +235,61 @@ void ActPhyDBTimingAPI::SetGetWitnessCB(
   GetWitnessCB = callback_function;
 }
 
-void ActPhyDBTimingAPI::SetGetViolatedTimingConstraintsCB(
-    void (*callback_function)(std::vector<int> &)
+void ActPhyDBTimingAPI::SetGetSlowWitnessCB(
+    void (*callback_function)(
+        int timing_constraint_id,
+        std::vector<ActEdge> &path
+    )
 ) {
-  GetViolatedTimingConstraintsCB = callback_function;
+  GetSlowWitnessCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetGetFastWitnessCB(
+    void (*callback_function)(
+        int timing_constraint_id,
+        std::vector<ActEdge> &path
+    )
+) {
+  GetFastWitnessCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetGetCriticalPerformanceSlackCB(
+    double (*callback_function)()
+) {
+  GetCriticalPerformanceSlackCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetGetCriticalPerformanceWitnessCB(
+    void (*callback_function)(std::vector<ActEdge> &path)
+) {
+  GetCriticalPerformanceWitnessCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetGetNumPerformanceConstraintsCB(
+    int (*callback_function)()
+) {
+  GetNumPerformanceConstraintsCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetGetPerformanceSlackCB(
+    double (*callback_function)(int performance_id)
+) {
+  GetPerformanceSlackCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetGetViolatedPerformanceConstraintsCB(
+    void (*callback_function)(std::vector<int> &performance_ids)
+) {
+  GetViolatedPerformanceConstraintsCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetGetPerformanceWitnessCB(
+    void (*callback_function)(
+        int performance_id,
+        std::vector<ActEdge> &path
+    )
+) {
+  GetPerformanceWitnessCB = callback_function;
 }
 
 #if PHYDB_USE_GALOIS
@@ -269,10 +330,16 @@ int ActPhyDBTimingAPI::GetNumConstraints() {
   return GetNumConstraintsCB();
 }
 
-void ActPhyDBTimingAPI::SpecifyTopK(int k) {
+void ActPhyDBTimingAPI::SpecifyTopKs(int k) {
+  PhyDBExpects(SpecifyTopKsCB != nullptr,
+               "Callback function for SpecifyTopKs() is not set");
+  SpecifyTopKsCB(k);
+}
+
+void ActPhyDBTimingAPI::SpecifyTopK(int tc_num, int k) {
   PhyDBExpects(SpecifyTopKCB != nullptr,
                "Callback function for SpecifyTopK() is not set");
-  SpecifyTopKCB(k);
+  SpecifyTopKCB(tc_num, k);
 }
 
 void ActPhyDBTimingAPI::UpdateTimingIncremental() {
@@ -287,14 +354,25 @@ double ActPhyDBTimingAPI::GetSlack(int tc_num) {
   return GetSlackCB(std::vector(1, tc_num))[0];
 }
 
+void ActPhyDBTimingAPI::GetViolatedTimingConstraints(std::vector<int> &violated_tc_nums) {
+  PhyDBExpects(GetViolatedTimingConstraintsCB != nullptr,
+               "Callback GetWitness for GetViolatedTimingConstraints() is not set");
+  GetViolatedTimingConstraintsCB(violated_tc_nums);
+}
+
 void ActPhyDBTimingAPI::GetWitness(
     int tc_num,
     PhydbPath &phydb_fast_path,
     PhydbPath &phydb_slow_path
 ) {
 #if PHYDB_USE_GALOIS
+  std::cout
+      << "\033[0;34m"
+      << "WARNING:" << "\n"
+      << "    " << __FUNCTION__ << " will be removed after April 1st, 2022"
+      << "\033[0m" << std::endl;
   PhyDBExpects(GetWitnessCB != nullptr,
-               "Callback GetWitness for GetSlack() is not set");
+               "Callback function for GetWitness() is not set");
   std::vector<ActEdge> act_fast_path;
   std::vector<ActEdge> act_slow_path;
 
@@ -305,10 +383,95 @@ void ActPhyDBTimingAPI::GetWitness(
 #endif
 }
 
-void ActPhyDBTimingAPI::GetViolatedTimingConstraints(std::vector<int> &violated_tc_nums) {
-  PhyDBExpects(GetViolatedTimingConstraintsCB != nullptr,
-               "Callback GetWitness for GetViolatedTimingConstraints() is not set");
-  GetViolatedTimingConstraintsCB(violated_tc_nums);
+void ActPhyDBTimingAPI::GetSlowWitness(
+    int tc_num,
+    PhydbPath &phydb_path
+) {
+#if PHYDB_USE_GALOIS
+  PhyDBExpects(GetSlowWitnessCB != nullptr,
+               "Callback function for GetSlowWitness() is not set");
+  std::vector<ActEdge> act_path;
+  GetSlowWitnessCB(tc_num, act_path);
+  TranslateActPathToPhydbPath(act_path, phydb_path);
+#endif
+}
+
+void ActPhyDBTimingAPI::GetFastWitness(
+    int tc_num,
+    PhydbPath &phydb_path
+) {
+#if PHYDB_USE_GALOIS
+  PhyDBExpects(GetFastWitnessCB != nullptr,
+               "Callback function for GetFastWitness() is not set");
+  std::vector<ActEdge> act_path;
+  GetFastWitnessCB(tc_num, act_path);
+  TranslateActPathToPhydbPath(act_path, phydb_path);
+#endif
+}
+
+double ActPhyDBTimingAPI::GetCriticalPerformanceSlack() {
+#if PHYDB_USE_GALOIS
+  PhyDBExpects(GetCriticalPerformanceSlackCB != nullptr,
+               "Callback function for GetCriticalPerformanceSlack() is not set");
+  return GetCriticalPerformanceSlackCB();
+#else
+  return 0;
+#endif
+}
+
+void ActPhyDBTimingAPI::GetCriticalPerformanceWitness(
+    PhydbPath &phydb_path
+) {
+#if PHYDB_USE_GALOIS
+  PhyDBExpects(GetCriticalPerformanceWitnessCB != nullptr,
+               "Callback function for GetCriticalPerformanceWitness() is not set");
+  std::vector<ActEdge> act_path;
+  GetCriticalPerformanceWitnessCB(act_path);
+  TranslateActPathToPhydbPath(act_path, phydb_path);
+#endif
+}
+
+int ActPhyDBTimingAPI::GetNumPerformanceConstraints() {
+#if PHYDB_USE_GALOIS
+  PhyDBExpects(GetNumPerformanceConstraintsCB != nullptr,
+               "Callback function for GetNumPerformanceConstraints() is not set");
+  return GetNumPerformanceConstraintsCB();
+#else
+  return 0;
+#endif
+}
+
+double ActPhyDBTimingAPI::GetPerformanceSlack(int performance_id) {
+#if PHYDB_USE_GALOIS
+  PhyDBExpects(GetPerformanceSlackCB != nullptr,
+               "Callback function for GetPerformanceSlack() is not set");
+  return GetPerformanceSlackCB(performance_id);
+#else
+  return 0;
+#endif
+}
+
+void ActPhyDBTimingAPI::GetViolatedPerformanceConstraints(
+    std::vector<int> &performance_ids
+) {
+#if PHYDB_USE_GALOIS
+  PhyDBExpects(GetViolatedPerformanceConstraintsCB != nullptr,
+               "Callback function for GetViolatedPerformanceConstraints() is not set");
+  GetViolatedPerformanceConstraintsCB(performance_ids);
+#endif
+}
+
+void ActPhyDBTimingAPI::GetPerformanceWitness(
+    int performance_id,
+    PhydbPath &phydb_path
+) {
+#if PHYDB_USE_GALOIS
+  PhyDBExpects(GetPerformanceWitnessCB != nullptr,
+               "Callback function for GetPerformanceWitness() is not set");
+  std::vector<ActEdge> act_path;
+  GetPerformanceWitnessCB(performance_id, act_path);
+  TranslateActPathToPhydbPath(act_path, phydb_path);
+#endif
 }
 
 void ActPhyDBTimingAPI::TranslateActPathToPhydbPath(
@@ -325,17 +488,24 @@ void ActPhyDBTimingAPI::TranslateActPathToPhydbPath(
     if (!IsActComPinPtrExisting(act_edge.source)) {
       std::cout << "before getFullName4Pin() for source" << std::endl;
       std::string pin_name = adaptor_->getFullName4Pin(act_edge.source);
-      PhyDBExpects(false, "ActEdge source pin, " + pin_name + " corresponds to no PhyDB pin");
+      PhyDBExpects(false,
+                   "ActEdge source pin, " + pin_name
+                       + " corresponds to no PhyDB pin");
     }
     if (!IsActComPinPtrExisting(act_edge.target)) {
       std::cout << "before getFullName4Pin() for target" << std::endl;
       std::string pin_name = adaptor_->getFullName4Pin(act_edge.target);
-      PhyDBExpects(false, "ActEdge target pin, " + pin_name + " corresponds to no PhyDB pin");
+      PhyDBExpects(false,
+                   "ActEdge target pin, " + pin_name
+                       + " corresponds to no PhyDB pin");
     }
-    if ((act_edge.net_ptr!=nullptr)&&!IsActNetPtrExisting(act_edge.net_ptr)) {
+    if ((act_edge.net_ptr != nullptr)
+        && !IsActNetPtrExisting(act_edge.net_ptr)) {
       std::cout << "before getFullName4Net()" << std::endl;
       std::string net_name = adaptor_->getFullName4Net(act_edge.net_ptr);
-      PhyDBExpects(false, "ActEdge net_ptr, " + net_name + " corresponds to no PhyDB net");
+      PhyDBExpects(false,
+                   "ActEdge net_ptr, " + net_name
+                       + " corresponds to no PhyDB net");
     }
     PhyDBExpects(act_edge.delay >= 0, "Negative delay?");
 
