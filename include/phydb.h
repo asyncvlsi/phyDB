@@ -233,15 +233,11 @@ class PhyDB {
           std::vector<ActEdge> &path
       )
   );
-  // the following APIs are for the most critical cycle
-  void SetGetCriticalPerformanceSlackCB(
-      double (*callback_function)()
-  );
-  void SetGetCriticalPerformanceWitnessCB(
-      void (*callback_function)(std::vector<ActEdge> &path)
-  );
-  // the following APIs are for "performance constraints" specified manually (future work)
+  // the following APIs are for performance constraints
   void SetGetNumPerformanceConstraintsCB(int (*callback_function)());
+  void SetGetPerformanceConstraintWeightCB(
+      double (*callback_function)(int performance_id)
+  );
   void SetGetPerformanceSlack(
       double (*callback_function)(int performance_id)
   );

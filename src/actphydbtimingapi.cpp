@@ -253,22 +253,16 @@ void ActPhyDBTimingAPI::SetGetFastWitnessCB(
   GetFastWitnessCB = callback_function;
 }
 
-void ActPhyDBTimingAPI::SetGetCriticalPerformanceSlackCB(
-    double (*callback_function)()
-) {
-  GetCriticalPerformanceSlackCB = callback_function;
-}
-
-void ActPhyDBTimingAPI::SetGetCriticalPerformanceWitnessCB(
-    void (*callback_function)(std::vector<ActEdge> &path)
-) {
-  GetCriticalPerformanceWitnessCB = callback_function;
-}
-
 void ActPhyDBTimingAPI::SetGetNumPerformanceConstraintsCB(
     int (*callback_function)()
 ) {
   GetNumPerformanceConstraintsCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetGetPerformanceConstraintWeightCB(
+    double (*callback_function)(int performance_id)
+) {
+  GetPerformanceConstraintWeightCB = callback_function;
 }
 
 void ActPhyDBTimingAPI::SetGetPerformanceSlackCB(
@@ -409,33 +403,21 @@ void ActPhyDBTimingAPI::GetFastWitness(
 #endif
 }
 
-double ActPhyDBTimingAPI::GetCriticalPerformanceSlack() {
-#if PHYDB_USE_GALOIS
-  PhyDBExpects(GetCriticalPerformanceSlackCB != nullptr,
-               "Callback function for GetCriticalPerformanceSlack() is not set");
-  return GetCriticalPerformanceSlackCB();
-#else
-  return 0;
-#endif
-}
-
-void ActPhyDBTimingAPI::GetCriticalPerformanceWitness(
-    PhydbPath &phydb_path
-) {
-#if PHYDB_USE_GALOIS
-  PhyDBExpects(GetCriticalPerformanceWitnessCB != nullptr,
-               "Callback function for GetCriticalPerformanceWitness() is not set");
-  std::vector<ActEdge> act_path;
-  GetCriticalPerformanceWitnessCB(act_path);
-  TranslateActPathToPhydbPath(act_path, phydb_path);
-#endif
-}
-
 int ActPhyDBTimingAPI::GetNumPerformanceConstraints() {
 #if PHYDB_USE_GALOIS
   PhyDBExpects(GetNumPerformanceConstraintsCB != nullptr,
                "Callback function for GetNumPerformanceConstraints() is not set");
   return GetNumPerformanceConstraintsCB();
+#else
+  return 0;
+#endif
+}
+
+double ActPhyDBTimingAPI::GetPerformanceConstraintWeight(int performance_id) {
+#if PHYDB_USE_GALOIS
+  PhyDBExpects(GetPerformanceConstraintWeightCB != nullptr,
+               "Callback function for GetPerformanceConstraintWeight() is not set");
+  return GetPerformanceConstraintWeightCB(performance_id);
 #else
   return 0;
 #endif

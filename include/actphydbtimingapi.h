@@ -179,13 +179,10 @@ class ActPhyDBTimingAPI {
           std::vector<ActEdge> &path
       )
   );
-  void SetGetCriticalPerformanceSlackCB(
-      double (*callback_function)()
-  );
-  void SetGetCriticalPerformanceWitnessCB(
-      void (*callback_function)(std::vector<ActEdge> &path)
-  );
   void SetGetNumPerformanceConstraintsCB(int (*callback_function)());
+  void SetGetPerformanceConstraintWeightCB(
+      double (*callback_function)(int performance_id)
+  );
   void SetGetPerformanceSlackCB(
       double (*callback_function)(int performance_id)
   );
@@ -237,9 +234,8 @@ class ActPhyDBTimingAPI {
       int tc_num,
       PhydbPath &phydb_path
   );
-  double GetCriticalPerformanceSlack();
-  void GetCriticalPerformanceWitness(PhydbPath &phydb_path) ;
   int GetNumPerformanceConstraints();
+  double GetPerformanceConstraintWeight(int performance_id);
   double GetPerformanceSlack(int performance_id);
   void GetViolatedPerformanceConstraints(std::vector<int> &performance_ids);
   void GetPerformanceWitness(
@@ -266,11 +262,8 @@ class ActPhyDBTimingAPI {
       int timing_constraint_id,
       std::vector<ActEdge> &path
   ) = nullptr;
-  double (*GetCriticalPerformanceSlackCB)() = nullptr;
-  void (*GetCriticalPerformanceWitnessCB)(
-      std::vector<ActEdge> &path
-  ) = nullptr;
   int (*GetNumPerformanceConstraintsCB)() = nullptr;
+  double (*GetPerformanceConstraintWeightCB)(int performance_id) = nullptr;
   double (*GetPerformanceSlackCB)(int performance_id) = nullptr;
   void (*GetViolatedPerformanceConstraintsCB)(
       std::vector<int> &performance_ids

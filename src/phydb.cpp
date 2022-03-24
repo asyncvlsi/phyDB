@@ -647,20 +647,14 @@ void PhyDB::SetGetFastWitnessCB(
   timing_api_.SetGetFastWitnessCB(callback_function);
 }
 
-void PhyDB::SetGetCriticalPerformanceSlackCB(
-    double (*callback_function)()
-) {
-  timing_api_.SetGetCriticalPerformanceSlackCB(callback_function);
-}
-
-void PhyDB::SetGetCriticalPerformanceWitnessCB(
-    void (*callback_function)(std::vector<ActEdge> &path)
-) {
-  timing_api_.SetGetCriticalPerformanceWitnessCB(callback_function);
-}
-
 void PhyDB::SetGetNumPerformanceConstraintsCB(int (*callback_function)()) {
   timing_api_.SetGetNumPerformanceConstraintsCB(callback_function);
+}
+
+void PhyDB::SetGetPerformanceConstraintWeightCB(
+    double (*callback_function)(int performance_id)
+) {
+  timing_api_.SetGetPerformanceConstraintWeightCB(callback_function);
 }
 
 void PhyDB::SetGetPerformanceSlack(
