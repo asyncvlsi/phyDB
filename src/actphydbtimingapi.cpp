@@ -121,7 +121,8 @@ bool ActPhyDBTimingAPI::ReadyForTimingDriven() {
   if (GetNumConstraintsCB == nullptr) return false;
   if (UpdateTimingIncrementalCB == nullptr) return false;
   if (GetSlackCB == nullptr) return false;
-  if (GetWitnessCB == nullptr) return false;
+  if (GetSlowWitnessCB == nullptr) return false;
+  if (GetFastWitnessCB == nullptr) return false;
   if (GetViolatedTimingConstraintsCB == nullptr) return false;
 #else
   PhyDBExpects(false, "This is not supposed to happen!");
@@ -257,6 +258,21 @@ void ActPhyDBTimingAPI::SetGetNumPerformanceConstraintsCB(
     int (*callback_function)()
 ) {
   GetNumPerformanceConstraintsCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetSpecifyPerformanceTopKsCB(
+    void (*callback_function)(int top_k)
+) {
+  SpecifyPerformanceTopKsCB = callback_function;
+}
+
+void ActPhyDBTimingAPI::SetSpecifyPerformanceTopKCB(
+    void (*callback_function)(
+        int performance_id,
+        int top_k
+    )
+) {
+  SpecifyPerformanceTopKCB = callback_function;
 }
 
 void ActPhyDBTimingAPI::SetGetPerformanceConstraintWeightCB(
@@ -410,6 +426,25 @@ int ActPhyDBTimingAPI::GetNumPerformanceConstraints() {
   return GetNumPerformanceConstraintsCB();
 #else
   return 0;
+#endif
+}
+
+void ActPhyDBTimingAPI::SpecifyPerformanceTopKs(int top_k) {
+#if PHYDB_USE_GALOIS
+  PhyDBExpects(SpecifyPerformanceTopKsCB != nullptr,
+               "Callback function for SpecifyPerformanceTopKs() is not set");
+  SpecifyPerformanceTopKsCB(top_k);
+#endif
+}
+
+void ActPhyDBTimingAPI::SpecifyPerformanceTopK(
+    int performance_id,
+    int top_k
+) {
+#if PHYDB_USE_GALOIS
+  PhyDBExpects(SpecifyPerformanceTopKCB != nullptr,
+               "Callback function for SpecifyPerformanceTopK() is not set");
+  SpecifyPerformanceTopKCB(performance_id, top_k);
 #endif
 }
 

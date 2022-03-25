@@ -194,8 +194,8 @@ class PhyDB {
   * and pointers of parasitic manager, cell libs, adaptor
   * ************************************************/
   void SetGetNumConstraintsCB(int (*callback_function)());
-  void SetSpecifyTopKsCB(void (*callback_function)(int top_k)); // top-k applied to all constraints
-  void SetSpecifyTopKCB( // top-k for a specific constraint
+  void SetSpecifyTopKsCB(void (*callback_function)(int top_k)); // top-k applied to all correctness constraints
+  void SetSpecifyTopKCB( // top-k for a specific correctness constraint
       void (*callback_function)(
           int timing_constraint_id,
           int top_k
@@ -208,13 +208,13 @@ class PhyDB {
       )
   );
   void SetGetViolatedTimingConstraintsCB(
-      void (*callback_function)(std::vector<int> &)
+      void (*callback_function)(std::vector<int> &timing_constraint_ids)
   );
   /* given a timing fork r : a < b
       The fast end paths are paths from r to a.
       The slow end paths are from r to b
   */
-  void SetGetWitnessCB(
+  void SetGetWitnessCB( // this API will be removed soon, because it can be replaced by the subsequent two APIs
       void (*callback_function)(
           int timing_constraint_id,
           std::vector<ActEdge> &fast_path,
@@ -235,6 +235,13 @@ class PhyDB {
   );
   // the following APIs are for performance constraints
   void SetGetNumPerformanceConstraintsCB(int (*callback_function)());
+  void SetSpecifyPerformanceTopKsCB(void (*callback_function)(int top_k)); // top-k applied to all performance constraints
+  void SetSpecifyPerformanceTopKCB( // top-k for a specific performance constraint
+      void (*callback_function)(
+          int performance_id,
+          int top_k
+      )
+  );
   void SetGetPerformanceConstraintWeightCB(
       double (*callback_function)(int performance_id)
   );

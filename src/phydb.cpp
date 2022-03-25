@@ -609,7 +609,7 @@ void PhyDB::SetGetSlackCB(
 }
 
 void PhyDB::SetGetViolatedTimingConstraintsCB(
-    void (*callback_function)(std::vector<int> &)
+    void (*callback_function)(std::vector<int> &timing_constraint_ids)
 ) {
   timing_api_.SetGetViolatedTimingConstraintsCB(callback_function);
 }
@@ -649,6 +649,19 @@ void PhyDB::SetGetFastWitnessCB(
 
 void PhyDB::SetGetNumPerformanceConstraintsCB(int (*callback_function)()) {
   timing_api_.SetGetNumPerformanceConstraintsCB(callback_function);
+}
+
+void PhyDB::SetSpecifyPerformanceTopKsCB(void (*callback_function)(int top_k)) {
+  timing_api_.SetSpecifyPerformanceTopKsCB(callback_function);
+}
+
+void PhyDB::SetSpecifyPerformanceTopKCB(
+    void (*callback_function)(
+        int performance_id,
+        int top_k
+    )
+) {
+  timing_api_.SetSpecifyPerformanceTopKCB(callback_function);
 }
 
 void PhyDB::SetGetPerformanceConstraintWeightCB(

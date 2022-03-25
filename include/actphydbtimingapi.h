@@ -180,6 +180,13 @@ class ActPhyDBTimingAPI {
       )
   );
   void SetGetNumPerformanceConstraintsCB(int (*callback_function)());
+  void SetSpecifyPerformanceTopKsCB(void (*callback_function)(int top_k));
+  void SetSpecifyPerformanceTopKCB(
+      void (*callback_function)(
+          int performance_id,
+          int top_k
+      )
+  );
   void SetGetPerformanceConstraintWeightCB(
       double (*callback_function)(int performance_id)
   );
@@ -235,6 +242,11 @@ class ActPhyDBTimingAPI {
       PhydbPath &phydb_path
   );
   int GetNumPerformanceConstraints();
+  void SpecifyPerformanceTopKs(int top_k);
+  void SpecifyPerformanceTopK(
+      int performance_id,
+      int top_k
+  );
   double GetPerformanceConstraintWeight(int performance_id);
   double GetPerformanceSlack(int performance_id);
   void GetViolatedPerformanceConstraints(std::vector<int> &performance_ids);
@@ -263,6 +275,11 @@ class ActPhyDBTimingAPI {
       std::vector<ActEdge> &path
   ) = nullptr;
   int (*GetNumPerformanceConstraintsCB)() = nullptr;
+  void (*SpecifyPerformanceTopKsCB)(int top_k) = nullptr;
+  void (*SpecifyPerformanceTopKCB)(
+      int performance_id,
+      int top_k
+  ) = nullptr;
   double (*GetPerformanceConstraintWeightCB)(int performance_id) = nullptr;
   double (*GetPerformanceSlackCB)(int performance_id) = nullptr;
   void (*GetViolatedPerformanceConstraintsCB)(
