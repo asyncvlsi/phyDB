@@ -757,17 +757,8 @@ void PhyDB::CreatePhydbActAdaptor() {
     );
     timing_api_.AddActNetPtrIdPair(act_net, i);
 
-    int number_of_pins = (int) net.GetPinsRef().size();
-    for (int j = 0; j < number_of_pins; ++j) {
-      auto &phydb_pin = net.GetPinsRef()[j];
-      std::string phydb_pin_name = GetFullCompPinName(phydb_pin, ':');
-      void *act_pin = timer_adaptor->getPinFromFullName(phydb_pin_name);
-      PhyDBExpects(
-          act_pin != nullptr,
-          "Component pin cannot be found in the timer netlist adaptor: "
-              + phydb_pin_name
-      );
-      timing_api_.AddActCompPinPtrIdPair(act_pin, phydb_pin);
+    for (auto &physb_pin: net.GetPinsRef()) {
+      BindPhydbPinToActPin(physb_pin);
     }
   }
 }
@@ -1161,5 +1152,32 @@ void PhyDB::WriteGuide(std::string const &guide_file_name) {
     outfile << ")" << std::endl;
   }
 }
+
+#if PHYDB_USE_GALOIS
+void PhyDB::BindPhydbPinToActPin(PhydbPin &phydb_pin) {
+  auto *timer_adaptor = GetNetlistAdaptor();
+  PhyDBExpects(timer_adaptor != nullptr,
+               "Timer netlist adaptor no found! Cannot build phydb-act adaptor");
+  std::string phydb_pin_name = GetFullCompPinName(phydb_pin, ':');
+  void *act_pin = timer_adaptor->getPinFromFullName(phydb_pin_name);
+  if (timing_api_.IsActComPinPtrExisting(act_pin)) {
+    if (timing_api_.ActCompPinPtr2Id(act_pin) != phydb_pin) {
+      PhydbPin existing_pin = timing_api_.ActCompPinPtr2Id(act_pin);
+      std::string existing_phydb_pin_name = GetFullCompPinName(existing_pin, ':');
+      std::cout << "\033[0;31m" << "FATAL ERROR:\n    "
+                << "ACT pin pointer, " << act_pin 
+                << ", corresponds to the following PhyDB pin:\n        "
+                << existing_phydb_pin_name << ".\n    "
+                << "Now this ACT pin needs to correspond to another PhyDB pin:\n        "
+                << phydb_pin_name << "\n";
+      std::cout << __FILE__ << " : " << __LINE__ << " : " << __FUNCTION__ << "\033[0m"
+                << std::endl;
+      exit(0);
+    }
+  } else {
+    timing_api_.AddActCompPinPtrIdPair(act_pin, phydb_pin);
+  } 
+}
+#endif
 
 }

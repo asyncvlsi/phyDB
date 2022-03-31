@@ -159,11 +159,10 @@ void ActPhyDBTimingAPI::AddActNetPtrIdPair(void *act_net, int net_id) {
   net_id_2_act_.insert(tmp_pair_1);
 }
 
-void ActPhyDBTimingAPI::AddActCompPinPtrIdPair(void *act_pin,
-                                               PhydbPin phydb_pin) {
-  PhyDBExpects(!IsActComPinPtrExisting(act_pin),
-               "Cannot add ACT pin again, it is in already in the PhyDB, component pin id: "
-                   + phydb_pin.Str());
+void ActPhyDBTimingAPI::AddActCompPinPtrIdPair(
+  void *act_pin,
+  PhydbPin phydb_pin
+) {
   std::pair<void *, PhydbPin> tmp_pair_0(act_pin, phydb_pin);
   std::pair<PhydbPin, void *> tmp_pair_1(phydb_pin, act_pin);
   component_pin_act_2_id_.insert(tmp_pair_0);

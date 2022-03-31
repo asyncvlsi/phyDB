@@ -49,6 +49,10 @@ struct PhydbPin {
     return (comp_id == rhs.comp_id) && (pin_id == rhs.pin_id);
   }
 
+  bool operator!=(PhydbPin const &rhs) const {
+    return (comp_id != rhs.comp_id) || (pin_id != rhs.pin_id);
+  }
+
   std::string Str() const {
     return "("
         + std::to_string(comp_id)

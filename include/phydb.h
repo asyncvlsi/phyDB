@@ -337,6 +337,10 @@ class PhyDB {
   Tech tech_;
   Design design_;
   ActPhyDBTimingAPI timing_api_;
+
+#if PHYDB_USE_GALOIS
+  void BindPhydbPinToActPin(PhydbPin &phydb_pin);
+#endif
 };
 
 }
