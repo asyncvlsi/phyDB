@@ -98,7 +98,7 @@ int WriteDieArea(defwCallbackType_e c, defiUserData ud) {
 int WriteRows(defwCallbackType_e type, defiUserData data) {
   int status;
   auto rows = ((PhyDB *) data)->GetRowVec();
-  for (auto row: rows) {
+  for (auto row : rows) {
     status = defwRowStr(
         row.name_.c_str(),
         row.site_name_.c_str(),
@@ -117,7 +117,7 @@ int WriteRows(defwCallbackType_e type, defiUserData data) {
 
 int WriteTracks(defwCallbackType_e type, defiUserData data) {
   auto tracks = ((PhyDB *) data)->GetTracksRef();
-  for (auto track: tracks) {
+  for (auto track : tracks) {
     int nlayers = track.GetLayerNames().size();
     const char **layer_names = new const char *[nlayers];
     for (int i = 0; i < nlayers; i++)
@@ -138,7 +138,7 @@ int WriteTracks(defwCallbackType_e type, defiUserData data) {
 
 int WriteGcellGrids(defwCallbackType_e type, defiUserData data) {
   auto gcell_grids = ((PhyDB *) data)->GetGcellGridsRef();
-  for (auto gcellgrid: gcell_grids) {
+  for (auto gcellgrid : gcell_grids) {
     defwGcellGrid(
         XYDirectionStr(gcellgrid.GetDirection()).c_str(),
         gcellgrid.GetStart(),
@@ -154,7 +154,7 @@ int WriteComponents(defwCallbackType_e type, defiUserData data) {
   auto components = ((PhyDB *) data)->GetDesignPtr()->GetComponentsRef();
   defwStartComponents(components.size());
 
-  for (auto comp: components) {
+  for (auto comp : components) {
     defwComponentStr(
         comp.GetName().c_str(),
         comp.GetMacro()->GetName().c_str(),
@@ -180,7 +180,7 @@ int WriteIOPins(defwCallbackType_e type, defiUserData data) {
   auto iopins = ((PhyDB *) data)->GetDesignPtr()->GetIoPinsRef();
   defwStartPins(iopins.size());
 
-  for (auto pin: iopins) {
+  for (auto pin : iopins) {
     defwPinStr(
         pin.GetName().c_str(),
         pin.GetNetName().c_str(),
@@ -209,7 +209,7 @@ int WriteBlockages(defwCallbackType_e type, defiUserData data) {
   if (blockages.empty()) return 0;
   defwStartBlockages(static_cast<int>(blockages.size()));
   int status;
-  for (auto &blockage: blockages) {
+  for (auto &blockage : blockages) {
     if (blockage.GetLayer() != nullptr) {
       std::string layer_name = blockage.GetLayer()->GetName();
       status = defwBlockagesLayer(layer_name.c_str());
@@ -272,12 +272,12 @@ int WriteBlockages(defwCallbackType_e type, defiUserData data) {
       PhyDBExpects(false, "blockage has no layer and placement?");
     }
 
-    for (auto &rect: blockage.GetRectsRef()) {
+    for (auto &rect : blockage.GetRectsRef()) {
       status =
           defwBlockagesRect(rect.LLX(), rect.LLY(), rect.URX(), rect.URY());
       CheckStatus(status);
     }
-    for (auto &polygon: blockage.GetPolygonRef()) {
+    for (auto &polygon : blockage.GetPolygonRef()) {
       int num_points = static_cast<int>(polygon.GetPointsRef().size());
       int *x = (int *) malloc(sizeof(int) * num_points);
       int *y = (int *) malloc(sizeof(int) * num_points);
@@ -302,22 +302,24 @@ int WriteNets(defwCallbackType_e type, defiUserData data) {
   auto nets = phydb_ptr->GetDesignPtr()->GetNetsRef();
   defwStartNets((int) nets.size());
   auto pin_str = (char *) "PIN";
-  for (auto net: nets) {
+  for (auto net : nets) {
     defwNet(net.GetName().c_str());
-    auto iopin_names = net.GetIoPinNamesRef();
-    for (int i = 0; i < (int) iopin_names.size(); i++) {
-      defwNetConnection(pin_str, iopin_names[i].c_str(), 0);
+    auto iopin_ids = net.GetIoPinIdsRef();
+    for (auto &iopin_id : iopin_ids) {
+      std::string iopin_name =
+          phydb_ptr->GetDesignPtr()->GetIoPinsRef()[iopin_id].GetName();
+      defwNetConnection(pin_str, iopin_name.c_str(), 0);
     }
 
-    for (auto &pin: net.GetPinsRef()) {
+    for (auto &pin : net.GetPinsRef()) {
       std::string component_name =
-          phydb_ptr->GetDesignPtr()->components_[pin.comp_id].GetName();
+          phydb_ptr->GetDesignPtr()->components_[pin.InstanceId()].GetName();
       std::string macro_name =
-          phydb_ptr->GetDesignPtr()->components_[pin.comp_id].GetMacro()->GetName();
+          phydb_ptr->GetDesignPtr()->components_[pin.InstanceId()].GetMacro()->GetName();
       Macro *macro_ptr = phydb_ptr->GetMacroPtr(macro_name);
       PhyDBExpects(macro_ptr != nullptr, "Macro does not exist");
       std::string pin_name =
-          macro_ptr->GetPinsRef()[pin.pin_id].GetName();
+          macro_ptr->GetPinsRef()[pin.PinId()].GetName();
       defwNetConnection(component_name.c_str(), pin_name.c_str(), 0);
     }
     defwNetEndOneNet();

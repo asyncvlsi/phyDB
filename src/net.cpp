@@ -22,16 +22,16 @@
 
 namespace phydb {
 
-void Net::AddIoPin(std::string const &iopin_name) {
-  iopin_names_.push_back(iopin_name);
+void Net::AddIoPin(int iopin_id) {
+  iopins_.push_back(iopin_id);
 }
 
 void Net::AddCompPin(int comp_id, int pin_id) {
   pins_.emplace_back(comp_id, pin_id);
 }
 
-void Net::AddRoutingGuide(int llx, int lly, int urx, int ury, int layerID) {
-  guides_.emplace_back(llx, lly, layerID, urx, ury, layerID);
+void Net::AddRoutingGuide(int llx, int lly, int urx, int ury, int layer_id) {
+  guides_.emplace_back(llx, lly, layer_id, urx, ury, layer_id);
 }
 
 Path *Net::AddPath() {
@@ -54,24 +54,33 @@ std::vector<PhydbPin> &Net::GetPinsRef() {
   return pins_;
 }
 
-std::vector<std::string> &Net::GetIoPinNamesRef() {
-  return iopin_names_;
+std::vector<int> &Net::GetIoPinIdsRef() {
+  return iopins_;
 }
 
 std::vector<Rect3D<int>> &Net::GetRoutingGuidesRef() {
   return guides_;
 }
 
+void Net::SetDriverPin(bool is_driver_io_pin, int pin_id) {
+  is_driver_io_pin_ = is_driver_io_pin;
+  driver_pin_id_ = pin_id;
+}
+
+std::vector<Path> &Net::GetPathsRef() {
+  return paths_;
+}
+
 void Net::Report() {
   int sz = (int) pins_.size();
   std::cout << "NET: " << name_ << "  weight: " << weight_
             << " size: " << sz << "\n";
-  for (auto &iopin_name: iopin_names_) {
-    std::cout << "  (PIN " << iopin_name << ") ";
+  for (auto &iopin_id: iopins_) {
+    std::cout << "  (PIN " << iopin_id << ") ";
   }
 
   for (int i = 0; i < sz; ++i) {
-    std::cout << "  (" << pins_[i].comp_id << " " << pins_[i].pin_id << ") ";
+    std::cout << "  (" << pins_[i].InstanceId() << " " << pins_[i].PinId() << ") ";
   }
   std::cout << "\n";
 }

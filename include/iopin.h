@@ -82,6 +82,7 @@ class IOPin {
   );
   void SetPlacementStatus(PlaceStatus place_status);
 
+  int GetId() const {return id_;}
   const std::string &GetName();
   const std::string &GetNetName();
   SignalDirection GetDirection();

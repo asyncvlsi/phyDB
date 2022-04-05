@@ -39,39 +39,43 @@
 
 namespace phydb {
 
-struct PhydbPin {
+class PhydbPin {
+ public:
   explicit PhydbPin(int comp = -1, int pin = -1)
-      : comp_id(comp), pin_id(pin) {}
-  int comp_id;
-  int pin_id;
+      : instance_id_(comp), pin_id_(pin) {}
 
   bool operator==(PhydbPin const &rhs) const {
-    return (comp_id == rhs.comp_id) && (pin_id == rhs.pin_id);
+    return (instance_id_ == rhs.instance_id_) && (pin_id_ == rhs.pin_id_);
   }
 
   bool operator!=(PhydbPin const &rhs) const {
-    return (comp_id != rhs.comp_id) || (pin_id != rhs.pin_id);
+    return (instance_id_ != rhs.instance_id_) || (pin_id_ != rhs.pin_id_);
   }
 
+  // positive instance id means a component; instance id -1 means IOPIN
+  int InstanceId() const { return instance_id_; }
+  // id of the pin in a MACRO or the IOPIN list
+  int PinId() const { return pin_id_; }
+
   std::string Str() const {
-    return "("
-        + std::to_string(comp_id)
-        + ", "
-        + std::to_string(pin_id)
-        + ")";
+    return "(" + std::to_string(instance_id_) + ", "
+        + std::to_string(pin_id_) + ")";
   }
 
   void Reset() {
-    comp_id = -1;
-    pin_id = -1;
+    instance_id_ = -1;
+    pin_id_ = -1;
   }
+ private:
+  int instance_id_;
+  int pin_id_;
 };
 
 struct PhydbPinHasher {
   std::size_t operator()(const PhydbPin &phydb_pin) const {
     std::size_t seed = 0;
-    boost::hash_combine(seed, boost::hash_value(phydb_pin.comp_id));
-    boost::hash_combine(seed, boost::hash_value(phydb_pin.pin_id));
+    boost::hash_combine(seed, boost::hash_value(phydb_pin.InstanceId()));
+    boost::hash_combine(seed, boost::hash_value(phydb_pin.PinId()));
     return seed;
   }
 };

@@ -363,7 +363,7 @@ void Stats::ComputeRUDY() {
         for(auto phydb_pin : phydb_pins) {
             int pin_min_x = grid_x - 1, pin_min_y = grid_y - 1;
             int pin_max_x = 0, pin_max_y = 0;
-            auto stats_pin = GetStatsPin(phydb_pin.comp_id, phydb_pin.pin_id);
+            auto stats_pin = GetStatsPin(phydb_pin.InstanceId(), phydb_pin.PinId());
 
             for(auto layer_rect : stats_pin.layer_rects_) {
                 for(auto rect : layer_rect.rects_) {
@@ -433,7 +433,7 @@ void Stats::ComputePinDensity() {
         for(auto phydb_pin : phydb_pins) {
             int pin_min_x = grid_x - 1, pin_min_y = grid_y - 1;
             int pin_max_x = 0, pin_max_y = 0;
-            auto stats_pin = GetStatsPin(phydb_pin.comp_id, phydb_pin.pin_id);
+            auto stats_pin = GetStatsPin(phydb_pin.InstanceId(), phydb_pin.PinId());
 
             for(auto layer_rect : stats_pin.layer_rects_) {
                 for(auto rect : layer_rect.rects_) {
@@ -451,8 +451,6 @@ void Stats::ComputePinDensity() {
             }
         }
     }
-
-
 }
 
 } //namespace phydb

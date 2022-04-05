@@ -395,10 +395,10 @@ void PhyDB::BindPhydbPinToActPin(
   int pin_id = macro_ptr->GetPinId(pin_name);
 
   if (timing_api_.IsActComPinPtrExisting(act_comp_pin_ptr)) {
-    auto id_pair = timing_api_.ActCompPinPtr2Id(act_comp_pin_ptr);
-    Component &comp = design_.components_[id_pair.comp_id];
+    auto phydb_pin = timing_api_.ActCompPinPtr2Id(act_comp_pin_ptr);
+    Component &comp = design_.components_[phydb_pin.InstanceId()];
     Macro *tmp_macro_ptr = comp.GetMacro();
-    Pin &pin = tmp_macro_ptr->GetPinsRef()[id_pair.pin_id];
+    Pin &pin = tmp_macro_ptr->GetPinsRef()[phydb_pin.PinId()];
     std::cout << "Component pin: " << comp.GetName() << " " << pin.GetName()
               << " has the same Act pointer as " << comp_name << " "
               << pin_name << std::endl;
@@ -433,9 +433,9 @@ void PhyDB::AddCompPinToNetWithActPtr(
   if (act_comp_pin_ptr == nullptr) return;
   if (timing_api_.IsActComPinPtrExisting(act_comp_pin_ptr)) {
     auto id_pair = timing_api_.ActCompPinPtr2Id(act_comp_pin_ptr);
-    Component &comp = design_.components_[id_pair.comp_id];
+    Component &comp = design_.components_[id_pair.InstanceId()];
     Macro *tmp_macro_ptr = comp.GetMacro();
-    Pin &pin = tmp_macro_ptr->GetPinsRef()[id_pair.pin_id];
+    Pin &pin = tmp_macro_ptr->GetPinsRef()[id_pair.PinId()];
     std::cout << "Component pin: " << comp.GetName() << " " << pin.GetName()
               << " has the same Act pointer as " << comp_name << " "
               << pin_name << std::endl;
@@ -692,9 +692,9 @@ void PhyDB::SetGetPerformanceWitnessCB(
 }
 
 bool PhyDB::IsDriverPin(PhydbPin &phydb_pin) {
-  int comp_id = phydb_pin.comp_id;
+  int comp_id = phydb_pin.InstanceId();
   Macro *macro_ptr = design_.components_[comp_id].GetMacro();
-  int pin_id = phydb_pin.pin_id;
+  int pin_id = phydb_pin.PinId();
   return macro_ptr->GetPinsRef()[pin_id].IsDriverPin();
 }
 
@@ -702,8 +702,8 @@ std::string PhyDB::GetFullCompPinName(
     PhydbPin &phydb_pin,
     char delimiter
 ) {
-  int comp_id = phydb_pin.comp_id;
-  int pin_id = phydb_pin.pin_id;
+  int comp_id = phydb_pin.InstanceId();
+  int pin_id = phydb_pin.PinId();
   Component &comp = design_.components_[comp_id];
   const std::string &comp_name = comp.GetName();
   const std::string &pin_name =
@@ -797,7 +797,7 @@ void PhyDB::AddNetsAndCompPinsToSpefManager() {
       }
       bool is_act_pin_in_spef = spef_manager->findPin(act_pin) != nullptr;
       if (IsDriverPin(phydb_pin)) {
-        net.driver_pin_id_ = j;
+        net.SetDriverPin(false, j); // TODO
         if (!is_act_pin_in_spef) {
           spef_manager->addDriverPin(act_pin);
         }

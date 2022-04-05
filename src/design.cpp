@@ -274,7 +274,7 @@ void Design::AddIoPinToNet(
   PhyDBExpects(net_ptr != nullptr, "Cannot add to a nonexistent net");
 
   iopin_ptr->SetNetName(net_name);
-  net_ptr->AddIoPin(iopin_name);
+  net_ptr->AddIoPin(iopin_ptr->GetId());
 }
 
 void Design::AddCompPinToNet(int comp_id, int pin_id, int net_id) {
