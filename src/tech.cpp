@@ -34,15 +34,13 @@ Tech::~Tech() {
 
 void Tech::SetDatabaseMicron(int database_micron) {
   PhyDBExpects(database_micron > 0,
-               "Cannot Set negative database microns: "
-                   + std::to_string(database_micron));
+               "Cannot Set negative database microns: " << database_micron);
 
   std::unordered_set<int>
       legal_database_units({100, 200, 1000, 2000, 10000, 20000});
   PhyDBExpects(legal_database_units.find(database_micron)
                    != legal_database_units.end(),
-               "Unsupported DATABASE MICRONS "
-                   + std::to_string(database_micron));
+               "Unsupported DATABASE MICRONS " << database_micron);
 
   if (database_micron_ > -1 && database_micron != database_micron_) {
     std::cout << "Warning: changing DATABASE MICRONS from "
@@ -59,8 +57,7 @@ int Tech::GetDatabaseMicron() const {
 
 void Tech::SetManufacturingGrid(double manufacture_grid) {
   PhyDBExpects(manufacture_grid > 0,
-               "Cannot Set negative manufacturing grid: "
-                   + std::to_string(manufacture_grid));
+               "Cannot Set negative manufacturing grid: " << manufacture_grid);
 
   if (manufacturing_grid_ > -1 && manufacture_grid != manufacturing_grid_) {
     std::cout << "Warning: changing MANUFACTURINGGRID from "
@@ -118,7 +115,7 @@ Layer *Tech::AddLayer(
     MetalDirection direction
 ) {
   PhyDBExpects(!IsLayerExisting(layer_name),
-               "LAYER name_ exists, cannot use again: " + layer_name);
+               "LAYER name_ exists, cannot use again: " << layer_name);
   int id = (int) layers_.size();
   layers_.emplace_back(layer_name, type, direction);
   layer_2_id_[layer_name] = id;
@@ -164,7 +161,7 @@ bool Tech::IsMacroExisting(std::string const &macro_name) {
 
 Macro *Tech::AddMacro(std::string const &macro_name) {
   PhyDBExpects(!IsMacroExisting(macro_name),
-               "Macro name_ exists, cannot use it again: " + macro_name);
+               "Macro name_ exists, cannot use it again: " << macro_name);
   int id = (int) macros_.size();
   macros_.emplace_back(macro_name);
 
@@ -189,7 +186,7 @@ bool Tech::IsLefViaExisting(std::string const &via_name) {
 
 LefVia *Tech::AddLefVia(std::string const &via_name) {
   PhyDBExpects(!IsLefViaExisting(via_name),
-               "VIA name_ exists, cannot use it again: " + via_name);
+               "VIA name_ exists, cannot use it again: " << via_name);
   int id = (int) vias_.size();
   vias_.emplace_back(via_name);
   via_2_id_[via_name] = id;
@@ -305,7 +302,7 @@ void Tech::GetDiffWellSpacing(
 }
 
 void Tech::ReportWellShape() {
-  for (auto &well: wells_) {
+  for (auto &well : wells_) {
     well.Report();
   }
 }
@@ -319,7 +316,7 @@ void Tech::SetLefName(std::string const &lef_file_name) {
 }
 
 void Tech::FindAllMetalLayers() {
-  for (auto &layer: layers_) {
+  for (auto &layer : layers_) {
     if (layer.GetType() == phydb::LayerType::ROUTING) {
       metal_layers_.emplace_back(&layer);
     }
@@ -340,7 +337,7 @@ void Tech::SetTechConfigLayerCount(int number_of_layers) {
 }
 
 void Tech::AddTechConfigCorner(int corner_index) {
-  for (auto &metal_ptr: metal_layers_) {
+  for (auto &metal_ptr : metal_layers_) {
     metal_ptr->AddTechConfigCorner(corner_index);
   }
 }
@@ -368,7 +365,7 @@ ConfigTable &Tech::InitConfigTable(
 }
 
 void Tech::FixResOverTable() {
-  for (auto &metal_ptr: metal_layers_) {
+  for (auto &metal_ptr : metal_layers_) {
     auto layer_tech_config = metal_ptr->GetLayerTechConfig();
     if (layer_tech_config != nullptr) {
       layer_tech_config->FixResOverTable();
@@ -378,11 +375,11 @@ void Tech::FixResOverTable() {
 
 void Tech::SetResistanceUnit(bool from_tech_config, bool is_report) {
   if (from_tech_config) {
-    for (auto &metal_ptr: metal_layers_) {
+    for (auto &metal_ptr : metal_layers_) {
       metal_ptr->SetResistanceUnitFromTechConfig();
     }
   } else {
-    for (auto &metal_ptr: metal_layers_) {
+    for (auto &metal_ptr : metal_layers_) {
       metal_ptr->SetResistanceUnitFromLef();
     }
   }
@@ -403,11 +400,11 @@ void Tech::SetResistanceUnit(bool from_tech_config, bool is_report) {
 
 void Tech::SetCapacitanceUnit(bool from_tech_config, bool is_report) {
   if (from_tech_config) {
-    for (auto &metal_ptr: metal_layers_) {
+    for (auto &metal_ptr : metal_layers_) {
       metal_ptr->SetCapacitanceUnitFromTechConfig();
     }
   } else {
-    for (auto &metal_ptr: metal_layers_) {
+    for (auto &metal_ptr : metal_layers_) {
       metal_ptr->SetCapacitanceUnitFromLef();
     }
   }
@@ -432,7 +429,7 @@ void Tech::SetCapacitanceUnit(bool from_tech_config, bool is_report) {
 }
 
 void Tech::ReportLayersTechConfig() {
-  for (auto &layer: layers_) {
+  for (auto &layer : layers_) {
     if (layer.GetType() == phydb::LayerType::ROUTING) {
       auto tech_config = layer.GetLayerTechConfig();
       if (tech_config != nullptr) {
@@ -454,7 +451,7 @@ void Tech::SetUnitResAndCap(
   PhyDBExpects(unit_res > 0, "Non positive resistance?");
   PhyDBExpects(unit_fringe_cap >= 0, "Negative fringe capacitance?");
   PhyDBExpects(unit_area_cap >= 0, "Negative area capacitance?");
-  for (auto &metal_ptr: metal_layers_) {
+  for (auto &metal_ptr : metal_layers_) {
     metal_ptr->unit_res_.assign(1, unit_res);
     metal_ptr->unit_edge_cap_.assign(1, unit_fringe_cap);
     metal_ptr->unit_area_cap_.assign(1, unit_area_cap);
@@ -462,14 +459,14 @@ void Tech::SetUnitResAndCap(
 }
 
 void Tech::ReportSites() {
-  for (auto &site: sites_) {
+  for (auto &site : sites_) {
     std::cout << site << "\n";
   }
 }
 
 void Tech::ReportLayers() {
   std::cout << "Total number of layer: " << layers_.size() << "\n";
-  for (auto &layer: layers_) {
+  for (auto &layer : layers_) {
     layer.Report();
   }
   std::cout << "\n";
@@ -477,7 +474,7 @@ void Tech::ReportLayers() {
 
 void Tech::ReportVias() {
   std::cout << "Total number of via: " << vias_.size() << "\n";
-  for (auto &via: vias_) {
+  for (auto &via : vias_) {
     via.Report();
   }
   std::cout << "\n";
@@ -485,7 +482,7 @@ void Tech::ReportVias() {
 
 void Tech::ReportMacros() {
   std::cout << "Total number of macro: " << macros_.size() << "\n";
-  for (auto &macro: macros_) {
+  for (auto &macro : macros_) {
     std::cout << macro << "\n";
   }
   std::cout << "\n";
@@ -505,7 +502,7 @@ void Tech::ReportMacroWell() {
   }
 
   std::cout << "Total number of  macro wells: " << wells_.size() << "\n";
-  for (auto &macro_well: wells_) {
+  for (auto &macro_well : wells_) {
     macro_well.Report();
   }
   std::cout << "\n";

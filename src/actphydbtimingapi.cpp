@@ -25,10 +25,14 @@
 
 namespace phydb {
 
+std::ostream& operator<<(std::ostream& os, const PhydbPin& pin) {
+  os << "(" << pin.InstanceId() << ", " << pin.PinId() << ")";
+  return os;
+}
+
 PhydbTimingEdge *PhydbTimingNode::AddPinToOutEdges(PhydbPin &pin) {
   PhyDBExpects(!IsTargetPinExisting(pin),
-               "Pin in OutEdges already, cannot add it again!" + source.Str()
-                   + pin.Str());
+               "Pin in OutEdges already, cannot add it again!" << source << pin);
   int id = (int) out_edges.size();
   out_edges.emplace_back(pin);
   out_pin2index_[pin] = id;
@@ -37,8 +41,7 @@ PhydbTimingEdge *PhydbTimingNode::AddPinToOutEdges(PhydbPin &pin) {
 
 PhydbTimingEdge *PhydbTimingNode::GetOutEdge(PhydbPin &pin) {
   PhyDBExpects(IsTargetPinExisting(pin),
-               "Pin not in OutEdges, cannot find it!" + source.Str()
-                   + pin.Str());
+               "Pin not in OutEdges, cannot find it!" << source << pin);
   int id = out_pin2index_[pin];
   return &out_edges[id];
 }
@@ -86,7 +89,7 @@ void PhydbPath::AddEdge(
 
 PhydbTimingNode *TimingDAG::AddPinToDag(PhydbPin &pin) {
   PhyDBExpects(!IsPinInDag(pin),
-               "Pin in DAG already, cannot add it again!" + pin.Str());
+               "Pin in DAG already, cannot add it again!" << pin);
   int id = (int) stb_fast_nodes.size();
   stb_fast_nodes.emplace_back(pin);
   fast_pin2index_[pin] = id;
@@ -95,7 +98,7 @@ PhydbTimingNode *TimingDAG::AddPinToDag(PhydbPin &pin) {
 
 PhydbTimingNode *TimingDAG::GetPinNode(PhydbPin &pin) {
   PhyDBExpects(IsPinInDag(pin),
-               "Pin not in DAG, cannot find it!" + pin.Str());
+               "Pin not in DAG, cannot find it!" << pin);
   int id = fast_pin2index_[pin];
   return &stb_fast_nodes[id];
 }
@@ -151,8 +154,7 @@ void *ActPhyDBTimingAPI::PhydbNetId2ActPtr(int net_id) {
 
 void ActPhyDBTimingAPI::AddActNetPtrIdPair(void *act_net, int net_id) {
   PhyDBExpects(!IsActNetPtrExisting(act_net),
-               "Cannot add ACT net again, it is in already in the PhyDB, net id: "
-                   + std::to_string(net_id));
+               "Cannot add ACT net again, it is in already in the PhyDB, net id: " << net_id);
   std::pair<void *, int> tmp_pair_0(act_net, net_id);
   std::pair<int, void *> tmp_pair_1(net_id, act_net);
   net_act_2_id_.insert(tmp_pair_0);

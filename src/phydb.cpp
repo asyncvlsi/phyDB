@@ -208,7 +208,7 @@ Component *PhyDB::GetComponentPtr(std::string const &comp_name) {
 int PhyDB::GetComponentId(std::string const &comp_name) {
   auto res = design_.component_2_id_.find(comp_name);
   PhyDBExpects(res != design_.component_2_id_.end(),
-               "Component does not exist: " + comp_name);
+               "Component does not exist: " << comp_name);
   return res->second;
 }
 
@@ -320,9 +320,8 @@ Net *PhyDB::AddNet(
   if (act_net_ptr != nullptr) {
     if (timing_api_.IsActNetPtrExisting(act_net_ptr)) {
       int id = timing_api_.ActNetPtr2Id(act_net_ptr);
-      std::string error_msg = "Net " + design_.nets_[id].GetName()
-          + " has the same Act pointer as " + net_name;
-      PhyDBExpects(false, error_msg);
+      PhyDBExpects(false, "Net " << design_.nets_[id].GetName()
+                                 << " has the same Act pointer as " << net_name);
     }
     int id = (int) design_.nets_.size() - 1;
     timing_api_.AddActNetPtrIdPair(act_net_ptr, id);
@@ -338,7 +337,7 @@ Net *PhyDB::GetNetPtr(std::string const &net_name) {
 int PhyDB::GetNetId(std::string const &net_name) {
   auto res = design_.net_2_id_.find(net_name);
   if (res == design_.net_2_id_.end()) {
-    PhyDBExpects(false, "Net does not exist: " + net_name);
+    PhyDBExpects(false, "Net does not exist: " << net_name);
   }
   return res->second;
 }
@@ -349,9 +348,9 @@ void PhyDB::AddIoPinToNet(
     void *act_io_pin_ptr
 ) {
   PhyDBExpects(IsIoPinExisting(iopin_name),
-               "Cannot add a nonexistent iopin to a net: " + iopin_name);
+               "Cannot add a nonexistent iopin to a net: " << iopin_name);
   PhyDBExpects(IsNetExisting(net_name),
-               "Cannot add iopin to a nonexistent Net: " + net_name);
+               "Cannot add iopin to a nonexistent Net: " << net_name);
   design_.AddIoPinToNet(iopin_name, net_name);
 }
 
@@ -361,16 +360,14 @@ void PhyDB::AddCompPinToNet(
     std::string const &net_name
 ) {
   PhyDBExpects(IsNetExisting(net_name),
-               "Cannot add a component pin to a nonexistent Net: "
-                   + net_name);
+               "Cannot add a component pin to a nonexistent Net: " << net_name);
   PhyDBExpects(IsComponentExisting(comp_name),
-               "Cannot add a nonexistent component to a net: " + comp_name);
+               "Cannot add a nonexistent component to a net: " << comp_name);
   Component *comp_ptr = GetComponentPtr(comp_name);
   std::string macro_name = comp_ptr->GetMacro()->GetName();
   Macro *macro_ptr = GetMacroPtr(macro_name);
   PhyDBExpects(macro_ptr->IsPinExisting(pin_name),
-               "Macro " + macro_name + " does not contain a pin with name "
-                   + pin_name);
+               "Macro " << macro_name << " does not contain a pin with name " << pin_name);
 
   int comp_id = GetComponentId(comp_name);
   int pin_id = macro_ptr->GetPinId(pin_name);
@@ -384,12 +381,12 @@ void PhyDB::BindPhydbPinToActPin(
     void *act_comp_pin_ptr
 ) {
   PhyDBExpects(IsComponentExisting(comp_name),
-               "Cannot find component: " + comp_name);
+               "Cannot find component: " << comp_name);
   Component *comp_ptr = GetComponentPtr(comp_name);
   Macro *macro_ptr = comp_ptr->GetMacro();
   PhyDBExpects(macro_ptr->IsPinExisting(pin_name),
-               "Macro " + macro_ptr->GetName()
-                   + " does not contain a pin with name " + pin_name);
+               "Macro " << macro_ptr->GetName()
+                        << " does not contain a pin with name " << pin_name);
 
   int comp_id = design_.component_2_id_[comp_name];
   int pin_id = macro_ptr->GetPinId(pin_name);
@@ -757,7 +754,7 @@ void PhyDB::CreatePhydbActAdaptor() {
     );
     timing_api_.AddActNetPtrIdPair(act_net, i);
 
-    for (auto &physb_pin: net.GetPinsRef()) {
+    for (auto &physb_pin : net.GetPinsRef()) {
       BindPhydbPinToActPin(physb_pin);
     }
   }
@@ -1109,7 +1106,7 @@ void PhyDB::WriteCluster(std::string const &cluster_file_name) {
   }
 
   auto cluster_cols = this->GetClusterColsRef();
-  for (auto cluster_col: cluster_cols) {
+  for (auto cluster_col : cluster_cols) {
     outfile << "STRIP " << cluster_col.GetName() << std::endl;
     outfile << cluster_col.GetLX() << " " << cluster_col.GetUX() << " "
             << cluster_col.GetBotSignal() << std::endl;
@@ -1135,13 +1132,13 @@ void PhyDB::WriteGuide(std::string const &guide_file_name) {
   auto design_p = this->GetDesignPtr();
   auto tech_p = this->GetTechPtr();
   auto netlist = design_p->GetNetsRef();
-  for (auto net: netlist) {
+  for (auto net : netlist) {
     std::string netName = net.GetName();
     outfile << netName << std::endl;
     outfile << "(" << std::endl;
 
     auto routing_guides = net.GetRoutingGuidesRef();
-    for (auto gcell: routing_guides) {
+    for (auto gcell : routing_guides) {
       std::string layer_name = tech_p->GetLayerName(gcell.ll.z);
       outfile << gcell.ll.x << " ";
       outfile << gcell.ll.y << " ";
@@ -1165,7 +1162,7 @@ void PhyDB::BindPhydbPinToActPin(PhydbPin &phydb_pin) {
       PhydbPin existing_pin = timing_api_.ActCompPinPtr2Id(act_pin);
       std::string existing_phydb_pin_name = GetFullCompPinName(existing_pin, ':');
       std::cout << "\033[0;31m" << "FATAL ERROR:\n    "
-                << "ACT pin pointer, " << act_pin 
+                << "ACT pin pointer, " << act_pin
                 << ", corresponds to the following PhyDB pin:\n        "
                 << existing_phydb_pin_name << ".\n    "
                 << "Now this ACT pin needs to correspond to another PhyDB pin:\n        "
@@ -1176,7 +1173,7 @@ void PhyDB::BindPhydbPinToActPin(PhydbPin &phydb_pin) {
     }
   } else {
     timing_api_.AddActCompPinPtrIdPair(act_pin, phydb_pin);
-  } 
+  }
 }
 #endif
 

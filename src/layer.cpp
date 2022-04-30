@@ -94,7 +94,7 @@ int LayerTechConfigCorner::ModelIndex() const {
 }
 
 void LayerTechConfigCorner::FixResOverTableLastEntry() {
-  for (auto &res_over_table: res_over_) {
+  for (auto &res_over_table : res_over_) {
     res_over_table.FixLastEntryIfWrong();
   }
 }
@@ -113,7 +113,7 @@ void LayerTechConfigCorner::FixResOverTableLastEntry() {
  */
 double LayerTechConfigCorner::GetOverSubstrateNoSurroundingWireRes() {
   double res = -1;
-  for (auto &table: res_over_) {
+  for (auto &table : res_over_) {
     if (table.Index0() == -1) {
       if (!table.GetTable().empty()) {
         res = table.GetTable()[0].res_;
@@ -138,7 +138,7 @@ double LayerTechConfigCorner::GetOverSubstrateNoSurroundingWireRes() {
  */
 double LayerTechConfigCorner::GetOverSubstrateNoSurroundingWireCap() {
   double res = -1;
-  for (auto &table: cap_over_) {
+  for (auto &table : cap_over_) {
     if (table.Index0() == -1) {
       if (!table.GetTable().empty()) {
         res = table.GetTable().back().fringe_cap_;
@@ -150,19 +150,19 @@ double LayerTechConfigCorner::GetOverSubstrateNoSurroundingWireCap() {
 }
 
 void LayerTechConfigCorner::Report() {
-  for (auto &table: res_over_) {
+  for (auto &table : res_over_) {
     table.Report();
   }
-  for (auto &table: cap_over_) {
+  for (auto &table : cap_over_) {
     table.Report();
   }
-  for (auto &table: cap_under_) {
+  for (auto &table : cap_under_) {
     table.Report();
   }
-  for (auto &table: cap_diagunder_) {
+  for (auto &table : cap_diagunder_) {
     table.Report();
   }
-  for (auto &table: cap_overunder_) {
+  for (auto &table : cap_overunder_) {
     table.Report();
   }
 }
@@ -183,13 +183,13 @@ LayerTechConfigCorner *LayerTechConfig::GetLastCorner() {
 }
 
 void LayerTechConfig::FixResOverTable() {
-  for (auto &corner: corners_) {
+  for (auto &corner : corners_) {
     corner.FixResOverTableLastEntry();
   }
 }
 
 void LayerTechConfig::Report() {
-  for (auto &corner: corners_) {
+  for (auto &corner : corners_) {
     corner.Report();
   }
 }
@@ -445,7 +445,7 @@ void Layer::SetResistanceUnitFromTechConfig() {
 
 void Layer::SetResistanceUnitFromLef() {
   PhyDBWarns(resistance_rpersq_ <= 0,
-             "resistance_rpersq_ not set: " + name_);
+             "resistance_rpersq_ not set: " << name_);
   unit_res_.assign(1, resistance_rpersq_);
 }
 
@@ -490,9 +490,9 @@ void Layer::SetCapacitanceUnitFromTechConfig() {
 
 void Layer::SetCapacitanceUnitFromLef() {
   PhyDBWarns(capacitance_cpersqdist_ <= 0,
-             "capacitance_cpersqdist_ not set: " + name_);
+             "capacitance_cpersqdist_ not set: " << name_);
   PhyDBWarns(edgecapacitance_ <= 0,
-             "edgecapacitance_ not set: " + name_);
+             "edgecapacitance_ not set: " << name_);
   unit_area_cap_.assign(1, capacitance_cpersqdist_ * capmultiplier_);
   unit_edge_cap_.assign(1, edgecapacitance_ * capmultiplier_);
 }

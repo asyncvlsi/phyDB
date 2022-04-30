@@ -57,15 +57,11 @@ class PhydbPin {
   // id of the pin in a MACRO or the IOPIN list
   int PinId() const { return pin_id_; }
 
-  std::string Str() const {
-    return "(" + std::to_string(instance_id_) + ", "
-        + std::to_string(pin_id_) + ")";
-  }
-
   void Reset() {
     instance_id_ = -1;
     pin_id_ = -1;
   }
+  friend std::ostream& operator<<(std::ostream& os, const PhydbPin& pin);
  private:
   int instance_id_;
   int pin_id_;

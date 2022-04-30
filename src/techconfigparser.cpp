@@ -36,7 +36,7 @@ void ReadHeader(std::ifstream &ist) {
   } while (line.empty());
   std::string header("Extraction Rules for OpenRCX");
   if (line != header) {
-    PhyDBExpects(false, "Expect: " + header);
+    PhyDBExpects(false, "Expect: " << header);
   }
 }
 
@@ -77,7 +77,7 @@ void ReadLayerCount(PhyDB *phy_db_ptr, std::ifstream &ist) {
       number_of_layers = std::stoi(words[1]);
     } catch (...) {
       PhyDBExpects(false,
-                   "Unable to convert string to int: " + words[1]);
+                   "Unable to convert string to int: " << words[1]);
     }
     tech.SetTechConfigLayerCount(number_of_layers);
   } else {
@@ -101,7 +101,7 @@ void ReadDensityRate(PhyDB *phy_db_ptr, std::ifstream &ist) {
       model_numbers = std::stoi(words[1]);
     } catch (...) {
       PhyDBExpects(false,
-                   "Unable to convert string to int: " + words[1]);
+                   "Unable to convert string to int: " << words[1]);
     }
     tech_config.SetModelCount(model_numbers);
     PhyDBExpects((int) words.size() == model_numbers + 2,
@@ -110,8 +110,7 @@ void ReadDensityRate(PhyDB *phy_db_ptr, std::ifstream &ist) {
       try {
         tech_config.AddDataRate(std::stod(words[i + 2]));
       } catch (...) {
-        PhyDBExpects(false, "Unable to convert string to int: "
-            + words[i + 2]);
+        PhyDBExpects(false, "Unable to convert string to int: " << words[i + 2]);
       }
     }
   } else {
@@ -133,7 +132,7 @@ void InitializeDensityModel(PhyDB *phy_db_ptr, std::ifstream &ist) {
       corner_index = std::stoi(words[1]);
     } catch (...) {
       PhyDBExpects(false,
-                   "Unable to convert string to int: " + words[1]);
+                   "Unable to convert string to int: " << words[1]);
     }
     tech.AddTechConfigCorner(corner_index);
   } else {
@@ -157,7 +156,7 @@ void ReadConfigTable(ConfigTable &config_table, std::ifstream &ist) {
       config_table.GetTable().reserve(pre_sz);
     } catch (...) {
       PhyDBExpects(false,
-                   "Unable to convert string to int: " + words[2]);
+                   "Unable to convert string to int: " << words[2]);
     }
     double width = -1;
     try {
@@ -165,7 +164,7 @@ void ReadConfigTable(ConfigTable &config_table, std::ifstream &ist) {
       config_table.SetWidth(width);
     } catch (...) {
       PhyDBExpects(false,
-                   "Unable to convert string to double: " + words[4]);
+                   "Unable to convert string to double: " << words[4]);
     }
   } else {
     PhyDBExpects(false, "Couldn't find: DIST count ...");
@@ -187,7 +186,7 @@ void ReadConfigTable(ConfigTable &config_table, std::ifstream &ist) {
       res = std::stod(words[3]);
     } catch (...) {
       PhyDBExpects(false,
-                   "Unable to convert string to double: " + line);
+                   "Unable to convert string to double: " << line);
     }
     config_table.AddEntry(distance, coupling_cap, fringe_cap, res);
   }
@@ -223,12 +222,12 @@ void ReadDensityModel(PhyDB *phy_db_ptr, std::ifstream &ist) {
         } else if (words[2] == "DIAGUNDER") {
           type = CAP_DIAGUNDER;
         } else {
-          PhyDBExpects(false, "Unknown table type: " + words[2]);
+          PhyDBExpects(false, "Unknown table type: " << words[2]);
         }
       } else if (words.size() == 6) {
         PhyDBExpects(
             words[2] == "OVER" && words[4] == "UNDER",
-            "Unknown table type: " + words[2] + " " + words[4]
+            "Unknown table type: " << words[2] << " " << words[4]
         );
         type = CAP_OVERUNDER;
       } else {
@@ -242,7 +241,7 @@ void ReadDensityModel(PhyDB *phy_db_ptr, std::ifstream &ist) {
         }
       } catch (...) {
         PhyDBExpects(false,
-                     "Unable to convert string to int: " + line);
+                     "Unable to convert string to int: " << line);
       }
       PhyDBExpects(type != BAD_TABLE_TYPE, "Bad table type?");
       auto &config_table = tech.InitConfigTable(
@@ -271,7 +270,7 @@ bool ReadTechnologyConfigurationFile(
   PhyDBExpects(phy_db_ptr != nullptr, "PhyDB pointer is a nullptr");
   std::ifstream ist(tech_config_file_name.c_str());
   PhyDBExpects(ist.is_open(),
-               "Cannot open input file " + tech_config_file_name);
+               "Cannot open input file " << tech_config_file_name);
 
   ReadHeader(ist);
   ReadDiagmodelOnOff(phy_db_ptr, ist);
