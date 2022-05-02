@@ -61,7 +61,7 @@ class PhydbPin {
     instance_id_ = -1;
     pin_id_ = -1;
   }
-  friend std::ostream& operator<<(std::ostream& os, const PhydbPin& pin);
+  friend std::ostream& operator<<(std::ostream& ost, const PhydbPin& pin);
  private:
   int instance_id_;
   int pin_id_;

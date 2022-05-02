@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(PhyDB
-    LANGUAGES CXX)
+project(
+    PhyDB
+    LANGUAGES CXX
+)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -13,67 +15,17 @@ include_directories(include)
 # Detect if the environment variable ACT_HOME can be found
 ############################################################################
 message(STATUS "Detecting environment variable ACT_HOME...")
-if (DEFINED ENV{ACT_HOME})
+if(DEFINED ENV{ACT_HOME})
     message(STATUS "Environment variable ACT_HOME detected: " $ENV{ACT_HOME})
-else ()
+else()
     message(FATAL_ERROR "Environment variable ACT_HOME is not found")
-endif ()
+endif()
 include_directories($ENV{ACT_HOME}/include)
 link_directories($ENV{ACT_HOME}/lib)
-
-############################################################################
-# Detect the installation path of LEF parser and DEF parser,
-# and check if the liblef and libdef library can be found or not
-############################################################################
-message(STATUS "Detecting environment variable LEF_ROOT...")
-set(LEF_ROOT "")
-if (DEFINED ENV{LEF_ROOT})
-    message(STATUS "Environment variable LEF_ROOT detected: " $ENV{LEF_ROOT})
-    include_directories($ENV{LEF_ROOT}/include)
-    link_directories($ENV{LEF_ROOT}/lib)
-    set(LEF_ROOT $ENV{LEF_ROOT})
-else ()
-    message(STATUS "Environment variable LEF_ROOT not found, using ACT_HOME instead")
-    include_directories($ENV{ACT_HOME}/include)
-    link_directories($ENV{ACT_HOME}/lib)
-    set(LEF_ROOT $ENV{ACT_HOME})
-endif ()
-find_library(
-    LEF_LIBRARY
-    NAMES lef
-    PATHS ${LEF_ROOT}/lib
-    REQUIRED
-)
-if (NOT LEF_LIBRARY)
-    message(FATAL_ERROR "Cannot find liblef.a")
-else ()
-    message(STATUS "Found liblef.a: " ${LEF_LIBRARY})
-endif ()
-
-message(STATUS "Detecting environment variable DEF_ROOT...")
-set(DEF_ROOT "")
-if (DEFINED ENV{DEF_ROOT})
-    message(STATUS "Environment variable DEF_ROOT detected: " $ENV{DEF_ROOT})
-    include_directories($ENV{DEF_ROOT}/include)
-    link_directories($ENV{DEF_ROOT}/lib)
-    set(DEF_ROOT $ENV{DEF_ROOT})
-else ()
-    message(STATUS "Environment variable DEF_ROOT not found, using ACT_HOME instead")
-    include_directories($ENV{ACT_HOME}/include)
-    link_directories($ENV{ACT_HOME}/lib)
-    set(DEF_ROOT $ENV{ACT_HOME})
-endif ()
-find_library(
-    DEF_LIBRARY
-    NAMES def
-    PATHS ${DEF_ROOT}/lib
-    REQUIRED
-)
-if (NOT DEF_LIBRARY)
-    message(FATAL_ERROR "Cannot find libdef.a")
-else ()
-    message(STATUS "Found libdef.a: " ${DEF_LIBRARY})
-endif ()
+find_library(LEF_LIBRARY NAMES lef PATHS $ENV{ACT_HOME}/lib REQUIRED)
+message(STATUS "Found liblef.a: " ${LEF_LIBRARY})
+find_library(DEF_LIBRARY NAMES def PATHS $ENV{ACT_HOME}/lib REQUIRED)
+message(STATUS "Found libdef.a: " ${DEF_LIBRARY})
 
 ############################################################################
 # Check if the galois_eda library is installed
@@ -85,7 +37,7 @@ find_library(
     NAMES galois_eda
     PATHS $ENV{ACT_HOME}/lib
 )
-if (GALOIS_EDA_LIBRARY)
+if(GALOIS_EDA_LIBRARY)
     set(Galois_LIBRARIES ${GALOIS_EDA_LIBRARY})
     message(STATUS "Found libgalois_eda.a: " ${GALOIS_EDA_LIBRARY})
 else()
@@ -97,19 +49,19 @@ find_library(
     NAMES galois_shmem
     PATHS $ENV{ACT_HOME}/lib
 )
-if (GALOIS_SHMEM_LIBRARY)
+if(GALOIS_SHMEM_LIBRARY)
     set(Galois_LIBRARIES ${Galois_LIBRARIES} ${GALOIS_SHMEM_LIBRARY})
     message(STATUS "Found libgalois_shmem.a: " ${GALOIS_SHMEM_LIBRARY})
 else()
     message(STATUS "Cannot find libgalois_shmem.a")
     set(Galois_FOUND FALSE)
 endif()
-if (UNIX AND (NOT APPLE))
+if(UNIX AND (NOT APPLE))
     find_library(
         NUMA_LIBRARY
         NAMES numa
     )
-    if (NUMA_LIBRARY)
+    if(NUMA_LIBRARY)
         set(Galois_LIBRARIES ${Galois_LIBRARIES} ${NUMA_LIBRARY})
         message(STATUS "Found libnuma: " ${NUMA_LIBRARY})
     else()
@@ -117,11 +69,11 @@ if (UNIX AND (NOT APPLE))
         set(Galois_FOUND FALSE)
     endif()
 endif()
-if (Galois_FOUND)
+if(Galois_FOUND)
     set(PHYDB_USE_GALOIS 1)
-else ()
+else()
     set(PHYDB_USE_GALOIS 0)
-endif ()
+endif()
 configure_file(${INC_DIR}/config.h.in ${INC_DIR}/config.h)
 
 ############################################################################
@@ -137,11 +89,11 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 # Set a default build type if none was specified
 set(default_build_type "RELEASE")
-if (NOT CMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE)
     message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
     set(CMAKE_BUILD_TYPE "${default_build_type}")
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "DEBUG" "RELEASE")
-endif ()
+endif()
 
 # Set compilation flags
 add_compile_options(-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Werror=return-type -pedantic)
@@ -154,7 +106,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 # Set the output directory of executables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
-FILE(GLOB SOURCES "src/*.cpp")
+file(GLOB SOURCES "src/*.cpp")
 add_subdirectory(test)
 
 # create the core library--phydb
@@ -165,7 +117,7 @@ add_library(
 )
 target_link_libraries(
     phydb
-    lef def
+    ${LEF_LIBRARY} ${DEF_LIBRARY}
     ${Boost_LIBRARIES}
     ${Galois_LIBRARIES}
 )

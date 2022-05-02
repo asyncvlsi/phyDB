@@ -25,9 +25,9 @@
 
 namespace phydb {
 
-std::ostream& operator<<(std::ostream& os, const PhydbPin& pin) {
-  os << "(" << pin.InstanceId() << ", " << pin.PinId() << ")";
-  return os;
+std::ostream& operator<<(std::ostream& ost, const PhydbPin& pin) {
+  ost << "(" << pin.InstanceId() << ", " << pin.PinId() << ")";
+  return ost;
 }
 
 PhydbTimingEdge *PhydbTimingNode::AddPinToOutEdges(PhydbPin &pin) {
