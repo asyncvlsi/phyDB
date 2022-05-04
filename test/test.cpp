@@ -19,12 +19,12 @@
  *
  ******************************************************************************/
 
-#include "datatype.h"
-#include "spacingtable.h"
-#include "layer.h"
-#include "phydb.h"
-#include "site.h"
-#include "tech.h"
+#include "phydb/datatype.h"
+#include "phydb/layer.h"
+#include "phydb/phydb.h"
+#include "phydb/site.h"
+#include "phydb/spacingtable.h"
+#include "phydb/tech.h"
 
 using namespace phydb;
 

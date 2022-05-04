@@ -19,29 +19,45 @@
  *
  ******************************************************************************/
 
-#include <fstream>
-#include <iostream>
+#ifndef PHYDB_CORNERSPACING_H_
+#define PHYDB_CORNERSPACING_H_
 
 #include "phydb/common/logging.h"
-#include "phydb/phydb.h"
 
-using namespace phydb;
+namespace phydb {
 
-int main(int argc, char **argv) {
-  PhyDBExpects(
-      argc == 3,
-      "Please provide a LEF file and a technology configuration file"
-  );
-  std::string lef_file_name(argv[1]);
-  std::string tech_config_file_name(argv[2]);
+class CornerSpacing {
+ private:
+  double eol_width_;
+  std::vector<double> width_;
+  std::vector<double> spacing_;
 
-  PhyDB phy_db;
-  phy_db.ReadLef(lef_file_name);
-  phy_db.ReadTechConfigFile(tech_config_file_name);
+ public:
+  CornerSpacing() : eol_width_(0) {}
 
-  phy_db.GetTechPtr()->ReportLayersTechConfig();
-  phy_db.GetTechPtr()->SetResistanceUnit(true, true);
-  phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
+  //constructor for metal layer
+  CornerSpacing(
+      double eolWidth,
+      std::vector<double> width,
+      std::vector<double> spacing
+  ) : eol_width_(eolWidth),
+      width_(width),
+      spacing_(spacing) {}
 
-  return 0;
+  void SetEOLWidth(double eol_width) { eol_width_ = eol_width; }
+  void AddWidth(double width) { width_.push_back(width); }
+  void AddSpacing(double spacing) { spacing_.push_back(spacing); }
+
+
+  double GetEOLWidth() { return eol_width_;}
+  std::vector<double> GetWidth() {return width_;}
+  std::vector<double> GetSpacing() { return spacing_;}
+
+  void Reset();
+};
+
+std::ostream &operator<<(std::ostream &, const CornerSpacing &);
+
 }
+
+#endif //PHYDB_CORNERSPACING_H_

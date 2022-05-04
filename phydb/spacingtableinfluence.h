@@ -19,29 +19,34 @@
  *
  ******************************************************************************/
 
-#include <fstream>
-#include <iostream>
+#ifndef PHYDB_SPACINGTABLEINFLUENCE_H
+#define PHYDB_SPACINGTABLEINFLUENCE_H
 
-#include "phydb/common/logging.h"
-#include "phydb/phydb.h"
+namespace phydb {
 
-using namespace phydb;
+class SpacingTableInfluence {
+ private:
+  double width_;
+  double within_;
+  double spacing_;
 
-int main(int argc, char **argv) {
-  PhyDBExpects(
-      argc == 3,
-      "Please provide a LEF file and a technology configuration file"
-  );
-  std::string lef_file_name(argv[1]);
-  std::string tech_config_file_name(argv[2]);
+ public:
+  SpacingTableInfluence() {}
+  SpacingTableInfluence(double width, double within, double spacing) :
+      width_(width), within_(within), spacing_(spacing) {}
 
-  PhyDB phy_db;
-  phy_db.ReadLef(lef_file_name);
-  phy_db.ReadTechConfigFile(tech_config_file_name);
+  void SetWidth(double);
+  void SetWithin(double);
+  void SetSpacing(double);
 
-  phy_db.GetTechPtr()->ReportLayersTechConfig();
-  phy_db.GetTechPtr()->SetResistanceUnit(true, true);
-  phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
+  double GetWidth() const;
+  double GetWithin() const;
+  double GetSpacing() const;
 
-  return 0;
+  void Report() const;
+
+};
+
 }
+
+#endif //PHYDB_SPACINGTABLEINFLUENCE_H

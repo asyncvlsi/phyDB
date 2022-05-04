@@ -19,29 +19,29 @@
  *
  ******************************************************************************/
 
-#include <fstream>
-#include <iostream>
+#ifndef PHYDB_ADJACENTCUTSPACING_H_
+#define PHYDB_ADJACENTCUTSPACING_H_
 
-#include "phydb/common/logging.h"
-#include "phydb/phydb.h"
+namespace phydb {
 
-using namespace phydb;
+class AdjacentCutSpacing {
+ private:
+  double spacing_;
+  int adjacent_cuts_;
+  int cut_within_;
 
-int main(int argc, char **argv) {
-  PhyDBExpects(
-      argc == 3,
-      "Please provide a LEF file and a technology configuration file"
-  );
-  std::string lef_file_name(argv[1]);
-  std::string tech_config_file_name(argv[2]);
+ public:
+  AdjacentCutSpacing() : spacing_(0), adjacent_cuts_(0), cut_within_(0) {}
+  AdjacentCutSpacing(double spacing, int adjacent_cuts, int cut_within) :
+      spacing_(spacing),
+      adjacent_cuts_(adjacent_cuts),
+      cut_within_(cut_within) {}
 
-  PhyDB phy_db;
-  phy_db.ReadLef(lef_file_name);
-  phy_db.ReadTechConfigFile(tech_config_file_name);
+  void Report();
+};
 
-  phy_db.GetTechPtr()->ReportLayersTechConfig();
-  phy_db.GetTechPtr()->SetResistanceUnit(true, true);
-  phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
-
-  return 0;
 }
+
+#endif //PHYDB_ADJACENTCUTSPACING_H_
+
+

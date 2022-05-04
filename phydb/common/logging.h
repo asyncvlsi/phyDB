@@ -18,30 +18,41 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
+#ifndef PHYDB_COMMON_LOGGING_H_
+#define PHYDB_COMMON_LOGGING_H_
 
-#include <fstream>
+#include <cassert>
+#include <cstring>
+
 #include <iostream>
+#include <map>
+#include <string>
+#include <vector>
 
-#include "phydb/common/logging.h"
-#include "phydb/phydb.h"
+namespace phydb {
 
-using namespace phydb;
+#define PhyDBExpects(e, error_message) do{ \
+  if(!(e)) { \
+    std::cout \
+      << "\033[0;31m" \
+      << "FATAL ERROR:" << "\n" \
+      << "    " << error_message << "\n" \
+      << __FILE__ << " : " << __LINE__ << " : " << __FUNCTION__ \
+      << "\033[0m" << std::endl; \
+      exit(1); \
+  } \
+} while(0)
 
-int main(int argc, char **argv) {
-  PhyDBExpects(
-      argc == 3,
-      "Please provide a LEF file and a technology configuration file"
-  );
-  std::string lef_file_name(argv[1]);
-  std::string tech_config_file_name(argv[2]);
+#define PhyDBWarns(e, warning_message) do{ \
+  if((e)) { \
+    std::cout \
+      << "\033[0;34m" \
+      << "WARNING:" << "\n" \
+      << "    " << warning_message << "\n" \
+      << "\033[0m" << std::endl; \
+  } \
+} while(0)
 
-  PhyDB phy_db;
-  phy_db.ReadLef(lef_file_name);
-  phy_db.ReadTechConfigFile(tech_config_file_name);
-
-  phy_db.GetTechPtr()->ReportLayersTechConfig();
-  phy_db.GetTechPtr()->SetResistanceUnit(true, true);
-  phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
-
-  return 0;
 }
+
+#endif //PHYDB_COMMON_LOGGING_H_

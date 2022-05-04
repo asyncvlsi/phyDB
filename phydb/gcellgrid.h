@@ -19,29 +19,47 @@
  *
  ******************************************************************************/
 
-#include <fstream>
-#include <iostream>
+#ifndef PHYDB_GCELLGRID_H_
+#define PHYDB_GCELLGRID_H_
 
+#include "enumtypes.h"
 #include "phydb/common/logging.h"
-#include "phydb/phydb.h"
 
-using namespace phydb;
+namespace phydb {
 
-int main(int argc, char **argv) {
-  PhyDBExpects(
-      argc == 3,
-      "Please provide a LEF file and a technology configuration file"
-  );
-  std::string lef_file_name(argv[1]);
-  std::string tech_config_file_name(argv[2]);
+class GcellGrid {
+ private:
+  XYDirection direction_;
+  int start_;
+  int numBoundaries_;
+  int step_;
 
-  PhyDB phy_db;
-  phy_db.ReadLef(lef_file_name);
-  phy_db.ReadTechConfigFile(tech_config_file_name);
+ public:
+  GcellGrid() : start_(0), numBoundaries_(0), step_(0) {}
+  GcellGrid(XYDirection direction, int start, int numBoundaries, int step) :
+      direction_(direction),
+      start_(start),
+      numBoundaries_(numBoundaries),
+      step_(step) {}
 
-  phy_db.GetTechPtr()->ReportLayersTechConfig();
-  phy_db.GetTechPtr()->SetResistanceUnit(true, true);
-  phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
+  void SetDirection(XYDirection);
+  void SetStart(int);
+  void SetNBoundaries(int);
+  void SetStep(int);
 
-  return 0;
+  XYDirection GetDirection() const;
+  int GetStart() const;
+  int GetNBoundaries() const;
+  int GetStep() const;
+
+  void Report() const;
+
+  friend std::ostream &operator<<(std::ostream &, const GcellGrid &);
+
+};
+
+std::ostream &operator<<(std::ostream &, const GcellGrid &);
+
 }
+
+#endif //PHYDB_GCELLGRID_H_

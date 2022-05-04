@@ -7,9 +7,10 @@ project(
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
-set(INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
-include_directories(include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+# Add sub-cmake files to the search path
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 ############################################################################
 # Detect if the environment variable ACT_HOME can be found
@@ -27,54 +28,8 @@ message(STATUS "Found liblef.a: " ${LEF_LIBRARY})
 find_library(DEF_LIBRARY NAMES def PATHS $ENV{ACT_HOME}/lib REQUIRED)
 message(STATUS "Found libdef.a: " ${DEF_LIBRARY})
 
-############################################################################
-# Check if the galois_eda library is installed
-############################################################################
-message(STATUS "Detecting Galois libraries...")
-set(Galois_FOUND TRUE)
-find_library(
-    GALOIS_EDA_LIBRARY
-    NAMES galois_eda
-    PATHS $ENV{ACT_HOME}/lib
-)
-if(GALOIS_EDA_LIBRARY)
-    set(Galois_LIBRARIES ${GALOIS_EDA_LIBRARY})
-    message(STATUS "Found libgalois_eda.a: " ${GALOIS_EDA_LIBRARY})
-else()
-    message(STATUS "Cannot find libgalois_eda.a")
-    set(Galois_FOUND FALSE)
-endif()
-find_library(
-    GALOIS_SHMEM_LIBRARY
-    NAMES galois_shmem
-    PATHS $ENV{ACT_HOME}/lib
-)
-if(GALOIS_SHMEM_LIBRARY)
-    set(Galois_LIBRARIES ${Galois_LIBRARIES} ${GALOIS_SHMEM_LIBRARY})
-    message(STATUS "Found libgalois_shmem.a: " ${GALOIS_SHMEM_LIBRARY})
-else()
-    message(STATUS "Cannot find libgalois_shmem.a")
-    set(Galois_FOUND FALSE)
-endif()
-if(UNIX AND (NOT APPLE))
-    find_library(
-        NUMA_LIBRARY
-        NAMES numa
-    )
-    if(NUMA_LIBRARY)
-        set(Galois_LIBRARIES ${Galois_LIBRARIES} ${NUMA_LIBRARY})
-        message(STATUS "Found libnuma: " ${NUMA_LIBRARY})
-    else()
-        message(STATUS "Cannot find libnuma")
-        set(Galois_FOUND FALSE)
-    endif()
-endif()
-if(Galois_FOUND)
-    set(PHYDB_USE_GALOIS 1)
-else()
-    set(PHYDB_USE_GALOIS 0)
-endif()
-configure_file(${INC_DIR}/config.h.in ${INC_DIR}/config.h)
+# Find galois_eda
+include(cmake/FindGaloisEDA.cmake)
 
 ############################################################################
 # Check Boost library
@@ -96,7 +51,14 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Set compilation flags
-add_compile_options(-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Werror=return-type -pedantic)
+add_compile_options(
+    -Wall
+    -Wextra
+    -Wshadow
+    -Wnon-virtual-dtor
+    -Werror=return-type
+    -pedantic
+)
 set(CMAKE_CXX_FLAGS_DEBUG "-O3 -g -fPIC")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -fPIC")
 
@@ -106,10 +68,13 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 # Set the output directory of executables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
-file(GLOB SOURCES "src/*.cpp")
+file(
+    GLOB_RECURSE SOURCES
+    phydb/*.cpp
+)
 add_subdirectory(test)
 
-# create the core library--phydb
+# Create the core library--phydb
 add_library(
     phydb
     STATIC
@@ -129,7 +94,7 @@ add_executable(parser_test test/test_parser.cpp)
 target_link_libraries(parser_test PRIVATE phydb)
 
 ############################################################################
-# specify the installation directory: ${ACT_HOME}
+# Specify the installation directory: ${ACT_HOME}
 ############################################################################
 message(STATUS "Changing Installation directory to $ACT_HOME")
 set(CMAKE_INSTALL_PREFIX $ENV{ACT_HOME} CACHE PATH "installation path" FORCE)
@@ -139,12 +104,10 @@ message(STATUS "Current installation directory: " ${CMAKE_INSTALL_PREFIX})
 # Install header files
 ############################################################################
 install(
-    DIRECTORY include/
+    DIRECTORY phydb/
     DESTINATION include/phydb
-    COMPONENT Development
     FILES_MATCHING
     PATTERN "*.h"
-    PATTERN "*.hpp"
 )
 
 ############################################################################

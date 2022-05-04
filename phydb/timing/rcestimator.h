@@ -18,30 +18,26 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
+#ifndef PHYDB_TIMING_RCESTIMATOR_H_
+#define PHYDB_TIMING_RCESTIMATOR_H_
 
-#include <fstream>
-#include <iostream>
-
-#include "phydb/common/logging.h"
+#include "phydb/datatype.h"
+#include "phydb/layer.h"
+#include "phydb/net.h"
 #include "phydb/phydb.h"
 
-using namespace phydb;
+namespace phydb {
 
-int main(int argc, char **argv) {
-  PhyDBExpects(
-      argc == 3,
-      "Please provide a LEF file and a technology configuration file"
-  );
-  std::string lef_file_name(argv[1]);
-  std::string tech_config_file_name(argv[2]);
+class RCEstimator {
+ protected:
+  PhyDB *phy_db_;
+ public:
+  explicit RCEstimator(PhyDB *phydb_ptr) : phy_db_(phydb_ptr) {}
+  virtual ~RCEstimator() = default;
 
-  PhyDB phy_db;
-  phy_db.ReadLef(lef_file_name);
-  phy_db.ReadTechConfigFile(tech_config_file_name);
+  virtual void PushNetRCToManager() = 0;
+};
 
-  phy_db.GetTechPtr()->ReportLayersTechConfig();
-  phy_db.GetTechPtr()->SetResistanceUnit(true, true);
-  phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
-
-  return 0;
 }
+
+#endif //PHYDB_TIMING_RCESTIMATOR_H_

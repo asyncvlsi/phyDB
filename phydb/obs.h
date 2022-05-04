@@ -19,29 +19,35 @@
  *
  ******************************************************************************/
 
-#include <fstream>
-#include <iostream>
+#ifndef PHYDB_OBS_H_
+#define PHYDB_OBS_H_
 
-#include "phydb/common/logging.h"
-#include "phydb/phydb.h"
+#include "datatype.h"
 
-using namespace phydb;
+namespace phydb {
 
-int main(int argc, char **argv) {
-  PhyDBExpects(
-      argc == 3,
-      "Please provide a LEF file and a technology configuration file"
-  );
-  std::string lef_file_name(argv[1]);
-  std::string tech_config_file_name(argv[2]);
+class OBS {
+ private:
+  std::vector<LayerRect> layer_rects_;
 
-  PhyDB phy_db;
-  phy_db.ReadLef(lef_file_name);
-  phy_db.ReadTechConfigFile(tech_config_file_name);
+ public:
+  OBS() {}
+  OBS(std::vector<LayerRect> layerRects) : layer_rects_(layerRects) {}
 
-  phy_db.GetTechPtr()->ReportLayersTechConfig();
-  phy_db.GetTechPtr()->SetResistanceUnit(true, true);
-  phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
+  void SetLayerRects(std::vector<LayerRect>);
 
-  return 0;
+  std::vector<LayerRect> GetLayerRects() const;
+  std::vector<LayerRect> &GetLayerRectsRef();
+
+  // API to add LayerRect
+  LayerRect *AddLayerRect(std::string &layer_name);
+
+  friend std::ostream &operator<<(std::ostream &, const OBS &);
+};
+
+std::ostream &operator<<(std::ostream &, const OBS &);
+
 }
+
+#endif //PHYDB_OBS_H_
+

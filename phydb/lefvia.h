@@ -18,30 +18,41 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
+#ifndef PHYDB_LEFVIA_H_
+#define PHYDB_LEFVIA_H_
 
-#include <fstream>
-#include <iostream>
+#include <string>
 
-#include "phydb/common/logging.h"
-#include "phydb/phydb.h"
+#include "datatype.h"
 
-using namespace phydb;
+namespace phydb {
 
-int main(int argc, char **argv) {
-  PhyDBExpects(
-      argc == 3,
-      "Please provide a LEF file and a technology configuration file"
+class LefVia {
+ private:
+  std::string name_;
+  bool is_default_;
+  std::vector<LayerRect> layer_rects_;
+ public:
+  LefVia() : is_default_(false) {}
+  explicit LefVia(std::string const &name) : name_(name) {}
+
+  std::string GetName() const;
+  void SetDefault();
+  void UnsetDefault();
+  void SetLayerRect(
+      const std::string &layer_name0,
+      const std::vector<Rect2D<double>> &rects0,
+      const std::string &layer_name1,
+      const std::vector<Rect2D<double>> &rects1,
+      const std::string &layer_name2,
+      const std::vector<Rect2D<double>> &rects2
   );
-  std::string lef_file_name(argv[1]);
-  std::string tech_config_file_name(argv[2]);
 
-  PhyDB phy_db;
-  phy_db.ReadLef(lef_file_name);
-  phy_db.ReadTechConfigFile(tech_config_file_name);
+  std::vector<LayerRect> &GetLayerRectsRef();
 
-  phy_db.GetTechPtr()->ReportLayersTechConfig();
-  phy_db.GetTechPtr()->SetResistanceUnit(true, true);
-  phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
+  void Report();
+};
 
-  return 0;
 }
+
+#endif //PHYDB_LEFVIA_H_

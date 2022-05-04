@@ -19,29 +19,39 @@
  *
  ******************************************************************************/
 
-#include <fstream>
-#include <iostream>
+#ifndef PHYDB_SITE_H_
+#define PHYDB_SITE_H_
 
 #include "phydb/common/logging.h"
-#include "phydb/phydb.h"
 
-using namespace phydb;
+namespace phydb {
 
-int main(int argc, char **argv) {
-  PhyDBExpects(
-      argc == 3,
-      "Please provide a LEF file and a technology configuration file"
-  );
-  std::string lef_file_name(argv[1]);
-  std::string tech_config_file_name(argv[2]);
+class Site {
+ private:
+  std::string name_;
+  std::string class_name_;
+  double width_;
+  double height_;
 
-  PhyDB phy_db;
-  phy_db.ReadLef(lef_file_name);
-  phy_db.ReadTechConfigFile(tech_config_file_name);
+ public:
+  Site() : name_(""), class_name_(""), width_(0), height_(0) {}
+  Site(std::string name, std::string className, double width, double height) :
+      name_(name), class_name_(className), width_(width), height_(height) {}
 
-  phy_db.GetTechPtr()->ReportLayersTechConfig();
-  phy_db.GetTechPtr()->SetResistanceUnit(true, true);
-  phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
+  void SetName(std::string);
+  void SetClassName(std::string);
+  void SetWidth(double);
+  void SetHeight(double);
 
-  return 0;
+  std::string GetName() const;
+  std::string GetClassName() const;
+  double GetWidth() const;
+  double GetHeight() const;
+
+};
+
+std::ostream &operator<<(std::ostream &, const Site &);
+
 }
+
+#endif //PHYDB_SITE_H_

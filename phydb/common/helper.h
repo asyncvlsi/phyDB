@@ -18,30 +18,16 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
+#ifndef PHYDB_COMMON_HELPER_H_
+#define PHYDB_COMMON_HELPER_H_
 
-#include <fstream>
-#include <iostream>
+#include <string>
+#include <vector>
 
-#include "phydb/common/logging.h"
-#include "phydb/phydb.h"
+namespace phydb {
 
-using namespace phydb;
+void StrTokenize(std::string &line, std::vector<std::string> &res);
 
-int main(int argc, char **argv) {
-  PhyDBExpects(
-      argc == 3,
-      "Please provide a LEF file and a technology configuration file"
-  );
-  std::string lef_file_name(argv[1]);
-  std::string tech_config_file_name(argv[2]);
-
-  PhyDB phy_db;
-  phy_db.ReadLef(lef_file_name);
-  phy_db.ReadTechConfigFile(tech_config_file_name);
-
-  phy_db.GetTechPtr()->ReportLayersTechConfig();
-  phy_db.GetTechPtr()->SetResistanceUnit(true, true);
-  phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
-
-  return 0;
 }
+
+#endif //PHYDB_COMMON_HELPER_H_

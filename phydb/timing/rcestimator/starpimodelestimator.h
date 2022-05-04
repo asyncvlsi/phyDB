@@ -18,30 +18,33 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
+#ifndef PHYDB_TIMING_RCESTIMATOR_STARPIMODELESTIMATOR_H_
+#define PHYDB_TIMING_RCESTIMATOR_STARPIMODELESTIMATOR_H_
 
-#include <fstream>
-#include <iostream>
+#include "phydb/timing/rcestimator.h"
 
-#include "phydb/common/logging.h"
-#include "phydb/phydb.h"
+namespace phydb {
 
-using namespace phydb;
-
-int main(int argc, char **argv) {
-  PhyDBExpects(
-      argc == 3,
-      "Please provide a LEF file and a technology configuration file"
+class StarPiModelEstimator : protected phydb::RCEstimator {
+ public:
+  StarPiModelEstimator(phydb::PhyDB *phydb_ptr) : RCEstimator(phydb_ptr) {}
+  ~StarPiModelEstimator() override = default;
+  void PushNetRCToManager() override;
+ private:
+  int distance_micron_ = 0;
+  bool edge_pushed_to_spef_manager_ = false;
+  phydb::Layer *horizontal_layer_ = nullptr;
+  phydb::Layer *vertical_layer_ = nullptr;
+  void AddEdgesToManager();
+  void FindFirstHorizontalAndVerticalMetalLayer();
+  void GetResistanceAndCapacitance(
+      double2d &driver_loc,
+      double2d &load_loc,
+      double &resistance,
+      double &capacitance
   );
-  std::string lef_file_name(argv[1]);
-  std::string tech_config_file_name(argv[2]);
+};
 
-  PhyDB phy_db;
-  phy_db.ReadLef(lef_file_name);
-  phy_db.ReadTechConfigFile(tech_config_file_name);
-
-  phy_db.GetTechPtr()->ReportLayersTechConfig();
-  phy_db.GetTechPtr()->SetResistanceUnit(true, true);
-  phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
-
-  return 0;
 }
+
+#endif //PHYDB_TIMING_RCESTIMATOR_STARPIMODELESTIMATOR_H_

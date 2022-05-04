@@ -19,29 +19,52 @@
  *
  ******************************************************************************/
 
-#include <fstream>
-#include <iostream>
+#ifndef PHYDB_ROW_H_
+#define PHYDB_ROW_H_
 
 #include "phydb/common/logging.h"
-#include "phydb/phydb.h"
 
-using namespace phydb;
+namespace phydb {
 
-int main(int argc, char **argv) {
-  PhyDBExpects(
-      argc == 3,
-      "Please provide a LEF file and a technology configuration file"
-  );
-  std::string lef_file_name(argv[1]);
-  std::string tech_config_file_name(argv[2]);
+class Row {
+ public:
+  std::string name_;
+  std::string site_name_;
+  std::string site_orient_;
+  int orig_x_;
+  int orig_y_;
+  int num_x_;
+  int num_y_;
+  int step_x_;
+  int step_y_;
 
-  PhyDB phy_db;
-  phy_db.ReadLef(lef_file_name);
-  phy_db.ReadTechConfigFile(tech_config_file_name);
+  Row() {}
+  Row(
+      std::string name,
+      std::string siteName,
+      std::string siteOrient,
+      int origX,
+      int origY,
+      int numX,
+      int numY,
+      int stepX,
+      int stepY
+  ) :
+      name_(name),
+      site_name_(siteName),
+      site_orient_(siteOrient),
+      orig_x_(origX),
+      orig_y_(origY),
+      num_x_(numX),
+      num_y_(numY),
+      step_x_(stepX),
+      step_y_(stepY) {}
 
-  phy_db.GetTechPtr()->ReportLayersTechConfig();
-  phy_db.GetTechPtr()->SetResistanceUnit(true, true);
-  phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
+};
 
-  return 0;
+std::ostream &operator<<(std::ostream &, const Row &);
+
 }
+
+#endif //PHYDB_ROW_H_
+

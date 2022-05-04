@@ -19,29 +19,48 @@
  *
  ******************************************************************************/
 
-#include <fstream>
-#include <iostream>
+#ifndef PHYDB_TRACK_H_
+#define PHYDB_TRACK_H_
 
+#include "enumtypes.h"
 #include "phydb/common/logging.h"
-#include "phydb/phydb.h"
 
-using namespace phydb;
+namespace phydb {
 
-int main(int argc, char **argv) {
-  PhyDBExpects(
-      argc == 3,
-      "Please provide a LEF file and a technology configuration file"
-  );
-  std::string lef_file_name(argv[1]);
-  std::string tech_config_file_name(argv[2]);
+class Track {
+ private:
+  XYDirection direction_;
+  int start_;
+  int n_tracks_;
+  int step_;
 
-  PhyDB phy_db;
-  phy_db.ReadLef(lef_file_name);
-  phy_db.ReadTechConfigFile(tech_config_file_name);
+  std::vector<std::string> layer_names_;
 
-  phy_db.GetTechPtr()->ReportLayersTechConfig();
-  phy_db.GetTechPtr()->SetResistanceUnit(true, true);
-  phy_db.GetTechPtr()->SetCapacitanceUnit(true, true);
+ public:
+  Track() {}
+  Track(
+      XYDirection direction,
+      int start,
+      int nTracks,
+      int step,
+      std::vector<std::string> &layerNames
+  ) : direction_(direction),
+      start_(start),
+      n_tracks_(nTracks),
+      step_(step),
+      layer_names_(layerNames) {}
 
-  return 0;
+  XYDirection GetDirection() const;
+  int GetStart() const;
+  int GetNTracks() const;
+  int GetStep() const;
+  std::vector<std::string> &GetLayerNames();
+
+  friend std::ostream &operator<<(std::ostream &, const Track &);
+};
+
+std::ostream &operator<<(std::ostream &, const Track &);
+
 }
+
+#endif //PHYDB_TRACK_H_
