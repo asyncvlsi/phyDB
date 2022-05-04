@@ -39,67 +39,97 @@ void CheckStatus(int status) {
 
 namespace phydb {
 
-int WriteVersion(defwCallbackType_e c, defiUserData ud) {
-  int status;
+int WriteVersion(defwCallbackType_e type, defiUserData ud) {
+  if (type != defwVersionCbkType) {
+    std::cout << "Type is not defwVersionCbkType!" << std::endl;
+    exit(2);
+  }
   double version = ((PhyDB *) ud)->GetDefVersion();
 
   int int_version = version * 10;
-  status = defwVersion(int_version / 10, int_version % 10);
+  int status = defwVersion(int_version / 10, int_version % 10);
+  CheckStatus(status);
   defwNewLine();
   return 0;
 }
 
-int WriteBusBit(defwCallbackType_e c, defiUserData ud) {
-  int status;
-  status = defwBusBitChars(((PhyDB *) ud)->GetDefBusBitChar().c_str());
+int WriteBusBit(defwCallbackType_e type, defiUserData ud) {
+  if (type != defwBusBitCbkType) {
+    std::cout << "Type is not defwBusBitCbkType!" << std::endl;
+    exit(2);
+  }
+  int status = defwBusBitChars(((PhyDB *) ud)->GetDefBusBitChar().c_str());
+  CheckStatus(status);
   defwNewLine();
   return 0;
 }
 
-int WriteDivider(defwCallbackType_e c, defiUserData ud) {
-  int status;
-  status = defwDividerChar(((PhyDB *) ud)->GetDefDividerChar().c_str());
+int WriteDivider(defwCallbackType_e type, defiUserData ud) {
+  if (type != defwDividerCbkType) {
+    std::cout << "Type is not defwDividerCbkType!" << std::endl;
+    exit(2);
+  }
+  int status = defwDividerChar(((PhyDB *) ud)->GetDefDividerChar().c_str());
+  CheckStatus(status);
   defwNewLine();
   return 0;
 }
 
-int WriteDesignName(defwCallbackType_e c, defiUserData ud) {
-  int status;
-
-  status = defwDesignName(((PhyDB *) ud)->GetDefName().c_str());
+int WriteDesignName(defwCallbackType_e type, defiUserData ud) {
+  if (type != defwDesignCbkType) {
+    std::cout << "Type is not defwDesignCbkType!" << std::endl;
+    exit(2);
+  }
+  int status = defwDesignName(((PhyDB *) ud)->GetDefName().c_str());
+  CheckStatus(status);
   defwNewLine();
   return 0;
 }
 
-int WriteDesignEnd(defwCallbackType_e c, defiUserData ud) {
+int WriteDesignEnd(defwCallbackType_e type, defiUserData ud) {
+  if (type != defwDesignEndCbkType) {
+    std::cout << "Type is not defwDesignEndCbkType!" << std::endl;
+    exit(2);
+  }
   defwNewLine();
-  defwEnd();
+  int status = defwEnd();
+  CheckStatus(status);
   return 0;
 }
 
-int WriteUnitsDistanceMicrons(defwCallbackType_e c, defiUserData ud) {
-  int status;
-
-  status =
+int WriteUnitsDistanceMicrons(defwCallbackType_e type, defiUserData ud) {
+  if (type != defwUnitsCbkType) {
+    std::cout << "Type is not defwUnitsCbkType!" << std::endl;
+    exit(2);
+  }
+  int status =
       defwUnits(((PhyDB *) ud)->GetDesignPtr()->GetUnitsDistanceMicrons());
+  CheckStatus(status);
   defwNewLine();
   return 0;
 }
 
-int WriteDieArea(defwCallbackType_e c, defiUserData ud) {
-  int status;
+int WriteDieArea(defwCallbackType_e type, defiUserData ud) {
+  if (type != defwDieAreaCbkType) {
+    std::cout << "Type is not defwDieAreaCbkType!" << std::endl;
+    exit(2);
+  }
   Rect2D<int> dieArea = ((PhyDB *) ud)->GetDieArea();
-  status =
+  int status =
       defwDieArea(dieArea.LLX(), dieArea.LLY(), dieArea.URX(), dieArea.URY());
+  CheckStatus(status);
   defwNewLine();
   return 0;
 }
 
 int WriteRows(defwCallbackType_e type, defiUserData data) {
-  int status;
+  if (type != defwRowCbkType) {
+    std::cout << "Type is not defwRowCbkType!" << std::endl;
+    exit(2);
+  }
   auto rows = ((PhyDB *) data)->GetRowVec();
-  for (auto row : rows) {
-    status = defwRowStr(
+  for (auto &row : rows) {
+    int status = defwRowStr(
         row.name_.c_str(),
         row.site_name_.c_str(),
         row.orig_x_,
@@ -110,19 +140,25 @@ int WriteRows(defwCallbackType_e type, defiUserData data) {
         row.step_x_,
         row.step_y_
     );
+    CheckStatus(status);
   }
-
+  defwNewLine();
   return 0;
 }
 
 int WriteTracks(defwCallbackType_e type, defiUserData data) {
+  if (type != defwTrackCbkType) {
+    std::cout << "Type is not defwTrackCbkType!" << std::endl;
+    exit(2);
+  }
   auto tracks = ((PhyDB *) data)->GetTracksRef();
-  for (auto track : tracks) {
-    int nlayers = track.GetLayerNames().size();
+  for (auto &track : tracks) {
+    int nlayers = static_cast<int>(track.GetLayerNames().size());
     const char **layer_names = new const char *[nlayers];
-    for (int i = 0; i < nlayers; i++)
+    for (int i = 0; i < nlayers; i++) {
       layer_names[i] = track.GetLayerNames()[i].c_str();
-    defwTracks(
+    }
+    int status = defwTracks(
         XYDirectionStr(track.GetDirection()).c_str(),
         track.GetStart(),
         track.GetNTracks(),
@@ -130,32 +166,42 @@ int WriteTracks(defwCallbackType_e type, defiUserData data) {
         nlayers,
         layer_names
     );
-
+    CheckStatus(status);
   }
   defwNewLine();
   return 0;
 }
 
 int WriteGcellGrids(defwCallbackType_e type, defiUserData data) {
+  if (type != defwGcellGridCbkType) {
+    std::cout << "Type is not defwGcellGridCbkType!" << std::endl;
+    exit(2);
+  }
   auto gcell_grids = ((PhyDB *) data)->GetGcellGridsRef();
-  for (auto gcellgrid : gcell_grids) {
-    defwGcellGrid(
+  for (auto &gcellgrid : gcell_grids) {
+    int status = defwGcellGrid(
         XYDirectionStr(gcellgrid.GetDirection()).c_str(),
         gcellgrid.GetStart(),
         gcellgrid.GetNBoundaries(),
         gcellgrid.GetStep()
     );
+    CheckStatus(status);
   }
   defwNewLine();
   return 0;
 }
 
 int WriteComponents(defwCallbackType_e type, defiUserData data) {
+  if (type != defwComponentCbkType) {
+    std::cout << "Type is not defwComponentCbkType!" << std::endl;
+    exit(2);
+  }
   auto components = ((PhyDB *) data)->GetDesignPtr()->GetComponentsRef();
-  defwStartComponents(components.size());
+  int status = defwStartComponents(static_cast<int>(components.size()));
+  CheckStatus(status);
 
-  for (auto comp : components) {
-    defwComponentStr(
+  for (auto &comp : components) {
+    status = defwComponentStr(
         comp.GetName().c_str(),
         comp.GetMacro()->GetName().c_str(),
         0,
@@ -171,17 +217,25 @@ int WriteComponents(defwCallbackType_e type, defiUserData data) {
         0, 0,
         0, 0
     );
+    CheckStatus(status);
   }
-  defwEndComponents();
+  status = defwEndComponents();
+  CheckStatus(status);
+
   return 0;
 }
 
 int WriteIOPins(defwCallbackType_e type, defiUserData data) {
+  if (type != defwPinCbkType) {
+    std::cout << "Type is not defwPinCbkType!" << std::endl;
+    exit(2);
+  }
   auto iopins = ((PhyDB *) data)->GetDesignPtr()->GetIoPinsRef();
-  defwStartPins(iopins.size());
+  int status = defwStartPins(static_cast<int>(iopins.size()));
+  CheckStatus(status);
 
-  for (auto pin : iopins) {
-    defwPinStr(
+  for (auto &pin : iopins) {
+    status = defwPinStr(
         pin.GetName().c_str(),
         pin.GetNetName().c_str(),
         0,
@@ -197,16 +251,24 @@ int WriteIOPins(defwCallbackType_e type, defiUserData data) {
         pin.GetRect().URX(),
         pin.GetRect().URY()
     );
+    CheckStatus(status);
   }
-  defwEndPins();
+  status = defwEndPins();
+  CheckStatus(status);
 
   return 0;
 }
 
 int WriteBlockages(defwCallbackType_e type, defiUserData data) {
+  if (type != defwBlockageCbkType) {
+    std::cout << "Type is not defwBlockageCbkType!" << std::endl;
+    exit(2);
+  }
+
   auto phydb_ptr = ((PhyDB *) data);
-  auto blockages = phydb_ptr->design().GetBlockagesRef();
+  auto &blockages = phydb_ptr->design().GetBlockagesRef();
   if (blockages.empty()) return 0;
+
   defwStartBlockages(static_cast<int>(blockages.size()));
   int status;
   for (auto &blockage : blockages) {
@@ -294,21 +356,32 @@ int WriteBlockages(defwCallbackType_e type, defiUserData data) {
   }
   status = defwEndBlockages();
   CheckStatus(status);
+
   return 0;
 }
 
 int WriteNets(defwCallbackType_e type, defiUserData data) {
+  if (type != defwNetCbkType) {
+    std::cout << "Type is not defwNetCbkType!" << std::endl;
+    exit(2);
+  }
+
   auto phydb_ptr = ((PhyDB *) data);
-  auto nets = phydb_ptr->GetDesignPtr()->GetNetsRef();
-  defwStartNets((int) nets.size());
+  auto &nets = phydb_ptr->GetDesignPtr()->GetNetsRef();
+  int status = defwStartNets(static_cast<int>( nets.size()));
+  CheckStatus(status);
+
   auto pin_str = (char *) "PIN";
-  for (auto net : nets) {
-    defwNet(net.GetName().c_str());
+  for (auto &net : nets) {
+    status = defwNet(net.GetName().c_str());
+    CheckStatus(status);
+
     auto iopin_ids = net.GetIoPinIdsRef();
     for (auto &iopin_id : iopin_ids) {
       std::string iopin_name =
           phydb_ptr->GetDesignPtr()->GetIoPinsRef()[iopin_id].GetName();
-      defwNetConnection(pin_str, iopin_name.c_str(), 0);
+      status = defwNetConnection(pin_str, iopin_name.c_str(), 0);
+      CheckStatus(status);
     }
 
     for (auto &pin : net.GetPinsRef()) {
@@ -320,51 +393,59 @@ int WriteNets(defwCallbackType_e type, defiUserData data) {
       PhyDBExpects(macro_ptr != nullptr, "Macro does not exist");
       std::string pin_name =
           macro_ptr->GetPinsRef()[pin.PinId()].GetName();
-      defwNetConnection(component_name.c_str(), pin_name.c_str(), 0);
+      status = defwNetConnection(component_name.c_str(), pin_name.c_str(), 0);
+      CheckStatus(status);
     }
-    defwNetEndOneNet();
+    status = defwNetEndOneNet();
+    CheckStatus(status);
   }
-
-  defwEndNets();
+  status = defwEndNets();
+  CheckStatus(status);
 
   return 0;
 }
 
-int WriteSNets(defwCallbackType_e c, defiUserData ud) {
+int WriteSNets(defwCallbackType_e type, defiUserData ud) {
+  if (type != defwSNetCbkType) {
+    std::cout << "Type is not defwSNetCbkType!" << std::endl;
+    exit(2);
+  }
+  auto &snet_vec = ((PhyDB *) ud)->GetSNetRef();
 
-  auto snet_vec = ((PhyDB *) ud)->GetSNetRef();
-
-  if (snet_vec.size())
-    defwStartSpecialNets(snet_vec.size()); //Number of special nets
-  else
+  if (snet_vec.empty()) {
     return 0;
+  } else {
+    int status = defwStartSpecialNets(static_cast<int>(snet_vec.size()));
+    CheckStatus(status);
+  }
 
-  for (int snet_id = 0; snet_id < snet_vec.size(); snet_id++) {
-    auto snet = snet_vec[snet_id];
+  for (auto &snet : snet_vec) {
     defwSpecialNet(snet.GetName().c_str());
     defwSpecialNetConnection("*", snet.GetName().c_str(), 0);
     defwSpecialNetUse(SignalUseStr(snet.GetUse()).c_str());
 
-    auto polygons = snet.GetPolygonsRef();
-    for (int i = 0; i < polygons.size(); i++) {
-      auto routing_points = polygons[i].GetRoutingPointsRef();
-      double *x = new double[routing_points.size()];
-      double *y = new double[routing_points.size()];
-
-      for (int j = 0; j < routing_points.size(); j++) {
+    auto &polygons = snet.GetPolygonsRef();
+    for (auto &polygon : polygons) {
+      auto &routing_points = polygon.GetRoutingPointsRef();
+      auto *x = new double[routing_points.size()];
+      auto *y = new double[routing_points.size()];
+      for (size_t j = 0; j < routing_points.size(); j++) {
         x[j] = routing_points[j].x;
         y[j] = routing_points[j].y;
       }
-      std::string layer_name = polygons[i].GetLayerName();
+      std::string layer_name = polygon.GetLayerName();
 
-      defwSpecialNetPolygon(layer_name.c_str(), routing_points.size(), x, y);
-
+      defwSpecialNetPolygon(
+          layer_name.c_str(),
+          static_cast<int>(routing_points.size()),
+          x, y
+      );
       delete[] x;
       delete[] y;
     }
 
     auto paths = snet.GetPathsRef();
-    for (int i = 0; i < paths.size(); i++) {
+    for (size_t i = 0; i < paths.size(); i++) {
       auto path = paths[i];
 
       if (i == 0)
@@ -379,47 +460,43 @@ int WriteSNets(defwCallbackType_e c, defiUserData ud) {
       auto routing_points = path.GetRoutingPointsRef();
       double x, y, ext;
 
-      for (int j = 0; j < routing_points.size(); j++) {
-        x = routing_points[j].x;
-        y = routing_points[j].y;
-        ext = routing_points[j].z;
-        if (ext == -1)
+      for (auto &point: routing_points) {
+        x =point.x;
+        y = point.y;
+        ext = point.z;
+        if (ext == -1) {
           defwSpecialNetPathPoint(1, &x, &y);
-        else
+        } else {
           defwSpecialNetPathPointWithWireExt(1, &x, &y, &ext);
+        }
       }
-      if (path.GetViaName() != "")
+      if (!path.GetViaName().empty()) {
         defwSpecialNetPathVia(path.GetViaName().c_str());
+      }
     }
     defwSpecialNetPathEnd();
     defwSpecialNetEndOneNet();
   }
-
   defwEndSpecialNets();
 
   return 0;
 }
 
 std::string GetCurrentDateTime() {
-  time_t now = time(0);
-  struct tm tstruct;
+  time_t now = time(nullptr);
+  struct tm tstruct = *localtime(&now);
   char buf[80];
-  tstruct = *localtime(&now);
   strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
 
   return buf;
 }
 
 void Si2WriteDef(PhyDB *phy_db_ptr, std::string const &defFileName) {
-  FILE *f;
-  int res;
-
-  if ((f = fopen(defFileName.c_str(), "w")) == 0) {
-    std::cout << "Couldn't open Write def file" << std::endl;
-    exit(2);
-  }
+  FILE *f = fopen(defFileName.c_str(), "w");
+  PhyDBExpects(f != nullptr, "Couldn't open Write def file");
   std::cout << "Writing def to " << defFileName << std::endl;
-  int status = defwInitCbk(f);
+
+  defwInitCbk(f);
 
   defwSetVersionCbk(WriteVersion);
   defwSetBusBitCbk(WriteBusBit);
@@ -446,12 +523,10 @@ void Si2WriteDef(PhyDB *phy_db_ptr, std::string const &defFileName) {
   fprintf(f, "\n");
   fprintf(f, "###########################\n");
 
-  res = defwWrite(f, defFileName.c_str(), (defiUserData) phy_db_ptr);
-  if (res != 0) {
-    std::cout << "DEF Writer returns an error!" << std::endl;
-    exit(2);
-  }
+  int res = defwWrite(f, defFileName.c_str(), (defiUserData) phy_db_ptr);
   fclose(f);
+
+  PhyDBExpects(res == 0, "DEF Writer returns an error!");
   std::cout << "def writing completes" << std::endl;
 }
 
