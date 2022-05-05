@@ -131,11 +131,11 @@ class PhyDB {
   Component *AddComponent(
       std::string const &comp_name,
       Macro *macro_ptr,
+      CompSource source,
       PlaceStatus place_status,
       int llx,
       int lly,
-      CompOrient orient,
-      CompSource source = CompSource::NETLIST
+      CompOrient orient
   );
   Component *GetComponentPtr(std::string const &comp_name);
   int GetComponentId(std::string const &comp_name);
@@ -148,6 +148,7 @@ class PhyDB {
       SignalUse signal_use
   );
   IOPin *GetIoPinPtr(std::string const &iopin_name);
+  int GetIoPinId(std::string const &iopin_name);
 
   void SetBlockageCount(int count);
   Blockage *AddBlockage();
@@ -164,21 +165,11 @@ class PhyDB {
   Net *GetNetPtr(std::string const &net_name);
   int GetNetId(std::string const &net_name);
   void AddIoPinToNet(
-      std::string const &iopin_name,
+      std::string const &io_pin_name,
       std::string const &net_name,
       void *act_io_pin_ptr = nullptr
   );
   void AddCompPinToNet(
-      std::string const &comp_name,
-      std::string const &pin_name,
-      std::string const &net_name
-  );
-  void BindPhydbPinToActPin(
-      std::string const &comp_name,
-      std::string const &pin_name,
-      void *act_comp_pin_ptr
-  );
-  void AddCompPinToNetWithActPtr(
       std::string const &comp_name,
       std::string const &pin_name,
       std::string const &net_name,

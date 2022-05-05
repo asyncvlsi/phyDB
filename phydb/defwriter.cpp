@@ -230,14 +230,17 @@ int WriteIOPins(defwCallbackType_e type, defiUserData data) {
     std::cout << "Type is not defwPinCbkType!" << std::endl;
     exit(2);
   }
-  auto iopins = ((PhyDB *) data)->GetDesignPtr()->GetIoPinsRef();
+
+  Design *design_ptr = ((PhyDB *) data)->GetDesignPtr();
+  auto iopins = design_ptr->GetIoPinsRef();
   int status = defwStartPins(static_cast<int>(iopins.size()));
   CheckStatus(status);
 
   for (auto &pin : iopins) {
+    Net &net = design_ptr->GetNetsRef()[pin.GetNetId()];
     status = defwPinStr(
         pin.GetName().c_str(),
-        pin.GetNetName().c_str(),
+        net.GetName().c_str(),
         0,
         SignalDirectionStr(pin.GetDirection()).c_str(),
         SignalUseStr(pin.GetUse()).c_str(),

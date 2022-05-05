@@ -44,13 +44,10 @@ std::string Polygon::GetLayerName() const {
 
 void Polygon::Report() const {
   std::cout << "POLYGON " << layer_name_ << " ";
-
-  for (int i = 0; i < routing_points_.size(); i++) {
-    std::cout << " ( " << routing_points_[i].x << " " << routing_points_[i].y
-              << " ) ";
+  for (auto &point : routing_points_) {
+    std::cout << " ( " << point.x << " " << point.y << " ) ";
   }
-  std::cout << std::endl;
-
+  std::cout << "\n";
 }
 
 void Path::SetLayerName(std::string &layer_name) {
@@ -113,13 +110,13 @@ void Path::Report() {
   std::cout << " NEW " << layer_name_ << " " << width_ << " + SHAPE "
             << shape_;
 
-  for (int i = 0; i < routing_points_.size(); i++) {
-    if (routing_points_[i].z != -1)
-      std::cout << " ( " << routing_points_[i].x << " " << routing_points_[i].y
-                << " " << routing_points_[i].z << " ) ";
-    else
-      std::cout << " ( " << routing_points_[i].x << " " << routing_points_[i].y
+  for (auto &point : routing_points_) {
+    if (point.z != -1) {
+      std::cout << " ( " << point.x << " " << point.y << " " << point.z
                 << " ) ";
+    } else {
+      std::cout << " ( " << point.x << " " << point.y << " ) ";
+    }
   }
 
   if (!via_rect_.IsEmpty())
@@ -153,7 +150,7 @@ Path *SNet::AddPath(std::string &layer_name, std::string shape, int width) {
   return &paths_[id];
 }
 
-Polygon *SNet::AddPolygon(std::string layer_name) {
+Polygon *SNet::AddPolygon(std::string const &layer_name) {
   int id = (int) polygons_.size();
   polygons_.emplace_back(layer_name);
   return &polygons_[id];
@@ -178,7 +175,7 @@ std::vector<Polygon> &SNet::GetPolygonsRef() {
 void SNet::Report() {
   std::cout << "SNET: " << name_
             << " use: " << SignalUseStr(use_) << "\n";
-  for (auto p: paths_) {
+  for (auto p : paths_) {
     p.Report();
   }
 }

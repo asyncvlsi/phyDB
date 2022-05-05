@@ -108,7 +108,7 @@ class Tech {
   WellLayer *GetPwellLayerPtr();
   void GetDiffWellSpacing(
       double &same_diff_spacing,
-      double any_diff_spacing
+      double &any_diff_spacing
   ) const;
   void ReportWellShape(); // report the well shape_ for each BlockType for debugging purposes.
 

@@ -23,8 +23,8 @@
 
 namespace phydb {
 
-void IOPin::SetNetName(std::string const &net_name) {
-  net_name_ = net_name;
+void IOPin::SetNetId(int net_id) {
+  net_id_ = net_id;
 }
 
 void IOPin::SetShape(std::string const &layer_name, int lx, int ly, int ux, int uy) {
@@ -52,8 +52,8 @@ const std::string &IOPin::GetName() {
   return name_;
 }
 
-const std::string &IOPin::GetNetName() {
-  return net_name_;
+int IOPin::GetNetId() {
+  return net_id_;
 }
 
 SignalDirection IOPin::GetDirection() {
@@ -85,7 +85,7 @@ PlaceStatus IOPin::GetPlacementStatus() {
 }
 
 void IOPin::Report() {
-  std::cout << "IOPIN name: " << name_ << "  Net: " << net_name_ << " "
+  std::cout << "IOPIN name: " << name_ << "  Net: " << net_id_ << " "
             << " DIRECTION: " << SignalDirectionStr(direction_) << " "
             << " USE: " << SignalUseStr(use_) << "\n";
   std::cout << "LAYER: " << layer_name_ << " " << rect_.Str() << "\n";

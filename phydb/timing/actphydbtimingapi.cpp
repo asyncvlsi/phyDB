@@ -25,14 +25,15 @@
 
 namespace phydb {
 
-std::ostream& operator<<(std::ostream& ost, const PhydbPin& pin) {
+std::ostream &operator<<(std::ostream &ost, const PhydbPin &pin) {
   ost << "(" << pin.InstanceId() << ", " << pin.PinId() << ")";
   return ost;
 }
 
 PhydbTimingEdge *PhydbTimingNode::AddPinToOutEdges(PhydbPin &pin) {
   PhyDBExpects(!IsTargetPinExisting(pin),
-               "Pin in OutEdges already, cannot add it again!" << source << pin);
+               "Pin in OutEdges already, cannot add it again!" << source
+                                                               << pin);
   int id = (int) out_edges.size();
   out_edges.emplace_back(pin);
   out_pin2index_[pin] = id;
@@ -110,7 +111,7 @@ void TimingDAG::AddFastPath(PhydbPath &fast_path) {
   } else {
     node = GetPinNode(fast_path.root);
   }
-  for (auto &edge: fast_path.edges) {
+  for (auto &edge : fast_path.edges) {
     node->AddEdge(edge);
     PhydbPin target = edge.target;
     node = GetPinNode(target);
@@ -154,30 +155,22 @@ void *ActPhyDBTimingAPI::PhydbNetId2ActPtr(int net_id) {
 
 void ActPhyDBTimingAPI::AddActNetPtrIdPair(void *act_net, int net_id) {
   PhyDBExpects(!IsActNetPtrExisting(act_net),
-               "Cannot add ACT net again, it is in already in the PhyDB, net id: " << net_id);
+               "Cannot add ACT net again, it is in already in the PhyDB, net id: "
+                   << net_id);
   std::pair<void *, int> tmp_pair_0(act_net, net_id);
   std::pair<int, void *> tmp_pair_1(net_id, act_net);
   net_act_2_id_.insert(tmp_pair_0);
   net_id_2_act_.insert(tmp_pair_1);
 }
 
-void ActPhyDBTimingAPI::AddActCompPinPtrIdPair(
-  void *act_pin,
-  PhydbPin phydb_pin
+void ActPhyDBTimingAPI::BindActPinAndPhydbPin(
+    void *act_pin,
+    PhydbPin phydb_pin
 ) {
   std::pair<void *, PhydbPin> tmp_pair_0(act_pin, phydb_pin);
   std::pair<PhydbPin, void *> tmp_pair_1(phydb_pin, act_pin);
   component_pin_act_2_id_.insert(tmp_pair_0);
   component_pin_id_2_act_.insert(tmp_pair_1);
-}
-
-void ActPhyDBTimingAPI::AddActCompPinPtrIdPair(
-    void *act_pin,
-    int comp_id,
-    int pin_id
-) {
-  PhydbPin phydb_pin(comp_id, pin_id);
-  AddActCompPinPtrIdPair(act_pin, phydb_pin);
 }
 
 bool ActPhyDBTimingAPI::IsActComPinPtrExisting(void *act_pin) {
@@ -303,38 +296,6 @@ void ActPhyDBTimingAPI::SetGetPerformanceWitnessCB(
   GetPerformanceWitnessCB = callback_function;
 }
 
-#if PHYDB_USE_GALOIS
-void ActPhyDBTimingAPI::SetParaManager(galois::eda::parasitics::Manager *manager) {
-  para_manager_ = manager;
-}
-void ActPhyDBTimingAPI::AddCellLib(galois::eda::liberty::CellLib *lib) {
-  libs_.push_back(lib);
-}
-void ActPhyDBTimingAPI::SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor) {
-  adaptor_ = adaptor;
-}
-
-galois::eda::parasitics::Manager *ActPhyDBTimingAPI::GetParaManager() {
-  return para_manager_;
-}
-
-std::vector<galois::eda::liberty::CellLib *> &ActPhyDBTimingAPI::GetCellLibs() {
-  return libs_;
-}
-
-galois::eda::utility::ExtNetlistAdaptor *ActPhyDBTimingAPI::GetNetlistAdaptor() {
-  return adaptor_;
-}
-
-galois::eda::parasitics::Node *ActPhyDBTimingAPI::PhyDBPinToSpefNode(PhydbPin phydb_pin) {
-  void *act_pin = PhydbCompPin2ActPtr(phydb_pin);
-  PhyDBExpects(act_pin != nullptr, "Cannot map PhyDB pin to ACT?");
-  auto node = para_manager_->findPin(act_pin);
-  PhyDBExpects(node != nullptr, "Cannot map ACT pin to SPEF node?");
-  return node;
-}
-#endif
-
 int ActPhyDBTimingAPI::GetNumConstraints() {
   PhyDBExpects(GetNumConstraintsCB != nullptr,
                "Callback function for GetNumConstraints() is not set");
@@ -371,12 +332,43 @@ void ActPhyDBTimingAPI::GetViolatedTimingConstraints(std::vector<int> &violated_
   GetViolatedTimingConstraintsCB(violated_tc_nums);
 }
 
+#if PHYDB_USE_GALOIS
+void ActPhyDBTimingAPI::SetParaManager(galois::eda::parasitics::Manager *manager) {
+  para_manager_ = manager;
+}
+void ActPhyDBTimingAPI::AddCellLib(galois::eda::liberty::CellLib *lib) {
+  libs_.push_back(lib);
+}
+void ActPhyDBTimingAPI::SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor) {
+  adaptor_ = adaptor;
+}
+
+galois::eda::parasitics::Manager *ActPhyDBTimingAPI::GetParaManager() {
+  return para_manager_;
+}
+
+std::vector<galois::eda::liberty::CellLib *> &ActPhyDBTimingAPI::GetCellLibs() {
+  return libs_;
+}
+
+galois::eda::utility::ExtNetlistAdaptor *ActPhyDBTimingAPI::GetNetlistAdaptor() {
+  return adaptor_;
+}
+
+galois::eda::parasitics::Node *ActPhyDBTimingAPI::PhyDBPinToSpefNode(PhydbPin phydb_pin) {
+  void *act_pin = PhydbCompPin2ActPtr(phydb_pin);
+  PhyDBExpects(act_pin != nullptr, "Cannot map PhyDB pin to ACT?");
+  auto node = para_manager_->findPin(act_pin);
+  PhyDBExpects(node != nullptr, "Cannot map ACT pin to SPEF node?");
+  return node;
+}
+
 void ActPhyDBTimingAPI::GetWitness(
     int tc_num,
     PhydbPath &phydb_fast_path,
     PhydbPath &phydb_slow_path
 ) {
-#if PHYDB_USE_GALOIS
+
   std::cout
       << "\033[0;34m"
       << "WARNING:" << "\n"
@@ -391,112 +383,86 @@ void ActPhyDBTimingAPI::GetWitness(
 
   TranslateActPathToPhydbPath(act_fast_path, phydb_fast_path);
   TranslateActPathToPhydbPath(act_slow_path, phydb_slow_path);
-#endif
 }
 
 void ActPhyDBTimingAPI::GetSlowWitness(
     int tc_num,
     PhydbPath &phydb_path
 ) {
-#if PHYDB_USE_GALOIS
   PhyDBExpects(GetSlowWitnessCB != nullptr,
                "Callback function for GetSlowWitness() is not set");
   std::vector<ActEdge> act_path;
   GetSlowWitnessCB(tc_num, act_path);
   TranslateActPathToPhydbPath(act_path, phydb_path);
-#endif
 }
 
 void ActPhyDBTimingAPI::GetFastWitness(
     int tc_num,
     PhydbPath &phydb_path
 ) {
-#if PHYDB_USE_GALOIS
   PhyDBExpects(GetFastWitnessCB != nullptr,
                "Callback function for GetFastWitness() is not set");
   std::vector<ActEdge> act_path;
   GetFastWitnessCB(tc_num, act_path);
   TranslateActPathToPhydbPath(act_path, phydb_path);
-#endif
 }
 
 int ActPhyDBTimingAPI::GetNumPerformanceConstraints() {
-#if PHYDB_USE_GALOIS
   PhyDBExpects(GetNumPerformanceConstraintsCB != nullptr,
                "Callback function for GetNumPerformanceConstraints() is not set");
   return GetNumPerformanceConstraintsCB();
-#else
-  return 0;
-#endif
 }
 
 void ActPhyDBTimingAPI::SpecifyPerformanceTopKs(int top_k) {
-#if PHYDB_USE_GALOIS
   PhyDBExpects(SpecifyPerformanceTopKsCB != nullptr,
                "Callback function for SpecifyPerformanceTopKs() is not set");
   SpecifyPerformanceTopKsCB(top_k);
-#endif
 }
 
 void ActPhyDBTimingAPI::SpecifyPerformanceTopK(
     int performance_id,
     int top_k
 ) {
-#if PHYDB_USE_GALOIS
   PhyDBExpects(SpecifyPerformanceTopKCB != nullptr,
                "Callback function for SpecifyPerformanceTopK() is not set");
   SpecifyPerformanceTopKCB(performance_id, top_k);
-#endif
 }
 
 double ActPhyDBTimingAPI::GetPerformanceConstraintWeight(int performance_id) {
-#if PHYDB_USE_GALOIS
   PhyDBExpects(GetPerformanceConstraintWeightCB != nullptr,
                "Callback function for GetPerformanceConstraintWeight() is not set");
   return GetPerformanceConstraintWeightCB(performance_id);
-#else
-  return 0;
-#endif
 }
 
 double ActPhyDBTimingAPI::GetPerformanceSlack(int performance_id) {
-#if PHYDB_USE_GALOIS
   PhyDBExpects(GetPerformanceSlackCB != nullptr,
                "Callback function for GetPerformanceSlack() is not set");
   return GetPerformanceSlackCB(performance_id);
-#else
-  return 0;
-#endif
 }
 
 void ActPhyDBTimingAPI::GetViolatedPerformanceConstraints(
     std::vector<int> &performance_ids
 ) {
-#if PHYDB_USE_GALOIS
   PhyDBExpects(GetViolatedPerformanceConstraintsCB != nullptr,
                "Callback function for GetViolatedPerformanceConstraints() is not set");
   GetViolatedPerformanceConstraintsCB(performance_ids);
-#endif
 }
 
 void ActPhyDBTimingAPI::GetPerformanceWitness(
     int performance_id,
     PhydbPath &phydb_path
 ) {
-#if PHYDB_USE_GALOIS
   PhyDBExpects(GetPerformanceWitnessCB != nullptr,
                "Callback function for GetPerformanceWitness() is not set");
   std::vector<ActEdge> act_path;
   GetPerformanceWitnessCB(performance_id, act_path);
   TranslateActPathToPhydbPath(act_path, phydb_path);
-#endif
 }
 
 void ActPhyDBTimingAPI::TranslateActPathToPhydbPath(
     std::vector<ActEdge> &act_path,
     PhydbPath &phydb_path
 ) {
-#if PHYDB_USE_GALOIS
   phydb_path.Clear();
 
   size_t sz = act_path.size();
@@ -537,7 +503,7 @@ void ActPhyDBTimingAPI::TranslateActPathToPhydbPath(
     double delay = act_edge.delay;
     phydb_path.AddEdge(source, target, net_index, delay, 1);
   }
-#endif
 }
+#endif
 
 }

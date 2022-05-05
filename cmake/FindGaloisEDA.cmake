@@ -51,13 +51,12 @@ if(UNIX AND (NOT APPLE))
     endif()
 endif()
 
-# Configure the config.h header file
 if(Galois_FOUND)
     set(PHYDB_USE_GALOIS 1)
 else()
     set(PHYDB_USE_GALOIS 0)
 endif()
 configure_file(
-    phydb/timing/config.h.in
-    phydb/timing/config.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/phydb/timing/config.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/phydb/timing/config.h
 )

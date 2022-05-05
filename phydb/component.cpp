@@ -27,17 +27,29 @@ void Component::SetPlacementStatus(PlaceStatus status) {
   place_status_ = status;
 }
 
-void Component::SetOrientation(CompOrient orient) {
-  orient_ = orient;
-}
-
 void Component::SetLocation(int lx, int ly) {
   location_.x = lx;
   location_.y = ly;
 }
 
-const std::string &Component::GetName() {
+void Component::SetOrientation(CompOrient orient) {
+  orient_ = orient;
+}
+
+void Component::SetSource(CompSource source) {
+  source_ = source;
+}
+
+int Component::GetId() {
+  return id_;
+}
+
+std::string const &Component::GetName() {
   return name_;
+}
+
+Macro *Component::GetMacro() {
+  return macro_ptr_;
 }
 
 CompSource Component::GetSource() const {
@@ -48,16 +60,16 @@ std::string Component::GetSourceStr() const {
   return CompSourceStr(source_);
 }
 
-Macro *Component::GetMacro() {
-  return macro_ptr_;
-}
-
 PlaceStatus Component::GetPlacementStatus() {
   return place_status_;
 }
 
 std::string Component::GetPlacementStatusStr() const {
   return PlaceStatusStr(place_status_);
+}
+
+Point2D<int> Component::GetLocation() {
+  return location_;
 }
 
 CompOrient Component::GetOrientation() {
@@ -68,15 +80,19 @@ std::string Component::GetOrientationStr() const {
   return CompOrientStr(orient_);
 }
 
-Point2D<int> Component::GetLocation() {
-  return location_;
+int Component::GetWeight() {
+  return weight_;
 }
 
-std::ostream &operator<<(std::ostream &os, const Component &c) {
-  os << c.name_ << " " << c.macro_ptr_ << " "
-     << c.GetSourceStr() << " " << c.GetPlacementStatusStr() << " "
-     << c.GetOrientationStr() << std::endl;
-  os << "weight: " << c.weight_ << " location: " << c.location_ << std::endl;
+std::ostream &operator<<(std::ostream &os, Component &c) {
+  os << c.GetId() << " "
+     << c.GetName() << " "
+     << c.GetMacro()->GetName() << " "
+     << c.GetSourceStr() << " "
+     << c.GetPlacementStatusStr() << " "
+     << c.GetOrientationStr() << "\n"
+     << "weight: " << c.GetWeight()
+     << " location: " << c.GetLocation() << "\n";
   return os;
 }
 

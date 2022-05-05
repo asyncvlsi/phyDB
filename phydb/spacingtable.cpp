@@ -49,17 +49,17 @@ int SpacingTable::GetNRow() const {
 }
 
 void SpacingTable::SetParallelRunLengthVec(const std::vector<double> &v) {
-  assert(v.size() == n_col_);
+  assert(v.size() == static_cast<size_t>(n_col_));
   parallel_run_length_ = v;
 }
 
 void SpacingTable::SetWidthVec(const std::vector<double> &v) {
-  assert(v.size() == n_row_);
+  assert(v.size() == static_cast<size_t>(n_row_));
   width_ = v;
 }
 
 void SpacingTable::SetSpacingVec(const std::vector<double> &v) {
-  assert(v.size() == n_row_ * n_col_);
+  assert(v.size() == static_cast<size_t>(n_row_ * n_col_));
   spacing_ = v;
 }
 

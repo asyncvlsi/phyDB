@@ -101,7 +101,7 @@ class SNet {
   void SetUse(SignalUse);
   Path *AddPath();
   Path *AddPath(std::string &layer_name, std::string shape, int width);
-  Polygon *AddPolygon(std::string layer_name);
+  Polygon *AddPolygon(std::string const &layer_name);
 
   std::string GetName() const;
   SignalUse GetUse() const;

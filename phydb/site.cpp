@@ -23,11 +23,11 @@
 
 namespace phydb {
 
-void Site::SetName(std::string name) {
+void Site::SetName(std::string const &name) {
   name_ = name;
 }
 
-void Site::SetClassName(std::string className) {
+void Site::SetClassName(std::string const &className) {
   class_name_ = className;
 }
 

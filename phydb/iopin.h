@@ -31,7 +31,7 @@ class IOPin {
  public:
   int id_;
   std::string name_;
-  std::string net_name_;
+  int net_id_;
   SignalDirection direction_;
   SignalUse use_;
 
@@ -53,7 +53,7 @@ class IOPin {
       use_(use) {}
   IOPin(
       std::string const &name,
-      std::string const &netName,
+      int &net_id,
       SignalDirection direction,
       SignalUse use,
       std::string const &layerName,
@@ -63,7 +63,7 @@ class IOPin {
       PlaceStatus status
   ) :
       name_(name),
-      net_name_(netName),
+      net_id_(net_id),
       direction_(direction),
       use_(use),
       layer_name_(layerName),
@@ -72,7 +72,7 @@ class IOPin {
       orient_(orient),
       place_status_(status) {}
 
-  void SetNetName(std::string const &net_name);
+  void SetNetId(int net_id);
   void SetShape(std::string const &layer_name, int lx, int ly, int ux, int uy);
   void SetPlacement(
       PlaceStatus place_status,
@@ -82,9 +82,9 @@ class IOPin {
   );
   void SetPlacementStatus(PlaceStatus place_status);
 
-  int GetId() const {return id_;}
+  int GetId() const { return id_; }
   const std::string &GetName();
-  const std::string &GetNetName();
+  int GetNetId();
   SignalDirection GetDirection();
   SignalUse GetUse();
   const std::string &GetLayerName();

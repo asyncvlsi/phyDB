@@ -142,18 +142,20 @@ bool Design::IsComponentExisting(std::string const &comp_name) {
 Component *Design::AddComponent(
     std::string const &comp_name,
     Macro *macro_ptr,
+    CompSource source,
     PlaceStatus place_status,
     int llx,
     int lly,
-    CompOrient orient,
-    CompSource source
+    CompOrient orient
 ) {
   PhyDBExpects(!IsComponentExisting(comp_name),
                "Component name_ exists, cannot use it again");
-  int id = (int) components_.size();
+  int id = static_cast<int>(components_.size());
   components_.emplace_back(
+      id,
       comp_name,
       macro_ptr,
+      source,
       place_status,
       llx,
       lly,
@@ -263,22 +265,24 @@ Net *Design::AddNet(std::string const &net_name, double weight) {
   return &(nets_[id]);
 }
 
-void Design::AddIoPinToNet(
-    std::string const &iopin_name,
-    std::string const &net_name
-) {
-  IOPin *iopin_ptr = GetIoPinPtr(iopin_name);
-  PhyDBExpects(iopin_ptr != nullptr,
-               "Cannot add a nonexistent IOPIN to a net");
-  Net *net_ptr = GetNetPtr(net_name);
-  PhyDBExpects(net_ptr != nullptr, "Cannot add to a nonexistent net");
-
-  iopin_ptr->SetNetName(net_name);
-  net_ptr->AddIoPin(iopin_ptr->GetId());
+void Design::AddIoPinToNet(int iopin_id, int net_id) {
+  PhyDBExpects(
+      (iopin_id < static_cast<int>(iopins_.size())) && (iopin_id >= 0),
+      "iopin id out of bound: " << iopin_id
+  );
+  PhyDBExpects(
+      (net_id < static_cast<int>(nets_.size())) && (net_id >= 0),
+      "net id out of bound: " << net_id
+  );
+  iopins_[iopin_id].SetNetId(net_id);
+  nets_[net_id].AddIoPin(iopin_id);
 }
 
 void Design::AddCompPinToNet(int comp_id, int pin_id, int net_id) {
-  PhyDBExpects(net_id < (int) nets_.size(), "net id out of bound");
+  PhyDBExpects(
+      (net_id < static_cast<int>(nets_.size())) && (net_id >= 0),
+      "net id out of bound: " << net_id
+  );
   nets_[net_id].AddCompPin(comp_id, pin_id);
 }
 
@@ -406,7 +410,7 @@ void Design::SaveWellToRectFile(std::string const &file_name) const {
 
 void Design::ReportTracks() {
   std::cout << "Total number of track: " << tracks_.size() << "\n";
-  for (auto &track: tracks_) {
+  for (auto &track : tracks_) {
     std::cout << track << "\n";
   }
   std::cout << "\n";
@@ -414,7 +418,7 @@ void Design::ReportTracks() {
 
 void Design::ReportRows() {
   std::cout << "Total number of row: " << rows_.size() << "\n";
-  for (auto &row: rows_) {
+  for (auto &row : rows_) {
     std::cout << row << "\n";
   }
   std::cout << "\n";
@@ -422,7 +426,7 @@ void Design::ReportRows() {
 
 void Design::ReportComponents() {
   std::cout << "Total component: " << components_.size() << "\n";
-  for (auto &component: components_) {
+  for (auto &component : components_) {
     std::cout << component << "\n";
   }
   std::cout << "\n";
@@ -430,7 +434,7 @@ void Design::ReportComponents() {
 
 void Design::ReportIoPins() {
   std::cout << "Total iopin: " << iopins_.size() << "\n";
-  for (auto &iopin: iopins_) {
+  for (auto &iopin : iopins_) {
     iopin.Report();
   }
   std::cout << "\n";
@@ -438,7 +442,7 @@ void Design::ReportIoPins() {
 
 void Design::ReportBlockages() {
   std::cout << "Total blockages: " << blockages_.size() << "\n";
-  for (auto &blockage: blockages_) {
+  for (auto &blockage : blockages_) {
     blockage.Report();
   }
   std::cout << "\n";
@@ -446,7 +450,7 @@ void Design::ReportBlockages() {
 
 void Design::ReportNets() {
   std::cout << "Total net: " << nets_.size() << "\n";
-  for (auto &net: nets_) {
+  for (auto &net : nets_) {
     net.Report();
   }
   std::cout << "\n";
@@ -454,7 +458,7 @@ void Design::ReportNets() {
 
 void Design::ReportClusterCols() {
   std::cout << "Total cluster cols: " << cluster_cols_.size() << "\n";
-  for (auto &c: cluster_cols_) {
+  for (auto &c : cluster_cols_) {
     c.Report();
   }
   std::cout << "\n";
@@ -462,7 +466,7 @@ void Design::ReportClusterCols() {
 
 void Design::ReportGcellGrids() {
   std::cout << "Total GcellGrids: " << gcell_grids_.size() << "\n";
-  for (auto &g: gcell_grids_) {
+  for (auto &g : gcell_grids_) {
     g.Report();
   }
   std::cout << "\n";
@@ -470,7 +474,7 @@ void Design::ReportGcellGrids() {
 
 void Design::ReportSNets() {
   std::cout << "Total SNets: " << snets_.size() << "\n";
-  for (auto &n: snets_) {
+  for (auto &n : snets_) {
     n.Report();
   }
   std::cout << "\n";

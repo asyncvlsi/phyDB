@@ -39,6 +39,20 @@
 
 namespace phydb {
 
+/*
+ * This is a data structure to represent pins in a net.
+ * There are two kind of pins:
+ *   1. component pin, this kind of pin is the input/output of a component;
+ *   2. I/O pin, this kind of pin is the input/output of the whole design,
+ *   which belongs to an I/O pad.
+ *
+ * This class contains two attributes:
+ *   1. instance_id_, the id of a component;
+ *   2. pin_id_, the id of the component pin in its macro definition.
+ *
+ * To represent an I/O pin, the value of instance_id_ will be -1, and the value
+ * of pin_id_ is the id of this I/O pin.
+ */
 class PhydbPin {
  public:
   explicit PhydbPin(int comp = -1, int pin = -1)
@@ -56,6 +70,14 @@ class PhydbPin {
   int InstanceId() const { return instance_id_; }
   // id of the pin in a MACRO or the IOPIN list
   int PinId() const { return pin_id_; }
+
+  bool IsValid() {
+    return !((instance_id_ < -1) || (pin_id_ < 0));
+  }
+
+  bool IsComponentPin() {
+    return instance_id_ >= 0;
+  }
 
   void Reset() {
     instance_id_ = -1;
@@ -151,8 +173,7 @@ class ActPhyDBTimingAPI {
  public:
   //APIs for ACT
   void AddActNetPtrIdPair(void *act_net, int net_id);
-  void AddActCompPinPtrIdPair(void *act_pin, PhydbPin phydb_pin);
-  void AddActCompPinPtrIdPair(void *act_pin, int comp_id, int pin_id);
+  void BindActPinAndPhydbPin(void *act_pin, PhydbPin phydb_pin);
 
   void SetGetNumConstraintsCB(int (*callback_function)());
   void SetSpecifyTopKsCB(void (*callback_function)(int));
@@ -206,17 +227,6 @@ class ActPhyDBTimingAPI {
           std::vector<ActEdge> &path
       )
   );
-#if PHYDB_USE_GALOIS
-  void SetParaManager(galois::eda::parasitics::Manager *manager);
-  void AddCellLib(galois::eda::liberty::CellLib *lib);
-  void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor);
-
-  galois::eda::parasitics::Manager *GetParaManager();
-  std::vector<galois::eda::liberty::CellLib *> &GetCellLibs();
-  galois::eda::utility::ExtNetlistAdaptor *GetNetlistAdaptor();
-
-  galois::eda::parasitics::Node *PhyDBPinToSpefNode(PhydbPin phydb_pin);
-#endif
 
   //APIs for Dali and SPRoute
   bool ReadyForTimingDriven();
@@ -232,6 +242,18 @@ class ActPhyDBTimingAPI {
   void UpdateTimingIncremental();
   double GetSlack(int tc_num);
   void GetViolatedTimingConstraints(std::vector<int> &violated_tc_nums);
+
+#if PHYDB_USE_GALOIS
+  void SetParaManager(galois::eda::parasitics::Manager *manager);
+  void AddCellLib(galois::eda::liberty::CellLib *lib);
+  void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor);
+
+  galois::eda::parasitics::Manager *GetParaManager();
+  std::vector<galois::eda::liberty::CellLib *> &GetCellLibs();
+  galois::eda::utility::ExtNetlistAdaptor *GetNetlistAdaptor();
+
+  galois::eda::parasitics::Node *PhyDBPinToSpefNode(PhydbPin phydb_pin);
+
   void GetWitness(
       int tc_num,
       PhydbPath &phydb_fast_path,
@@ -258,6 +280,7 @@ class ActPhyDBTimingAPI {
       int performance_id,
       PhydbPath &phydb_path
   );
+#endif
  private:
   int (*GetNumConstraintsCB)() = nullptr;
   void (*SpecifyTopKsCB)(int) = nullptr;

@@ -31,66 +31,72 @@ namespace phydb {
 
 class Component {
  public:
-  int id_;
-  std::string name_;
-  Macro *macro_ptr_;
-  CompSource source_;
-  PlaceStatus place_status_;
-  CompOrient orient_;
-
-  int weight_;
-  Point2D<int> location_;
-
-  Component() {}
+  Component() = default;
   Component(
-      std::string const &name,
-      Macro *macroName,
+      int id,
+      std::string const &comp_name,
+      Macro *macro_ptr,
       CompSource source,
       PlaceStatus place_status,
+      Point2D<int> location,
       CompOrient orient,
-      int weight,
-      Point2D<int> location
-  ) : name_(name),
-      macro_ptr_(macroName),
+      int weight = 0
+  ) : id_(id),
+      name_(comp_name),
+      macro_ptr_(macro_ptr),
       source_(source),
       place_status_(place_status),
+      location_(location),
       orient_(orient),
-      weight_(weight),
-      location_(location) {}
+      weight_(weight) {}
   Component(
+      int id,
       std::string const &comp_name,
-      Macro *macro_name,
+      Macro *macro_ptr,
+      CompSource source,
       PlaceStatus place_status,
       int llx,
       int lly,
-      CompOrient orient
-  ) : name_(comp_name),
-      macro_ptr_(macro_name),
-      source_(CompSource::NETLIST),
+      CompOrient orient,
+      int weight = 0
+  ) : id_(id),
+      name_(comp_name),
+      macro_ptr_(macro_ptr),
+      source_(source),
       place_status_(place_status),
-      orient_(orient) {
-    location_.x = llx;
-    location_.y = lly;
-  }
+      location_(llx, lly),
+      orient_(orient),
+      weight_(weight) {}
 
-  void SetSource(CompSource source);
   void SetPlacementStatus(PlaceStatus status);
-  void SetOrientation(CompOrient orient);
   void SetLocation(int lx, int ly);
+  void SetOrientation(CompOrient orient);
+  void SetSource(CompSource source);
 
-  const std::string &GetName();
+  int GetId();
+  std::string const &GetName();
+  Macro *GetMacro();
   CompSource GetSource() const;
   std::string GetSourceStr() const;
-  Macro *GetMacro();
   PlaceStatus GetPlacementStatus();
   std::string GetPlacementStatusStr() const;
+  Point2D<int> GetLocation();
   CompOrient GetOrientation();
   std::string GetOrientationStr() const;
-  Point2D<int> GetLocation();
-  int GetWeight() { return weight_; }
+  int GetWeight();
+
+ private:
+  int id_{};
+  std::string name_;
+  Macro *macro_ptr_{};
+  CompSource source_;
+  PlaceStatus place_status_;
+  Point2D<int> location_;
+  CompOrient orient_;
+  int weight_{};
 };
 
-std::ostream &operator<<(std::ostream &, const Component &);
+std::ostream &operator<<(std::ostream &, Component &);
 
 }
 

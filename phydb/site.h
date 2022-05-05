@@ -38,8 +38,8 @@ class Site {
   Site(std::string name, std::string className, double width, double height) :
       name_(name), class_name_(className), width_(width), height_(height) {}
 
-  void SetName(std::string);
-  void SetClassName(std::string);
+  void SetName(std::string const&);
+  void SetClassName(std::string const &);
   void SetWidth(double);
   void SetHeight(double);
 

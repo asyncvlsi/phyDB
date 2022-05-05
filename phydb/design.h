@@ -145,11 +145,11 @@ class Design {
   Component *AddComponent(
       std::string const &comp_name,
       Macro *macro_ptr,
+      CompSource source,
       PlaceStatus place_status,
       int llx,
       int lly,
-      CompOrient orient,
-      CompSource source
+      CompOrient orient
   );
   Component *GetComponentPtr(std::string const &comp_name);
   std::vector<Component> &GetComponentsRef() { return components_; }
@@ -172,10 +172,7 @@ class Design {
   void SetNetCount(int count, double redundancy_factor = 1.4);
   bool IsNetExisting(std::string const &net_name);
   Net *AddNet(std::string const &net_name, double weight = 1);
-  void AddIoPinToNet(
-      std::string const &iopin_name,
-      std::string const &net_name
-  );
+  void AddIoPinToNet(int iopin_id, int net_id);
   void AddCompPinToNet(int comp_id, int pin_id, int net_id);
   Net *GetNetPtr(std::string const &net_name);
   std::vector<Net> &GetNetsRef() { return nets_; }

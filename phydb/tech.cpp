@@ -160,11 +160,11 @@ bool Tech::IsMacroExisting(std::string const &macro_name) {
 }
 
 Macro *Tech::AddMacro(std::string const &macro_name) {
-  PhyDBExpects(!IsMacroExisting(macro_name),
-               "Macro name_ exists, cannot use it again: " << macro_name);
-  int id = (int) macros_.size();
+  PhyDBExpects(
+      !IsMacroExisting(macro_name),
+      "Macro name_ exists, cannot use it again: " << macro_name
+  );
   macros_.emplace_back(macro_name);
-
   macro_2_ptr_[macro_name] = &macros_.back();
   return &(macros_.back());
 }
@@ -295,7 +295,7 @@ WellLayer *Tech::GetPwellLayerPtr() {
 
 void Tech::GetDiffWellSpacing(
     double &same_diff_spacing,
-    double any_diff_spacing
+    double &any_diff_spacing
 ) const {
   same_diff_spacing = same_diff_spacing_;
   any_diff_spacing = any_diff_spacing_;

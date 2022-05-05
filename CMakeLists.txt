@@ -28,7 +28,7 @@ message(STATUS "Found liblef.a: " ${LEF_LIBRARY})
 find_library(DEF_LIBRARY NAMES def PATHS $ENV{ACT_HOME}/lib REQUIRED)
 message(STATUS "Found libdef.a: " ${DEF_LIBRARY})
 
-# Find galois_eda
+# Find galois_eda and configure the config.h header file
 include(cmake/FindGaloisEDA.cmake)
 
 ############################################################################
