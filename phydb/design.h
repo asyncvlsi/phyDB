@@ -119,6 +119,9 @@ class Design {
   Component *GetComponentPtr(std::string const &comp_name);
   int GetComponentId(std::string const &comp_name);
   std::vector<Component> &GetComponentsRef() { return components_; }
+  std::unordered_map<std::string, int> &GetComponentNameMapRef() {
+    return component_2_id_;
+  }
 
   void SetIoPinCount(int count);
   bool IsIoPinExisting(std::string const &iopin_name);
@@ -130,6 +133,9 @@ class Design {
   IOPin *GetIoPinPtr(std::string const &iopin_name);
   int GetIoPinId(std::string const &iopin_name);
   std::vector<IOPin> &GetIoPinsRef() { return iopins_; }
+  std::unordered_map<std::string, int> &GetIoPinNameMapRef() {
+    return iopin_2_id_;
+  }
 
   void SetBlockageCount(int count);
   Blockage *AddBlockage();
@@ -144,6 +150,7 @@ class Design {
   Net *GetNetPtr(std::string const &net_name);
   int GetNetId(std::string const &net_name);
   std::vector<Net> &GetNetsRef() { return nets_; }
+  std::unordered_map<std::string, int> &GetNetNameMapRef() { return net_2_id_; }
 
   SNet *AddSNet(std::string const &net_name, SignalUse use);
   SNet *GetSNet(std::string const &net_name);
