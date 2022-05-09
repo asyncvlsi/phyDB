@@ -18,33 +18,23 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-#ifndef PHYDB_TIMING_RCESTIMATOR_STARPIMODELESTIMATOR_H_
-#define PHYDB_TIMING_RCESTIMATOR_STARPIMODELESTIMATOR_H_
+#ifndef PHYDB_TIMING_ABSTRACTRCESTIMATOR_H_
+#define PHYDB_TIMING_ABSTRACTRCESTIMATOR_H_
 
-#include "phydb/timing/rcestimator.h"
+#include "phydb/phydb.h"
 
 namespace phydb {
 
-class StarPiModelEstimator : protected phydb::RCEstimator {
+class AbstractRcEstimator {
+ protected:
+  PhyDB *phy_db_;
  public:
-  StarPiModelEstimator(phydb::PhyDB *phydb_ptr) : RCEstimator(phydb_ptr) {}
-  ~StarPiModelEstimator() override = default;
-  void PushNetRCToManager() override;
- private:
-  int distance_micron_ = 0;
-  bool edge_pushed_to_spef_manager_ = false;
-  phydb::Layer *horizontal_layer_ = nullptr;
-  phydb::Layer *vertical_layer_ = nullptr;
-  void AddEdgesToManager();
-  void FindFirstHorizontalAndVerticalMetalLayer();
-  void GetResistanceAndCapacitance(
-      double2d &driver_loc,
-      double2d &load_loc,
-      double &resistance,
-      double &capacitance
-  );
+  explicit AbstractRcEstimator(PhyDB *phydb_ptr) : phy_db_(phydb_ptr) {}
+  virtual ~AbstractRcEstimator() = default;
+
+  virtual void PushNetRCToManager() = 0;
 };
 
 }
 
-#endif //PHYDB_TIMING_RCESTIMATOR_STARPIMODELESTIMATOR_H_
+#endif //PHYDB_TIMING_ABSTRACTRCESTIMATOR_H_

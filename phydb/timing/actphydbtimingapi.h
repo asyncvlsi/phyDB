@@ -30,11 +30,11 @@
 #include "phydb/timing/config.h"
 
 #if PHYDB_USE_GALOIS
-#include "galois/eda/liberty/CellLib.h"
-#include "galois/eda/parasitics/Edge.h"
-#include "galois/eda/parasitics/Manager.h"
-#include "galois/eda/parasitics/Node.h"
-#include "galois/eda/utility/ExtNetlistAdaptor.h"
+#include <galois/eda/liberty/CellLib.h>
+#include <galois/eda/parasitics/Edge.h>
+#include <galois/eda/parasitics/Manager.h>
+#include <galois/eda/parasitics/Node.h>
+#include <galois/eda/utility/ExtNetlistAdaptor.h>
 #endif
 
 namespace phydb {
