@@ -374,6 +374,9 @@ int WriteNets(defwCallbackType_e type, defiUserData data) {
   int status = defwStartNets(static_cast<int>( nets.size()));
   CheckStatus(status);
 
+  auto &components = phydb_ptr->GetDesignPtr()->GetComponentsRef();
+  auto &io_pins = phydb_ptr->GetDesignPtr()->GetIoPinsRef();
+
   auto pin_str = (char *) "PIN";
   for (auto &net : nets) {
     status = defwNet(net.GetName().c_str());
@@ -381,21 +384,18 @@ int WriteNets(defwCallbackType_e type, defiUserData data) {
 
     auto iopin_ids = net.GetIoPinIdsRef();
     for (auto &iopin_id : iopin_ids) {
-      std::string iopin_name =
-          phydb_ptr->GetDesignPtr()->GetIoPinsRef()[iopin_id].GetName();
+      std::string iopin_name = io_pins[iopin_id].GetName();
       status = defwNetConnection(pin_str, iopin_name.c_str(), 0);
       CheckStatus(status);
     }
 
     for (auto &pin : net.GetPinsRef()) {
-      std::string component_name =
-          phydb_ptr->GetDesignPtr()->components_[pin.InstanceId()].GetName();
-      std::string macro_name =
-          phydb_ptr->GetDesignPtr()->components_[pin.InstanceId()].GetMacro()->GetName();
+      int comp_id = pin.InstanceId();
+      std::string component_name = components[comp_id].GetName();
+      std::string macro_name = components[comp_id].GetMacro()->GetName();
       Macro *macro_ptr = phydb_ptr->GetMacroPtr(macro_name);
       PhyDBExpects(macro_ptr != nullptr, "Macro does not exist");
-      std::string pin_name =
-          macro_ptr->GetPinsRef()[pin.PinId()].GetName();
+      std::string pin_name = macro_ptr->GetPinsRef()[pin.PinId()].GetName();
       status = defwNetConnection(component_name.c_str(), pin_name.c_str(), 0);
       CheckStatus(status);
     }
@@ -463,8 +463,8 @@ int WriteSNets(defwCallbackType_e type, defiUserData ud) {
       auto routing_points = path.GetRoutingPointsRef();
       double x, y, ext;
 
-      for (auto &point: routing_points) {
-        x =point.x;
+      for (auto &point : routing_points) {
+        x = point.x;
         y = point.y;
         ext = point.z;
         if (ext == -1) {

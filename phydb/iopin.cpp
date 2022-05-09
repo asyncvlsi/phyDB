@@ -84,6 +84,10 @@ PlaceStatus IOPin::GetPlacementStatus() {
   return place_status_;
 }
 
+Rect2D<int> IOPin::GetBoundingBox() {
+  return rect_;
+}
+
 void IOPin::Report() {
   std::cout << "IOPIN name: " << name_ << "  Net: " << net_id_ << " "
             << " DIRECTION: " << SignalDirectionStr(direction_) << " "

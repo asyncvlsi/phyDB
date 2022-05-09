@@ -27,31 +27,24 @@
 namespace phydb {
 
 class Pin {
- private:
-  std::string name_;
-  SignalDirection direction_;
-  SignalUse use_;
-  std::string shape_;
-  std::string antenna_diff_area_layer_;
-  double antenna_diff_area_;
-
-  std::vector<LayerRect> layer_rects_;
-
  public:
   Pin() :
       name_(""),
       direction_(SignalDirection::INPUT),
       use_(SignalUse::SIGNAL),
-      shape_(""),
       antenna_diff_area_layer_(""),
       antenna_diff_area_(0) {}
-  Pin(std::string const &name, SignalDirection direction, SignalUse use) :
-      name_(name), direction_(direction), use_(use) {}
+  Pin(std::string const &name,
+      SignalDirection direction,
+      SignalUse use
+  ) :
+      name_(name),
+      direction_(direction),
+      use_(use) {}
   Pin(
       std::string const &name,
       SignalDirection direction,
       SignalUse use,
-      std::string const &shape,
       std::string const &antennaDiffAreaLayer,
       double antennaDiffArea,
       std::vector<LayerRect> layerRects
@@ -59,7 +52,6 @@ class Pin {
       name_(name),
       direction_(direction),
       use_(use),
-      shape_(shape),
       antenna_diff_area_layer_(antennaDiffAreaLayer),
       antenna_diff_area_(antennaDiffArea),
       layer_rects_(layerRects) {}
@@ -77,6 +69,14 @@ class Pin {
   Rect2D<double> GetBoundingBox();
 
   friend std::ostream &operator<<(std::ostream &, const Pin &);
+ private:
+  std::string name_;
+  SignalDirection direction_;
+  SignalUse use_;
+  std::string antenna_diff_area_layer_;
+  double antenna_diff_area_;
+
+  std::vector<LayerRect> layer_rects_;
 };
 
 std::ostream &operator<<(std::ostream &, const Pin &);

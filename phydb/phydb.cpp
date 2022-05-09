@@ -206,12 +206,7 @@ Component *PhyDB::GetComponentPtr(std::string const &comp_name) {
 }
 
 int PhyDB::GetComponentId(std::string const &comp_name) {
-  auto res = design_.component_2_id_.find(comp_name);
-  PhyDBExpects(
-      res != design_.component_2_id_.end(),
-      "Component does not exist: " << comp_name
-  );
-  return res->second;
+  return design_.GetComponentId(comp_name);
 }
 
 Track *PhyDB::AddTrack(
@@ -277,12 +272,7 @@ IOPin *PhyDB::GetIoPinPtr(std::string const &iopin_name) {
 }
 
 int PhyDB::GetIoPinId(std::string const &iopin_name) {
-  auto res = design_.iopin_2_id_.find(iopin_name);
-  PhyDBExpects(
-      res != design_.iopin_2_id_.end(),
-      "IO pin does not exist: " << iopin_name
-  );
-  return res->second;
+  return design_.GetIoPinId(iopin_name);
 }
 
 void PhyDB::SetBlockageCount(int count) {
@@ -327,17 +317,18 @@ Net *PhyDB::AddNet(
     void *act_net_ptr
 ) {
   auto *ret = design_.AddNet(net_name, weight);
+
   if (act_net_ptr != nullptr) {
     if (timing_api_.IsActNetPtrExisting(act_net_ptr)) {
       int id = timing_api_.ActNetPtr2Id(act_net_ptr);
       PhyDBExpects(
           false,
-          "Net " << design_.nets_[id].GetName()
+          "Net " << design_.GetNetsRef()[id].GetName()
                  << " has the same Act pointer as "
                  << net_name
       );
     }
-    int id = (int) design_.nets_.size() - 1;
+    int id = static_cast<int>(design_.GetNetsRef().size()) - 1;
     timing_api_.AddActNetPtrIdPair(act_net_ptr, id);
   }
   return ret;
@@ -348,11 +339,7 @@ Net *PhyDB::GetNetPtr(std::string const &net_name) {
 }
 
 int PhyDB::GetNetId(std::string const &net_name) {
-  auto res = design_.net_2_id_.find(net_name);
-  if (res == design_.net_2_id_.end()) {
-    PhyDBExpects(false, "Net does not exist: " << net_name);
-  }
-  return res->second;
+  return design_.GetNetId(net_name);
 }
 
 void PhyDB::AddIoPinToNet(
@@ -378,7 +365,7 @@ void PhyDB::AddIoPinToNet(
   if (timing_api_.IsActComPinPtrExisting(act_io_pin_ptr)) {
     PhydbPin tmp_pin = timing_api_.ActCompPinPtr2Id(act_io_pin_ptr);
     if (tmp_pin.IsComponentPin()) {
-      Component &comp = design_.components_[tmp_pin.InstanceId()];
+      Component &comp = design_.GetComponentsRef()[tmp_pin.InstanceId()];
       Macro *tmp_macro_ptr = comp.GetMacro();
       Pin &pin = tmp_macro_ptr->GetPinsRef()[tmp_pin.PinId()];
       PhyDBExpects(
@@ -388,7 +375,7 @@ void PhyDB::AddIoPinToNet(
                      << comp.GetName() << " " << pin.GetName() << ")"
       );
     } else {
-      IOPin &tmp_io_pin = design_.iopins_[tmp_pin.PinId()];
+      IOPin &tmp_io_pin = design_.GetIoPinsRef()[tmp_pin.PinId()];
       PhyDBExpects(
           false,
           "IO pin, " << io_pin_name
@@ -433,7 +420,7 @@ void PhyDB::AddCompPinToNet(
 
   if (timing_api_.IsActComPinPtrExisting(act_comp_pin_ptr)) {
     PhydbPin tmp_pin = timing_api_.ActCompPinPtr2Id(act_comp_pin_ptr);
-    Component &comp = design_.components_[tmp_pin.InstanceId()];
+    Component &comp = design_.GetComponentsRef()[tmp_pin.InstanceId()];
     Macro *tmp_macro_ptr = comp.GetMacro();
     Pin &pin = tmp_macro_ptr->GetPinsRef()[tmp_pin.PinId()];
     PhyDBExpects(
@@ -698,7 +685,7 @@ void PhyDB::SetGetPerformanceWitnessCB(
 
 bool PhyDB::IsDriverPin(PhydbPin &phydb_pin) {
   int comp_id = phydb_pin.InstanceId();
-  Macro *macro_ptr = design_.components_[comp_id].GetMacro();
+  Macro *macro_ptr = design_.GetComponentsRef()[comp_id].GetMacro();
   int pin_id = phydb_pin.PinId();
   return macro_ptr->GetPinsRef()[pin_id].IsDriverPin();
 }
@@ -709,7 +696,7 @@ std::string PhyDB::GetFullCompPinName(
 ) {
   int comp_id = phydb_pin.InstanceId();
   int pin_id = phydb_pin.PinId();
-  Component &comp = design_.components_[comp_id];
+  Component &comp = design_.GetComponentsRef()[comp_id];
   const std::string &comp_name = comp.GetName();
   const std::string &pin_name =
       comp.GetMacro()->GetPinsRef()[pin_id].GetName();
@@ -752,9 +739,9 @@ void PhyDB::CreatePhydbActAdaptor() {
   auto *timer_adaptor = GetNetlistAdaptor();
   PhyDBExpects(timer_adaptor != nullptr,
                "Timer netlist adaptor no found! Cannot build phydb-act adaptor");
-  int number_of_nets = static_cast<int>(design_.nets_.size());
+  int number_of_nets = static_cast<int>(design_.GetNetsRef().size());
   for (int i = 0; i < number_of_nets; ++i) {
-    Net &net = design_.nets_[i];
+    Net &net = design_.GetNetsRef()[i];
     void *act_net = timer_adaptor->getNetFromFullName(net.GetName(), '.');
     PhyDBExpects(
         act_net != nullptr,
@@ -779,13 +766,15 @@ void PhyDB::AddNetsAndCompPinsToSpefManager() {
   //spef_manager->dump();
   //std::cout << "--------------------------------------------------\n";
   // add nets and pins to the SPEF manager
-  int number_of_nets = (int) design_.nets_.size();
+  int number_of_nets = (int) design_.GetNetsRef().size();
   for (int i = 0; i < number_of_nets; ++i) {
-    Net &net = design_.nets_[i];
+    Net &net = design_.GetNetsRef()[i];
     void *act_net = timing_api_.net_id_2_act_[i];
-    PhyDBExpects(act_net != nullptr,
-                 "Cannot map from a PhyDB net to an ACT net, net name: "
-                     + design_.nets_[i].GetName());
+    PhyDBExpects(
+        act_net != nullptr,
+        "Cannot map from a PhyDB net to an ACT net, net name: "
+            << design_.GetNetsRef()[i].GetName()
+    );
     if (spef_manager->findNet(act_net) == nullptr) {
       spef_manager->addNet(act_net);
     }

@@ -62,14 +62,21 @@ std::vector<LayerRect> Pin::GetLayerRectCpy() {
   return layer_rects_;
 }
 
+/****
+ * @brief Get the bounding box of this pin
+ *
+ * @return bounding box in um unit
+ */
 Rect2D<double> Pin::GetBoundingBox() {
-  PhyDBExpects(!layer_rects_.empty(),
-               "Compute bounding box for 0 layer_rects?");
+  PhyDBExpects(
+      !layer_rects_.empty(),
+      "Compute bounding box for 0 layer_rects?"
+  );
   double min_x = DBL_MAX;
   double min_y = DBL_MAX;
   double max_x = -DBL_MAX;
   double max_y = -DBL_MAX;
-  for (auto &layer_rect: layer_rects_) {
+  for (auto &layer_rect : layer_rects_) {
     auto rect = layer_rect.GetBoundingBox();
     min_x = std::min(min_x, rect.LLX());
     min_y = std::min(min_y, rect.LLY());
@@ -82,12 +89,12 @@ Rect2D<double> Pin::GetBoundingBox() {
 std::ostream &operator<<(std::ostream &os, const Pin &p) {
   os << p.name_ << " "
      << SignalDirectionStr(p.direction_) << " "
-     << SignalUseStr(p.use_) << " "
-     << p.shape_ << std::endl;
+     << SignalUseStr(p.use_) << "\n";
   os << p.antenna_diff_area_layer_ << " " << p.antenna_diff_area_ << "\n";
 
-  for (auto &l: p.layer_rects_)
-    os << l << std::endl;
+  for (auto &l : p.layer_rects_) {
+    os << l << "\n";
+  }
   return os;
 }
 

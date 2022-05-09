@@ -173,6 +173,15 @@ Component *Design::GetComponentPtr(std::string const &comp_name) {
   return &(components_[id]);
 }
 
+int Design::GetComponentId(std::string const &comp_name) {
+  auto res = component_2_id_.find(comp_name);
+  PhyDBExpects(
+      res != component_2_id_.end(),
+      "Component does not exist: " << comp_name
+  );
+  return res->second;
+}
+
 bool Design::IsDefViaExisting(std::string const &name) {
   return def_via_2_id_.find(name) != def_via_2_id_.end();
 }
@@ -221,6 +230,15 @@ IOPin *Design::GetIoPinPtr(std::string const &iopin_name) {
   }
   int id = iopin_2_id_[iopin_name];
   return &(iopins_[id]);
+}
+
+int Design::GetIoPinId(std::string const &iopin_name) {
+  auto res = iopin_2_id_.find(iopin_name);
+  PhyDBExpects(
+      res != iopin_2_id_.end(),
+      "IO pin does not exist: " << iopin_name
+  );
+  return res->second;
 }
 
 void Design::SetBlockageCount(int count) {
@@ -292,6 +310,14 @@ Net *Design::GetNetPtr(std::string const &net_name) {
   }
   int id = net_2_id_[net_name];
   return &(nets_[id]);
+}
+
+int Design::GetNetId(std::string const &net_name) {
+  auto res = net_2_id_.find(net_name);
+  if (res == net_2_id_.end()) {
+    PhyDBExpects(false, "Net does not exist: " << net_name);
+  }
+  return res->second;
 }
 
 SNet *Design::AddSNet(std::string const &net_name, SignalUse use) {
@@ -406,6 +432,48 @@ void Design::SaveWellToRectFile(std::string const &file_name) const {
   if (well_filling_ != nullptr) {
     well_filling_->SaveToRectFile(file_name);
   }
+}
+
+/****
+ * @brief Get the center of the bounding box of the component pin.
+ * Every component pin consists of metal segments, whose shape may or may not be
+ * regular. This method returns the center of the bounding box as its location
+ * as an approximation.
+ *
+ * @param comp_id: index of the component
+ * @param pin_id: index of the pin
+ * @return the location of this component pin, in manufacturing grid unit.
+ */
+Point2D<int> Design::GetComponentPinLocation(int comp_id, int pin_id) {
+  Component &comp = components_[comp_id];
+  Macro &macro = *(comp.GetMacro());
+  Pin &pin = macro.GetPinsRef()[pin_id];
+
+  Rect2D<double> bbox = pin.GetBoundingBox();
+  Point2D<double> bb_center(
+      (bbox.LLX() + bbox.URX()) / 2.0,
+      (bbox.LLY() + bbox.URY()) / 2.0
+  );
+  bb_center.Rotate(comp.GetOrientation(), macro.GetWidth(), macro.GetHeight());
+
+  Point2D<int> comp_loc = comp.GetLocation();
+  Point2D<int> res;
+  res.x = comp_loc.x
+      + static_cast<int>(std::round(bb_center.x * GetUnitsDistanceMicrons()));
+  res.y = comp_loc.y
+      + static_cast<int>(std::round(bb_center.y * GetUnitsDistanceMicrons()));
+  return res;
+}
+
+/****
+ * @brief Get the location of an I/O pin.
+ *
+ * @param iopin_id: index of this IO pin
+ * @return the location of this component pin, in manufacturing grid unit.
+ */
+Point2D<int> Design::GetIoPinLocation(int iopin_id) {
+  IOPin &iopin = iopins_[iopin_id];
+  return iopin.GetLocation();
 }
 
 void Design::ReportTracks() {

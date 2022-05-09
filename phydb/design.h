@@ -42,41 +42,6 @@ namespace phydb {
 
 class Design {
  public:
-  std::string name_;
-  double version_ = -1;
-  std::string divider_char_;
-  std::string bus_bit_char_;
-
-  Rect2D<int> die_area_;
-
-  int unit_distance_micron_ = -1;
-  std::vector<Row> rows_;
-  std::vector<Track> tracks_;
-  std::vector<Component> components_;
-  std::vector<IOPin> iopins_;
-  std::vector<SNet> snets_;
-  std::vector<Net> nets_;
-  std::vector<DefVia> vias_;
-  std::vector<ClusterCol> cluster_cols_;
-  std::vector<GcellGrid> gcell_grids_;
-  std::vector<Blockage> blockages_;
-
-  std::unordered_map<std::string, int> component_2_id_;
-  std::unordered_map<std::string, int> iopin_2_id_;
-  std::unordered_map<std::string, int> def_via_2_id_;
-  std::unordered_map<std::string, int> layer_name_2_trackid_;
-  std::unordered_map<std::string, int> net_2_id_;
-  std::unordered_map<std::string, int> snet_2_id_;
-  std::unordered_map<std::string, int> via_2_id_;
-  std::unordered_set<std::string> row_set_;
-
-  /****DEF file name****/
-  std::string def_name_;
-
-  /****Nplus/Pplus and N/P-well filling****/
-  SpecialMacroRectLayout *plus_filling_ = nullptr;
-  SpecialMacroRectLayout *well_filling_ = nullptr;
-
   Design() = default;
   ~Design();
 
@@ -152,6 +117,7 @@ class Design {
       CompOrient orient
   );
   Component *GetComponentPtr(std::string const &comp_name);
+  int GetComponentId(std::string const &comp_name);
   std::vector<Component> &GetComponentsRef() { return components_; }
 
   void SetIoPinCount(int count);
@@ -162,6 +128,7 @@ class Design {
       SignalUse signal_use
   );
   IOPin *GetIoPinPtr(std::string const &iopin_name);
+  int GetIoPinId(std::string const &iopin_name);
   std::vector<IOPin> &GetIoPinsRef() { return iopins_; }
 
   void SetBlockageCount(int count);
@@ -175,6 +142,7 @@ class Design {
   void AddIoPinToNet(int iopin_id, int net_id);
   void AddCompPinToNet(int comp_id, int pin_id, int net_id);
   Net *GetNetPtr(std::string const &net_name);
+  int GetNetId(std::string const &net_name);
   std::vector<Net> &GetNetsRef() { return nets_; }
 
   SNet *AddSNet(std::string const &net_name, SignalUse use);
@@ -207,6 +175,13 @@ class Design {
   );
   void SaveWellToRectFile(std::string const &file_name) const;
 
+  // helper functions
+  // get the center of the bounding box of the component pin
+  Point2D<int> GetComponentPinLocation(int comp_id, int pin_id);
+  // get the center of the bounding box of the I/O pin
+  Point2D<int> GetIoPinLocation(int iopin_id);
+
+  // print various information to console for debugging purposes
   void ReportTracks();
   void ReportRows();
   void ReportComponents();
@@ -217,6 +192,41 @@ class Design {
   void ReportClusterCols();
   void ReportGcellGrids();
   void Report();
+ private:
+  std::string name_;
+  double version_ = -1;
+  std::string divider_char_;
+  std::string bus_bit_char_;
+
+  Rect2D<int> die_area_;
+
+  int unit_distance_micron_ = -1;
+  std::vector<Row> rows_;
+  std::vector<Track> tracks_;
+  std::vector<Component> components_;
+  std::vector<IOPin> iopins_;
+  std::vector<SNet> snets_;
+  std::vector<Net> nets_;
+  std::vector<DefVia> vias_;
+  std::vector<ClusterCol> cluster_cols_;
+  std::vector<GcellGrid> gcell_grids_;
+  std::vector<Blockage> blockages_;
+
+  std::unordered_map<std::string, int> component_2_id_;
+  std::unordered_map<std::string, int> iopin_2_id_;
+  std::unordered_map<std::string, int> def_via_2_id_;
+  std::unordered_map<std::string, int> layer_name_2_trackid_;
+  std::unordered_map<std::string, int> net_2_id_;
+  std::unordered_map<std::string, int> snet_2_id_;
+  std::unordered_map<std::string, int> via_2_id_;
+  std::unordered_set<std::string> row_set_;
+
+  /****DEF file name****/
+  std::string def_name_;
+
+  /****Nplus/Pplus and N/P-well filling****/
+  SpecialMacroRectLayout *plus_filling_ = nullptr;
+  SpecialMacroRectLayout *well_filling_ = nullptr;
 };
 
 }

@@ -24,6 +24,7 @@
 
 #include <string>
 
+#include "enumtypes.h"
 #include "phydb/common/logging.h"
 
 namespace phydb {
@@ -64,6 +65,56 @@ class Point2D {
     if (y > p.y) return true;
     else if (y < p.y) return false;
     else return (x > p.x);
+  }
+  void Rotate(CompOrient orient, T width, T height) {
+    double new_x;
+    double new_y;
+    switch (orient) {
+      case CompOrient::N: {
+        // no rotation is needed
+        break;
+      }
+      case CompOrient::S: {
+        new_x = width - x;
+        new_y = height - y;
+        break;
+      }
+      case CompOrient::W: {
+        new_x = height - y;
+        new_y = x;
+        break;
+      }
+      case CompOrient::E: {
+        new_x = y;
+        new_y = width - x;
+        break;
+      }
+      case CompOrient::FN: {
+        new_x = width - x;
+        new_y = y;
+        break;
+      }
+      case CompOrient::FS: {
+        new_x = x;
+        new_y = height - y;
+        break;
+      }
+      case CompOrient::FW: {
+        new_x = y;
+        new_y = x;
+        break;
+      }
+      case CompOrient::FE: {
+        new_x = height - y;
+        new_y = width - x;
+        break;
+      }
+      default: {
+        PhyDBExpects(false, "Impossible to happen!");
+      }
+    }
+    x = new_x;
+    y = new_y;
   }
 };
 

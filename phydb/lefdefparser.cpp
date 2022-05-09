@@ -74,18 +74,23 @@ int getLefMacros(lefrCallbackType_e type, lefiMacro *macro, lefiUserData data) {
 
   double originX = macro->originX();
   double originY = macro->originY();
+  PhyDBExpects(
+      (originX == 0) && (originY == 0),
+      "Nonzero origin is not supported, macro: " << macro->name()
+  );
   double sizeX = macro->sizeX();
   double sizeY = macro->sizeY();
 
-  PhyDBExpects(macro->hasClass(),
-               "Macro has no class?" + std::string(macro->name()));
+  PhyDBExpects(
+      macro->hasClass(),
+      "Macro has no class?" + std::string(macro->name())
+  );
   std::string str_macro_class(macro->macroClass());
   MacroClass macro_class = StrToMacroClass(str_macro_class);
 
   auto *phy_db_ptr = (PhyDB *) data;
-
-  Macro &m =
-      phy_db_ptr->GetTechPtr()->GetMacrosRef().back(); //write to the last one
+  //write to the last one
+  Macro &m = phy_db_ptr->GetTechPtr()->GetMacrosRef().back();
   m.SetOrigin(originX, originY);
   m.SetSize(sizeX, sizeY);
   m.SetClass(macro_class);
@@ -1155,8 +1160,8 @@ void Si2ReadLef(PhyDB *phy_db_ptr, std::string const &lef_file_name) {
 
   lefrSetUserData((lefiUserData) phy_db_ptr);
 
-  lefrSetMacroCbk(getLefMacros);
   lefrSetMacroBeginCbk(getLefMacrosBegin);
+  lefrSetMacroCbk(getLefMacros);
   lefrSetMacroEndCbk(getLefMacrosEnd);
   lefrSetUnitsCbk(getLefUnits);
   lefrSetManufacturingCbk(getLefManufacturingGrid);
@@ -1254,9 +1259,11 @@ int CheckDefUnits(defrCallbackType_e type, double number, defiUserData data) {
   auto *phy_db_ptr = (PhyDB *) data;
 
   int cur_unit = (int) number;
-  int existing_unit = phy_db_ptr->GetDesignPtr()->unit_distance_micron_;
-  PhyDBExpects(cur_unit == existing_unit,
-               "UNITS DISTANCE MICRONS is not supposed to be changed in the placed DEF file");
+  int existing_unit = phy_db_ptr->GetDesignPtr()->GetUnitsDistanceMicrons();
+  PhyDBExpects(
+      cur_unit == existing_unit,
+      "UNITS DISTANCE MICRONS is not supposed to be changed in the placed DEF file"
+  );
 
   return 0;
 }

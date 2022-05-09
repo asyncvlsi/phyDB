@@ -29,19 +29,6 @@ namespace phydb {
 
 class IOPin {
  public:
-  int id_;
-  std::string name_;
-  int net_id_;
-  SignalDirection direction_;
-  SignalUse use_;
-
-  std::string layer_name_;
-  Rect2D<int> rect_;
-
-  Point2D<int> location_;
-  CompOrient orient_ = CompOrient::N;
-  PlaceStatus place_status_ = PlaceStatus::UNPLACED;
-
   IOPin() : id_(-1) {}
   IOPin(
       std::string const &name,
@@ -93,7 +80,22 @@ class IOPin {
   CompOrient GetOrientation();
   PlaceStatus GetPlacementStatus();
 
+  Rect2D<int> GetBoundingBox();
+
   void Report();
+ private:
+  int id_;
+  std::string name_;
+  int net_id_;
+  SignalDirection direction_;
+  SignalUse use_;
+
+  std::string layer_name_;
+  Rect2D<int> rect_;
+
+  Point2D<int> location_;
+  CompOrient orient_ = CompOrient::N;
+  PlaceStatus place_status_ = PlaceStatus::UNPLACED;
 };
 
 std::ostream &operator<<(std::ostream &, const IOPin &);
