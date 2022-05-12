@@ -18,13 +18,15 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_PHYDB_H_
 #define PHYDB_PHYDB_H_
 
-#include "phydb/timing/actphydbtimingapi.h"
+#include <string>
+#include <vector>
+
 #include "design.h"
 #include "tech.h"
+#include "phydb/timing/actphydbtimingapi.h"
 
 namespace phydb {
 
@@ -131,11 +133,11 @@ class PhyDB {
   Component *AddComponent(
       std::string const &comp_name,
       Macro *macro_ptr,
-      CompSource source,
       PlaceStatus place_status,
       int llx,
       int lly,
-      CompOrient orient
+      CompOrient orient,
+      CompSource source = CompSource::NETLIST
   );
   Component *GetComponentPtr(std::string const &comp_name);
   int GetComponentId(std::string const &comp_name);
@@ -205,13 +207,6 @@ class PhyDB {
       The fast end paths are paths from r to a.
       The slow end paths are from r to b
   */
-  void SetGetWitnessCB( // this API will be removed soon, because it can be replaced by the subsequent two APIs
-      void (*callback_function)(
-          int timing_constraint_id,
-          std::vector<ActEdge> &fast_path,
-          std::vector<ActEdge> &slow_path
-      )
-  );
   void SetGetSlowWitnessCB(
       void (*callback_function)(
           int timing_constraint_id,
@@ -330,7 +325,7 @@ class PhyDB {
   ActPhyDBTimingAPI timing_api_;
 
 #if PHYDB_USE_GALOIS
-  void BindPhydbPinToActPin(PhydbPin &phydb_pin);
+  void BindPhydbPinToActPin_(PhydbPin &phydb_pin);
 #endif
 };
 

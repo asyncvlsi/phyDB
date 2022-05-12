@@ -184,20 +184,20 @@ bool PhyDB::IsComponentExisting(std::string const &component_name) {
 Component *PhyDB::AddComponent(
     std::string const &comp_name,
     Macro *macro_ptr,
-    CompSource source,
     PlaceStatus place_status,
     int llx,
     int lly,
-    CompOrient orient
+    CompOrient orient,
+    CompSource source
 ) {
   return design_.AddComponent(
       comp_name,
       macro_ptr,
-      source,
       place_status,
       llx,
       lly,
-      orient
+      orient,
+      source
   );
 }
 
@@ -506,11 +506,11 @@ SpecialMacroRectLayout *PhyDB::CreatePpNpMacroAndComponent(
   AddComponent(
       plus_filling_component_name,
       plus_filling_macro,
-      CompSource::USER,
       PlaceStatus::COVER,
       llx,
       lly,
-      CompOrient::N
+      CompOrient::N,
+      CompSource::USER
   );
   return design_.CreatePpNpMacroAndComponent(
       plus_filling_macro,
@@ -541,11 +541,11 @@ SpecialMacroRectLayout *PhyDB::CreateWellLayerMacroAndComponent(
   AddComponent(
       well_filling_component_name,
       well_filling_macro,
-      CompSource::USER,
       PlaceStatus::COVER,
       llx,
       lly,
-      CompOrient::N
+      CompOrient::N,
+      CompSource::USER
   );
   return design_.CreateWellLayerMacroAndComponent(
       well_filling_macro,
@@ -604,21 +604,6 @@ void PhyDB::SetGetViolatedTimingConstraintsCB(
     void (*callback_function)(std::vector<int> &timing_constraint_ids)
 ) {
   timing_api_.SetGetViolatedTimingConstraintsCB(callback_function);
-}
-
-void PhyDB::SetGetWitnessCB(
-    void (*callback_function)(
-        int timing_constraint_id,
-        std::vector<ActEdge> &fast_path,
-        std::vector<ActEdge> &slow_path
-    )
-) {
-  std::cout
-      << "\033[0;34m"
-      << "WARNING:" << "\n"
-      << "    " << __FUNCTION__ << " will be removed after April 1st, 2022"
-      << "\033[0m" << std::endl;
-  timing_api_.SetGetWitnessCB(callback_function);
 }
 
 void PhyDB::SetGetSlowWitnessCB(
@@ -745,12 +730,12 @@ void PhyDB::CreatePhydbActAdaptor() {
     void *act_net = timer_adaptor->getNetFromFullName(net.GetName(), '.');
     PhyDBExpects(
         act_net != nullptr,
-        "Net cannot be found in the timer netlist adaptor: " + net.GetName()
+        "Net cannot be found in the timer netlist adaptor: " << net.GetName()
     );
     timing_api_.AddActNetPtrIdPair(act_net, i);
 
     for (auto &physb_pin : net.GetPinsRef()) {
-      BindPhydbPinToActPin(physb_pin);
+      BindPhydbPinToActPin_(physb_pin);
     }
   }
 }
@@ -785,9 +770,11 @@ void PhyDB::AddNetsAndCompPinsToSpefManager() {
       void *act_pin = timing_api_.PhydbCompPin2ActPtr(phydb_pin);
       if (act_pin == nullptr) {
         std::string phydb_pin_name = GetFullCompPinName(phydb_pin, ':');
-        PhyDBExpects(false,
-                     "Cannot map from a PhyDB component pin to an ACT pin: "
-                         + phydb_pin_name);
+        PhyDBExpects(
+            false,
+            "Cannot map from a PhyDB component pin to an ACT pin: "
+                << phydb_pin_name
+        );
       }
       bool is_act_pin_in_spef = spef_manager->findPin(act_pin) != nullptr;
       if (IsDriverPin(phydb_pin)) {
@@ -996,18 +983,16 @@ void PhyDB::ReadCell(std::string const &cell_file_name) {
           && !ist.eof());
     }
   }
-  PhyDBExpects(tech_.IsWellInfoSet(),
-               "N/P well technology information not found!");
-  //tech_.ReportWellShape();
-
-  //std::cout << "CELL file loading complete: " << cellFileName << "\n";
+  PhyDBExpects(
+      tech_.IsWellInfoSet(),
+      "N/P well technology information not found!"
+  );
 }
 
 void PhyDB::ReadCluster(std::string const &cluster_file_name) {
   std::ifstream infile(cluster_file_name.c_str());
   if (infile.is_open()) {
-    std::cout
-        << "Loading cluster file: " << cluster_file_name << "\n";
+    std::cout << "Loading cluster file: " << cluster_file_name << "\n";
   } else {
     PhyDBExpects(false, "cannot open input file " + cluster_file_name);
   }
@@ -1044,8 +1029,10 @@ void PhyDB::ReadCluster(std::string const &cluster_file_name) {
 bool PhyDB::ReadTechConfigFile(std::string const &tech_config_file_name) {
   // resistance and capacitance information will be saved into metal layers,
   // so we need to make sure metal layers are in the database
-  PhyDBExpects(!tech_.layers_.empty(),
-               "Layers in PhyDB are needed for loading technology configuration file");
+  PhyDBExpects(
+      !tech_.layers_.empty(),
+      "Layers in PhyDB are needed for loading technology configuration file"
+  );
 
   ReadTechnologyConfigurationFile(this, tech_config_file_name);
 
@@ -1067,8 +1054,7 @@ bool PhyDB::ReadTechConfigFile(int argc, char **argv) {
   std::string file_name(argv[1]);
   if (file_name == "__manual__") {
     if (argc < 5) {
-      std::cout
-          << "Please provide unit resistance and unit capacitance\n";
+      std::cout << "Please provide unit resistance and unit capacitance\n";
       return false;
     }
     double unit_res, unit_fringe_cap, unit_area_cap;
@@ -1095,11 +1081,12 @@ void PhyDB::WriteDef(std::string const &def_file_name) {
 void PhyDB::WriteCluster(std::string const &cluster_file_name) {
   std::ofstream outfile(cluster_file_name.c_str());
   if (outfile.is_open()) {
-    std::cout
-        << "writing cluster file: " << cluster_file_name << "\n";
+    std::cout << "writing cluster file: " << cluster_file_name << "\n";
   } else {
-    PhyDBExpects(false,
-                 "Cannot open output cluster file " + cluster_file_name);
+    PhyDBExpects(
+        false,
+        "Cannot open output cluster file " + cluster_file_name
+    );
   }
 
   auto cluster_cols = this->GetClusterColsRef();
@@ -1120,8 +1107,7 @@ void PhyDB::WriteCluster(std::string const &cluster_file_name) {
 void PhyDB::WriteGuide(std::string const &guide_file_name) {
   std::ofstream outfile(guide_file_name.c_str());
   if (outfile.is_open()) {
-    std::cout
-        << "writing guide file: " << guide_file_name << "\n";
+    std::cout << "writing guide file: " << guide_file_name << "\n";
   } else {
     PhyDBExpects(false, "Cannot open output guide file " + guide_file_name);
   }
@@ -1148,27 +1134,24 @@ void PhyDB::WriteGuide(std::string const &guide_file_name) {
 }
 
 #if PHYDB_USE_GALOIS
-void PhyDB::BindPhydbPinToActPin(PhydbPin &phydb_pin) {
+void PhyDB::BindPhydbPinToActPin_(PhydbPin &phydb_pin) {
   auto *timer_adaptor = GetNetlistAdaptor();
-  PhyDBExpects(timer_adaptor != nullptr,
-               "Timer netlist adaptor no found! Cannot build phydb-act adaptor");
-  std::string phydb_pin_name = GetFullCompPinName(phydb_pin, ':');
-  void *act_pin = timer_adaptor->getPinFromFullName(phydb_pin_name);
+  PhyDBExpects(
+      timer_adaptor != nullptr,
+      "Timer netlist adaptor no found! Cannot build phydb-act adaptor"
+  );
+  std::string pin_name = GetFullCompPinName(phydb_pin, ':');
+  void *act_pin = timer_adaptor->getPinFromFullName(pin_name);
   if (timing_api_.IsActComPinPtrExisting(act_pin)) {
     if (timing_api_.ActCompPinPtr2Id(act_pin) != phydb_pin) {
       PhydbPin existing_pin = timing_api_.ActCompPinPtr2Id(act_pin);
-      std::string
-          existing_phydb_pin_name = GetFullCompPinName(existing_pin, ':');
-      std::cout << "\033[0;31m" << "FATAL ERROR:\n    "
-                << "ACT pin pointer, " << act_pin
-                << ", corresponds to the following PhyDB pin:\n        "
-                << existing_phydb_pin_name << ".\n    "
-                << "Now this ACT pin needs to correspond to another PhyDB pin:\n        "
-                << phydb_pin_name << "\n";
-      std::cout << __FILE__ << " : " << __LINE__ << " : " << __FUNCTION__
-                << "\033[0m"
-                << std::endl;
-      exit(0);
+      std::string tmp_pin_name = GetFullCompPinName(existing_pin, ':');
+      PhyDBExpects(false, "ACT pin pointer, "
+          << act_pin << ", is associated with the following PhyDB pin:\n"
+          << "    " << tmp_pin_name << ".\n"
+          << "Now this ACT pin needs to be associated with another PhyDB pin:\n"
+          << pin_name << "\n"
+      );
     }
   } else {
     timing_api_.BindActPinAndPhydbPin(act_pin, phydb_pin);

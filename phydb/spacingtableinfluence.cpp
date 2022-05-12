@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #include <iostream>
 
 #include "spacingtableinfluence.h"
@@ -50,11 +49,9 @@ double SpacingTableInfluence::GetSpacing() const {
 }
 
 void SpacingTableInfluence::Report() const {
-  std::cout << "width: " << width_;
-  std::cout << "within: " << within_;
-  std::cout << "spacing: " << spacing_;
-  std::cout << std::endl;
-
+  std::cout << "width: " << width_
+            << "within: " << within_
+            << "spacing: " << spacing_ << "\n";
 }
 
 }

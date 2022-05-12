@@ -18,24 +18,18 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_SPACINGTABLE_H_
 #define PHYDB_SPACINGTABLE_H_
+
+#include <vector>
 
 #include "phydb/common/logging.h"
 
 namespace phydb {
 
 class SpacingTable {
- private:
-  int n_col_;
-  int n_row_;
-  std::vector<double> parallel_run_length_;
-  std::vector<double> width_;
-  std::vector<double> spacing_;
-
  public:
-  SpacingTable() : n_col_(0), n_row_(0) {}
+  SpacingTable() = default;
   SpacingTable(int nC, int nR) : n_col_(nC), n_row_(nR) {
     parallel_run_length_.resize(nC);
     width_.resize(nR);
@@ -77,6 +71,12 @@ class SpacingTable {
 
   double GetSpacingForWidth(double width) const;
   double GetSpacingFor(double width, double length) const;
+ private:
+  int n_col_ = 0;
+  int n_row_ = 0;
+  std::vector<double> parallel_run_length_;
+  std::vector<double> width_;
+  std::vector<double> spacing_;
 };
 
 std::ostream &operator<<(std::ostream &, const SpacingTable &);

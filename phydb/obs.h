@@ -18,21 +18,19 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_OBS_H_
 #define PHYDB_OBS_H_
+
+#include <vector>
 
 #include "datatype.h"
 
 namespace phydb {
 
 class OBS {
- private:
-  std::vector<LayerRect> layer_rects_;
-
  public:
   OBS() {}
-  OBS(std::vector<LayerRect> layerRects) : layer_rects_(layerRects) {}
+  explicit OBS(std::vector<LayerRect> layerRects) : layer_rects_(layerRects) {}
 
   void SetLayerRects(std::vector<LayerRect>);
 
@@ -43,6 +41,8 @@ class OBS {
   LayerRect *AddLayerRect(std::string &layer_name);
 
   friend std::ostream &operator<<(std::ostream &, const OBS &);
+ private:
+  std::vector<LayerRect> layer_rects_;
 };
 
 std::ostream &operator<<(std::ostream &, const OBS &);

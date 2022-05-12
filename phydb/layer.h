@@ -28,9 +28,9 @@
 #include "cornerspacing.h"
 #include "enumtypes.h"
 #include "eolspacing.h"
-#include "phydb/common/logging.h"
 #include "spacingtable.h"
 #include "spacingtableinfluence.h"
+#include "phydb/common/logging.h"
 #include "phydb/timing/techconfig.h"
 
 namespace phydb {
@@ -91,9 +91,13 @@ class LayerTechConfig {
 class Layer {
   friend class Tech;
  public:
-  Layer(std::string const &name, LayerType type, MetalDirection direction) :
-      name_(name), type_(type), direction_(direction) {
-  }
+  Layer(
+      std::string const &name,
+      LayerType type,
+      MetalDirection direction
+  ) : name_(name),
+      type_(type),
+      direction_(direction) {}
 
   //constructor for metal layer
   Layer(
@@ -120,7 +124,11 @@ class Layer {
   }
 
   //constructor for cut layer
-  Layer(std::string const &name, LayerType type, double spacing) :
+  Layer(
+      std::string const &name,
+      LayerType type,
+      double spacing
+  ) :
       name_(name),
       type_(type),
       id_(-1),
@@ -265,12 +273,6 @@ class Layer {
 std::ostream &operator<<(std::ostream &, const Layer &);
 
 class WellLayer {
- private:
-  double width_;
-  double spacing_;
-  double op_spacing_;
-  double max_plug_dist_;
-  double overhang_;
  public:
   WellLayer(
       double width,
@@ -304,6 +306,12 @@ class WellLayer {
       double overhang
   );
   void Report() const;
+ private:
+  double width_;
+  double spacing_;
+  double op_spacing_;
+  double max_plug_dist_;
+  double overhang_;
 };
 
 }

@@ -18,9 +18,10 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_ROW_H_
 #define PHYDB_ROW_H_
+
+#include <string>
 
 #include "phydb/common/logging.h"
 
@@ -28,21 +29,11 @@ namespace phydb {
 
 class Row {
  public:
-  std::string name_;
-  std::string site_name_;
-  std::string site_orient_;
-  int orig_x_;
-  int orig_y_;
-  int num_x_;
-  int num_y_;
-  int step_x_;
-  int step_y_;
-
-  Row() {}
+  Row() = default;
   Row(
-      std::string name,
-      std::string siteName,
-      std::string siteOrient,
+      std::string const &name,
+      std::string const &siteName,
+      std::string const &siteOrient,
       int origX,
       int origY,
       int numX,
@@ -60,6 +51,25 @@ class Row {
       step_x_(stepX),
       step_y_(stepY) {}
 
+  const std::string &GetName() const { return name_; }
+  const std::string &GetSiteName() const { return site_name_; }
+  const std::string &GetSiteOrientation() const { return site_orient_; };
+  int GetOriginX() const { return orig_x_; }
+  int GetOriginY() const { return orig_y_; }
+  int GetNumX() const { return num_x_; }
+  int GetNumY() const { return num_y_; }
+  int GetStepX() const { return step_x_; }
+  int GetStepY() const { return step_y_; }
+ private:
+  std::string name_;
+  std::string site_name_;
+  std::string site_orient_;
+  int orig_x_;
+  int orig_y_;
+  int num_x_;
+  int num_y_;
+  int step_x_;
+  int step_y_;
 };
 
 std::ostream &operator<<(std::ostream &, const Row &);

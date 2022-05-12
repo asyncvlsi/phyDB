@@ -21,11 +21,11 @@
 #ifndef PHYDB_NET_H_
 #define PHYDB_NET_H_
 
-#include "phydb/timing/actphydbtimingapi.h"
 #include "datatype.h"
 #include "enumtypes.h"
-#include "phydb/common/logging.h"
 #include "snet.h"
+#include "phydb/common/logging.h"
+#include "phydb/timing/actphydbtimingapi.h"
 
 namespace phydb {
 

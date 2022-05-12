@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #include "obs.h"
 
 namespace phydb {
@@ -32,8 +31,9 @@ std::ostream &operator<<(std::ostream &os, const OBS &obs) {
   if (!obs.layer_rects_.empty()) {
     os << "OBS\n";
   }
-  for (auto &l: obs.layer_rects_)
-    os << l << std::endl;
+  for (auto &l : obs.layer_rects_) {
+    os << l << "\n";
+  }
   return os;
 }
 

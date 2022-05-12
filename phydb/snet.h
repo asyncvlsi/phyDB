@@ -21,6 +21,9 @@
 #ifndef PHYDB_SNET_H_
 #define PHYDB_SNET_H_
 
+#include <string>
+#include <vector>
+
 #include "datatype.h"
 #include "enumtypes.h"
 #include "phydb/common/logging.h"
@@ -30,18 +33,18 @@ namespace phydb {
 class Polygon {
  private:
   std::string layer_name_;
-  std::vector<Point2D < int>> routing_points_;
+  std::vector<Point2D<int>> routing_points_;
 
  public:
   Polygon() {}
   Polygon(std::string layer_name) : layer_name_(layer_name) {}
 
-  void SetLayerName(std::string layer_name);
+  void SetLayerName(std::string const &layer_name);
   void AddRoutingPoint(Point2D<int> p);
   void AddRoutingPoint(int x, int y);
 
   std::string GetLayerName() const;
-  std::vector<Point2D < int>>&
+  std::vector<Point2D<int>> &
   GetRoutingPointsRef();
 
   void Report() const;
@@ -56,7 +59,7 @@ class Path {
   std::string via_name_;
 
   Rect2D<int> via_rect_;
-  std::vector<Point3D < int>> routing_points_;
+  std::vector<Point3D<int>> routing_points_;
 
  public:
   Path() : width_(0) {}
@@ -80,7 +83,7 @@ class Path {
   std::string GetViaName() const;
 
   Rect2D<int> GetRect() const;
-  std::vector<Point3D < int>>&
+  std::vector<Point3D<int>> &
   GetRoutingPointsRef();
 
   void Report();

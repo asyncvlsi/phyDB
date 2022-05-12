@@ -18,10 +18,10 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_SPECIALMACRORECTLAYOUT_H_
 #define PHYDB_SPECIALMACRORECTLAYOUT_H_
 
+#include <string>
 #include <vector>
 
 #include "datatype.h"

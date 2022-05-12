@@ -18,8 +18,9 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #include "component.h"
+
+#include "phydb/common/logging.h"
 
 namespace phydb {
 

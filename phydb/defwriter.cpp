@@ -130,15 +130,15 @@ int WriteRows(defwCallbackType_e type, defiUserData data) {
   auto rows = ((PhyDB *) data)->GetRowVec();
   for (auto &row : rows) {
     int status = defwRowStr(
-        row.name_.c_str(),
-        row.site_name_.c_str(),
-        row.orig_x_,
-        row.orig_y_,
-        row.site_orient_.c_str(),
-        row.num_x_,
-        row.num_y_,
-        row.step_x_,
-        row.step_y_
+        row.GetName().c_str(),
+        row.GetSiteName().c_str(),
+        row.GetOriginX(),
+        row.GetOriginY(),
+        row.GetSiteOrientation().c_str(),
+        row.GetNumX(),
+        row.GetNumY(),
+        row.GetStepX(),
+        row.GetStepY()
     );
     CheckStatus(status);
   }

@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #include "iopin.h"
 
 namespace phydb {
@@ -27,7 +26,11 @@ void IOPin::SetNetId(int net_id) {
   net_id_ = net_id;
 }
 
-void IOPin::SetShape(std::string const &layer_name, int lx, int ly, int ux, int uy) {
+void IOPin::SetShape(std::string const &layer_name,
+                     int lx,
+                     int ly,
+                     int ux,
+                     int uy) {
   layer_name_ = layer_name;
   rect_.Set(lx, ly, ux, uy);
 }
@@ -91,9 +94,9 @@ Rect2D<int> IOPin::GetBoundingBox() {
 void IOPin::Report() {
   std::cout << "IOPIN name: " << name_ << "  Net: " << net_id_ << " "
             << " DIRECTION: " << SignalDirectionStr(direction_) << " "
-            << " USE: " << SignalUseStr(use_) << "\n";
-  std::cout << "LAYER: " << layer_name_ << " " << rect_.Str() << "\n";
-  std::cout << PlaceStatusStr(place_status_) << " "
+            << " USE: " << SignalUseStr(use_) << "\n"
+            << "LAYER: " << layer_name_ << " " << rect_.Str() << "\n"
+            << PlaceStatusStr(place_status_) << " "
             << location_.Str() << " "
             << CompOrientStr(orient_) << "\n";
 }

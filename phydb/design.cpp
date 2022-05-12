@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #include "design.h"
 
 #include <cmath>
@@ -142,11 +141,11 @@ bool Design::IsComponentExisting(std::string const &comp_name) {
 Component *Design::AddComponent(
     std::string const &comp_name,
     Macro *macro_ptr,
-    CompSource source,
     PlaceStatus place_status,
     int llx,
     int lly,
-    CompOrient orient
+    CompOrient orient,
+    CompSource source
 ) {
   PhyDBExpects(!IsComponentExisting(comp_name),
                "Component name_ exists, cannot use it again");

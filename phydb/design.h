@@ -30,13 +30,13 @@
 #include "defvia.h"
 #include "gcellgrid.h"
 #include "iopin.h"
-#include "phydb/common/logging.h"
 #include "net.h"
 #include "row.h"
 #include "snet.h"
 #include "specialmacrorectlayout.h"
 #include "tech.h"
 #include "track.h"
+#include "phydb/common/logging.h"
 
 namespace phydb {
 
@@ -110,11 +110,11 @@ class Design {
   Component *AddComponent(
       std::string const &comp_name,
       Macro *macro_ptr,
-      CompSource source,
       PlaceStatus place_status,
       int llx,
       int lly,
-      CompOrient orient
+      CompOrient orient,
+      CompSource source
   );
   Component *GetComponentPtr(std::string const &comp_name);
   int GetComponentId(std::string const &comp_name);

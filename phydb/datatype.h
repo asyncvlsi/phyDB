@@ -18,11 +18,11 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_DATATYPES_H_
 #define PHYDB_DATATYPES_H_
 
 #include <string>
+#include <vector>
 
 #include "enumtypes.h"
 #include "phydb/common/logging.h"
@@ -67,8 +67,8 @@ class Point2D {
     else return (x > p.x);
   }
   void Rotate(CompOrient orient, T width, T height) {
-    double new_x;
-    double new_y;
+    double new_x = x;
+    double new_y = y;
     switch (orient) {
       case CompOrient::N: {
         // no rotation is needed

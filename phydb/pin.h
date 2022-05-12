@@ -21,6 +21,9 @@
 #ifndef PHYDB_PIN_H_
 #define PHYDB_PIN_H_
 
+#include <string>
+#include <vector>
+
 #include "datatype.h"
 #include "enumtypes.h"
 

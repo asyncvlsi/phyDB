@@ -354,10 +354,10 @@ void Stats::ComputeRUDY() {
   int grid_y = (int) std::ceil(
       (double) (die_area.URY() - die_area.LLY()) / (double) Gcell_size);
 
-  RUDY = new double[grid_x * grid_y];
+  RUDY_ = new double[grid_x * grid_y];
 
   for (int i = 0; i < grid_x * grid_y; i++) {
-    RUDY[i] = 0;
+    RUDY_[i] = 0;
   }
 
   auto nets = GetDbPtr()->design().GetNetsRef();
@@ -392,7 +392,7 @@ void Stats::ComputeRUDY() {
 
     for (int x = net_min_x; x <= net_max_x; x++) {
       for (int y = net_min_y; y <= net_max_y; y++) {
-        RUDY[y * grid_x + x] += net_rudy;
+        RUDY_[y * grid_x + x] += net_rudy;
       }
     }
   }
@@ -427,10 +427,10 @@ void Stats::ComputePinDensity() {
   int grid_y = (int) std::ceil(
       (double) (die_area.URY() - die_area.LLY()) / (double) Gcell_size);
 
-  pin_density = new double[grid_x * grid_y];
+  pin_density_ = new double[grid_x * grid_y];
 
   for (int i = 0; i < grid_x * grid_y; i++) {
-    pin_density[i] = 0;
+    pin_density_[i] = 0;
   }
 
   auto nets = GetDbPtr()->design().GetNetsRef();
@@ -454,7 +454,7 @@ void Stats::ComputePinDensity() {
 
       for (int x = pin_min_x; x <= pin_max_x; x++) {
         for (int y = pin_min_y; y <= pin_max_y; y++) {
-          pin_density[y * grid_x + x] += 1;
+          pin_density_[y * grid_x + x] += 1;
         }
       }
     }

@@ -72,15 +72,16 @@ std::vector<Path> &Net::GetPathsRef() {
 }
 
 void Net::Report() {
-  int sz = (int) pins_.size();
-  std::cout << "NET: " << name_ << "  weight: " << weight_
-            << " size: " << sz << "\n";
-  for (auto &iopin_id: iopins_) {
+  std::cout << "NET: " << name_
+            << "  weight: " << weight_
+            << " size: " << pins_.size() << "\n";
+  for (auto &iopin_id : iopins_) {
     std::cout << "  (PIN " << iopin_id << ") ";
   }
 
-  for (int i = 0; i < sz; ++i) {
-    std::cout << "  (" << pins_[i].InstanceId() << " " << pins_[i].PinId() << ") ";
+  for (auto &comp_pin : pins_) {
+    std::cout << "  (" << comp_pin.InstanceId()
+              << " " << comp_pin.PinId() << ") ";
   }
   std::cout << "\n";
 }

@@ -18,11 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
-//
-// Created by yihang on 9/3/21.
-//
-
 #include "specialmacrorectlayout.h"
 
 #include <fstream>

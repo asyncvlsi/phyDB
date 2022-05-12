@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #include "lefvia.h"
 
 namespace phydb {
@@ -55,7 +54,7 @@ std::vector<LayerRect> &LefVia::GetLayerRectsRef() {
 
 void LefVia::Report() {
   std::cout << "LefVia name: " << name_ << "\n";
-  for (auto &layer_rect: layer_rects_) {
+  for (auto &layer_rect : layer_rects_) {
     layer_rect.Report();
   }
 }

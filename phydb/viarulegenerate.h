@@ -21,17 +21,14 @@
 #ifndef PHYDB_VIARULEGENERATE_H
 #define PHYDB_VIARULEGENERATE_H
 
+#include <string>
+
 #include "datatype.h"
 
 namespace phydb {
 
 class ViaRuleGenerateLayer {
  public:
-  std::string layer_name_;
-  Rect2D<double> rect_;
-  Size2D<double> spacing_;
-  Size2D<double> enclosure_;
-
   ViaRuleGenerateLayer() {}
   explicit ViaRuleGenerateLayer(std::string const &layer_name) :
       layer_name_(layer_name) {}
@@ -45,14 +42,15 @@ class ViaRuleGenerateLayer {
   Rect2D<double> GetRect() const;
   Size2D<double> GetSpacing() const;
   Size2D<double> GetEnclosure() const;
+ private:
+  std::string layer_name_;
+  Rect2D<double> rect_;
+  Size2D<double> spacing_;
+  Size2D<double> enclosure_;
 };
 
 class ViaRuleGenerate {
  public:
-  std::string name_;
-  bool is_default_;
-  ViaRuleGenerateLayer layers_[3];
-
   ViaRuleGenerate() : is_default_(false) {}
   ViaRuleGenerate(std::string const &name) : name_(name), is_default_(false) {}
 
@@ -63,6 +61,10 @@ class ViaRuleGenerate {
       ViaRuleGenerateLayer &,
       ViaRuleGenerateLayer &
   );
+ private:
+  std::string name_;
+  bool is_default_;
+  ViaRuleGenerateLayer layers_[3];
 };
 
 }

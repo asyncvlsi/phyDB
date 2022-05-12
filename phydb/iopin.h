@@ -21,9 +21,11 @@
 #ifndef PHYDB_IOPIN_H_
 #define PHYDB_IOPIN_H_
 
+#include <string>
+
 #include "datatype.h"
-#include "phydb/common/logging.h"
 #include "enumtypes.h"
+#include "phydb/common/logging.h"
 
 namespace phydb {
 

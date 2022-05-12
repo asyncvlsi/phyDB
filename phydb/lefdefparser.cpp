@@ -700,10 +700,10 @@ int getDefComponents(
   phy_db_ptr->AddComponent(
       comp_name,
       macro_ptr,
-      source,
       place_status,
       llx, lly,
-      orient
+      orient,
+      source
   );
 
   return 0;

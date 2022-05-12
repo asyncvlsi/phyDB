@@ -43,5 +43,3 @@ class AdjacentCutSpacing {
 }
 
 #endif //PHYDB_ADJACENTCUTSPACING_H_
-
-

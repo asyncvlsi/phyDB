@@ -18,9 +18,11 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_TRACK_H_
 #define PHYDB_TRACK_H_
+
+#include <string>
+#include <vector>
 
 #include "enumtypes.h"
 #include "phydb/common/logging.h"
@@ -28,14 +30,6 @@
 namespace phydb {
 
 class Track {
- private:
-  XYDirection direction_;
-  int start_;
-  int n_tracks_;
-  int step_;
-
-  std::vector<std::string> layer_names_;
-
  public:
   Track() {}
   Track(
@@ -57,6 +51,13 @@ class Track {
   std::vector<std::string> &GetLayerNames();
 
   friend std::ostream &operator<<(std::ostream &, const Track &);
+ private:
+  XYDirection direction_;
+  int start_;
+  int n_tracks_;
+  int step_;
+
+  std::vector<std::string> layer_names_;
 };
 
 std::ostream &operator<<(std::ostream &, const Track &);

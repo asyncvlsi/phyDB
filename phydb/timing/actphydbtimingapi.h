@@ -185,13 +185,6 @@ class ActPhyDBTimingAPI {
   void SetGetViolatedTimingConstraintsCB(
       void (*callback_function)(std::vector<int> &)
   );
-  void SetGetWitnessCB(
-      void (*callback_function)(
-          int timing_constraint_id,
-          std::vector<ActEdge> &fast_path,
-          std::vector<ActEdge> &slow_path
-      )
-  );
   void SetGetSlowWitnessCB(
       void (*callback_function)(
           int timing_constraint_id,
@@ -288,11 +281,6 @@ class ActPhyDBTimingAPI {
   void (*UpdateTimingIncrementalCB)() = nullptr;
   std::vector<double> (*GetSlackCB)(const std::vector<int> &) = nullptr;
   void (*GetViolatedTimingConstraintsCB)(std::vector<int> &) = nullptr;
-  void (*GetWitnessCB)(
-      int,
-      std::vector<ActEdge> &,
-      std::vector<ActEdge> &
-  ) = nullptr;
   void (*GetSlowWitnessCB)(
       int timing_constraint_id,
       std::vector<ActEdge> &path

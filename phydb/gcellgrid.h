@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_GCELLGRID_H_
 #define PHYDB_GCELLGRID_H_
 
@@ -28,16 +27,17 @@
 namespace phydb {
 
 class GcellGrid {
- private:
-  XYDirection direction_;
-  int start_;
-  int numBoundaries_;
-  int step_;
-
  public:
-  GcellGrid() : start_(0), numBoundaries_(0), step_(0) {}
-  GcellGrid(XYDirection direction, int start, int numBoundaries, int step) :
-      direction_(direction),
+  GcellGrid() :
+      start_(0),
+      numBoundaries_(0),
+      step_(0) {}
+  GcellGrid(
+      XYDirection direction,
+      int start,
+      int numBoundaries,
+      int step
+  ) : direction_(direction),
       start_(start),
       numBoundaries_(numBoundaries),
       step_(step) {}
@@ -55,6 +55,11 @@ class GcellGrid {
   void Report() const;
 
   friend std::ostream &operator<<(std::ostream &, const GcellGrid &);
+ private:
+  XYDirection direction_;
+  int start_;
+  int numBoundaries_;
+  int step_;
 
 };
 

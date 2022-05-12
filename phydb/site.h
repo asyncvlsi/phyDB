@@ -18,27 +18,29 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_SITE_H_
 #define PHYDB_SITE_H_
+
+#include <string>
 
 #include "phydb/common/logging.h"
 
 namespace phydb {
 
 class Site {
- private:
-  std::string name_;
-  std::string class_name_;
-  double width_;
-  double height_;
-
  public:
-  Site() : name_(""), class_name_(""), width_(0), height_(0) {}
-  Site(std::string name, std::string className, double width, double height) :
-      name_(name), class_name_(className), width_(width), height_(height) {}
+  Site() = default;
+  Site(
+      std::string const &name,
+      std::string const &className,
+      double width,
+      double height
+  ) : name_(name),
+      class_name_(className),
+      width_(width),
+      height_(height) {}
 
-  void SetName(std::string const&);
+  void SetName(std::string const &);
   void SetClassName(std::string const &);
   void SetWidth(double);
   void SetHeight(double);
@@ -47,7 +49,11 @@ class Site {
   std::string GetClassName() const;
   double GetWidth() const;
   double GetHeight() const;
-
+ private:
+  std::string name_;
+  std::string class_name_;
+  double width_ = 0;
+  double height_ = 0;
 };
 
 std::ostream &operator<<(std::ostream &, const Site &);

@@ -21,34 +21,36 @@
 #ifndef PHYDB_CLUSTERCOL_H_
 #define PHYDB_CLUSTERCOL_H_
 
-#include "phydb/common/logging.h"
+#include <string>
+#include <vector>
 
 namespace phydb {
 
 class ClusterCol {
- private:
-  std::string name_;
-  std::string bot_signal_;
-  int lx_;
-  int ux_;
-  std::vector<int> ly_;
-  std::vector<int> uy_;
-
  public:
   ClusterCol() : lx_(0), ux_(0) {}
-  ClusterCol(std::string name, std::string bot_signal) :
-      name_(name), bot_signal_(bot_signal) {}
-  ClusterCol(std::string name, std::string bot_signal, int lx, int ux) :
-      name_(name), bot_signal_(bot_signal), lx_(lx), ux_(ux) {}
   ClusterCol(
-      std::string name,
-      std::string bot_signal,
+      std::string const &name,
+      std::string const &bot_signal
+  ) : name_(name),
+      bot_signal_(bot_signal) {}
+  ClusterCol(
+      std::string const &name,
+      std::string const &bot_signal,
+      int lx,
+      int ux
+  ) : name_(name),
+      bot_signal_(bot_signal),
+      lx_(lx),
+      ux_(ux) {}
+  ClusterCol(
+      std::string const &name,
+      std::string const &bot_signal,
       int lx,
       int ux,
-      std::vector<int> ly,
-      std::vector<int> uy
-  ) :
-      name_(name),
+      std::vector<int> &ly,
+      std::vector<int> &uy
+  ) : name_(name),
       bot_signal_(bot_signal),
       lx_(lx),
       ux_(ux),
@@ -70,7 +72,13 @@ class ClusterCol {
   std::vector<int> &GetUY();
 
   void Report();
-
+ private:
+  std::string name_;
+  std::string bot_signal_;
+  int lx_;
+  int ux_;
+  std::vector<int> ly_;
+  std::vector<int> uy_;
 };
 
 }

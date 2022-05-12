@@ -22,16 +22,13 @@
 #define PHYDB_LEFVIA_H_
 
 #include <string>
+#include <vector>
 
 #include "datatype.h"
 
 namespace phydb {
 
 class LefVia {
- private:
-  std::string name_;
-  bool is_default_;
-  std::vector<LayerRect> layer_rects_;
  public:
   LefVia() : is_default_(false) {}
   explicit LefVia(std::string const &name) : name_(name) {}
@@ -51,6 +48,10 @@ class LefVia {
   std::vector<LayerRect> &GetLayerRectsRef();
 
   void Report();
+ private:
+  std::string name_;
+  bool is_default_;
+  std::vector<LayerRect> layer_rects_;
 };
 
 }

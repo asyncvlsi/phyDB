@@ -61,9 +61,11 @@ Pin *Macro::AddPin(
     SignalDirection direction,
     SignalUse use
 ) {
-  PhyDBExpects(!IsPinExisting(pin_name),
-               "Pin " + pin_name + " exists in Macro " + GetName()
-                   + ", cannot add it again");
+  PhyDBExpects(
+      !IsPinExisting(pin_name),
+      "Pin " << pin_name << " exists in Macro " << name_
+             << ", cannot add it again"
+  );
   int id = (int) pins_.size();
   pin_2_id_[pin_name] = id;
   pins_.emplace_back(pin_name, direction, use);
@@ -134,7 +136,7 @@ std::ostream &operator<<(std::ostream &os, const Macro &macro) {
   os << macro.origin_ << std::endl;
   os << macro.size_ << std::endl;
 
-  for (auto &p: macro.pins_) {
+  for (auto &p : macro.pins_) {
     os << p << std::endl;
   }
   os << macro.obs_ << std::endl;
@@ -182,11 +184,13 @@ Rect2D<double> *MacroWell::GetPwellRectPtr() {
 }
 
 // Set the rect_ of N or P well
-void MacroWell::SetWellRect(bool is_n,
-                            double lx,
-                            double ly,
-                            double ux,
-                            double uy) {
+void MacroWell::SetWellRect(
+    bool is_n,
+    double lx,
+    double ly,
+    double ux,
+    double uy
+) {
   if (is_n) {
     SetNwellRect(lx, ly, ux, uy);
   } else {

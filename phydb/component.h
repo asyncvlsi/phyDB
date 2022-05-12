@@ -18,13 +18,11 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_COMPONENT_H_
 #define PHYDB_COMPONENT_H_
 
 #include "datatype.h"
 #include "enumtypes.h"
-#include "phydb/common/logging.h"
 #include "macro.h"
 
 namespace phydb {

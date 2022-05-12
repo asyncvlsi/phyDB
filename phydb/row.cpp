@@ -24,10 +24,11 @@
 namespace phydb {
 
 std::ostream &operator<<(std::ostream &os, const Row &r) {
-  os << r.name_ << " " << r.site_name_ << " " << r.site_orient_ << "\n";
-  os << "orig: " << r.orig_x_ << ", " << r.orig_y_ << "\n";
-  os << "num: " << r.num_x_ << ", " << r.num_y_ << "\n";
-  os << "step: " << r.step_x_ << ", " << r.step_y_ << "\n";
+  os << r.GetName() << " " << r.GetSiteName() << " "
+     << r.GetSiteOrientation() << "\n"
+     << "orig: " << r.GetOriginX() << ", " << r.GetOriginY() << "\n"
+     << "num: " << r.GetNumX() << ", " << r.GetNumY() << "\n"
+     << "step: " << r.GetStepX() << ", " << r.GetStepY() << "\n";
   return os;
 }
 

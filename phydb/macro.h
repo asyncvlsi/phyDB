@@ -21,6 +21,7 @@
 #ifndef PHYDB_MACRO_H_
 #define PHYDB_MACRO_H_
 
+#include <string>
 #include <unordered_map>
 
 #include "datatype.h"
@@ -34,23 +35,9 @@ class Macro;
 struct MacroWell;
 
 class Macro {
- private:
-  std::string name_;
-
-  MacroClass class_ = MacroClass::CORE;
-
-  Point2D<double> origin_;
-  Point2D<double> size_;
-
-  std::vector<Pin> pins_;
-  OBS obs_;
-
-  std::unordered_map<std::string, int> pin_2_id_;
-  MacroWell *well_ptr_ = nullptr;
-
  public:
   Macro() : name_("") {}
-  Macro(std::string const &name) : name_(name) {
+  explicit Macro(std::string const &name) : name_(name) {
     size_.x = 0;
     size_.y = 0;
     origin_.x = 0;
@@ -109,18 +96,24 @@ class Macro {
   MacroWell *GetWellPtr();
 
   friend std::ostream &operator<<(std::ostream &, const Macro &);
+ private:
+  std::string name_;
+
+  MacroClass class_ = MacroClass::CORE;
+
+  Point2D<double> origin_;
+  Point2D<double> size_;
+
+  std::vector<Pin> pins_;
+  OBS obs_;
+
+  std::unordered_map<std::string, int> pin_2_id_;
+  MacroWell *well_ptr_ = nullptr;
 };
 
 std::ostream &operator<<(std::ostream &, const Macro &);
 
 struct MacroWell {
- private:
-  Macro *macro_ptr_; // pointer to BlockType
-  bool is_n_set_ = false; // whether N-well shape_ is Set or not
-  bool is_p_set_ = false; // whether P-well shape_ is Set or not
-  Rect2D<double> n_rect_; // N-well rect_
-  Rect2D<double> p_rect_; // P-well rect_
-  double p_n_edge_ = 0; // cached N/P-well boundary
  public:
   explicit MacroWell(Macro *type_ptr) : macro_ptr_(type_ptr) {}
 
@@ -133,6 +126,13 @@ struct MacroWell {
   void SetWellShape(bool is_n, Rect2D<double> &rect);
   bool IsNPWellAbutted() const;
   void Report() const;
+ private:
+  Macro *macro_ptr_; // pointer to BlockType
+  bool is_n_set_ = false; // whether N-well shape_ is Set or not
+  bool is_p_set_ = false; // whether P-well shape_ is Set or not
+  Rect2D<double> n_rect_; // N-well rect_
+  Rect2D<double> p_rect_; // P-well rect_
+  double p_n_edge_ = 0; // cached N/P-well boundary
 };
 
 }

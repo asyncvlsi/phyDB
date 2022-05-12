@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_CORNERSPACING_H_
 #define PHYDB_CORNERSPACING_H_
 
@@ -27,19 +26,14 @@
 namespace phydb {
 
 class CornerSpacing {
- private:
-  double eol_width_;
-  std::vector<double> width_;
-  std::vector<double> spacing_;
-
  public:
-  CornerSpacing() : eol_width_(0) {}
+  CornerSpacing() = default;
 
   //constructor for metal layer
   CornerSpacing(
       double eolWidth,
-      std::vector<double> width,
-      std::vector<double> spacing
+      std::vector<double> &width,
+      std::vector<double> &spacing
   ) : eol_width_(eolWidth),
       width_(width),
       spacing_(spacing) {}
@@ -54,6 +48,10 @@ class CornerSpacing {
   std::vector<double> GetSpacing() { return spacing_;}
 
   void Reset();
+ private:
+  double eol_width_ = 0;
+  std::vector<double> width_;
+  std::vector<double> spacing_;
 };
 
 std::ostream &operator<<(std::ostream &, const CornerSpacing &);

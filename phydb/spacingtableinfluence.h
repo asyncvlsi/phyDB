@@ -18,22 +18,21 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_SPACINGTABLEINFLUENCE_H
 #define PHYDB_SPACINGTABLEINFLUENCE_H
 
 namespace phydb {
 
 class SpacingTableInfluence {
- private:
-  double width_;
-  double within_;
-  double spacing_;
-
  public:
   SpacingTableInfluence() {}
-  SpacingTableInfluence(double width, double within, double spacing) :
-      width_(width), within_(within), spacing_(spacing) {}
+  SpacingTableInfluence(
+      double width,
+      double within,
+      double spacing
+  ) : width_(width),
+      within_(within),
+      spacing_(spacing) {}
 
   void SetWidth(double);
   void SetWithin(double);
@@ -44,7 +43,10 @@ class SpacingTableInfluence {
   double GetSpacing() const;
 
   void Report() const;
-
+ private:
+  double width_;
+  double within_;
+  double spacing_;
 };
 
 }

@@ -220,16 +220,6 @@ void ActPhyDBTimingAPI::SetGetViolatedTimingConstraintsCB(
   GetViolatedTimingConstraintsCB = callback_function;
 }
 
-void ActPhyDBTimingAPI::SetGetWitnessCB(
-    void (*callback_function)(
-        int,
-        std::vector<ActEdge> &,
-        std::vector<ActEdge> &
-    )
-) {
-  GetWitnessCB = callback_function;
-}
-
 void ActPhyDBTimingAPI::SetGetSlowWitnessCB(
     void (*callback_function)(
         int timing_constraint_id,
@@ -361,28 +351,6 @@ galois::eda::parasitics::Node *ActPhyDBTimingAPI::PhyDBPinToSpefNode(PhydbPin ph
   auto node = para_manager_->findPin(act_pin);
   PhyDBExpects(node != nullptr, "Cannot map ACT pin to SPEF node?");
   return node;
-}
-
-void ActPhyDBTimingAPI::GetWitness(
-    int tc_num,
-    PhydbPath &phydb_fast_path,
-    PhydbPath &phydb_slow_path
-) {
-
-  std::cout
-      << "\033[0;34m"
-      << "WARNING:" << "\n"
-      << "    " << __FUNCTION__ << " will be removed after April 1st, 2022"
-      << "\033[0m" << std::endl;
-  PhyDBExpects(GetWitnessCB != nullptr,
-               "Callback function for GetWitness() is not set");
-  std::vector<ActEdge> act_fast_path;
-  std::vector<ActEdge> act_slow_path;
-
-  GetWitnessCB(tc_num, act_fast_path, act_slow_path);
-
-  TranslateActPathToPhydbPath(act_fast_path, phydb_fast_path);
-  TranslateActPathToPhydbPath(act_slow_path, phydb_slow_path);
 }
 
 void ActPhyDBTimingAPI::GetSlowWitness(

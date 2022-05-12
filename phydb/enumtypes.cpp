@@ -27,14 +27,13 @@
 namespace phydb {
 
 LayerType StrToLayerType(std::string const &str_layer_type) {
-  LayerType layer_type = phydb::LayerType::ROUTING;
+  LayerType layer_type;
   if (str_layer_type == "ROUTING") {
     layer_type = phydb::LayerType::ROUTING;
   } else if (str_layer_type == "CUT") {
     layer_type = phydb::LayerType::CUT;
   } else {
-    std::cout << "Unknown LayerType: " << str_layer_type << std::endl;
-    exit(1);
+    PhyDBExpects(false, "Unknown LayerType: " << str_layer_type);
   }
   return layer_type;
 }
@@ -47,15 +46,14 @@ std::string LayerTypeStr(LayerType layer_type) {
     case phydb::LayerType::CUT: { s = "CUT"; }
       break;
     default: {
-      std::cout << "LayerType error! This should never happen!" << std::endl;
-      exit(1);
+      PhyDBExpects(false, "LayerType error! This should never happen!");
     }
   }
   return s;
 }
 
 MetalDirection StrToMetalDirection(std::string const &str_metal_direction) {
-  MetalDirection metal_direction = phydb::MetalDirection::HORIZONTAL;
+  MetalDirection metal_direction;
   if (str_metal_direction == "HORIZONTAL") {
     metal_direction = phydb::MetalDirection::HORIZONTAL;
   } else if (str_metal_direction == "VERTICAL") {
@@ -65,9 +63,10 @@ MetalDirection StrToMetalDirection(std::string const &str_metal_direction) {
   } else if (str_metal_direction == "DIAG135") {
     metal_direction = phydb::MetalDirection::DIAG135;
   } else {
-    std::cout << "Unknown MetalLayer direction: " << str_metal_direction
-              << std::endl;
-    exit(1);
+    PhyDBExpects(
+        false,
+        "Unknown MetalLayer direction: " << str_metal_direction
+    );
   }
   return metal_direction;
 }
@@ -84,23 +83,26 @@ std::string MetalDirectionStr(MetalDirection metal_direction) {
     case phydb::MetalDirection::DIAG135: { s = "DIAG135"; }
       break;
     default: {
-      std::cout << "MetalLayer direction error! This should never happen!"
-                << std::endl;
-      exit(1);
+      PhyDBExpects(
+          false,
+          "MetalLayer direction error! This should never happen!"
+      );
     }
   }
   return s;
 }
 
 XYDirection StrToXYDirection(std::string const &direction) {
-  XYDirection dir = XYDirection::X;
+  XYDirection dir;
   if (direction == "X")
     dir = XYDirection::X;
   else if (direction == "Y")
     dir = XYDirection::Y;
   else {
-    std::cout << "unknown XYdirection: " << direction << std::endl;
-    exit(1);
+    PhyDBExpects(
+        false,
+        "Unknown XYdirection: " << direction
+    );
   }
   return dir;
 }
@@ -117,15 +119,14 @@ std::string XYDirectionStr(XYDirection dir) {
       break;
     }
     default: {
-      std::cout << "unknown XYdirection " << std::endl;
-      exit(1);
+      PhyDBExpects(false, "Unknown XYdirection");
     }
   }
   return direction;
 }
 
 CompOrient StrToCompOrient(std::string const &str_orient) {
-  CompOrient orient = CompOrient::N;
+  CompOrient orient;
   if (str_orient == "N" || str_orient == "R0") {
     orient = CompOrient::N;
   } else if (str_orient == "S" || str_orient == "R180") {
@@ -145,8 +146,7 @@ CompOrient StrToCompOrient(std::string const &str_orient) {
       || str_orient == "MYR90") {
     orient = CompOrient::FE;
   } else {
-    std::cout << "Unknown Block orientation: " << str_orient << std::endl;
-    exit(1);
+    PhyDBExpects(false, "Unknown Block orientation: " << str_orient);
   }
   return orient;
 }
@@ -171,9 +171,7 @@ std::string CompOrientStr(CompOrient orient) {
     case CompOrient::FE: { s = "FE"; }
       break;
     default: {
-      std::cout << "Block orientation error! This should never happen!"
-                << std::endl;
-      exit(1);
+      PhyDBExpects(false, "Block orientation error! This should never happen!");
     }
   }
   return s;
@@ -191,7 +189,6 @@ CompSource StrToCompSource(std::string const &str_comp_source) {
   } else {
     PhyDBExpects(false, "Unknown component source");
   }
-  return CompSource::NETLIST;
 }
 
 std::string CompSourceStr(CompSource comp_source) {
@@ -213,7 +210,7 @@ std::string CompSourceStr(CompSource comp_source) {
 }
 
 PlaceStatus StrToPlaceStatus(std::string const &str_place_status) {
-  PlaceStatus place_status = PlaceStatus::UNPLACED;
+  PlaceStatus place_status;
   if (str_place_status == "COVER") {
     place_status = PlaceStatus::COVER;
   } else if (str_place_status == "FIXED" || str_place_status == "LOCKED"
@@ -224,8 +221,7 @@ PlaceStatus StrToPlaceStatus(std::string const &str_place_status) {
   } else if (str_place_status == "UNPLACED" || str_place_status == "NONE") {
     place_status = PlaceStatus::UNPLACED;
   } else {
-    std::cout << "Unknown placement status: " << str_place_status << std::endl;
-    exit(1);
+    PhyDBExpects(false, "Unknown placement status: " << str_place_status);
   }
   return place_status;
 }
@@ -242,16 +238,14 @@ std::string PlaceStatusStr(PlaceStatus place_status) {
     case PlaceStatus::UNPLACED: { s = "UNPLACED"; }
       break;
     default: {
-      std::cout << "Unit placement state error! This should never happen!"
-                << std::endl;
-      exit(1);
+      PhyDBExpects(false, "Unit placement state error!");
     }
   }
   return s;
 }
 
 SignalDirection StrToSignalDirection(std::string const &str_signal_direction) {
-  SignalDirection signal_direction = SignalDirection::INPUT;
+  SignalDirection signal_direction;
   if (str_signal_direction == "INPUT") {
     signal_direction = SignalDirection::INPUT;
   } else if (str_signal_direction == "OUTPUT") {
@@ -263,9 +257,7 @@ SignalDirection StrToSignalDirection(std::string const &str_signal_direction) {
   } else if (str_signal_direction == "OUTPUT TRISTATE") {
     signal_direction = SignalDirection::OUTPUT_TRISTATE;
   } else {
-    std::cout << "Unknown SignalDirection: " << str_signal_direction
-              << std::endl;
-    exit(0);
+    PhyDBExpects(false, "Unknown SignalDirection: " << str_signal_direction);
   }
   return signal_direction;
 }
@@ -284,16 +276,14 @@ std::string SignalDirectionStr(SignalDirection signal_direction) {
     case SignalDirection::OUTPUT_TRISTATE: { s = "OUTPUT TRISTATE"; }
       break;
     default: {
-      std::cout << "IOPIN signal direction error! This should never happen!"
-                << std::endl;
-      exit(1);
+      PhyDBExpects(false, "IOPIN signal direction error!");
     }
   }
   return s;
 }
 
 SignalUse StrToSignalUse(std::string const &str_signal_use) {
-  SignalUse signal_use = SignalUse::SIGNAL;
+  SignalUse signal_use;
   if (str_signal_use == "SIGNAL") {
     signal_use = SignalUse::SIGNAL;
   } else if (str_signal_use == "POWER") {
@@ -311,8 +301,7 @@ SignalUse StrToSignalUse(std::string const &str_signal_use) {
   } else if (str_signal_use == "RESET") {
     signal_use = SignalUse::RESET;
   } else {
-    std::cout << "Unknown SignalUse: " << str_signal_use << std::endl;
-    exit(0);
+    PhyDBExpects(false, "Unknown SignalUse: " << str_signal_use);
   }
   return signal_use;
 }
@@ -337,9 +326,7 @@ std::string SignalUseStr(SignalUse signal_use) {
     case SignalUse::RESET: { s = "RESET"; }
       break;
     default: {
-      std::cout << "IOPIN signal use error! This should never happen!"
-                << std::endl;
-      exit(1);
+      PhyDBExpects(false, "IOPIN signal use error!");
     }
   }
   return s;
@@ -400,8 +387,7 @@ MacroClass StrToMacroClass(std::string const &str_macro_class) {
   } else if (str_macro_class == "ENDCAP BOTTOMRIGHT") {
     macro_class = MacroClass::ENDCAP_BOTTOMRIGHT;
   } else {
-    std::cout << "Unknown MacroClass: " << str_macro_class << std::endl;
-    exit(0);
+    PhyDBExpects(false, "Unknown MacroClass: " << str_macro_class);
   }
   return macro_class;
 }
@@ -462,9 +448,7 @@ std::string MacroClassStr(MacroClass macro_class) {
     case MacroClass::ENDCAP_BOTTOMRIGHT: { s = "ENDCAP BOTTOMRIGHT"; }
       break;
     default: {
-      std::cout << "IOPIN signal use error! This should never happen!"
-                << std::endl;
-      exit(1);
+      PhyDBExpects(false, "IOPIN signal use error!");
     }
   }
   return s;

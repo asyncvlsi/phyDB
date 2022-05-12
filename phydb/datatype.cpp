@@ -25,9 +25,10 @@
 namespace phydb {
 
 std::ostream &operator<<(std::ostream &os, const LayerRect &lr) {
-  os << lr.layer_name_ << std::endl;
-  for (auto rect: lr.rects_)
-    os << rect << std::endl;
+  os << lr.layer_name_ << "\n";
+  for (auto rect : lr.rects_) {
+    os << rect << "\n";
+  }
   return os;
 }
 
@@ -40,13 +41,15 @@ std::vector<Rect2D<double>> &LayerRect::GetRects() {
 }
 
 Rect2D<double> LayerRect::GetBoundingBox() {
-  PhyDBExpects(!rects_.empty(),
-               "Compute bounding box for 0 rects?");
+  PhyDBExpects(
+      !rects_.empty(),
+      "Compute bounding box for 0 rects?"
+  );
   double min_x = DBL_MAX;
   double min_y = DBL_MAX;
   double max_x = -DBL_MAX;
   double max_y = -DBL_MAX;
-  for (auto &rect: rects_) {
+  for (auto &rect : rects_) {
     min_x = std::min(min_x, rect.LLX());
     min_y = std::min(min_y, rect.LLY());
     max_x = std::max(max_x, rect.URX());
@@ -63,7 +66,7 @@ void LayerRect::Reset() {
 
 void LayerRect::Report() {
   std::cout << "Name: " << layer_name_ << "\n";
-  for (auto &rect_2d: rects_) {
+  for (auto &rect_2d : rects_) {
     std::cout << "  " << rect_2d.ll.Str() << " " << rect_2d.ur.Str() << "\n";
   }
 }

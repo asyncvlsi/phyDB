@@ -22,7 +22,7 @@
 
 namespace phydb {
 
-void Polygon::SetLayerName(std::string layer_name) {
+void Polygon::SetLayerName(std::string const &layer_name) {
   layer_name_ = layer_name;
 }
 
