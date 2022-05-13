@@ -138,6 +138,42 @@ enum class MacroClass {
 MacroClass StrToMacroClass(std::string const &str_macro_class);
 std::string MacroClassStr(MacroClass macro_class);
 
+enum class SiteClass {
+  PAD = 0,
+  CORE = 1
+};
+SiteClass StrToSiteClass(std::string const &str_site_class);
+std::string SiteClassStr(SiteClass site_class);
+
+class Symmetry {
+ public:
+  Symmetry() = default;
+  Symmetry(
+      bool x_symmetry,
+      bool y_symmetry,
+      bool r90_symmetry
+  ) : x_symmetry_(x_symmetry),
+      y_symmetry_(y_symmetry),
+      r90_symmetry_(r90_symmetry) {}
+
+  void SetXSymmetry(bool x_symmetry) { x_symmetry_ = x_symmetry; }
+  void SetYSymmetry(bool y_symmetry) { y_symmetry_ = y_symmetry; }
+  void SetR90Symmetry(bool r90_symmetry) { r90_symmetry_ = r90_symmetry; }
+  void Set(bool x, bool y, bool r90) {
+    x_symmetry_ = x;
+    y_symmetry_ = y;
+    r90_symmetry_ = r90;
+  }
+  bool GetXSymmetry() const { return x_symmetry_; }
+  bool GetYSymmetry() const { return y_symmetry_; }
+  bool GetR90Symmetry() const { return r90_symmetry_; }
+  std::string Str() const;
+ private:
+  bool x_symmetry_ = false;
+  bool y_symmetry_ = false;
+  bool r90_symmetry_ = false;
+};
+
 }
 
 #endif //PHYDB_ENUMTYPES_H_

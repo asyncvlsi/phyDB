@@ -46,12 +46,14 @@ class Tech {
   int GetDatabaseMicron() const;
   void SetManufacturingGrid(double manufacture_grid);
   double GetManufacturingGrid() const;
-  void AddSite(
-      std::string const &name,
-      std::string const &class_name,
+  bool IsSiteExisting(std::string const &site_name);
+  Site *AddSite(
+      std::string const &site_name,
+      const std::string &class_name,
       double width,
       double height
   );
+  int GetSiteId(std::string const &site_name);
   std::vector<Site> &GetSitesRef();
   void SetPlacementGrids(
       double placement_grid_value_x,
@@ -70,7 +72,7 @@ class Tech {
   );
   Layer *GetLayerPtr(std::string const &layer_name);
   int GetLayerId(std::string const &layer_name);
-  const std::string &GetLayerName(int layerID);
+  const std::string &GetLayerName(int layer_id);
   std::vector<Layer> &GetLayersRef();
   std::vector<Layer *> &GetMetalLayersRef();
 
@@ -162,6 +164,7 @@ class Tech {
   std::vector<ViaRuleGenerate> via_rule_generates_;
 
   std::unordered_map<std::string, int> layer_2_id_;
+  std::unordered_map<std::string, int> site_2_id_;
   std::unordered_map<std::string, Macro *> macro_2_ptr_;
   std::unordered_map<std::string, int> via_2_id_;
   std::unordered_map<std::string, int> via_rule_generate_2_id_;

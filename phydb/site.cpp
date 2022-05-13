@@ -27,8 +27,8 @@ void Site::SetName(std::string const &name) {
   name_ = name;
 }
 
-void Site::SetClassName(std::string const &className) {
-  class_name_ = className;
+void Site::SetClass(SiteClass site_class) {
+  site_class_ = site_class;
 }
 
 void Site::SetWidth(double width) {
@@ -39,12 +39,16 @@ void Site::SetHeight(double height) {
   height_ = height;
 }
 
-std::string Site::GetName() const {
+void Site::SetSymmetry(bool x, bool y, bool r90) {
+  symmetry_.Set(x, y, r90);
+}
+
+const std::string &Site::GetName() const {
   return name_;
 }
 
-std::string Site::GetClassName() const {
-  return class_name_;
+SiteClass Site::GetClass() const {
+  return site_class_;
 }
 
 double Site::GetWidth() const {
@@ -55,9 +59,16 @@ double Site::GetHeight() const {
   return height_;
 }
 
+Symmetry Site::GetSymmetry() const {
+  return symmetry_;
+}
+
 std::ostream &operator<<(std::ostream &os, const Site &s) {
-  os << s.GetName() << " " << s.GetClassName() << "\n";
-  os << s.GetWidth() << " " << s.GetHeight() << "\n";
+  os << s.GetName() << " "
+     << SiteClassStr(s.GetClass()) << "\n"
+     << s.GetSymmetry().Str() << "\n"
+     << s.GetWidth() << " "
+     << s.GetHeight() << "\n";
   return os;
 
 }

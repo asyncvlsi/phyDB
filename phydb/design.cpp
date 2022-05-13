@@ -97,8 +97,8 @@ bool Design::IsRowExisting(std::string const &row_name) {
 
 Row *Design::AddRow(
     std::string const &name,
-    std::string const &site_name,
-    std::string const &site_orient,
+    int site_id,
+    CompOrient orient,
     int origX,
     int origY,
     int numX,
@@ -107,12 +107,14 @@ Row *Design::AddRow(
     int stepY
 ) {
   size_t id = rows_.size();
-  PhyDBExpects(!IsRowExisting(name),
-               name + " row name_ exists, cannot use it again");
+  PhyDBExpects(
+      !IsRowExisting(name),
+      name + " row name_ exists, cannot use it again"
+  );
   rows_.emplace_back(
       name,
-      site_name,
-      site_orient,
+      site_id,
+      orient,
       origX,
       origY,
       numX,
@@ -147,12 +149,13 @@ Component *Design::AddComponent(
     CompOrient orient,
     CompSource source
 ) {
-  PhyDBExpects(!IsComponentExisting(comp_name),
-               "Component name_ exists, cannot use it again");
+  PhyDBExpects(
+      !IsComponentExisting(comp_name),
+      "Component name_ exists, cannot use it again"
+  );
   int id = static_cast<int>(components_.size());
   components_.emplace_back(
-      id,
-      comp_name,
+      id, comp_name,
       macro_ptr,
       source,
       place_status,

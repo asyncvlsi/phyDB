@@ -24,8 +24,8 @@
 namespace phydb {
 
 std::ostream &operator<<(std::ostream &os, const Row &r) {
-  os << r.GetName() << " " << r.GetSiteName() << " "
-     << r.GetSiteOrientation() << "\n"
+  os << r.GetName() << " " << r.GetSiteId() << " "
+     << CompOrientStr(r.GetOrient()) << "\n"
      << "orig: " << r.GetOriginX() << ", " << r.GetOriginY() << "\n"
      << "num: " << r.GetNumX() << ", " << r.GetNumY() << "\n"
      << "step: " << r.GetStepX() << ", " << r.GetStepY() << "\n";

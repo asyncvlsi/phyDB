@@ -64,8 +64,8 @@ class Design {
   bool IsRowExisting(std::string const &row_name);
   Row *AddRow(
       std::string const &name,
-      std::string const &site_name,
-      std::string const &site_orient,
+      int site_id,
+      CompOrient orient,
       int origX,
       int origY,
       int numX,

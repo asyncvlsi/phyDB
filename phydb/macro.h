@@ -62,6 +62,7 @@ class Macro {
   void SetOrigin(double x, double y);
   void SetSize(Point2D<double> size);
   void SetSize(double width, double height);
+  void SetSymmetry(bool x, bool y, bool r90);
 
   // APIs for adding PINs to this MACRO
   bool IsPinExisting(std::string const &pin_name);
@@ -88,6 +89,7 @@ class Macro {
   Point2D<double> GetSize() const;
   double GetWidth() const;
   double GetHeight() const;
+  Symmetry GetSymmetry() const;
   std::vector<Pin> GetPinVec() const;
   std::vector<Pin> &GetPinsRef();
   bool GetPin(std::string const pinName, Pin &pin) const; // TODO: what is this?
@@ -98,12 +100,10 @@ class Macro {
   friend std::ostream &operator<<(std::ostream &, const Macro &);
  private:
   std::string name_;
-
   MacroClass class_ = MacroClass::CORE;
-
   Point2D<double> origin_;
   Point2D<double> size_;
-
+  Symmetry symmetry_;
   std::vector<Pin> pins_;
   OBS obs_;
 

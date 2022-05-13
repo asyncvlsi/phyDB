@@ -23,6 +23,7 @@
 
 #include <string>
 
+#include "enumtypes.h"
 #include "phydb/common/logging.h"
 
 namespace phydb {
@@ -32,8 +33,8 @@ class Row {
   Row() = default;
   Row(
       std::string const &name,
-      std::string const &siteName,
-      std::string const &siteOrient,
+      int site_id,
+      CompOrient orient,
       int origX,
       int origY,
       int numX,
@@ -42,8 +43,8 @@ class Row {
       int stepY
   ) :
       name_(name),
-      site_name_(siteName),
-      site_orient_(siteOrient),
+      site_id_(site_id),
+      orient_(orient),
       orig_x_(origX),
       orig_y_(origY),
       num_x_(numX),
@@ -52,8 +53,8 @@ class Row {
       step_y_(stepY) {}
 
   const std::string &GetName() const { return name_; }
-  const std::string &GetSiteName() const { return site_name_; }
-  const std::string &GetSiteOrientation() const { return site_orient_; };
+  int GetSiteId() const { return site_id_; }
+  CompOrient GetOrient() const { return orient_; };
   int GetOriginX() const { return orig_x_; }
   int GetOriginY() const { return orig_y_; }
   int GetNumX() const { return num_x_; }
@@ -62,8 +63,8 @@ class Row {
   int GetStepY() const { return step_y_; }
  private:
   std::string name_;
-  std::string site_name_;
-  std::string site_orient_;
+  int site_id_;
+  CompOrient orient_;
   int orig_x_;
   int orig_y_;
   int num_x_;

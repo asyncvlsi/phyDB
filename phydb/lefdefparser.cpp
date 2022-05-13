@@ -38,11 +38,16 @@ int getLefSite(lefrCallbackType_e type, lefiSite *site, lefiUserData data) {
     if (site->hasClass()) {
       site_class_name = std::string(site->siteClass());
     }
-    phy_db_ptr->AddSite(
+    Site *phydb_site = phy_db_ptr->AddSite(
         site_name,
         site_class_name,
         site->sizeX(),
         site->sizeY()
+    );
+    phydb_site->SetSymmetry(
+        site->hasXSymmetry(),
+        site->hasYSymmetry(),
+        site->has90Symmetry()
     );
   } else {
     PhyDBExpects(false, "SITE SIZE information not provided");
@@ -90,11 +95,15 @@ int getLefMacros(lefrCallbackType_e type, lefiMacro *macro, lefiUserData data) {
 
   auto *phy_db_ptr = (PhyDB *) data;
   //write to the last one
-  Macro &m = phy_db_ptr->GetTechPtr()->GetMacrosRef().back();
-  m.SetOrigin(originX, originY);
-  m.SetSize(sizeX, sizeY);
-  m.SetClass(macro_class);
-
+  Macro &phydb_macro = phy_db_ptr->GetTechPtr()->GetMacrosRef().back();
+  phydb_macro.SetOrigin(originX, originY);
+  phydb_macro.SetSize(sizeX, sizeY);
+  phydb_macro.SetClass(macro_class);
+  phydb_macro.SetSymmetry(
+      macro->hasXSymmetry(),
+      macro->hasYSymmetry(),
+      macro->has90Symmetry()
+  );
   return 0;
 }
 

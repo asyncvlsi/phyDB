@@ -46,7 +46,7 @@ std::string LayerTypeStr(LayerType layer_type) {
     case phydb::LayerType::CUT: { s = "CUT"; }
       break;
     default: {
-      PhyDBExpects(false, "LayerType error! This should never happen!");
+      PhyDBExpects(false, "LayerType value error! This should never happen!");
     }
   }
   return s;
@@ -85,7 +85,7 @@ std::string MetalDirectionStr(MetalDirection metal_direction) {
     default: {
       PhyDBExpects(
           false,
-          "MetalLayer direction error! This should never happen!"
+          "MetalDirection value error! This should never happen!"
       );
     }
   }
@@ -94,11 +94,11 @@ std::string MetalDirectionStr(MetalDirection metal_direction) {
 
 XYDirection StrToXYDirection(std::string const &direction) {
   XYDirection dir;
-  if (direction == "X")
+  if (direction == "X") {
     dir = XYDirection::X;
-  else if (direction == "Y")
+  } else if (direction == "Y") {
     dir = XYDirection::Y;
-  else {
+  } else {
     PhyDBExpects(
         false,
         "Unknown XYdirection: " << direction
@@ -110,16 +110,12 @@ XYDirection StrToXYDirection(std::string const &direction) {
 std::string XYDirectionStr(XYDirection dir) {
   std::string direction = "X";
   switch (dir) {
-    case XYDirection::X: {
-      direction = "X";
+    case XYDirection::X: { direction = "X"; }
       break;
-    }
-    case XYDirection::Y: {
-      direction = "Y";
+    case XYDirection::Y: { direction = "Y"; }
       break;
-    }
     default: {
-      PhyDBExpects(false, "Unknown XYdirection");
+      PhyDBExpects(false, "XYdirection value error! This should never happen!");
     }
   }
   return direction;
@@ -171,7 +167,7 @@ std::string CompOrientStr(CompOrient orient) {
     case CompOrient::FE: { s = "FE"; }
       break;
     default: {
-      PhyDBExpects(false, "Block orientation error! This should never happen!");
+      PhyDBExpects(false, "CompOrient value error! This should never happen!");
     }
   }
   return s;
@@ -203,7 +199,7 @@ std::string CompSourceStr(CompSource comp_source) {
     case CompSource::TIMING: { res = "TIMING"; }
       break;
     default: {
-      PhyDBExpects(false, "This should never happen");
+      PhyDBExpects(false, "CompSource value error! This should never happen");
     }
   }
   return res;
@@ -238,7 +234,10 @@ std::string PlaceStatusStr(PlaceStatus place_status) {
     case PlaceStatus::UNPLACED: { s = "UNPLACED"; }
       break;
     default: {
-      PhyDBExpects(false, "Unit placement state error!");
+      PhyDBExpects(
+          false,
+          "PlacementStatus value error! This should never happen!"
+      );
     }
   }
   return s;
@@ -276,7 +275,10 @@ std::string SignalDirectionStr(SignalDirection signal_direction) {
     case SignalDirection::OUTPUT_TRISTATE: { s = "OUTPUT TRISTATE"; }
       break;
     default: {
-      PhyDBExpects(false, "IOPIN signal direction error!");
+      PhyDBExpects(
+          false,
+          "SignalDirection value error! This should never happen!"
+      );
     }
   }
   return s;
@@ -326,7 +328,7 @@ std::string SignalUseStr(SignalUse signal_use) {
     case SignalUse::RESET: { s = "RESET"; }
       break;
     default: {
-      PhyDBExpects(false, "IOPIN signal use error!");
+      PhyDBExpects(false, "SignalUse value error! This should never happen!");
     }
   }
   return s;
@@ -448,10 +450,53 @@ std::string MacroClassStr(MacroClass macro_class) {
     case MacroClass::ENDCAP_BOTTOMRIGHT: { s = "ENDCAP BOTTOMRIGHT"; }
       break;
     default: {
-      PhyDBExpects(false, "IOPIN signal use error!");
+      PhyDBExpects(false, "MacroClass value error! This should never happen!");
     }
   }
   return s;
+}
+
+SiteClass StrToSiteClass(std::string const &str_site_class) {
+  SiteClass site_class;
+  if (str_site_class == "PAD") {
+    site_class = SiteClass::PAD;
+  } else if (str_site_class == "CORE") {
+    site_class = SiteClass::CORE;
+  } else {
+    PhyDBExpects(false, "Unknown SiteClass: " << str_site_class);
+  }
+  return site_class;
+}
+
+std::string SiteClassStr(SiteClass site_class) {
+  std::string s;
+  switch (site_class) {
+    case SiteClass::PAD: { s = "PAD"; }
+      break;
+    case SiteClass::CORE: { s = "CORE"; }
+      break;
+    default: {
+      PhyDBExpects(false, "SiteClass value error! This should never happen!");
+    }
+  }
+  return s;
+}
+
+std::string Symmetry::Str() const {
+  std::string res;
+  if (x_symmetry_) {
+    res = "X ";
+  }
+  if (y_symmetry_) {
+    res.append("Y ");
+  }
+  if (r90_symmetry_) {
+    res.append("R90 ");
+  }
+  if (!res.empty()) {
+    res.pop_back();
+  }
+  return res;
 }
 
 }

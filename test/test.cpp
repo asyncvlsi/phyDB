@@ -131,7 +131,7 @@ void test_layer() {
 }
 
 void test_site() {
-  Site s("AAA", "BBB", 0.1, 0.2);
+  Site s("AAA", SiteClass::CORE, 0.1, 0.2);
   std::cout << s << std::endl;
 
 }
@@ -141,11 +141,13 @@ void test_tech() {
   Tech tech;
   std::vector<Pin> pins;
   OBS obs;
-  Macro macro1("testMacro",
-               Point2D<double>(1.0, 2.0),
-               Point2D<double>(3.0, 4.0),
-               pins,
-               obs);
+  Macro macro1(
+      "testMacro",
+      Point2D<double>(1.0, 2.0),
+      Point2D<double>(3.0, 4.0),
+      pins,
+      obs
+  );
 
   std::string macro_name = "testMacro";
   tech.AddMacro(macro_name);

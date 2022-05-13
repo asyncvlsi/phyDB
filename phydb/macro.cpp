@@ -52,6 +52,10 @@ void Macro::SetSize(double width, double height) {
   size_.y = height;
 }
 
+void Macro::SetSymmetry(bool x, bool y, bool r90) {
+  symmetry_.Set(x, y, r90);
+}
+
 bool Macro::IsPinExisting(std::string const &pin_name) {
   return pin_2_id_.find(pin_name) != pin_2_id_.end();
 }
@@ -113,6 +117,10 @@ double Macro::GetWidth() const {
 
 double Macro::GetHeight() const {
   return size_.y;
+}
+
+Symmetry Macro::GetSymmetry() const {
+  return symmetry_;
 }
 
 Point2D<double> Macro::GetSize() const {

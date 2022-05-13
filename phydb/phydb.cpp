@@ -57,13 +57,21 @@ void PhyDB::SetManufacturingGrid(double manufacture_grid) {
   tech_.SetManufacturingGrid(manufacture_grid);
 }
 
-void PhyDB::AddSite(
+Site *PhyDB::AddSite(
     std::string const &name,
     std::string const &class_name,
     double width,
     double height
 ) {
-  tech_.AddSite(name, class_name, width, height);
+  return tech_.AddSite(name, class_name, width, height);
+}
+
+std::vector<Site> &PhyDB::GetSitesRef() {
+  return tech_.sites_;
+}
+
+Site &PhyDB::GetSite(int id) {
+  return tech_.sites_[id];
 }
 
 void PhyDB::SetPlacementGrids(
@@ -226,7 +234,7 @@ std::vector<Track> &PhyDB::GetTracksRef() {
 Row *PhyDB::AddRow(
     std::string const &name,
     std::string const &site_name,
-    std::string const &site_orient,
+    std::string const &row_orient,
     int origX,
     int origY,
     int numX,
@@ -234,10 +242,16 @@ Row *PhyDB::AddRow(
     int stepX,
     int stepY
 ) {
+  int site_id = tech_.GetSiteId(site_name);
+  PhyDBExpects(
+      site_id != -1,
+      "Site name is not in the database: " << site_name
+  );
+  CompOrient orient = StrToCompOrient(row_orient);
   return design_.AddRow(
       name,
-      site_name,
-      site_orient,
+      site_id,
+      orient,
       origX,
       origY,
       numX,

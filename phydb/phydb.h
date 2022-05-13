@@ -45,12 +45,14 @@ class PhyDB {
   * ************************************************/
   void SetDatabaseMicron(int database_micron);
   void SetManufacturingGrid(double manufacture_grid);
-  void AddSite(
+  Site *AddSite(
       std::string const &name,
       std::string const &class_name,
       double width,
       double height
   );
+  std::vector<Site> &GetSitesRef();
+  Site &GetSite(int id);
   void SetPlacementGrids(
       double placement_grid_value_x_,
       double placement_grid_value_y_
@@ -93,7 +95,7 @@ class PhyDB {
   Row *AddRow(
       std::string const &name,
       std::string const &site_name,
-      std::string const &site_orient,
+      std::string const &row_orient,
       int origX,
       int origY,
       int numX,

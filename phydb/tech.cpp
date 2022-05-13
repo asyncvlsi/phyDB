@@ -56,13 +56,14 @@ int Tech::GetDatabaseMicron() const {
 }
 
 void Tech::SetManufacturingGrid(double manufacture_grid) {
-  PhyDBExpects(manufacture_grid > 0,
-               "Cannot Set negative manufacturing grid: " << manufacture_grid);
+  PhyDBExpects(
+      manufacture_grid > 0,
+      "Cannot Set negative manufacturing grid: " << manufacture_grid
+  );
 
   if (manufacturing_grid_ > -1 && manufacture_grid != manufacturing_grid_) {
     std::cout << "Warning: changing MANUFACTURINGGRID from "
-              << manufacturing_grid_ << " to " << manufacture_grid
-              << "\n";
+              << manufacturing_grid_ << " to " << manufacture_grid << "\n";
   }
 
   manufacturing_grid_ = manufacture_grid;
@@ -72,25 +73,47 @@ double Tech::GetManufacturingGrid() const {
   return manufacturing_grid_;
 }
 
-void Tech::AddSite(
-    std::string const &name,
-    std::string const &class_name,
+bool Tech::IsSiteExisting(const std::string &site_name) {
+  return site_2_id_.find(site_name) != site_2_id_.end();
+}
+
+Site *Tech::AddSite(
+    std::string const &site_name,
+    const std::string &class_name,
     double width,
     double height
 ) {
-  sites_.emplace_back(name, class_name, width, height);
+  PhyDBExpects(
+      !IsSiteExisting(site_name),
+      "Site site_name exists, cannot use it again: " << site_name
+  );
+  SiteClass site_class = StrToSiteClass(class_name);
+  int id = static_cast<int>(sites_.size());
+  sites_.emplace_back(site_name, site_class, width, height);
+  site_2_id_[site_name] = id;
+  return &(sites_[id]);
 }
 
 std::vector<Site> &Tech::GetSitesRef() {
   return sites_;
 }
 
+int Tech::GetSiteId(std::string const &site_name) {
+  if (!IsSiteExisting(site_name)) {
+    return -1;
+  }
+  int id = site_2_id_[site_name];
+  return id;
+}
+
 void Tech::SetPlacementGrids(
     double placement_grid_value_x,
     double placement_grid_value_y
 ) {
-  PhyDBExpects(placement_grid_value_x > 0 && placement_grid_value_y > 0,
-               "negative placement grid value not allowed");
+  PhyDBExpects(
+      placement_grid_value_x > 0 && placement_grid_value_y > 0,
+      "negative placement grid value not allowed"
+  );
   placement_grid_value_x_ = placement_grid_value_x;
   placement_grid_value_y_ = placement_grid_value_y;
   is_placement_grid_set_ = true;
@@ -114,9 +137,11 @@ Layer *Tech::AddLayer(
     LayerType type,
     MetalDirection direction
 ) {
-  PhyDBExpects(!IsLayerExisting(layer_name),
-               "LAYER name_ exists, cannot use again: " << layer_name);
-  int id = (int) layers_.size();
+  PhyDBExpects(
+      !IsLayerExisting(layer_name),
+      "LAYER name_ exists, cannot use again: " << layer_name
+  );
+  int id = static_cast<int>(layers_.size());
   layers_.emplace_back(layer_name, type, direction);
   layer_2_id_[layer_name] = id;
   layers_[id].SetID(id);
@@ -139,12 +164,12 @@ int Tech::GetLayerId(std::string const &layer_name) {
   return id;
 }
 
-const std::string &Tech::GetLayerName(int layerID) {
-  if (layerID >= (int) layers_.size()) {
-    std::cout << "accessing layerID > num. of layers" << std::endl;
+const std::string &Tech::GetLayerName(int layer_id) {
+  if (layer_id >= (int) layers_.size()) {
+    std::cout << "accessing layer_id > num. of layers" << std::endl;
     exit(1);
   }
-  return layers_[layerID].GetName();
+  return layers_[layer_id].GetName();
 }
 
 std::vector<Layer> &Tech::GetLayersRef() {
