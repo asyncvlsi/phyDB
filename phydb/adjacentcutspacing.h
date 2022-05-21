@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_ADJACENTCUTSPACING_H_
 #define PHYDB_ADJACENTCUTSPACING_H_
 

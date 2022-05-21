@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_TIMING_ACTPHYDBTIMINGAPI_H_
 #define PHYDB_TIMING_ACTPHYDBTIMINGAPI_H_
 
@@ -27,7 +26,7 @@
 
 #include <boost/functional/hash.hpp>
 
-#include "phydb/timing/config.h"
+#include "config.h"
 
 #if PHYDB_USE_GALOIS
 #include <galois/eda/liberty/CellLib.h>

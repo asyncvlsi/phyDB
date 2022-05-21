@@ -18,7 +18,6 @@
  * Boston, MA  02110-1301, USA.
  *
  ******************************************************************************/
-
 #ifndef PHYDB_TIMING_TECHCONFIGPARSER_H_
 #define PHYDB_TIMING_TECHCONFIGPARSER_H_
 
