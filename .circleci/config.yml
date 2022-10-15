@@ -12,7 +12,7 @@ jobs:
             apt install -y build-essential git
             apt install -y libedit-dev zlib1g-dev m4
             DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt install -y tzdata
-            git clone https://github.com/asyncvlsi/act.git
+            git clone https://github.com/asyncvlsi/act.git --depth 1
             cd act
             mkdir install
             export VLSI_TOOLS_SRC=`pwd`
@@ -25,7 +25,7 @@ jobs:
       - run:
           name: "Install Si2 LEF/DEF parser"
           command: |
-            git clone https://github.com/asyncvlsi/lefdef.git
+            git clone https://github.com/asyncvlsi/lefdef.git --depth 1
             apt-get install -y flex bison
             cd lefdef
             make
@@ -34,12 +34,14 @@ jobs:
           name: "Install phyDB"
           command: |
             apt install -y cmake libboost-all-dev
-            git clone https://github.com/asyncvlsi/phyDB.git
+            git clone https://github.com/asyncvlsi/phyDB.git --depth 1
             cd phyDB
             mkdir build
             cd build
             cmake ..
             make install
+            export CTEST_OUTPUT_ON_FAILURE=TRUE
+            make test
   macos11:
     macos:
       xcode: 11.3.0
@@ -57,7 +59,7 @@ jobs:
             brew install libedit
             brew install zlib
             brew install m4
-            git clone https://github.com/asyncvlsi/act.git
+            git clone https://github.com/asyncvlsi/act.git --depth 1
             cd act
             mkdir install
             export VLSI_TOOLS_SRC=`pwd`
@@ -71,7 +73,7 @@ jobs:
           name: "Install Si2 LEF/DEF parser"
           command: |
             brew install bison
-            git clone https://github.com/asyncvlsi/lefdef.git
+            git clone https://github.com/asyncvlsi/lefdef.git --depth 1
             cd lefdef
             echo '$ACT_HOME' $ACT_HOME
             make
@@ -82,7 +84,7 @@ jobs:
             brew install cmake
             brew install boost
             echo '$ACT_HOME' $ACT_HOME
-            git clone https://github.com/asyncvlsi/phyDB.git
+            git clone https://github.com/asyncvlsi/phyDB.git --depth 1
             cd phyDB
             mkdir build
             cd build
