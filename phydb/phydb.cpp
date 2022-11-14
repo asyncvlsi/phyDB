@@ -498,7 +498,22 @@ MacroWell *PhyDB::AddMacrowell(std::string const &macro_name) {
  * The boundary is the floor of the half of the cell height with grid value y as the unit.
  */
 void PhyDB::AddDummyWell(double p_well_height) {
-
+  for (auto &macro : tech_.macros_) {
+    std::unique_ptr<MacroWell> &well_ptr = macro.WellPtrRef();
+    // skip macros with a well
+    if (well_ptr != nullptr) {
+      return;
+    }
+    double width = macro.GetWidth();
+    double height = macro.GetHeight();
+    double n_p_boundary = p_well_height;
+    if (n_p_boundary < 0) {
+      n_p_boundary = height / 2.0;
+    }
+    well_ptr = std::make_unique<MacroWell>(&macro);
+    well_ptr->SetPwellRect(0, 0, width, n_p_boundary);
+    well_ptr->SetNwellRect(0, n_p_boundary, width, height);
+  }
 }
 
 ClusterCol *PhyDB::AddClusterCol(
