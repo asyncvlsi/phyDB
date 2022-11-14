@@ -488,9 +488,17 @@ MacroWell *PhyDB::AddMacrowell(std::string const &macro_name) {
   Macro *macro_ptr = GetMacroPtr(macro_name);
   PhyDBExpects(macro_ptr != nullptr,
                "Macro does not exist, cannot add well info: " + macro_name);
-  tech_.wells_.emplace_back(macro_ptr);
-  macro_ptr->SetWellPtr(&(tech_.wells_.back()));
-  return macro_ptr->GetWellPtr();
+  macro_ptr->InitWellPtr(macro_ptr);
+  return macro_ptr->WellPtrRef().get();
+}
+
+/****
+ * This function will add dummy well for all macros if they do not have well info.
+ * P-well will be at the bottom and N-well at the top.
+ * The boundary is the floor of the half of the cell height with grid value y as the unit.
+ */
+void PhyDB::AddDummyWell(double p_well_height) {
+
 }
 
 ClusterCol *PhyDB::AddClusterCol(

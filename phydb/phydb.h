@@ -206,8 +206,8 @@ class PhyDB {
       void (*callback_function)(std::vector<int> &timing_constraint_ids)
   );
   /* given a timing fork r : a < b
-      The fast end paths are paths from r to a.
-      The slow end paths are from r to b
+      The fast end paths are paths from node r to node a.
+      The slow end paths are from node r to node b.
   */
   void SetGetSlowWitnessCB(
       void (*callback_function)(
@@ -279,6 +279,7 @@ class PhyDB {
   );
   void SetNpwellSpacing(double same_spacing, double any_spacing);
   MacroWell *AddMacrowell(std::string const &macro_name);
+  void AddDummyWell(double p_well_height = -1);
 
   /************************************************
   * The following APIs are for information in clusters,

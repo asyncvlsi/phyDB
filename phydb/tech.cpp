@@ -327,8 +327,11 @@ void Tech::GetDiffWellSpacing(
 }
 
 void Tech::ReportWellShape() {
-  for (auto &well : wells_) {
-    well.Report();
+  for (auto &macro : macros_) {
+    std::unique_ptr<MacroWell> &well_ptr = macro.WellPtrRef();
+    if (well_ptr != nullptr) {
+      well_ptr->Report();
+    }
   }
 }
 
@@ -526,11 +529,7 @@ void Tech::ReportMacroWell() {
     n_layer_ptr_->Report();
   }
 
-  std::cout << "Total number of  macro wells: " << wells_.size() << "\n";
-  for (auto &macro_well : wells_) {
-    macro_well.Report();
-  }
-  std::cout << "\n";
+  ReportWellShape();
 }
 
 void Tech::Report() {

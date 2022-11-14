@@ -21,6 +21,7 @@
 #ifndef PHYDB_MACRO_H_
 #define PHYDB_MACRO_H_
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -77,9 +78,6 @@ class Macro {
   //void SetObs(OBS &obs); // TODO: change this API to return a pointer
   //void AddObsLayerRect(LayerRect &layer_rect);
 
-
-  void SetWellPtr(MacroWell *well_ptr);
-
   const std::string &GetName();
   MacroClass GetClass() const;
   Point2D<double> GetOrigin() const;
@@ -95,7 +93,8 @@ class Macro {
   bool GetPin(std::string const pinName, Pin &pin) const; // TODO: what is this?
   //bool GetObs(OBS &) const;
   OBS *GetObs();
-  MacroWell *GetWellPtr();
+  void InitWellPtr(Macro *macro_ptr);
+  std::unique_ptr<MacroWell> &WellPtrRef();
 
   friend std::ostream &operator<<(std::ostream &, const Macro &);
  private:
@@ -108,14 +107,14 @@ class Macro {
   OBS obs_;
 
   std::unordered_map<std::string, int> pin_2_id_;
-  MacroWell *well_ptr_ = nullptr;
+  std::unique_ptr<MacroWell> well_ptr_ = nullptr;
 };
 
 std::ostream &operator<<(std::ostream &, const Macro &);
 
 struct MacroWell {
  public:
-  explicit MacroWell(Macro *type_ptr) : macro_ptr_(type_ptr) {}
+  explicit MacroWell(Macro *macro_ptr) : macro_ptr_(macro_ptr) {}
 
   Macro *GetMacroPtr() const;
   void SetNwellRect(double lx, double ly, double ux, double uy);

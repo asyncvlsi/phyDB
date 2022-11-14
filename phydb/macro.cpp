@@ -87,10 +87,6 @@ OBS *Macro::GetObs() {
   return &obs_;
 }
 
-void Macro::SetWellPtr(MacroWell *well_ptr) {
-  well_ptr_ = well_ptr;
-}
-
 MacroClass Macro::GetClass() const {
   return class_;
 }
@@ -135,7 +131,11 @@ std::vector<Pin> &Macro::GetPinsRef() {
   return pins_;
 }
 
-MacroWell *Macro::GetWellPtr() {
+void Macro::InitWellPtr(Macro *macro_ptr) {
+  well_ptr_ = std::make_unique<MacroWell>(macro_ptr);
+}
+
+std::unique_ptr<MacroWell> &Macro::WellPtrRef() {
   return well_ptr_;
 }
 

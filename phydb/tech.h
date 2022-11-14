@@ -181,7 +181,6 @@ class Tech {
   WellLayer *p_layer_ptr_ = nullptr;
   double same_diff_spacing_ = -1;
   double any_diff_spacing_ = -1;
-  std::list<MacroWell> wells_;
 
   /****LEF file name****/
   std::string lef_name_;
