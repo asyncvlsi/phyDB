@@ -122,6 +122,7 @@ class Design {
   std::unordered_map<std::string, int> &GetComponentNameMapRef() {
     return component_2_id_;
   }
+  std::vector<Component> &GetFillersRef() { return fillers_; }
 
   void SetIoPinCount(int count);
   bool IsIoPinExisting(std::string const &iopin_name);
@@ -211,6 +212,7 @@ class Design {
   std::vector<Row> rows_;
   std::vector<Track> tracks_;
   std::vector<Component> components_;
+  std::vector<Component> fillers_;
   std::vector<IOPin> iopins_;
   std::vector<SNet> snets_;
   std::vector<Net> nets_;

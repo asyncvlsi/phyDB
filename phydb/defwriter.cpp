@@ -197,11 +197,32 @@ int WriteComponents(defwCallbackType_e type, defiUserData data) {
     std::cout << "Type is not defwComponentCbkType!" << std::endl;
     exit(2);
   }
-  auto components = ((PhyDB *) data)->GetDesignPtr()->GetComponentsRef();
-  int status = defwStartComponents(static_cast<int>(components.size()));
+  auto &components = ((PhyDB *) data)->GetDesignPtr()->GetComponentsRef();
+  auto &fillers = ((PhyDB *) data)->GetDesignPtr()->GetFillersRef();
+  int total_count = static_cast<int>(components.size() + fillers.size());
+  int status = defwStartComponents(total_count);
   CheckStatus(status);
 
   for (auto &comp : components) {
+    status = defwComponentStr(
+        comp.GetName().c_str(),
+        comp.GetMacro()->GetName().c_str(),
+        0,
+        NULL, NULL, NULL, NULL,
+        comp.GetSourceStr().c_str(),
+        0,
+        NULL, NULL, NULL, NULL,
+        PlaceStatusStr(comp.GetPlacementStatus()).c_str(),
+        comp.GetLocation().x, comp.GetLocation().y,
+        CompOrientStr(comp.GetOrientation()).c_str(),
+        0,
+        NULL,
+        0, 0,
+        0, 0
+    );
+    CheckStatus(status);
+  }
+  for (auto &comp : fillers) {
     status = defwComponentStr(
         comp.GetName().c_str(),
         comp.GetMacro()->GetName().c_str(),
