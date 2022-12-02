@@ -43,6 +43,7 @@ class PhyDB {
   /************************************************
   * The following APIs are for information in LEF
   * ************************************************/
+  void SetLefVersion(double version);
   void SetDatabaseMicron(int database_micron);
   void SetManufacturingGrid(double manufacture_grid);
   Site *AddSite(

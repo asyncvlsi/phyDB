@@ -49,6 +49,10 @@ Design &PhyDB::design() {
   return design_;
 }
 
+void PhyDB::SetLefVersion(double version) {
+  tech_.SetVersion(version);
+}
+
 void PhyDB::SetDatabaseMicron(int database_micron) {
   tech_.SetDatabaseMicron(database_micron);
 }

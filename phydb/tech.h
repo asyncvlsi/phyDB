@@ -42,6 +42,7 @@ class Tech {
   Tech() : manufacturing_grid_(-1), database_micron_(-1) {}
   ~Tech();
 
+  void SetVersion(double version);
   void SetDatabaseMicron(int database_micron);
   int GetDatabaseMicron() const;
   void SetManufacturingGrid(double manufacture_grid);
@@ -149,7 +150,7 @@ class Tech {
   friend std::ostream &operator<<(std::ostream &, const Tech &);
 
  private:
-  std::string version_;
+  double version_ = 5.6;
   std::string bus_bit_char_;
   std::string divier_char_;
   std::string clearance_measure_;

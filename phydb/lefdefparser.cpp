@@ -55,6 +55,16 @@ int getLefSite(lefrCallbackType_e type, lefiSite *site, lefiUserData data) {
   return 0;
 }
 
+int getLefVersion(lefrCallbackType_e type, double version, lefiUserData data) {
+  if (type != lefrVersionCbkType) {
+    std::cout << "Type is not lefrVersionCbkType!" << std::endl;
+    exit(2);
+  }
+  auto *phy_db_ptr = (PhyDB *) data;
+  phy_db_ptr->SetLefVersion(version);
+  return 0;
+}
+
 int getLefMacrosBegin(
     lefrCallbackType_e type,
     const char *str,
@@ -1169,6 +1179,7 @@ void Si2ReadLef(PhyDB *phy_db_ptr, std::string const &lef_file_name) {
 
   lefrSetUserData((lefiUserData) phy_db_ptr);
 
+  lefrSetVersionCbk(getLefVersion);
   lefrSetMacroBeginCbk(getLefMacrosBegin);
   lefrSetMacroCbk(getLefMacros);
   lefrSetMacroEndCbk(getLefMacrosEnd);

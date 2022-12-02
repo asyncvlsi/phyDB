@@ -32,22 +32,15 @@ Tech::~Tech() {
   p_layer_ptr_ = nullptr;
 }
 
+void Tech::SetVersion(double version) {
+  version_ = version;
+}
+
 void Tech::SetDatabaseMicron(int database_micron) {
-  PhyDBExpects(database_micron > 0,
-               "Cannot Set negative database microns: " << database_micron);
-
-  std::unordered_set<int>
-      legal_database_units({100, 200, 1000, 2000, 10000, 20000});
-  PhyDBExpects(legal_database_units.find(database_micron)
-                   != legal_database_units.end(),
-               "Unsupported DATABASE MICRONS " << database_micron);
-
-  if (database_micron_ > -1 && database_micron != database_micron_) {
+  if (database_micron != database_micron_) {
     std::cout << "Warning: changing DATABASE MICRONS from "
-              << database_micron_ << " to " << database_micron
-              << "\n";
+              << database_micron_ << " to " << database_micron << "\n";
   }
-
   database_micron_ = database_micron;
 }
 
