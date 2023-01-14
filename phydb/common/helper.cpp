@@ -27,12 +27,12 @@ namespace phydb {
  * @brief Splits a line into word tokens
  *
  * @param line: a string containing many words
- * @param res: a list of word tokens
+ * @return: a list of word tokens
  */
-void StrTokenize(std::string &line, std::vector<std::string> &res) {
+std::vector<std::string> StrTokenize(std::string &line) {
   static std::vector<char> delimiter_list{' ', ':', ';', '\t', '\r', '\n'};
 
-  res.clear();
+  std::vector<std::string> tokens;
   std::string empty_str;
   bool is_delimiter, old_is_delimiter = true;
   int current_field = -1;
@@ -50,12 +50,14 @@ void StrTokenize(std::string &line, std::vector<std::string> &res) {
     } else {
       if (old_is_delimiter) {
         current_field++;
-        res.push_back(empty_str);
+        tokens.push_back(empty_str);
       }
-      res[current_field] += c;
+      tokens[current_field] += c;
       old_is_delimiter = is_delimiter;
     }
   }
+
+  return tokens; // return value optimization
 }
 
 }

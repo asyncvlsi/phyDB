@@ -42,13 +42,12 @@ void ReadHeader(std::ifstream &ist) {
 
 void ReadDiagmodelOnOff(PhyDB *phy_db_ptr, std::ifstream &ist) {
   std::string line;
-  std::vector<std::string> words;
   auto &tech_config = phy_db_ptr->tech().GetTechConfigRef();
   do {
     getline(ist, line);
   } while (line.empty());
   if (line.find("DIAGMODEL") != std::string::npos) {
-    StrTokenize(line, words);
+    std::vector<std::string> words = StrTokenize(line);
     PhyDBExpects(words.size() == 2, "Expect: DIAGMODEL ON/OFF");
     if (words[1] == "ON") {
       tech_config.SetDiagModelOn(true);
@@ -64,13 +63,12 @@ void ReadDiagmodelOnOff(PhyDB *phy_db_ptr, std::ifstream &ist) {
 
 void ReadLayerCount(PhyDB *phy_db_ptr, std::ifstream &ist) {
   std::string line;
-  std::vector<std::string> words;
   auto &tech = phy_db_ptr->tech();
   do {
     getline(ist, line);
   } while (line.empty());
   if (line.find("LayerCount") != std::string::npos) {
-    StrTokenize(line, words);
+    std::vector<std::string> words = StrTokenize(line);
     PhyDBExpects(words.size() == 2, "Expect: LayerCount num");
     int number_of_layers = -1;
     try {
@@ -87,13 +85,12 @@ void ReadLayerCount(PhyDB *phy_db_ptr, std::ifstream &ist) {
 
 void ReadDensityRate(PhyDB *phy_db_ptr, std::ifstream &ist) {
   std::string line;
-  std::vector<std::string> words;
   auto &tech_config = phy_db_ptr->tech().GetTechConfigRef();
   do {
     getline(ist, line);
   } while (line.empty());
   if (line.find("DensityRate") != std::string::npos) {
-    StrTokenize(line, words);
+    std::vector<std::string> words = StrTokenize(line);
     PhyDBExpects(words.size() >= 3,
                  "Expect: DensityRate model_numbers rate ...");
     int model_numbers = -1;
@@ -110,7 +107,8 @@ void ReadDensityRate(PhyDB *phy_db_ptr, std::ifstream &ist) {
       try {
         tech_config.AddDataRate(std::stod(words[i + 2]));
       } catch (...) {
-        PhyDBExpects(false, "Unable to convert string to int: " << words[i + 2]);
+        PhyDBExpects(false,
+                     "Unable to convert string to int: " << words[i + 2]);
       }
     }
   } else {
@@ -120,13 +118,12 @@ void ReadDensityRate(PhyDB *phy_db_ptr, std::ifstream &ist) {
 
 void InitializeDensityModel(PhyDB *phy_db_ptr, std::ifstream &ist) {
   std::string line;
-  std::vector<std::string> words;
   auto &tech = phy_db_ptr->tech();
   do {
     getline(ist, line);
   } while (line.empty() && !ist.eof());
   if (line.find("DensityModel") != std::string::npos) {
-    StrTokenize(line, words);
+    std::vector<std::string> words = StrTokenize(line);
     PhyDBExpects(words.size() == 2, "Expect: DensityModel num");
     try {
       corner_index = std::stoi(words[1]);
@@ -143,13 +140,12 @@ void InitializeDensityModel(PhyDB *phy_db_ptr, std::ifstream &ist) {
 
 void ReadConfigTable(ConfigTable &config_table, std::ifstream &ist) {
   std::string line;
-  std::vector<std::string> words;
   do {
     getline(ist, line);
   } while (line.empty());
   int pre_sz = -1;
   if (line.find("DIST count") != std::string::npos) {
-    StrTokenize(line, words);
+    std::vector<std::string> words = StrTokenize(line);
     try {
       pre_sz = std::stoi(words[2]);
       PhyDBExpects(pre_sz >= 0, "Negative table size?");
@@ -174,7 +170,7 @@ void ReadConfigTable(ConfigTable &config_table, std::ifstream &ist) {
     getline(ist, line);
     if (line.empty()) continue;
     if (line.find("END DIST") != std::string::npos) break;
-    StrTokenize(line, words);
+    std::vector<std::string> words = StrTokenize(line);
     double distance = -1;
     double coupling_cap = -1;
     double fringe_cap = -1;
@@ -194,7 +190,6 @@ void ReadConfigTable(ConfigTable &config_table, std::ifstream &ist) {
 
 void ReadDensityModel(PhyDB *phy_db_ptr, std::ifstream &ist) {
   std::string line;
-  std::vector<std::string> words;
   auto &tech = phy_db_ptr->tech();
   while (!ist.eof()) {
     getline(ist, line);
@@ -204,7 +199,7 @@ void ReadDensityModel(PhyDB *phy_db_ptr, std::ifstream &ist) {
       return;
     }
 
-    StrTokenize(line, words);
+    std::vector<std::string> words = StrTokenize(line);
     bool is_table_start = (words[0] == "Metal") &&
         ((words.size() == 4) || (words.size() == 6));
     if (is_table_start) {

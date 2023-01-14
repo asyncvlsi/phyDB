@@ -22,6 +22,7 @@
 #define PHYDB_MACRO_H_
 
 #include <memory>
+#include <fstream>
 #include <string>
 #include <unordered_map>
 
@@ -29,6 +30,7 @@
 #include "enumtypes.h"
 #include "obs.h"
 #include "pin.h"
+#include "site.h"
 
 namespace phydb {
 
@@ -64,6 +66,7 @@ class Macro {
   void SetSize(Point2D<double> size);
   void SetSize(double width, double height);
   void SetSymmetry(bool x, bool y, bool r90);
+  void SetSite(std::string const &site_name);
 
   // APIs for adding PINs to this MACRO
   bool IsPinExisting(std::string const &pin_name);
@@ -88,6 +91,7 @@ class Macro {
   double GetWidth() const;
   double GetHeight() const;
   Symmetry GetSymmetry() const;
+  std::string GetSite() const;
   std::vector<Pin> GetPinVec() const;
   std::vector<Pin> &GetPinsRef();
   bool GetPin(std::string const pinName, Pin &pin) const; // TODO: what is this?
@@ -96,6 +100,9 @@ class Macro {
   void InitWellPtr(Macro *macro_ptr);
   std::unique_ptr<MacroWell> &WellPtrRef();
 
+  /****Helper functions****/
+  void ExportToFile(std::ofstream &ost);
+
   friend std::ostream &operator<<(std::ostream &, const Macro &);
  private:
   std::string name_;
@@ -103,6 +110,7 @@ class Macro {
   Point2D<double> origin_;
   Point2D<double> size_;
   Symmetry symmetry_;
+  std::string site_name_; // TODO optimize this
   std::vector<Pin> pins_;
   OBS obs_;
 

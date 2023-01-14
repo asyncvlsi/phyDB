@@ -864,12 +864,11 @@ void PhyDB::ReadCell(std::string const &cell_file_name) {
     if (line.empty()) continue;
     if (line.find("LAYER") != std::string::npos) {
       if (line.find("LEGALIZER") != std::string::npos) {
-        std::vector<std::string> legalizer_fields;
         double same_diff_spacing = 0;
         double any_diff_spacing = 0;
         do {
           getline(ist, line);
-          StrTokenize(line, legalizer_fields);
+          std::vector<std::string> legalizer_fields = StrTokenize(line);
           if (legalizer_fields.size() != 2) {
             std::cout << "Expect: SPACING + Value, get: " + line
                       << std::endl;
@@ -896,8 +895,7 @@ void PhyDB::ReadCell(std::string const &cell_file_name) {
             && !ist.eof());
         SetNpwellSpacing(same_diff_spacing, any_diff_spacing);
       } else {
-        std::vector<std::string> well_fields;
-        StrTokenize(line, well_fields);
+        std::vector<std::string> well_fields = StrTokenize(line);
         bool is_n_well = (well_fields[1] == "nwell");
         if (!is_n_well) {
           if (well_fields[1] != "pwell") {
@@ -914,52 +912,52 @@ void PhyDB::ReadCell(std::string const &cell_file_name) {
         double overhang = 0;
         do {
           if (line.find("MINWIDTH") != std::string::npos) {
-            StrTokenize(line, well_fields);
+            std::vector<std::string> width_fields = StrTokenize(line);
             try {
-              width = std::stod(well_fields[1]);
+              width = std::stod(width_fields[1]);
             } catch (...) {
               std::cout
-                  << "Invalid stod conversion: " + well_fields[1]
+                  << "Invalid stod conversion: " + width_fields[1]
                   << std::endl;
               exit(1);
             }
           } else if (line.find("OPPOSPACING") != std::string::npos) {
-            StrTokenize(line, well_fields);
+            std::vector<std::string> oppo_spacing_fields = StrTokenize(line);
             try {
-              op_spacing = std::stod(well_fields[1]);
+              op_spacing = std::stod(oppo_spacing_fields[1]);
             } catch (...) {
               std::cout
-                  << "Invalid stod conversion: " + well_fields[1]
+                  << "Invalid stod conversion: " + oppo_spacing_fields[1]
                   << std::endl;
               exit(1);
             }
           } else if (line.find("SPACING") != std::string::npos) {
-            StrTokenize(line, well_fields);
+            std::vector<std::string> spacing_fields = StrTokenize(line);
             try {
-              spacing = std::stod(well_fields[1]);
+              spacing = std::stod(spacing_fields[1]);
             } catch (...) {
               std::cout
-                  << "Invalid stod conversion: " + well_fields[1]
+                  << "Invalid stod conversion: " + spacing_fields[1]
                   << std::endl;
               exit(1);
             }
           } else if (line.find("MAXPLUGDIST") != std::string::npos) {
-            StrTokenize(line, well_fields);
+            std::vector<std::string> max_plug_dist_fields = StrTokenize(line);
             try {
-              max_plug_dist = std::stod(well_fields[1]);
+              max_plug_dist = std::stod(max_plug_dist_fields[1]);
             } catch (...) {
               std::cout
-                  << "Invalid stod conversion: " + well_fields[1]
+                  << "Invalid stod conversion: " + max_plug_dist_fields[1]
                   << std::endl;
               exit(1);
             }
-          } else if (line.find("MAXPLUGDIST") != std::string::npos) {
-            StrTokenize(line, well_fields);
+          } else if (line.find("OVERHANG") != std::string::npos) {
+            std::vector<std::string> overhang_fields = StrTokenize(line);
             try {
-              overhang = std::stod(well_fields[1]);
+              overhang = std::stod(overhang_fields[1]);
             } catch (...) {
               std::cout
-                  << "Invalid stod conversion: " + well_fields[1]
+                  << "Invalid stod conversion: " + overhang_fields[1]
                   << std::endl;
               exit(1);
             }
@@ -988,8 +986,7 @@ void PhyDB::ReadCell(std::string const &cell_file_name) {
     }
 
     if (line.find("MACRO") != std::string::npos) {
-      std::vector<std::string> macro_fields;
-      StrTokenize(line, macro_fields);
+      std::vector<std::string> macro_fields = StrTokenize(line);
       std::string end_macro_flag = "END " + macro_fields[1];
       MacroWell *well_ptr = AddMacrowell(macro_fields[1]);
       do {
@@ -1002,8 +999,7 @@ void PhyDB::ReadCell(std::string const &cell_file_name) {
             }
             if (line.find("RECT") != std::string::npos) {
               double lx = 0, ly = 0, ux = 0, uy = 0;
-              std::vector<std::string> shape_fields;
-              StrTokenize(line, shape_fields);
+              std::vector<std::string> shape_fields = StrTokenize(line);
               try {
                 lx = std::stod(shape_fields[1]);
                 ly = std::stod(shape_fields[2]);

@@ -140,12 +140,16 @@ class Tech {
       double unit_area_cap
   );
 
+  /****Print all sorts of information****/
   void ReportSites();
   void ReportLayers();
   void ReportVias();
   void ReportMacros();
   void ReportMacroWell();
-  void Report(); // for debugging purposes
+  void Report();
+
+  /****Helper functions****/
+  void AutoAddPowerGroundPin(std::string const &macro_name);
 
   friend std::ostream &operator<<(std::ostream &, const Tech &);
 

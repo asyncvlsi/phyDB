@@ -21,6 +21,7 @@
 #ifndef PHYDB_PIN_H_
 #define PHYDB_PIN_H_
 
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -70,6 +71,9 @@ class Pin {
   std::vector<LayerRect> &GetLayerRectRef();
   std::vector<LayerRect> GetLayerRectCpy();
   Rect2D<double> GetBoundingBox();
+
+  /****Helper functions****/
+  void ExportToFile(std::ofstream &ost);
 
   friend std::ostream &operator<<(std::ostream &, const Pin &);
  private:

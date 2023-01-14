@@ -37,7 +37,7 @@ void Tech::SetVersion(double version) {
 }
 
 void Tech::SetDatabaseMicron(int database_micron) {
-  if (database_micron != database_micron_) {
+  if (database_micron_ >= 0 && database_micron != database_micron_) {
     std::cout << "Warning: changing DATABASE MICRONS from "
               << database_micron_ << " to " << database_micron << "\n";
   }
@@ -538,6 +538,94 @@ void Tech::Report() {
   ReportVias();
   ReportMacros();
   ReportMacroWell();
+}
+
+/****
+ * This function will automatically add power and ground pins for the target macro.
+ * Notice that this is for standard cell library only.
+ *
+ * @param macro_name: the macro which needs power and ground pins
+ */
+void Tech::AutoAddPowerGroundPin(std::string const &macro_name) {
+  // check if this macro is in the library
+  if (!IsMacroExisting(macro_name)) {
+    std::cout << macro_name
+              << " does not exist in the library, skip adding Power&Ground pins\n";
+  }
+
+  // find one cell with POWER and GROUND pin
+  Macro *source_macro = nullptr;
+  int power_pin_index = -1;
+  int ground_pin_index = -1;
+  for (auto &macro : macros_) {
+    bool found_example_macro = false;
+    // reset pin index
+    power_pin_index = -1;
+    ground_pin_index = -1;
+
+    // check macro pin one by one
+    auto &pins = macro.GetPinsRef();
+    int pins_sz = static_cast<int>(pins.size());
+    for (int i = 0; i < pins_sz; ++i) {
+      auto &pin = pins[i];
+      if (pin.GetUse() == SignalUse::POWER) {
+        power_pin_index = i;
+      } else if (pin.GetUse() == SignalUse::GROUND) {
+        ground_pin_index = i;
+      }
+      // if both power and ground pins are found, early return
+      if (power_pin_index >= 0 && ground_pin_index >= 0) {
+        found_example_macro = true;
+        break;
+      }
+    }
+
+    // early return if example macro is found
+    if (found_example_macro) {
+      source_macro = &macro;
+      break;
+    }
+  }
+  if (source_macro == nullptr) {
+    std::cout << "Cannot find an example macro for adding Power&Ground pin for "
+              << macro_name << "\n";
+    return;
+  }
+
+  // automatically add POWER and GROUND pin to this macro
+  Macro *target_macro = macro_2_ptr_[macro_name];
+  Pin &source_power_pin = source_macro->GetPinsRef()[power_pin_index];
+  Pin *power_pin = target_macro->AddPin(
+      source_power_pin.GetName(),
+      source_power_pin.GetDirection(),
+      source_power_pin.GetUse()
+  );
+  target_macro->SetSite(source_macro->GetSite());
+  if (!source_power_pin.GetLayerRectRef().empty()) {
+    auto &source_layer_rect = source_power_pin.GetLayerRectRef()[0];
+    PhyDBExpects(!source_layer_rect.GetRects().empty(), "no rects for this power pin?" << source_macro->GetName());
+    // metal width is height of this rect
+    double power_ly = source_layer_rect.GetRects()[0].ll.y;
+    double power_uy = source_layer_rect.GetRects()[0].ur.y;
+    LayerRect *power_layer_rect = power_pin->AddLayerRect(source_layer_rect.layer_name_);
+    power_layer_rect->AddRect(0, power_ly, target_macro->GetWidth(), power_uy);
+  }
+
+  Pin &source_ground_pin = source_macro->GetPinsRef()[ground_pin_index];
+  Pin *ground_pin = target_macro->AddPin(
+      source_ground_pin.GetName(),
+      source_ground_pin.GetDirection(),
+      source_ground_pin.GetUse()
+  );
+  if (!source_ground_pin.GetLayerRectRef().empty()) {
+    auto &source_layer_rect = source_ground_pin.GetLayerRectRef()[0];
+    PhyDBExpects(!source_layer_rect.GetRects().empty(), "no rects for this ground pin?" << source_macro->GetName());
+    // metal width is height of this rect
+    double power_ly = source_layer_rect.GetRects()[0].ll.y;
+    double power_uy = source_layer_rect.GetRects()[0].ur.y;
+    LayerRect *ground_layer_rect = ground_pin->AddLayerRect(source_layer_rect.layer_name_);
+    ground_layer_rect->AddRect(0, power_ly, target_macro->GetWidth(), power_uy);
+  }
 }
 
 }

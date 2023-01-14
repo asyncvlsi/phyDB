@@ -56,6 +56,10 @@ void Macro::SetSymmetry(bool x, bool y, bool r90) {
   symmetry_.Set(x, y, r90);
 }
 
+void Macro::SetSite(std::string const &site_name) {
+  site_name_ = site_name;
+}
+
 bool Macro::IsPinExisting(std::string const &pin_name) {
   return pin_2_id_.find(pin_name) != pin_2_id_.end();
 }
@@ -119,6 +123,10 @@ Symmetry Macro::GetSymmetry() const {
   return symmetry_;
 }
 
+std::string Macro::GetSite() const {
+  return site_name_;
+}
+
 Point2D<double> Macro::GetSize() const {
   return size_;
 }
@@ -137,6 +145,23 @@ void Macro::InitWellPtr(Macro *macro_ptr) {
 
 std::unique_ptr<MacroWell> &Macro::WellPtrRef() {
   return well_ptr_;
+}
+
+void Macro::ExportToFile(std::ofstream &ost) {
+  ost << "MACRO " << name_ << "\n"
+      << "    CLASS " << MacroClassStr(class_) << " ;\n"
+      << "    FOREIGN " << name_ << " 0.000000 0.000000 ;\n"
+      << "    ORIGIN " << origin_.x << " " << origin_.y << " ;\n"
+      << "    SIZE " << size_.x << " BY " << size_.y << " ;\n"
+      << "    SYMMETRY " << symmetry_.Str() << " ;\n"
+      << "    SITE " <<site_name_ << " ;\n";
+
+  for (auto &pin: pins_) {
+    pin.ExportToFile(ost);
+  }
+
+  ost << "END " << name_ << "\n";
+  ost << "\n";
 }
 
 std::ostream &operator<<(std::ostream &os, const Macro &macro) {

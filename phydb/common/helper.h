@@ -26,7 +26,9 @@
 
 namespace phydb {
 
-void StrTokenize(std::string &line, std::vector<std::string> &res);
+std::vector<std::string> StrTokenize(std::string &line);
+
+
 
 }
 

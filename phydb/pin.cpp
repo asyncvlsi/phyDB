@@ -86,6 +86,24 @@ Rect2D<double> Pin::GetBoundingBox() {
   return {min_x, min_y, max_x, max_y};
 }
 
+void Pin::ExportToFile(std::ofstream &ost) {
+  ost << "    PIN " << name_ << "\n"
+      << "        DIRECTION " << SignalDirectionStr(direction_) << " ;\n"
+      << "        USE " << SignalUseStr(use_) << " ;\n";
+
+  ost << "        PORT\n";
+  for (auto &layer_rect : layer_rects_) {
+    ost << "        LAYER " << layer_rect.layer_name_ << " ;\n";
+    for (auto &rect : layer_rect.GetRects()) {
+      ost << "        RECT " << rect.ll.x << " " << rect.ll.y << " "
+          << rect.ur.x << " " << rect.ur.y << " ;\n";
+    }
+  }
+  ost << "        END\n";
+
+  ost << "    END " << name_ << "\n";
+}
+
 std::ostream &operator<<(std::ostream &os, const Pin &p) {
   os << p.name_ << " "
      << SignalDirectionStr(p.direction_) << " "
@@ -99,7 +117,3 @@ std::ostream &operator<<(std::ostream &os, const Pin &p) {
 }
 
 }
-
-
-
-

@@ -114,6 +114,7 @@ int getLefMacros(lefrCallbackType_e type, lefiMacro *macro, lefiUserData data) {
       macro->hasYSymmetry(),
       macro->has90Symmetry()
   );
+  phydb_macro.SetSite(macro->siteName());
   return 0;
 }
 
