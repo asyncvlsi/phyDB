@@ -22,6 +22,7 @@
 
 #include <algorithm>
 
+#include "datatype.h"
 #include "phydb/common/logging.h"
 
 namespace phydb {
@@ -603,7 +604,7 @@ void getMaxAndMin(int number_of_points, const int *series, int &min, int &max) {
   PhyDBExpects(number_of_points > 0, "number of points is no more than 0?");
   max = series[0];
   min = series[0];
-  for (int i=1; i<number_of_points ; ++i) {
+  for (int i = 1; i < number_of_points; ++i) {
     max = std::max(max, series[i]);
     min = std::min(min, series[i]);
   }
@@ -616,16 +617,25 @@ int getDefDieArea(defrCallbackType_e type, defiBox *box, defiUserData data) {
     exit(1);
   }
   defiPoints polygon_points = box->getPoint();
+  int num_points = polygon_points.numPoints;
   if (polygon_points.numPoints == 2 || polygon_points.numPoints == 4) {
     // if two points are defined, specifies two corners of the bounding rectangle for the design.
     // the edges of the polygon must be parallel to the x or y-axis (45-degree shapes are not
     // allowed), and the last point is connected to the first point.
     int lower_x, lower_y, upper_x, upper_y;
-    getMaxAndMin(polygon_points.numPoints, polygon_points.x, lower_x, upper_x);
-    getMaxAndMin(polygon_points.numPoints, polygon_points.y, lower_y, upper_y);
+    getMaxAndMin(num_points, polygon_points.x, lower_x, upper_x);
+    getMaxAndMin(num_points, polygon_points.y, lower_y, upper_y);
     phy_db_ptr->SetDieArea(lower_x, lower_y, upper_x, upper_y);
   } else {
-    PhyDBExpects(false, "general polygon is currently not supported");
+    std::vector<Point2D<int>> rectilinear_polygon_die_area;
+    rectilinear_polygon_die_area.reserve(num_points);
+    for (int i = 0; i < num_points; ++i) {
+      rectilinear_polygon_die_area.emplace_back(
+          polygon_points.x[i],
+          polygon_points.y[i]
+      );
+    }
+    phy_db_ptr->SetRectilinearPolygonDieArea(rectilinear_polygon_die_area);
   }
 
   return 0;

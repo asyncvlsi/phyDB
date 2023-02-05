@@ -56,10 +56,13 @@ class Design {
   std::string GetName() const;
 
   void SetUnitsDistanceMicrons(int distance_microns);
+  int GetUnitsDistanceMicrons() const;
   void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
-
-  int GetUnitsDistanceMicrons() const { return unit_distance_micron_; }
-  Rect2D<int> GetDieArea() const { return die_area_; }
+  Rect2D<int> GetDieArea() const;
+  void SetRectilinearPolygonDieArea(
+      std::vector<Point2D<int>> &rectilinear_polygon_die_area
+  );
+  std::vector<Point2D<int>> &RectilinearPolygonDieAreaRef();
 
   bool IsRowExisting(std::string const &row_name);
   Row *AddRow(
@@ -207,6 +210,7 @@ class Design {
   std::string bus_bit_char_;
 
   Rect2D<int> die_area_;
+  std::vector<Point2D<int>> rectilinear_polygon_die_area_;
 
   int unit_distance_micron_ = -1;
   std::vector<Row> rows_;

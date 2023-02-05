@@ -65,6 +65,10 @@ void Design::SetUnitsDistanceMicrons(int distance_microns) {
   unit_distance_micron_ = distance_microns;
 }
 
+int Design::GetUnitsDistanceMicrons() const {
+  return unit_distance_micron_;
+}
+
 void Design::SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
   PhyDBExpects(upper_x > lower_x,
                "Right boundary is not larger than Left boundary?");
@@ -74,6 +78,22 @@ void Design::SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
   die_area_.ll.y = lower_y;
   die_area_.ur.x = upper_x;
   die_area_.ur.y = upper_y;
+
+  rectilinear_polygon_die_area_.clear();
+  rectilinear_polygon_die_area_.emplace_back(lower_x, lower_y);
+  rectilinear_polygon_die_area_.emplace_back(upper_x, upper_y);
+}
+
+Rect2D<int> Design::GetDieArea() const {
+  return die_area_;
+}
+
+void Design::SetRectilinearPolygonDieArea(std::vector<Point2D<int>> &rectilinear_polygon_die_area) {
+  rectilinear_polygon_die_area_ = rectilinear_polygon_die_area;
+}
+
+std::vector<Point2D<int>> &Design::RectilinearPolygonDieAreaRef() {
+  return rectilinear_polygon_die_area_;
 }
 
 Track *Design::AddTrack(

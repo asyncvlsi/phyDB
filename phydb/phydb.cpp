@@ -185,6 +185,16 @@ Rect2D<int> PhyDB::GetDieArea() const {
   return design_.GetDieArea();
 }
 
+void PhyDB::SetRectilinearPolygonDieArea(
+    std::vector<Point2D<int>> &rectilinear_polygon_die_area
+) {
+  design_.SetRectilinearPolygonDieArea(rectilinear_polygon_die_area);
+}
+
+std::vector<Point2D<int>> &PhyDB::RectilinearPolygonDieAreaRef() {
+  return design_.RectilinearPolygonDieAreaRef();
+}
+
 void PhyDB::SetComponentCount(int count) {
   design_.SetComponentCount(count);
 }

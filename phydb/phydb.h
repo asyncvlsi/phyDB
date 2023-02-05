@@ -24,9 +24,10 @@
 #include <string>
 #include <vector>
 
+#include "datatype.h"
 #include "design.h"
-#include "tech.h"
 #include "phydb/timing/actphydbtimingapi.h"
+#include "tech.h"
 
 namespace phydb {
 
@@ -92,6 +93,10 @@ class PhyDB {
   void SetUnitsDistanceMicrons(int distance_microns);
   void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
   Rect2D<int> GetDieArea() const;
+  void SetRectilinearPolygonDieArea(
+      std::vector<Point2D<int>> &rectilinear_polygon_die_area
+  );
+  std::vector<Point2D<int>> &RectilinearPolygonDieAreaRef();
 
   Row *AddRow(
       std::string const &name,
