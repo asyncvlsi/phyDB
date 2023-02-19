@@ -85,6 +85,20 @@ int Component::GetWeight() {
   return weight_;
 }
 
+std::string const &Component::GetPinName(size_t pin_id) {
+  PhyDBExpects(
+      macro_ptr_ != nullptr,
+      "Macro is not set for Component: " + GetName()
+  );
+  auto &pins = macro_ptr_->GetPinsRef();
+  PhyDBExpects(
+      pin_id < pins.size(),
+      "pin_id: " << pin_id << " cannot be found in Macro: "
+                 << macro_ptr_->GetName()
+  );
+  return pins[pin_id].GetName();
+}
+
 std::ostream &operator<<(std::ostream &os, Component &c) {
   os << c.GetId() << " "
      << c.GetName() << " "

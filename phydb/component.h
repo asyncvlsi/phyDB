@@ -83,6 +83,9 @@ class Component {
   std::string GetOrientationStr() const;
   int GetWeight();
 
+  // helper functions
+  std::string const &GetPinName(size_t pin_id);
+
  private:
   int id_{};
   std::string name_;
