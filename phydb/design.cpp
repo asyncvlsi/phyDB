@@ -70,10 +70,14 @@ int Design::GetUnitsDistanceMicrons() const {
 }
 
 void Design::SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y) {
-  PhyDBExpects(upper_x > lower_x,
-               "Right boundary is not larger than Left boundary?");
-  PhyDBExpects(upper_y > lower_y,
-               "Top boundary is not larger than Bottom boundary?");
+  PhyDBExpects(
+      upper_x > lower_x,
+      "Right boundary is not larger than Left boundary?"
+  );
+  PhyDBExpects(
+      upper_y > lower_y,
+      "Top boundary is not larger than Bottom boundary?"
+  );
   die_area_.ll.x = lower_x;
   die_area_.ll.y = lower_y;
   die_area_.ur.x = upper_x;

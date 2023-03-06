@@ -114,9 +114,23 @@ int WriteDieArea(defwCallbackType_e type, defiUserData ud) {
     std::cout << "Type is not defwDieAreaCbkType!" << std::endl;
     exit(2);
   }
-  Rect2D<int> dieArea = ((PhyDB *) ud)->GetDieArea();
-  int status =
-      defwDieArea(dieArea.LLX(), dieArea.LLY(), dieArea.URX(), dieArea.URY());
+
+  std::vector<Point2D<int>> &die_area =
+      ((PhyDB *) ud)->RectilinearPolygonDieAreaRef();
+  int num_points = static_cast<int>(die_area.size());
+  std::vector<int> x(num_points, 0);
+  std::vector<int> y(num_points, 0);
+  for (int i = 0; i < num_points; ++i) {
+    x[i] = die_area[i].x;
+    y[i] = die_area[i].y;
+  }
+
+  int status = 0;
+  if (num_points == 2) {
+    status = defwDieArea(x[0], y[0], x[1], y[1]);
+  } else if (num_points >= 4) {
+    status = defwDieAreaList(num_points, x.data(), y.data());
+  }
   CheckStatus(status);
   defwNewLine();
   return 0;
