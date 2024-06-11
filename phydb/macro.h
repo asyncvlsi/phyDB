@@ -99,6 +99,7 @@ class Macro {
   OBS *GetObs();
   void InitWellPtr(Macro *macro_ptr);
   std::unique_ptr<MacroWell> &WellPtrRef();
+  double GetWellPNEdge () const;
 
   /****Helper functions****/
   void ExportToFile(std::ofstream &ost);
@@ -133,6 +134,7 @@ struct MacroWell {
   void SetWellShape(bool is_n, Rect2D<double> &rect);
   bool IsNPWellAbutted() const;
   void Report() const;
+  double GetPNEdge () const;
  private:
   Macro *macro_ptr_; // pointer to BlockType
   bool is_n_set_ = false; // whether N-well shape_ is Set or not

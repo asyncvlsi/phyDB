@@ -147,6 +147,15 @@ std::unique_ptr<MacroWell> &Macro::WellPtrRef() {
   return well_ptr_;
 }
 
+double Macro::GetWellPNEdge() const {
+  if (well_ptr_) {
+    return well_ptr_->GetPNEdge();
+  }
+  else {
+    return -1;
+  }
+}
+
 void Macro::ExportToFile(std::ofstream &ost) {
   ost << "MACRO " << name_ << "\n"
       << "    CLASS " << MacroClassStr(class_) << " ;\n"
@@ -242,6 +251,10 @@ bool MacroWell::IsNPWellAbutted() const {
     return p_rect_.URY() == n_rect_.LLY();
   }
   return true;
+}
+
+double MacroWell::GetPNEdge() const {
+  return p_n_edge_;
 }
 
 // report the information of N/P-well for debugging purposes
