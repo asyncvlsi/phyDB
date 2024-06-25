@@ -115,6 +115,12 @@ class Tech {
       double &same_diff_spacing,
       double &any_diff_spacing
   ) const;
+  void GetEndCapMinWidthHeight(
+      std::optional<double> &pre_end_cap_min_width,
+      std::optional<double> &pre_end_cap_min_height,
+      std::optional<double> &post_end_cap_min_width,
+      std::optional<double> &post_end_cap_min_height
+  ) const;
   void ReportWellShape(); // report the well shape_ for each BlockType for debugging purposes.
 
   std::string GetLefName() const;

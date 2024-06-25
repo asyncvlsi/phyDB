@@ -319,6 +319,18 @@ void Tech::GetDiffWellSpacing(
   any_diff_spacing = any_diff_spacing_;
 }
 
+void Tech::GetEndCapMinWidthHeight(
+    std::optional<double> &pre_end_cap_min_width,
+    std::optional<double> &pre_end_cap_min_height,
+    std::optional<double> &post_end_cap_min_width,
+    std::optional<double> &post_end_cap_min_height
+) const {
+  pre_end_cap_min_width = pre_end_cap_min_width_;
+  pre_end_cap_min_height = pre_end_cap_min_height_;
+  post_end_cap_min_width = post_end_cap_min_width_;
+  post_end_cap_min_height = post_end_cap_min_height_;
+}
+
 void Tech::ReportWellShape() {
   for (auto &macro : macros_) {
     std::unique_ptr<MacroWell> &well_ptr = macro.WellPtrRef();
