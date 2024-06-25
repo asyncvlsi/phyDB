@@ -880,7 +880,7 @@ void PhyDB::ReadCell(std::string const &cell_file_name) {
           getline(ist, line);
           std::vector<std::string> legalizer_fields = StrTokenize(line);
           if (legalizer_fields.size() != 2) {
-            std::cout << "Expect: SPACING + Value, get: " + line
+            std::cout << "Expect: ParameterName Value, get: " + line
                       << std::endl;
             exit(1);
           }
@@ -895,6 +895,38 @@ void PhyDB::ReadCell(std::string const &cell_file_name) {
           } else if (legalizer_fields[0] == "ANY_DIFF_SPACING") {
             try {
               any_diff_spacing = std::stod(legalizer_fields[1]);
+            } catch (...) {
+              std::cout << "Invalid stod conversion: " + line
+                        << std::endl;
+              exit(1);
+            }
+          } else if (legalizer_fields[0] == "PRE_ENDCAP_MINWIDTH") {
+            try {
+              tech_.pre_end_cap_min_width_ = std::stod(legalizer_fields[1]);
+            } catch (...) {
+              std::cout << "Invalid stod conversion: " + line
+                        << std::endl;
+              exit(1);
+            }
+          } else if (legalizer_fields[0] == "PRE_ENDCAP_MINHEIGHT") {
+            try {
+              tech_.pre_end_cap_min_height_ = std::stod(legalizer_fields[1]);
+            } catch (...) {
+              std::cout << "Invalid stod conversion: " + line
+                        << std::endl;
+              exit(1);
+            }
+          } else if (legalizer_fields[0] == "POST_ENDCAP_MINWIDTH") {
+            try {
+              tech_.post_end_cap_min_width_ = std::stod(legalizer_fields[1]);
+            } catch (...) {
+              std::cout << "Invalid stod conversion: " + line
+                        << std::endl;
+              exit(1);
+            }
+          } else if (legalizer_fields[0] == "POST_ENDCAP_MINHEIGHT") {
+            try {
+              tech_.post_end_cap_min_height_ = std::stod(legalizer_fields[1]);
             } catch (...) {
               std::cout << "Invalid stod conversion: " + line
                         << std::endl;

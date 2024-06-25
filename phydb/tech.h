@@ -23,6 +23,7 @@
 
 #include <list>
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 
@@ -179,13 +180,19 @@ class Tech {
   double placement_grid_value_x_ = -1;
   double placement_grid_value_y_ = -1;
 
-  /****N/P-well layers_****/
+  /****N/P-well layers****/
   bool is_n_well_layer_set_ = false;
   bool is_p_well_layer_set_ = false;
   WellLayer *n_layer_ptr_ = nullptr;
   WellLayer *p_layer_ptr_ = nullptr;
   double same_diff_spacing_ = -1;
   double any_diff_spacing_ = -1;
+
+  /****pre- and post-end cap cell parameters for gridded cell placement****/
+  std::optional<double> pre_end_cap_min_width_ = std::nullopt;
+  std::optional<double> pre_end_cap_min_height_ = std::nullopt;
+  std::optional<double> post_end_cap_min_width_ = std::nullopt;
+  std::optional<double> post_end_cap_min_height_ = std::nullopt;
 
   /****LEF file name****/
   std::string lef_name_;
