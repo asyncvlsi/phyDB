@@ -319,16 +319,28 @@ void Tech::GetDiffWellSpacing(
   any_diff_spacing = any_diff_spacing_;
 }
 
-void Tech::GetEndCapMinWidthHeight(
-    std::optional<double> &pre_end_cap_min_width,
-    std::optional<double> &pre_end_cap_min_height,
-    std::optional<double> &post_end_cap_min_width,
-    std::optional<double> &post_end_cap_min_height
-) const {
-  pre_end_cap_min_width = pre_end_cap_min_width_;
-  pre_end_cap_min_height = pre_end_cap_min_height_;
-  post_end_cap_min_width = post_end_cap_min_width_;
-  post_end_cap_min_height = post_end_cap_min_height_;
+std::optional<double> Tech::GetPreEndCapMinWidth() const {
+  return pre_end_cap_min_width_;
+}
+
+std::optional<double> Tech::GetPreEndCapMinPHeight() const {
+  return pre_end_cap_min_p_height_;
+}
+
+std::optional<double> Tech::GetPreEndCapMinNHeight() const {
+  return pre_end_cap_min_n_height_;
+}
+
+std::optional<double> Tech::GetPostEndCapMinWidth() const {
+  return post_end_cap_min_width_;
+}
+
+std::optional<double> Tech::GetPostEndCapMinPHeight() const {
+  return post_end_cap_min_p_height_;
+}
+
+std::optional<double> Tech::GetPostEndCapMinNHeight() const {
+  return post_end_cap_min_n_height_;
 }
 
 void Tech::ReportWellShape() {

@@ -900,7 +900,7 @@ void PhyDB::ReadCell(std::string const &cell_file_name) {
                         << std::endl;
               exit(1);
             }
-          } else if (legalizer_fields[0] == "PRE_ENDCAP_MINWIDTH") {
+          } else if (legalizer_fields[0] == "PRE_ENDCAP_MIN_WIDTH") {
             try {
               tech_.pre_end_cap_min_width_ = std::stod(legalizer_fields[1]);
             } catch (...) {
@@ -908,15 +908,23 @@ void PhyDB::ReadCell(std::string const &cell_file_name) {
                         << std::endl;
               exit(1);
             }
-          } else if (legalizer_fields[0] == "PRE_ENDCAP_MINHEIGHT") {
+          } else if (legalizer_fields[0] == "PRE_ENDCAP_MIN_P_HEIGHT") {
             try {
-              tech_.pre_end_cap_min_height_ = std::stod(legalizer_fields[1]);
+              tech_.pre_end_cap_min_p_height_ = std::stod(legalizer_fields[1]);
             } catch (...) {
               std::cout << "Invalid stod conversion: " + line
                         << std::endl;
               exit(1);
             }
-          } else if (legalizer_fields[0] == "POST_ENDCAP_MINWIDTH") {
+          } else if (legalizer_fields[0] == "PRE_ENDCAP_MIN_N_HEIGHT") {
+            try {
+              tech_.pre_end_cap_min_n_height_ = std::stod(legalizer_fields[1]);
+            } catch (...) {
+              std::cout << "Invalid stod conversion: " + line
+                        << std::endl;
+              exit(1);
+            }
+          } else if (legalizer_fields[0] == "POST_ENDCAP_MIN_WIDTH") {
             try {
               tech_.post_end_cap_min_width_ = std::stod(legalizer_fields[1]);
             } catch (...) {
@@ -924,9 +932,17 @@ void PhyDB::ReadCell(std::string const &cell_file_name) {
                         << std::endl;
               exit(1);
             }
-          } else if (legalizer_fields[0] == "POST_ENDCAP_MINHEIGHT") {
+          } else if (legalizer_fields[0] == "POST_ENDCAP_MIN_P_HEIGHT") {
             try {
-              tech_.post_end_cap_min_height_ = std::stod(legalizer_fields[1]);
+              tech_.post_end_cap_min_p_height_ = std::stod(legalizer_fields[1]);
+            } catch (...) {
+              std::cout << "Invalid stod conversion: " + line
+                        << std::endl;
+              exit(1);
+            }
+          } else if (legalizer_fields[0] == "POST_ENDCAP_MIN_N_HEIGHT") {
+            try {
+              tech_.post_end_cap_min_n_height_ = std::stod(legalizer_fields[1]);
             } catch (...) {
               std::cout << "Invalid stod conversion: " + line
                         << std::endl;

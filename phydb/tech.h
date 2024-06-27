@@ -115,12 +115,12 @@ class Tech {
       double &same_diff_spacing,
       double &any_diff_spacing
   ) const;
-  void GetEndCapMinWidthHeight(
-      std::optional<double> &pre_end_cap_min_width,
-      std::optional<double> &pre_end_cap_min_height,
-      std::optional<double> &post_end_cap_min_width,
-      std::optional<double> &post_end_cap_min_height
-  ) const;
+  std::optional<double> GetPreEndCapMinWidth() const;
+  std::optional<double> GetPreEndCapMinPHeight() const;
+  std::optional<double> GetPreEndCapMinNHeight() const;
+  std::optional<double> GetPostEndCapMinWidth() const;
+  std::optional<double> GetPostEndCapMinPHeight() const;
+  std::optional<double> GetPostEndCapMinNHeight() const;
   void ReportWellShape(); // report the well shape_ for each BlockType for debugging purposes.
 
   std::string GetLefName() const;
@@ -196,9 +196,11 @@ class Tech {
 
   /****pre- and post-end cap cell parameters for gridded cell placement****/
   std::optional<double> pre_end_cap_min_width_ = std::nullopt;
-  std::optional<double> pre_end_cap_min_height_ = std::nullopt;
+  std::optional<double> pre_end_cap_min_p_height_ = std::nullopt;
+  std::optional<double> pre_end_cap_min_n_height_ = std::nullopt;
   std::optional<double> post_end_cap_min_width_ = std::nullopt;
-  std::optional<double> post_end_cap_min_height_ = std::nullopt;
+  std::optional<double> post_end_cap_min_p_height_ = std::nullopt;
+  std::optional<double> post_end_cap_min_n_height_ = std::nullopt;
 
   /****LEF file name****/
   std::string lef_name_;
