@@ -31,26 +31,17 @@ namespace phydb {
 class Row {
  public:
   Row() = default;
-  Row(
-      std::string const &name,
-      int site_id,
-      CompOrient orient,
-      int origX,
-      int origY,
-      int numX,
-      int numY,
-      int stepX,
-      int stepY
-  ) :
-      name_(name),
-      site_id_(site_id),
-      orient_(orient),
-      orig_x_(origX),
-      orig_y_(origY),
-      num_x_(numX),
-      num_y_(numY),
-      step_x_(stepX),
-      step_y_(stepY) {}
+  Row(std::string const &name, int site_id, CompOrient orient, int origX,
+      int origY, int numX, int numY, int stepX, int stepY)
+      : name_(name),
+        site_id_(site_id),
+        orient_(orient),
+        orig_x_(origX),
+        orig_y_(origY),
+        num_x_(numX),
+        num_y_(numY),
+        step_x_(stepX),
+        step_y_(stepY) {}
 
   const std::string &GetName() const { return name_; }
   int GetSiteId() const { return site_id_; }
@@ -61,6 +52,7 @@ class Row {
   int GetNumY() const { return num_y_; }
   int GetStepX() const { return step_x_; }
   int GetStepY() const { return step_y_; }
+
  private:
   std::string name_;
   int site_id_;
@@ -75,7 +67,6 @@ class Row {
 
 std::ostream &operator<<(std::ostream &, const Row &);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_ROW_H_
-
+#endif  // PHYDB_ROW_H_

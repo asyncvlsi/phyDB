@@ -35,13 +35,9 @@ class SpacingTable {
     width_.resize(nR);
     spacing_.resize(nC * nR);
   }
-  SpacingTable(
-      int nC,
-      int nR,
-      const std::vector<double> &v_parallel_run_length,
-      const std::vector<double> &v_width,
-      const std::vector<double> &v_spacing
-  ) {
+  SpacingTable(int nC, int nR, const std::vector<double> &v_parallel_run_length,
+               const std::vector<double> &v_width,
+               const std::vector<double> &v_spacing) {
     SetSize(nC, nR);
     SetParallelRunLengthVec(v_parallel_run_length);
     SetWidthVec(v_width);
@@ -63,7 +59,7 @@ class SpacingTable {
 
   void SetParallelRunLengthAt(int col, double val);
   void SetWidthAt(int row, double val);
-  void SetSpacingAt(int col, int row, double val); // (0, 0) is at top left
+  void SetSpacingAt(int col, int row, double val);  // (0, 0) is at top left
 
   double GetParallelRunLengthAt(int col) const;
   double GetWidthAt(int row) const;
@@ -71,6 +67,7 @@ class SpacingTable {
 
   double GetSpacingForWidth(double width) const;
   double GetSpacingFor(double width, double length) const;
+
  private:
   int n_col_ = 0;
   int n_row_ = 0;
@@ -81,6 +78,6 @@ class SpacingTable {
 
 std::ostream &operator<<(std::ostream &, const SpacingTable &);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_SPACINGTABLE_H_
+#endif  // PHYDB_SPACINGTABLE_H_

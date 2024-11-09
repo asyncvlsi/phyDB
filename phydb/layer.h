@@ -28,30 +28,23 @@
 #include "cornerspacing.h"
 #include "enumtypes.h"
 #include "eolspacing.h"
-#include "spacingtable.h"
-#include "spacingtableinfluence.h"
 #include "phydb/common/logging.h"
 #include "phydb/timing/techconfig.h"
+#include "spacingtable.h"
+#include "spacingtableinfluence.h"
 
 namespace phydb {
 
 class LayerTechConfigCorner {
  public:
-  explicit LayerTechConfigCorner(int model_index)
-      : model_index_(model_index) {}
+  explicit LayerTechConfigCorner(int model_index) : model_index_(model_index) {}
 
   ConfigTable &InitResOverTable(int layer_index, int over_index);
   ConfigTable &InitCapOverTable(int layer_index, int over_index);
   ConfigTable &InitCapUnderTable(int layer_index, int under_index);
-  ConfigTable &InitCapDiagUnderTable(
-      int layer_index,
-      int diagunder_index
-  );
-  ConfigTable &InitCapOverUnderTable(
-      int layer_index,
-      int over_index,
-      int under_index
-  );
+  ConfigTable &InitCapDiagUnderTable(int layer_index, int diagunder_index);
+  ConfigTable &InitCapOverUnderTable(int layer_index, int over_index,
+                                     int under_index);
 
   /**** getters for raw data ****/
   std::vector<ConfigTable> &GetResOverRef();
@@ -79,6 +72,7 @@ class LayerTechConfigCorner {
 class LayerTechConfig {
  private:
   std::vector<LayerTechConfigCorner> corners_;
+
  public:
   void AddCorner(int corner_index);
   std::vector<LayerTechConfigCorner> &CornersRef();
@@ -90,49 +84,29 @@ class LayerTechConfig {
 
 class Layer {
   friend class Tech;
+
  public:
-  Layer(
-      std::string const &name,
-      LayerType type,
-      MetalDirection direction
-  ) : name_(name),
-      type_(type),
-      direction_(direction) {}
+  Layer(std::string const &name, LayerType type, MetalDirection direction)
+      : name_(name), type_(type), direction_(direction) {}
 
-  //constructor for metal layer
-  Layer(
-      std::string const &name,
-      LayerType type,
-      MetalDirection direction,
-      double pitch_x,
-      double pitch_y,
-      double width,
-      double area,
-      double min_width,
-      double offset
-  ) :
-      name_(name),
-      type_(type),
-      id_(-1),
-      direction_(direction),
-      pitchx_(pitch_x),
-      pitchy_(pitch_y),
-      width_(width),
-      area_(area),
-      min_width_(min_width),
-      offset_(offset) {
-  }
+  // constructor for metal layer
+  Layer(std::string const &name, LayerType type, MetalDirection direction,
+        double pitch_x, double pitch_y, double width, double area,
+        double min_width, double offset)
+      : name_(name),
+        type_(type),
+        id_(-1),
+        direction_(direction),
+        pitchx_(pitch_x),
+        pitchy_(pitch_y),
+        width_(width),
+        area_(area),
+        min_width_(min_width),
+        offset_(offset) {}
 
-  //constructor for cut layer
-  Layer(
-      std::string const &name,
-      LayerType type,
-      double spacing
-  ) :
-      name_(name),
-      type_(type),
-      id_(-1),
-      spacing_(spacing) {}
+  // constructor for cut layer
+  Layer(std::string const &name, LayerType type, double spacing)
+      : name_(name), type_(type), id_(-1), spacing_(spacing) {}
 
   ~Layer();
 
@@ -170,31 +144,16 @@ class Layer {
 
   SpacingTable *SetSpacingTable(SpacingTable &);
   SpacingTable *SetSpacingTable(
-      int n_col,
-      int n_row,
-      const std::vector<double> &v_parallel_run_length,
-      const std::vector<double> &v_width,
-      const std::vector<double> &v_spacing
-  );
-  SpacingTableInfluence *AddSpacingTableInfluence(
-      double width,
-      double within,
-      double spacing
-  );
+      int n_col, int n_row, const std::vector<double> &v_parallel_run_length,
+      const std::vector<double> &v_width, const std::vector<double> &v_spacing);
+  SpacingTableInfluence *AddSpacingTableInfluence(double width, double within,
+                                                  double spacing);
 
-  EolSpacing *AddEolSpacing(
-      double spacing,
-      double eol_width,
-      double eol_within,
-      double par_edge,
-      double par_within
-  );
+  EolSpacing *AddEolSpacing(double spacing, double eol_width, double eol_within,
+                            double par_edge, double par_within);
   CornerSpacing *SetCornerSpacing(CornerSpacing &);
-  AdjacentCutSpacing *SetAdjCutSpacing(
-      double spacing,
-      int adjacent_cuts,
-      int cut_within
-  );
+  AdjacentCutSpacing *SetAdjCutSpacing(double spacing, int adjacent_cuts,
+                                       int cut_within);
 
   SpacingTable *GetSpacingTable();
   std::vector<SpacingTableInfluence> *GetSpacingTableInfluences();
@@ -209,21 +168,9 @@ class Layer {
   void SetResistanceUnitFromLef();
   void SetCapacitanceUnitFromTechConfig();
   void SetCapacitanceUnitFromLef();
-  double GetResistance(
-      double width,
-      double length,
-      int corner_index
-  );
-  double GetAreaCapacitance(
-      double width,
-      double length,
-      int corner_index
-  );
-  double GetFringeCapacitance(
-      double width,
-      double length,
-      int corner_index
-  );
+  double GetResistance(double width, double length, int corner_index);
+  double GetAreaCapacitance(double width, double length, int corner_index);
+  double GetFringeCapacitance(double width, double length, int corner_index);
 
   friend std::ostream &operator<<(std::ostream &, const Layer &);
 
@@ -234,7 +181,7 @@ class Layer {
   LayerType type_;
   int id_ = -1;
 
-  //metal layer
+  // metal layer
   MetalDirection direction_ = MetalDirection::VERTICAL;
   double pitchx_ = -1;
   double pitchy_ = -1;
@@ -248,7 +195,7 @@ class Layer {
   std::vector<EolSpacing> eol_spacings_;
   CornerSpacing corner_spacing_;
 
-  //cut layer
+  // cut layer
   double spacing_ = -1;
   AdjacentCutSpacing adjacent_cut_spacing_;
 
@@ -257,16 +204,21 @@ class Layer {
   std::vector<double> unit_edge_cap_;
   std::vector<double> unit_res_;
   /**** Part 1. parameters from LEF (only one corner?) ****/
-  // capacitance for each square unit, in picofarads per square micron. This is used to model wire-to-ground capacitance.
+  // capacitance for each square unit, in picofarads per square micron. This is
+  // used to model wire-to-ground capacitance.
   double capacitance_cpersqdist_ = -1;
-  // Specifies the multiplier for interconnect capacitance to account for increases in capacitance caused by nearby wires.
+  // Specifies the multiplier for interconnect capacitance to account for
+  // increases in capacitance caused by nearby wires.
   double capmultiplier_ = 1;
-  // segment capacitance = (layer_capacitance_per_square x segment_width x segment_length) + (peripheral_capacitance x 2 (segment_width + segment_length))
+  // segment capacitance = (layer_capacitance_per_square x segment_width x
+  // segment_length) + (peripheral_capacitance x 2 (segment_width +
+  // segment_length))
   double edgecapacitance_ = -1;
-  // Specifies the resistance for a square of wire, in ohms per square. The resistance of a wire can be defined as
-  // RPERSQU x wire_length/wire_width
+  // Specifies the resistance for a square of wire, in ohms per square. The
+  // resistance of a wire can be defined as RPERSQU x wire_length/wire_width
   double resistance_rpersq_ = -1;
-  /**** Part 2. parameters from OpenRCX technology configuration file (multiple corners) ****/
+  /**** Part 2. parameters from OpenRCX technology configuration file (multiple
+   * corners) ****/
   LayerTechConfig *layer_tech_config_ = nullptr;
 };
 
@@ -274,18 +226,13 @@ std::ostream &operator<<(std::ostream &, const Layer &);
 
 class WellLayer {
  public:
-  WellLayer(
-      double width,
-      double spacing,
-      double op_spacing,
-      double max_plug_dist,
-      double overhang
-  ) :
-      width_(width),
-      spacing_(spacing),
-      op_spacing_(op_spacing),
-      max_plug_dist_(max_plug_dist),
-      overhang_(overhang) {}
+  WellLayer(double width, double spacing, double op_spacing,
+            double max_plug_dist, double overhang)
+      : width_(width),
+        spacing_(spacing),
+        op_spacing_(op_spacing),
+        max_plug_dist_(max_plug_dist),
+        overhang_(overhang) {}
 
   double GetWidth() const;
   double GetSpacing() const;
@@ -298,14 +245,10 @@ class WellLayer {
   void SetOpSpacing(double op_spacing);
   void SetMaxPlugDist(double max_plug_dist);
   void SetOverhang(double overhang);
-  void SetParams(
-      double width,
-      double spacing,
-      double op_spacing,
-      double max_plug_dist,
-      double overhang
-  );
+  void SetParams(double width, double spacing, double op_spacing,
+                 double max_plug_dist, double overhang);
   void Report() const;
+
  private:
   double width_;
   double spacing_;
@@ -314,6 +257,6 @@ class WellLayer {
   double overhang_;
 };
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_LAYER_H_
+#endif  // PHYDB_LAYER_H_

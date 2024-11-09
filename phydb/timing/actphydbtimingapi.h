@@ -21,10 +21,9 @@
 #ifndef PHYDB_TIMING_ACTPHYDBTIMINGAPI_H_
 #define PHYDB_TIMING_ACTPHYDBTIMINGAPI_H_
 
+#include <boost/functional/hash.hpp>
 #include <unordered_map>
 #include <vector>
-
-#include <boost/functional/hash.hpp>
 
 #include "config.h"
 
@@ -70,19 +69,16 @@ class PhydbPin {
   // id of the pin in a MACRO or the IOPIN list
   int PinId() const { return pin_id_; }
 
-  bool IsValid() {
-    return !((instance_id_ < -1) || (pin_id_ < 0));
-  }
+  bool IsValid() { return !((instance_id_ < -1) || (pin_id_ < 0)); }
 
-  bool IsComponentPin() {
-    return instance_id_ >= 0;
-  }
+  bool IsComponentPin() { return instance_id_ >= 0; }
 
   void Reset() {
     instance_id_ = -1;
     pin_id_ = -1;
   }
-  friend std::ostream& operator<<(std::ostream& ost, const PhydbPin& pin);
+  friend std::ostream &operator<<(std::ostream &ost, const PhydbPin &pin);
+
  private:
   int instance_id_;
   int pin_id_;
@@ -123,13 +119,7 @@ struct PhydbPath {
   PhydbPin root;
   std::vector<PhydbTimingEdge> edges;
   void Clear();
-  void AddEdge(
-      PhydbPin &src,
-      PhydbPin &tgt,
-      int net_id,
-      double dly,
-      int cnt
-  );
+  void AddEdge(PhydbPin &src, PhydbPin &tgt, int net_id, double dly, int cnt);
 };
 
 struct TimingDAG {
@@ -150,13 +140,15 @@ struct TimingDAG {
   void AddFastPath(PhydbPath &fast_path);
 };
 
-// TODO : is arc delay independent of load net SPEF? If yes, no need to store arcs using PhydbTimingEdge
+// TODO : is arc delay independent of load net SPEF? If yes, no need to store
+// arcs using PhydbTimingEdge
 struct ForkConstraint {
   PhydbPin root;
-  PhydbPin stb_slow; // supposed to be slow
-  std::vector<PhydbPin> stb_fast; // supposed to be fast
+  PhydbPin stb_slow;               // supposed to be slow
+  std::vector<PhydbPin> stb_fast;  // supposed to be fast
 
-  // TODO: for different root sign and stb_slow sign combinations, put them in one or multiple DAGs?
+  // TODO: for different root sign and stb_slow sign combinations, put them in
+  // one or multiple DAGs?
   TimingDAG timing_dag;
 };
 
@@ -169,8 +161,9 @@ struct ActEdge {
 
 class ActPhyDBTimingAPI {
   friend class PhyDB;
+
  public:
-  //APIs for ACT
+  // APIs for ACT
   void AddActNetPtrIdPair(void *act_net, int net_id);
   void BindActPinAndPhydbPin(void *act_pin, PhydbPin phydb_pin);
 
@@ -179,48 +172,27 @@ class ActPhyDBTimingAPI {
   void SetSpecifyTopKCB(void (*callback_function)(int, int));
   void SetUpdateTimingIncrementalCB(void (*callback_function)());
   void SetGetSlackCB(
-      std::vector<double> (*callback_function)(const std::vector<int> &)
-  );
+      std::vector<double> (*callback_function)(const std::vector<int> &));
   void SetGetViolatedTimingConstraintsCB(
-      void (*callback_function)(std::vector<int> &)
-  );
-  void SetGetSlowWitnessCB(
-      void (*callback_function)(
-          int timing_constraint_id,
-          std::vector<ActEdge> &path
-      )
-  );
-  void SetGetFastWitnessCB(
-      void (*callback_function)(
-          int timing_constraint_id,
-          std::vector<ActEdge> &path
-      )
-  );
+      void (*callback_function)(std::vector<int> &));
+  void SetGetSlowWitnessCB(void (*callback_function)(
+      int timing_constraint_id, std::vector<ActEdge> &path));
+  void SetGetFastWitnessCB(void (*callback_function)(
+      int timing_constraint_id, std::vector<ActEdge> &path));
   void SetGetNumPerformanceConstraintsCB(int (*callback_function)());
   void SetSpecifyPerformanceTopKsCB(void (*callback_function)(int top_k));
-  void SetSpecifyPerformanceTopKCB(
-      void (*callback_function)(
-          int performance_id,
-          int top_k
-      )
-  );
+  void SetSpecifyPerformanceTopKCB(void (*callback_function)(int performance_id,
+                                                             int top_k));
   void SetGetPerformanceConstraintWeightCB(
-      double (*callback_function)(int performance_id)
-  );
+      double (*callback_function)(int performance_id));
   void SetGetPerformanceSlackCB(
-      double (*callback_function)(int performance_id)
-  );
+      double (*callback_function)(int performance_id));
   void SetGetViolatedPerformanceConstraintsCB(
-      void (*callback_function)(std::vector<int> &)
-  );
-  void SetGetPerformanceWitnessCB(
-      void (*callback_function)(
-          int performance_id,
-          std::vector<ActEdge> &path
-      )
-  );
+      void (*callback_function)(std::vector<int> &));
+  void SetGetPerformanceWitnessCB(void (*callback_function)(
+      int performance_id, std::vector<ActEdge> &path));
 
-  //APIs for Dali and SPRoute
+  // APIs for Dali and SPRoute
   bool ReadyForTimingDriven();
   bool IsActNetPtrExisting(void *act_net);
   int ActNetPtr2Id(void *act_net);
@@ -246,32 +218,17 @@ class ActPhyDBTimingAPI {
 
   galois::eda::parasitics::Node *PhyDBPinToSpefNode(PhydbPin phydb_pin);
 
-  void GetWitness(
-      int tc_num,
-      PhydbPath &phydb_fast_path,
-      PhydbPath &phydb_slow_path
-  );
-  void GetSlowWitness(
-      int tc_num,
-      PhydbPath &phydb_path
-  );
-  void GetFastWitness(
-      int tc_num,
-      PhydbPath &phydb_path
-  );
+  void GetWitness(int tc_num, PhydbPath &phydb_fast_path,
+                  PhydbPath &phydb_slow_path);
+  void GetSlowWitness(int tc_num, PhydbPath &phydb_path);
+  void GetFastWitness(int tc_num, PhydbPath &phydb_path);
   int GetNumPerformanceConstraints();
   void SpecifyPerformanceTopKs(int top_k);
-  void SpecifyPerformanceTopK(
-      int performance_id,
-      int top_k
-  );
+  void SpecifyPerformanceTopK(int performance_id, int top_k);
   double GetPerformanceConstraintWeight(int performance_id);
   double GetPerformanceSlack(int performance_id);
   void GetViolatedPerformanceConstraints(std::vector<int> &performance_ids);
-  void GetPerformanceWitness(
-      int performance_id,
-      PhydbPath &phydb_path
-  );
+  void GetPerformanceWitness(int performance_id, PhydbPath &phydb_path);
 #endif
  private:
   int (*GetNumConstraintsCB)() = nullptr;
@@ -280,29 +237,19 @@ class ActPhyDBTimingAPI {
   void (*UpdateTimingIncrementalCB)() = nullptr;
   std::vector<double> (*GetSlackCB)(const std::vector<int> &) = nullptr;
   void (*GetViolatedTimingConstraintsCB)(std::vector<int> &) = nullptr;
-  void (*GetSlowWitnessCB)(
-      int timing_constraint_id,
-      std::vector<ActEdge> &path
-  ) = nullptr;
-  void (*GetFastWitnessCB)(
-      int timing_constraint_id,
-      std::vector<ActEdge> &path
-  ) = nullptr;
+  void (*GetSlowWitnessCB)(int timing_constraint_id,
+                           std::vector<ActEdge> &path) = nullptr;
+  void (*GetFastWitnessCB)(int timing_constraint_id,
+                           std::vector<ActEdge> &path) = nullptr;
   int (*GetNumPerformanceConstraintsCB)() = nullptr;
   void (*SpecifyPerformanceTopKsCB)(int top_k) = nullptr;
-  void (*SpecifyPerformanceTopKCB)(
-      int performance_id,
-      int top_k
-  ) = nullptr;
+  void (*SpecifyPerformanceTopKCB)(int performance_id, int top_k) = nullptr;
   double (*GetPerformanceConstraintWeightCB)(int performance_id) = nullptr;
   double (*GetPerformanceSlackCB)(int performance_id) = nullptr;
   void (*GetViolatedPerformanceConstraintsCB)(
-      std::vector<int> &performance_ids
-  ) = nullptr;
-  void (*GetPerformanceWitnessCB)(
-      int performance_id,
-      std::vector<ActEdge> &path
-  ) = nullptr;
+      std::vector<int> &performance_ids) = nullptr;
+  void (*GetPerformanceWitnessCB)(int performance_id,
+                                  std::vector<ActEdge> &path) = nullptr;
 
   // act net pointer <=> phydb net index
   std::unordered_map<void *, int> net_act_2_id_;
@@ -317,12 +264,10 @@ class ActPhyDBTimingAPI {
   galois::eda::utility::ExtNetlistAdaptor *adaptor_;
 #endif
 
-  void TranslateActPathToPhydbPath(
-      std::vector<ActEdge> &act_path,
-      PhydbPath &phydb_path
-  );
+  void TranslateActPathToPhydbPath(std::vector<ActEdge> &act_path,
+                                   PhydbPath &phydb_path);
 };
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_TIMING_ACTPHYDBTIMINGAPI_H_
+#endif  // PHYDB_TIMING_ACTPHYDBTIMINGAPI_H_

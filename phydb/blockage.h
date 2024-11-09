@@ -79,6 +79,6 @@ class Blockage {
   std::vector<Points2D<int>> polygons_;
 };
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_BLOCKAGE_H_
+#endif  // PHYDB_BLOCKAGE_H_

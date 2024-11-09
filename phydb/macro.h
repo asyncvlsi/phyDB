@@ -21,8 +21,8 @@
 #ifndef PHYDB_MACRO_H_
 #define PHYDB_MACRO_H_
 
-#include <memory>
 #include <fstream>
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -46,18 +46,9 @@ class Macro {
     origin_.x = 0;
     origin_.y = 0;
   }
-  Macro(
-      std::string const &name,
-      Point2D<double> origin,
-      Point2D<double> size,
-      std::vector<Pin> pins,
-      OBS obs
-  ) :
-      name_(name),
-      origin_(origin),
-      size_(size),
-      pins_(pins),
-      obs_(obs) {}
+  Macro(std::string const &name, Point2D<double> origin, Point2D<double> size,
+        std::vector<Pin> pins, OBS obs)
+      : name_(name), origin_(origin), size_(size), pins_(pins), obs_(obs) {}
 
   void SetName(std::string const &name);
   void SetClass(MacroClass macro_class);
@@ -70,16 +61,13 @@ class Macro {
 
   // APIs for adding PINs to this MACRO
   bool IsPinExisting(std::string const &pin_name);
-  Pin *AddPin(
-      std::string const &pin_name,
-      SignalDirection direction,
-      SignalUse use
-  );
+  Pin *AddPin(std::string const &pin_name, SignalDirection direction,
+              SignalUse use);
   int GetPinId(std::string const &pin_name);
 
   // APIs for adding OBS to this MACRO
-  //void SetObs(OBS &obs); // TODO: change this API to return a pointer
-  //void AddObsLayerRect(LayerRect &layer_rect);
+  // void SetObs(OBS &obs); // TODO: change this API to return a pointer
+  // void AddObsLayerRect(LayerRect &layer_rect);
 
   const std::string &GetName();
   MacroClass GetClass() const;
@@ -94,24 +82,26 @@ class Macro {
   std::string GetSite() const;
   std::vector<Pin> GetPinVec() const;
   std::vector<Pin> &GetPinsRef();
-  bool GetPin(std::string const pinName, Pin &pin) const; // TODO: what is this?
-  //bool GetObs(OBS &) const;
+  bool GetPin(std::string const pinName,
+              Pin &pin) const;  // TODO: what is this?
+  // bool GetObs(OBS &) const;
   OBS *GetObs();
   void InitWellPtr(Macro *macro_ptr);
   std::unique_ptr<MacroWell> &WellPtrRef();
-  double GetWellPNEdge () const;
+  double GetWellPNEdge() const;
 
   /****Helper functions****/
   void ExportToFile(std::ofstream &ost);
 
   friend std::ostream &operator<<(std::ostream &, const Macro &);
+
  private:
   std::string name_;
   MacroClass class_ = MacroClass::CORE;
   Point2D<double> origin_;
   Point2D<double> size_;
   Symmetry symmetry_;
-  std::string site_name_; // TODO optimize this
+  std::string site_name_;  // TODO optimize this
   std::vector<Pin> pins_;
   OBS obs_;
 
@@ -134,19 +124,17 @@ struct MacroWell {
   void SetWellShape(bool is_n, Rect2D<double> &rect);
   bool IsNPWellAbutted() const;
   void Report() const;
-  double GetPNEdge () const;
+  double GetPNEdge() const;
+
  private:
-  Macro *macro_ptr_; // pointer to BlockType
-  bool is_n_set_ = false; // whether N-well shape_ is Set or not
-  bool is_p_set_ = false; // whether P-well shape_ is Set or not
-  Rect2D<double> n_rect_; // N-well rect_
-  Rect2D<double> p_rect_; // P-well rect_
-  double p_n_edge_ = 0; // cached N/P-well boundary
+  Macro *macro_ptr_;       // pointer to BlockType
+  bool is_n_set_ = false;  // whether N-well shape_ is Set or not
+  bool is_p_set_ = false;  // whether P-well shape_ is Set or not
+  Rect2D<double> n_rect_;  // N-well rect_
+  Rect2D<double> p_rect_;  // P-well rect_
+  double p_n_edge_ = 0;    // cached N/P-well boundary
 };
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_MACRO_H_
-
-
-
+#endif  // PHYDB_MACRO_H_

@@ -28,6 +28,7 @@ namespace phydb {
 class StatsPin {
   friend class Stats;
   friend class StatsComponent;
+
  public:
   StatsPin(phydb::Pin &pin, int dbuPerMicron) {
     name_ = pin.GetName();
@@ -43,6 +44,7 @@ class StatsPin {
       }
     }
   }
+
  private:
   std::string name_;
   SignalUse use_;
@@ -51,16 +53,14 @@ class StatsPin {
 
 class StatsComponent {
   friend class Stats;
+
  public:
-  void ComputeLocation(
-      Rect2D<double> &rect,
-      CompOrient orient,
-      Point2D<int> location,
-      Point2D<int> orig,
-      Point2D<int> size
-  );
+  void ComputeLocation(Rect2D<double> &rect, CompOrient orient,
+                       Point2D<int> location, Point2D<int> orig,
+                       Point2D<int> size);
 
   StatsComponent(Component &, int);
+
  private:
   std::string name_;
   phydb::Point2D<int> location_;
@@ -90,14 +90,15 @@ class Stats {
 
   void ComputeRUDY();
   void ComputePinDensity();
+
  private:
   PhyDB *db_ptr_ = nullptr;
-  int Gcell_size_ = 15; //in the unit of the min pitch of all layers
+  int Gcell_size_ = 15;  // in the unit of the min pitch of all layers
   std::vector<StatsComponent> stats_components_;
   double *RUDY_;
   double *pin_density_;
 };
 
-} //namespace phydb
+}  // namespace phydb
 
 #endif

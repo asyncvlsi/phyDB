@@ -36,24 +36,23 @@ class LefVia {
   std::string GetName() const;
   void SetDefault();
   void UnsetDefault();
-  void SetLayerRect(
-      const std::string &layer_name0,
-      const std::vector<Rect2D<double>> &rects0,
-      const std::string &layer_name1,
-      const std::vector<Rect2D<double>> &rects1,
-      const std::string &layer_name2,
-      const std::vector<Rect2D<double>> &rects2
-  );
+  void SetLayerRect(const std::string &layer_name0,
+                    const std::vector<Rect2D<double>> &rects0,
+                    const std::string &layer_name1,
+                    const std::vector<Rect2D<double>> &rects1,
+                    const std::string &layer_name2,
+                    const std::vector<Rect2D<double>> &rects2);
 
   std::vector<LayerRect> &GetLayerRectsRef();
 
   void Report();
+
  private:
   std::string name_;
   bool is_default_;
   std::vector<LayerRect> layer_rects_;
 };
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_LEFVIA_H_
+#endif  // PHYDB_LEFVIA_H_

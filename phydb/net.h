@@ -23,29 +23,24 @@
 
 #include "datatype.h"
 #include "enumtypes.h"
-#include "snet.h"
 #include "phydb/common/logging.h"
 #include "phydb/timing/actphydbtimingapi.h"
+#include "snet.h"
 
 namespace phydb {
 
 class Net {
  public:
   Net() {}
-  Net(const std::string &name, double weight)
-      : name_(name), weight_(weight) {}
+  Net(const std::string &name, double weight) : name_(name), weight_(weight) {}
 
   void AddIoPin(int iopin_id);
   void AddCompPin(int comp_id, int pin_id);
   void AddRoutingGuide(int llx, int lly, int urx, int ury, int layer_id);
 
   Path *AddPath();
-  //by default, width of signal nets is the standard width
-  Path *AddPath(
-      std::string &layer_name,
-      std::string shape,
-      int width = 0
-  );
+  // by default, width of signal nets is the standard width
+  Path *AddPath(std::string &layer_name, std::string shape, int width = 0);
 
   const std::string &GetName() const;
   std::vector<PhydbPin> &GetPinsRef();
@@ -58,6 +53,7 @@ class Net {
   int GetDriverPinId() const { return driver_pin_id_; }
 
   void Report();
+
  private:
   std::string name_;
   SignalUse use_ = SignalUse::SIGNAL;
@@ -77,6 +73,6 @@ class Net {
 
 std::ostream &operator<<(std::ostream &, const Net &);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_NET_H_
+#endif  // PHYDB_NET_H_

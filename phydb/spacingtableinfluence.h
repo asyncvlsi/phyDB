@@ -26,13 +26,8 @@ namespace phydb {
 class SpacingTableInfluence {
  public:
   SpacingTableInfluence() {}
-  SpacingTableInfluence(
-      double width,
-      double within,
-      double spacing
-  ) : width_(width),
-      within_(within),
-      spacing_(spacing) {}
+  SpacingTableInfluence(double width, double within, double spacing)
+      : width_(width), within_(within), spacing_(spacing) {}
 
   void SetWidth(double);
   void SetWithin(double);
@@ -43,12 +38,13 @@ class SpacingTableInfluence {
   double GetSpacing() const;
 
   void Report() const;
+
  private:
   double width_;
   double within_;
   double spacing_;
 };
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_SPACINGTABLEINFLUENCE_H
+#endif  // PHYDB_SPACINGTABLEINFLUENCE_H

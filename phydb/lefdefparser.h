@@ -31,9 +31,11 @@
 namespace phydb {
 
 int getLefSite(lefrCallbackType_e type, lefiSite *site, lefiUserData data);
-int getLefMacrosBegin(lefrCallbackType_e type, const char *str, lefiUserData data);
+int getLefMacrosBegin(lefrCallbackType_e type, const char *str,
+                      lefiUserData data);
 int getLefMacros(lefrCallbackType_e, lefiMacro *, lefiUserData);
-int getLefMacrosEnd(lefrCallbackType_e type, const char *str, lefiUserData data);
+int getLefMacrosEnd(lefrCallbackType_e type, const char *str,
+                    lefiUserData data);
 int getLefString(lefrCallbackType_e, const char *, lefiUserData);
 int getLefUnits(lefrCallbackType_e, lefiUnits *, lefiUserData);
 int getLefManufacturingGrid(lefrCallbackType_e, double, lefiUserData);
@@ -45,7 +47,7 @@ int getLefViaRuleGenerates(lefrCallbackType_e, lefiViaRule *, lefiUserData);
 
 int getDefVersion(defrCallbackType_e, double, defiUserData);
 int getDefBlockageStart(defrCallbackType_e, int, defiUserData);
-int getDefBlockage(defrCallbackType_e, defiBlockage*, defiUserData);
+int getDefBlockage(defrCallbackType_e, defiBlockage *, defiUserData);
 int getDefBusBit(defrCallbackType_e, const char *, defiUserData);
 int getDefDivider(defrCallbackType_e, const char *, defiUserData);
 int getDefString(defrCallbackType_e, const char *, defiUserData);
@@ -65,6 +67,6 @@ void Si2ReadLef(PhyDB *phy_db_ptr, std::string const &lef_file_name);
 void Si2ReadDef(PhyDB *phy_db_ptr, std::string const &def_file_name);
 void Si2LoadPlacedDef(PhyDB *phy_db_ptr, std::string const &def_file_name);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_LEFDEFPARSER_H_
+#endif  // PHYDB_LEFDEFPARSER_H_

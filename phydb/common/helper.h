@@ -28,8 +28,6 @@ namespace phydb {
 
 std::vector<std::string> StrTokenize(std::string &line);
 
-
-
 }
 
-#endif //PHYDB_COMMON_HELPER_H_
+#endif  // PHYDB_COMMON_HELPER_H_

@@ -28,19 +28,12 @@ namespace phydb {
 
 class GcellGrid {
  public:
-  GcellGrid() :
-      start_(0),
-      numBoundaries_(0),
-      step_(0) {}
-  GcellGrid(
-      XYDirection direction,
-      int start,
-      int numBoundaries,
-      int step
-  ) : direction_(direction),
-      start_(start),
-      numBoundaries_(numBoundaries),
-      step_(step) {}
+  GcellGrid() : start_(0), numBoundaries_(0), step_(0) {}
+  GcellGrid(XYDirection direction, int start, int numBoundaries, int step)
+      : direction_(direction),
+        start_(start),
+        numBoundaries_(numBoundaries),
+        step_(step) {}
 
   void SetDirection(XYDirection);
   void SetStart(int);
@@ -55,16 +48,16 @@ class GcellGrid {
   void Report() const;
 
   friend std::ostream &operator<<(std::ostream &, const GcellGrid &);
+
  private:
   XYDirection direction_;
   int start_;
   int numBoundaries_;
   int step_;
-
 };
 
 std::ostream &operator<<(std::ostream &, const GcellGrid &);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_GCELLGRID_H_
+#endif  // PHYDB_GCELLGRID_H_

@@ -30,41 +30,28 @@ namespace phydb {
 class Component {
  public:
   Component() = default;
-  Component(
-      int id,
-      std::string const &comp_name,
-      Macro *macro_ptr,
-      CompSource source,
-      PlaceStatus place_status,
-      Point2D<int> location,
-      CompOrient orient,
-      int weight = 0
-  ) : id_(id),
-      name_(comp_name),
-      macro_ptr_(macro_ptr),
-      source_(source),
-      place_status_(place_status),
-      location_(location),
-      orient_(orient),
-      weight_(weight) {}
-  Component(
-      int id,
-      std::string const &comp_name,
-      Macro *macro_ptr,
-      CompSource source,
-      PlaceStatus place_status,
-      int llx,
-      int lly,
-      CompOrient orient,
-      int weight = 0
-  ) : id_(id),
-      name_(comp_name),
-      macro_ptr_(macro_ptr),
-      source_(source),
-      place_status_(place_status),
-      location_(llx, lly),
-      orient_(orient),
-      weight_(weight) {}
+  Component(int id, std::string const &comp_name, Macro *macro_ptr,
+            CompSource source, PlaceStatus place_status, Point2D<int> location,
+            CompOrient orient, int weight = 0)
+      : id_(id),
+        name_(comp_name),
+        macro_ptr_(macro_ptr),
+        source_(source),
+        place_status_(place_status),
+        location_(location),
+        orient_(orient),
+        weight_(weight) {}
+  Component(int id, std::string const &comp_name, Macro *macro_ptr,
+            CompSource source, PlaceStatus place_status, int llx, int lly,
+            CompOrient orient, int weight = 0)
+      : id_(id),
+        name_(comp_name),
+        macro_ptr_(macro_ptr),
+        source_(source),
+        place_status_(place_status),
+        location_(llx, lly),
+        orient_(orient),
+        weight_(weight) {}
 
   void SetPlacementStatus(PlaceStatus status);
   void SetLocation(int lx, int ly);
@@ -99,6 +86,6 @@ class Component {
 
 std::ostream &operator<<(std::ostream &, Component &);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_COMPONENT_H_
+#endif  // PHYDB_COMPONENT_H_

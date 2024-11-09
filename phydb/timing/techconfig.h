@@ -26,8 +26,8 @@
 namespace phydb {
 
 /****
- * @brief This structure presents an entry in tables in a technology configuration
- * file from OpenRCX.
+ * @brief This structure presents an entry in tables in a technology
+ * configuration file from OpenRCX.
  *
  * This structure contains four attributes:
  * 1. distance_: distance of two metal segments.
@@ -39,16 +39,12 @@ namespace phydb {
  */
 struct TableEntry {
  public:
-  TableEntry(
-      double distance,
-      double coupling_cap,
-      double fringe_cap,
-      double res
-  ) :
-      distance_(distance),
-      coupling_cap_(coupling_cap),
-      fringe_cap_(fringe_cap),
-      res_(res) {}
+  TableEntry(double distance, double coupling_cap, double fringe_cap,
+             double res)
+      : distance_(distance),
+        coupling_cap_(coupling_cap),
+        fringe_cap_(fringe_cap),
+        res_(res) {}
   double distance_;
   double coupling_cap_;
   double fringe_cap_;
@@ -78,18 +74,14 @@ enum TableType {
  */
 struct ConfigTable {
  public:
-  ConfigTable(TableType type, int layer_index, int index0, int index1 = 0) :
-      type_(type),
-      layer_index_(layer_index),
-      index0_(index0),
-      index1_(index1) {}
+  ConfigTable(TableType type, int layer_index, int index0, int index1 = 0)
+      : type_(type),
+        layer_index_(layer_index),
+        index0_(index0),
+        index1_(index1) {}
 
-  void AddEntry(
-      double distance,
-      double coupling_cap,
-      double fringe_cap,
-      double res
-  );
+  void AddEntry(double distance, double coupling_cap, double fringe_cap,
+                double res);
 
   void FixLastEntryIfWrong();
   void SetWidth(double width);
@@ -101,6 +93,7 @@ struct ConfigTable {
   std::vector<TableEntry> &GetTable();
 
   void Report() const;
+
  private:
   TableType type_;
   double width_ = -1;
@@ -114,7 +107,7 @@ class TechConfig {
  public:
   bool is_diagmodel_on_ = false;
   int layer_count_ = 0;
-  int corner_count_; // DensityRate : model_count data_rate_table
+  int corner_count_;  // DensityRate : model_count data_rate_table
   std::vector<double> data_rate_table_;
 
   void SetDiagModelOn(bool is_diagmodel_on);
@@ -125,6 +118,6 @@ class TechConfig {
   void Report();
 };
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_TIMING_TECHCONFIG_H_
+#endif  // PHYDB_TIMING_TECHCONFIG_H_

@@ -32,17 +32,13 @@ namespace phydb {
 class Track {
  public:
   Track() {}
-  Track(
-      XYDirection direction,
-      int start,
-      int nTracks,
-      int step,
-      std::vector<std::string> &layerNames
-  ) : direction_(direction),
-      start_(start),
-      n_tracks_(nTracks),
-      step_(step),
-      layer_names_(layerNames) {}
+  Track(XYDirection direction, int start, int nTracks, int step,
+        std::vector<std::string> &layerNames)
+      : direction_(direction),
+        start_(start),
+        n_tracks_(nTracks),
+        step_(step),
+        layer_names_(layerNames) {}
 
   XYDirection GetDirection() const;
   int GetStart() const;
@@ -51,6 +47,7 @@ class Track {
   std::vector<std::string> &GetLayerNames();
 
   friend std::ostream &operator<<(std::ostream &, const Track &);
+
  private:
   XYDirection direction_;
   int start_;
@@ -62,6 +59,6 @@ class Track {
 
 std::ostream &operator<<(std::ostream &, const Track &);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_TRACK_H_
+#endif  // PHYDB_TRACK_H_

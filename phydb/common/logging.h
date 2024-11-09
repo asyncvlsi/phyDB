@@ -23,7 +23,6 @@
 
 #include <cassert>
 #include <cstring>
-
 #include <iostream>
 #include <map>
 #include <string>
@@ -31,28 +30,28 @@
 
 namespace phydb {
 
-#define PhyDBExpects(e, error_message) do{ \
-  if(!(e)) { \
-    std::cout \
-      << "\033[0;31m" \
-      << "FATAL ERROR:" << "\n" \
-      << "    " << error_message << "\n" \
-      << __FILE__ << " : " << __LINE__ << " : " << __FUNCTION__ \
-      << "\033[0m" << std::endl; \
-      exit(1); \
-  } \
-} while(0)
+#define PhyDBExpects(e, error_message)                                    \
+  do {                                                                    \
+    if (!(e)) {                                                           \
+      std::cout << "\033[0;31m"                                           \
+                << "FATAL ERROR:" << "\n"                                 \
+                << "    " << error_message << "\n"                        \
+                << __FILE__ << " : " << __LINE__ << " : " << __FUNCTION__ \
+                << "\033[0m" << std::endl;                                \
+      exit(1);                                                            \
+    }                                                                     \
+  } while (0)
 
-#define PhyDBWarns(e, warning_message) do{ \
-  if((e)) { \
-    std::cout \
-      << "\033[0;34m" \
-      << "WARNING:" << "\n" \
-      << "    " << warning_message << "\n" \
-      << "\033[0m" << std::endl; \
-  } \
-} while(0)
+#define PhyDBWarns(e, warning_message)               \
+  do {                                               \
+    if ((e)) {                                       \
+      std::cout << "\033[0;34m"                      \
+                << "WARNING:" << "\n"                \
+                << "    " << warning_message << "\n" \
+                << "\033[0m" << std::endl;           \
+    }                                                \
+  } while (0)
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_COMMON_LOGGING_H_
+#endif  // PHYDB_COMMON_LOGGING_H_

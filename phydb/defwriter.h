@@ -28,6 +28,6 @@ namespace phydb {
 void Si2WriteDef(PhyDB *phy_db_ptr, std::string const &def_file_name);
 void WriteCluter(PhyDB *phy_db_ptr, std::string const &cluster_file_name);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_DEFWRITER_H_
+#endif  // PHYDB_DEFWRITER_H_

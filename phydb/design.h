@@ -31,12 +31,12 @@
 #include "gcellgrid.h"
 #include "iopin.h"
 #include "net.h"
+#include "phydb/common/logging.h"
 #include "row.h"
 #include "snet.h"
 #include "specialmacrorectlayout.h"
 #include "tech.h"
 #include "track.h"
-#include "phydb/common/logging.h"
 
 namespace phydb {
 
@@ -60,48 +60,23 @@ class Design {
   void SetDieArea(int lower_x, int lower_y, int upper_x, int upper_y);
   Rect2D<int> GetDieArea() const;
   void SetRectilinearPolygonDieArea(
-      std::vector<Point2D<int>> &rectilinear_polygon_die_area
-  );
+      std::vector<Point2D<int>> &rectilinear_polygon_die_area);
   std::vector<Point2D<int>> &RectilinearPolygonDieAreaRef();
 
   bool IsRowExisting(std::string const &row_name);
-  Row *AddRow(
-      std::string const &name,
-      int site_id,
-      CompOrient orient,
-      int origX,
-      int origY,
-      int numX,
-      int numY,
-      int stepX,
-      int stepY
-  );
+  Row *AddRow(std::string const &name, int site_id, CompOrient orient,
+              int origX, int origY, int numX, int numY, int stepX, int stepY);
   std::vector<Row> &GetRowVec();
 
-  Track *AddTrack(
-      XYDirection direction,
-      int start,
-      int num_tracks,
-      int step,
-      std::vector<std::string> &layer_names
-  );
+  Track *AddTrack(XYDirection direction, int start, int num_tracks, int step,
+                  std::vector<std::string> &layer_names);
   std::vector<Track> &GetTracksRef();
 
-  GcellGrid *AddGcellGrid(
-      XYDirection direction,
-      int start,
-      int nBoundaries,
-      int step
-  );
+  GcellGrid *AddGcellGrid(XYDirection direction, int start, int nBoundaries,
+                          int step);
   std::vector<GcellGrid> &GetGcellGridsRef();
-  void InsertRoutingGuide(
-      int netID,
-      int llx,
-      int lly,
-      int urx,
-      int ury,
-      int layerID
-  );
+  void InsertRoutingGuide(int netID, int llx, int lly, int urx, int ury,
+                          int layerID);
 
   bool IsDefViaExisting(std::string const &name);
   DefVia *AddDefVia(std::string const &name);
@@ -110,15 +85,9 @@ class Design {
 
   void SetComponentCount(int count, double redundancy_factor = 1.4);
   bool IsComponentExisting(std::string const &comp_name);
-  Component *AddComponent(
-      std::string const &comp_name,
-      Macro *macro_ptr,
-      PlaceStatus place_status,
-      int llx,
-      int lly,
-      CompOrient orient,
-      CompSource source
-  );
+  Component *AddComponent(std::string const &comp_name, Macro *macro_ptr,
+                          PlaceStatus place_status, int llx, int lly,
+                          CompOrient orient, CompSource source);
   Component *GetComponentPtr(std::string const &comp_name);
   int GetComponentId(std::string const &comp_name);
   std::vector<Component> &GetComponentsRef() { return components_; }
@@ -129,11 +98,8 @@ class Design {
 
   void SetIoPinCount(int count);
   bool IsIoPinExisting(std::string const &iopin_name);
-  IOPin *AddIoPin(
-      std::string const &iopin_name,
-      SignalDirection signal_direction,
-      SignalUse signal_use
-  );
+  IOPin *AddIoPin(std::string const &iopin_name,
+                  SignalDirection signal_direction, SignalUse signal_use);
   IOPin *GetIoPinPtr(std::string const &iopin_name);
   int GetIoPinId(std::string const &iopin_name);
   std::vector<IOPin> &GetIoPinsRef() { return iopins_; }
@@ -160,30 +126,20 @@ class Design {
   SNet *GetSNet(std::string const &net_name);
   std::vector<SNet> &GetSNetRef();
 
-  ClusterCol *AddClusterCol(
-      std::string const &name,
-      std::string const &bot_signal
-  );
+  ClusterCol *AddClusterCol(std::string const &name,
+                            std::string const &bot_signal);
   std::vector<ClusterCol> &GetClusterColsRef();
 
   std::string GetDefName() const;
   void SetDefName(std::string const &def_file_name);
 
-  SpecialMacroRectLayout *CreatePpNpMacroAndComponent(
-      Macro *macro_ptr,
-      int llx,
-      int lly,
-      int urx,
-      int ury
-  );
+  SpecialMacroRectLayout *CreatePpNpMacroAndComponent(Macro *macro_ptr, int llx,
+                                                      int lly, int urx,
+                                                      int ury);
   void SavePpNpToRectFile(std::string const &file_name) const;
-  SpecialMacroRectLayout *CreateWellLayerMacroAndComponent(
-      Macro *macro_ptr,
-      int llx,
-      int lly,
-      int urx,
-      int ury
-  );
+  SpecialMacroRectLayout *CreateWellLayerMacroAndComponent(Macro *macro_ptr,
+                                                           int llx, int lly,
+                                                           int urx, int ury);
   void SaveWellToRectFile(std::string const &file_name) const;
 
   // helper functions
@@ -203,6 +159,7 @@ class Design {
   void ReportClusterCols();
   void ReportGcellGrids();
   void Report();
+
  private:
   std::string name_;
   double version_ = -1;
@@ -242,6 +199,6 @@ class Design {
   SpecialMacroRectLayout *well_filling_ = nullptr;
 };
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_DESIGN_H_
+#endif  // PHYDB_DESIGN_H_

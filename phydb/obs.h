@@ -41,13 +41,13 @@ class OBS {
   LayerRect *AddLayerRect(std::string &layer_name);
 
   friend std::ostream &operator<<(std::ostream &, const OBS &);
+
  private:
   std::vector<LayerRect> layer_rects_;
 };
 
 std::ostream &operator<<(std::ostream &, const OBS &);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_OBS_H_
-
+#endif  // PHYDB_OBS_H_

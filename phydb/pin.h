@@ -32,33 +32,23 @@ namespace phydb {
 
 class Pin {
  public:
-  Pin() :
-      name_(""),
-      direction_(SignalDirection::INPUT),
-      use_(SignalUse::SIGNAL),
-      antenna_diff_area_layer_(""),
-      antenna_diff_area_(0) {}
-  Pin(std::string const &name,
-      SignalDirection direction,
-      SignalUse use
-  ) :
-      name_(name),
-      direction_(direction),
-      use_(use) {}
-  Pin(
-      std::string const &name,
-      SignalDirection direction,
-      SignalUse use,
-      std::string const &antennaDiffAreaLayer,
-      double antennaDiffArea,
-      std::vector<LayerRect> layerRects
-  ) :
-      name_(name),
-      direction_(direction),
-      use_(use),
-      antenna_diff_area_layer_(antennaDiffAreaLayer),
-      antenna_diff_area_(antennaDiffArea),
-      layer_rects_(layerRects) {}
+  Pin()
+      : name_(""),
+        direction_(SignalDirection::INPUT),
+        use_(SignalUse::SIGNAL),
+        antenna_diff_area_layer_(""),
+        antenna_diff_area_(0) {}
+  Pin(std::string const &name, SignalDirection direction, SignalUse use)
+      : name_(name), direction_(direction), use_(use) {}
+  Pin(std::string const &name, SignalDirection direction, SignalUse use,
+      std::string const &antennaDiffAreaLayer, double antennaDiffArea,
+      std::vector<LayerRect> layerRects)
+      : name_(name),
+        direction_(direction),
+        use_(use),
+        antenna_diff_area_layer_(antennaDiffAreaLayer),
+        antenna_diff_area_(antennaDiffArea),
+        layer_rects_(layerRects) {}
 
   void SetName(std::string &name);
   void SetUse(SignalUse &use);
@@ -76,6 +66,7 @@ class Pin {
   void ExportToFile(std::ofstream &ost);
 
   friend std::ostream &operator<<(std::ostream &, const Pin &);
+
  private:
   std::string name_;
   SignalDirection direction_;
@@ -88,6 +79,6 @@ class Pin {
 
 std::ostream &operator<<(std::ostream &, const Pin &);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_PIN_H_
+#endif  // PHYDB_PIN_H_

@@ -28,6 +28,7 @@ namespace phydb {
 class AbstractRcEstimator {
  protected:
   PhyDB *phy_db_;
+
  public:
   explicit AbstractRcEstimator(PhyDB *phydb_ptr) : phy_db_(phydb_ptr) {}
   virtual ~AbstractRcEstimator() = default;
@@ -35,6 +36,6 @@ class AbstractRcEstimator {
   virtual void PushNetRCToManager() = 0;
 };
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_TIMING_ABSTRACTRCESTIMATOR_H_
+#endif  // PHYDB_TIMING_ABSTRACTRCESTIMATOR_H_

@@ -27,25 +27,21 @@ namespace phydb {
 
 class EolSpacing {
  public:
-  EolSpacing() :
-      spacing_(0),
-      eol_width_(0),
-      eol_within_(0),
-      par_edge_(0),
-      par_within_(0) {}
+  EolSpacing()
+      : spacing_(0),
+        eol_width_(0),
+        eol_within_(0),
+        par_edge_(0),
+        par_within_(0) {}
 
-  //constructor for metal layer
-  EolSpacing(
-      double spacing,
-      double eolWidth,
-      double eolWithin,
-      double parEdge,
-      double parWithin
-  ) : spacing_(spacing),
-      eol_width_(eolWidth),
-      eol_within_(eolWithin),
-      par_edge_(parEdge),
-      par_within_(parWithin) {}
+  // constructor for metal layer
+  EolSpacing(double spacing, double eolWidth, double eolWithin, double parEdge,
+             double parWithin)
+      : spacing_(spacing),
+        eol_width_(eolWidth),
+        eol_within_(eolWithin),
+        par_edge_(parEdge),
+        par_within_(parWithin) {}
 
   double GetSpacing() { return spacing_; }
   double GetEOLWidth() { return eol_width_; }
@@ -54,8 +50,9 @@ class EolSpacing {
   double GetParWithin() { return par_within_; }
 
   void Reset();
+
  private:
-  //metal layer
+  // metal layer
   double spacing_;
   double eol_width_;
   double eol_within_;
@@ -65,6 +62,6 @@ class EolSpacing {
 
 std::ostream &operator<<(std::ostream &, const EolSpacing &);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_EOLSPACING_H_
+#endif  // PHYDB_EOLSPACING_H_

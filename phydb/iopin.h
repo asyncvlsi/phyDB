@@ -32,43 +32,24 @@ namespace phydb {
 class IOPin {
  public:
   IOPin() : id_(-1) {}
-  IOPin(
-      std::string const &name,
-      SignalDirection direction,
-      SignalUse use
-  ) :
-      name_(name),
-      direction_(direction),
-      use_(use) {}
-  IOPin(
-      std::string const &name,
-      int &net_id,
-      SignalDirection direction,
-      SignalUse use,
-      std::string const &layerName,
-      Rect2D<int> rect,
-      Point2D<int> location,
-      CompOrient orient,
-      PlaceStatus status
-  ) :
-      name_(name),
-      net_id_(net_id),
-      direction_(direction),
-      use_(use),
-      layer_name_(layerName),
-      rect_(rect),
-      location_(location),
-      orient_(orient),
-      place_status_(status) {}
+  IOPin(std::string const &name, SignalDirection direction, SignalUse use)
+      : name_(name), direction_(direction), use_(use) {}
+  IOPin(std::string const &name, int &net_id, SignalDirection direction,
+        SignalUse use, std::string const &layerName, Rect2D<int> rect,
+        Point2D<int> location, CompOrient orient, PlaceStatus status)
+      : name_(name),
+        net_id_(net_id),
+        direction_(direction),
+        use_(use),
+        layer_name_(layerName),
+        rect_(rect),
+        location_(location),
+        orient_(orient),
+        place_status_(status) {}
 
   void SetNetId(int net_id);
   void SetShape(std::string const &layer_name, int lx, int ly, int ux, int uy);
-  void SetPlacement(
-      PlaceStatus place_status,
-      int x,
-      int y,
-      CompOrient orient
-  );
+  void SetPlacement(PlaceStatus place_status, int x, int y, CompOrient orient);
   void SetPlacementStatus(PlaceStatus place_status);
 
   int GetId() const { return id_; }
@@ -85,6 +66,7 @@ class IOPin {
   Rect2D<int> GetBoundingBox();
 
   void Report();
+
  private:
   int id_;
   std::string name_;
@@ -102,10 +84,6 @@ class IOPin {
 
 std::ostream &operator<<(std::ostream &, const IOPin &);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_IOPIN_H_
-
-
-
-
+#endif  // PHYDB_IOPIN_H_

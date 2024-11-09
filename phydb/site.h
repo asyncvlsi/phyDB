@@ -24,7 +24,6 @@
 #include <string>
 
 #include "enumtypes.h"
-
 #include "phydb/common/logging.h"
 
 namespace phydb {
@@ -32,15 +31,9 @@ namespace phydb {
 class Site {
  public:
   Site() = default;
-  Site(
-      std::string const &name,
-      SiteClass site_class,
-      double width,
-      double height
-  ) : name_(name),
-      site_class_(site_class),
-      width_(width),
-      height_(height) {}
+  Site(std::string const &name, SiteClass site_class, double width,
+       double height)
+      : name_(name), site_class_(site_class), width_(width), height_(height) {}
 
   void SetName(std::string const &);
   void SetClass(SiteClass site_class);
@@ -53,6 +46,7 @@ class Site {
   double GetWidth() const;
   double GetHeight() const;
   Symmetry GetSymmetry() const;
+
  private:
   std::string name_;
   SiteClass site_class_;
@@ -63,6 +57,6 @@ class Site {
 
 std::ostream &operator<<(std::ostream &, const Site &);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_SITE_H_
+#endif  // PHYDB_SITE_H_

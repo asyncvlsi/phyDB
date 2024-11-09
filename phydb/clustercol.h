@@ -29,33 +29,19 @@ namespace phydb {
 class ClusterCol {
  public:
   ClusterCol() : lx_(0), ux_(0) {}
-  ClusterCol(
-      std::string const &name,
-      std::string const &bot_signal
-  ) : name_(name),
-      bot_signal_(bot_signal) {}
-  ClusterCol(
-      std::string const &name,
-      std::string const &bot_signal,
-      int lx,
-      int ux
-  ) : name_(name),
-      bot_signal_(bot_signal),
-      lx_(lx),
-      ux_(ux) {}
-  ClusterCol(
-      std::string const &name,
-      std::string const &bot_signal,
-      int lx,
-      int ux,
-      std::vector<int> &ly,
-      std::vector<int> &uy
-  ) : name_(name),
-      bot_signal_(bot_signal),
-      lx_(lx),
-      ux_(ux),
-      ly_(ly),
-      uy_(uy) {}
+  ClusterCol(std::string const &name, std::string const &bot_signal)
+      : name_(name), bot_signal_(bot_signal) {}
+  ClusterCol(std::string const &name, std::string const &bot_signal, int lx,
+             int ux)
+      : name_(name), bot_signal_(bot_signal), lx_(lx), ux_(ux) {}
+  ClusterCol(std::string const &name, std::string const &bot_signal, int lx,
+             int ux, std::vector<int> &ly, std::vector<int> &uy)
+      : name_(name),
+        bot_signal_(bot_signal),
+        lx_(lx),
+        ux_(ux),
+        ly_(ly),
+        uy_(uy) {}
 
   void SetName(std::string &);
   void SetBotSignal(std::string &);
@@ -72,6 +58,7 @@ class ClusterCol {
   std::vector<int> &GetUY();
 
   void Report();
+
  private:
   std::string name_;
   std::string bot_signal_;
@@ -81,6 +68,6 @@ class ClusterCol {
   std::vector<int> uy_;
 };
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_CLUSTERCOL_H_
+#endif  // PHYDB_CLUSTERCOL_H_

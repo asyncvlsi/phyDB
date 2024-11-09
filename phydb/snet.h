@@ -44,11 +44,9 @@ class Polygon {
   void AddRoutingPoint(int x, int y);
 
   std::string GetLayerName() const;
-  std::vector<Point2D<int>> &
-  GetRoutingPointsRef();
+  std::vector<Point2D<int>> &GetRoutingPointsRef();
 
   void Report() const;
-
 };
 
 class Path {
@@ -63,10 +61,8 @@ class Path {
 
  public:
   Path() : width_(0) {}
-  Path(std::string &layer_name, std::string &shape, int width) :
-      layer_name_(layer_name),
-      width_(width),
-      shape_(shape) {}
+  Path(std::string &layer_name, std::string &shape, int width)
+      : layer_name_(layer_name), width_(width), shape_(shape) {}
 
   void SetLayerName(std::string &);
   void SetWidth(int);
@@ -83,8 +79,7 @@ class Path {
   std::string GetViaName() const;
 
   Rect2D<int> GetRect() const;
-  std::vector<Point3D<int>> &
-  GetRoutingPointsRef();
+  std::vector<Point3D<int>> &GetRoutingPointsRef();
 
   void Report();
 };
@@ -92,9 +87,10 @@ class Path {
 class SNet {
  private:
   std::string name_;
-  SignalUse use_; // POWER or GROUND
+  SignalUse use_;  // POWER or GROUND
   std::vector<Path> paths_;
   std::vector<Polygon> polygons_;
+
  public:
   SNet() {}
   SNet(std::string const &name) : name_(name) {}
@@ -114,6 +110,6 @@ class SNet {
   void Report();
 };
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_SNET_H_
+#endif  // PHYDB_SNET_H_

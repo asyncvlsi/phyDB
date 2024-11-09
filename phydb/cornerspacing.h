@@ -29,25 +29,21 @@ class CornerSpacing {
  public:
   CornerSpacing() = default;
 
-  //constructor for metal layer
-  CornerSpacing(
-      double eolWidth,
-      std::vector<double> &width,
-      std::vector<double> &spacing
-  ) : eol_width_(eolWidth),
-      width_(width),
-      spacing_(spacing) {}
+  // constructor for metal layer
+  CornerSpacing(double eolWidth, std::vector<double> &width,
+                std::vector<double> &spacing)
+      : eol_width_(eolWidth), width_(width), spacing_(spacing) {}
 
   void SetEOLWidth(double eol_width) { eol_width_ = eol_width; }
   void AddWidth(double width) { width_.push_back(width); }
   void AddSpacing(double spacing) { spacing_.push_back(spacing); }
 
-
-  double GetEOLWidth() { return eol_width_;}
-  std::vector<double> GetWidth() {return width_;}
-  std::vector<double> GetSpacing() { return spacing_;}
+  double GetEOLWidth() { return eol_width_; }
+  std::vector<double> GetWidth() { return width_; }
+  std::vector<double> GetSpacing() { return spacing_; }
 
   void Reset();
+
  private:
   double eol_width_ = 0;
   std::vector<double> width_;
@@ -56,6 +52,6 @@ class CornerSpacing {
 
 std::ostream &operator<<(std::ostream &, const CornerSpacing &);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_CORNERSPACING_H_
+#endif  // PHYDB_CORNERSPACING_H_

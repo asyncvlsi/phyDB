@@ -25,10 +25,7 @@
 
 namespace phydb {
 
-enum class LayerType {
-  ROUTING = 0,
-  CUT = 1
-};
+enum class LayerType { ROUTING = 0, CUT = 1 };
 LayerType StrToLayerType(std::string const &str_layer_type);
 std::string LayerTypeStr(LayerType layer_type);
 
@@ -61,21 +58,11 @@ enum class CompOrient {
 CompOrient StrToCompOrient(std::string const &str_orient);
 std::string CompOrientStr(CompOrient orient);
 
-enum class CompSource {
-  NETLIST = 0,
-  DIST = 1,
-  USER = 2,
-  TIMING = 3
-};
+enum class CompSource { NETLIST = 0, DIST = 1, USER = 2, TIMING = 3 };
 CompSource StrToCompSource(std::string const &str_comp_source);
 std::string CompSourceStr(CompSource comp_source);
 
-enum class PlaceStatus {
-  COVER = 0,
-  FIXED = 1,
-  PLACED = 2,
-  UNPLACED = 3
-};
+enum class PlaceStatus { COVER = 0, FIXED = 1, PLACED = 2, UNPLACED = 3 };
 PlaceStatus StrToPlaceStatus(std::string const &str_place_status);
 std::string PlaceStatusStr(PlaceStatus place_status);
 
@@ -138,23 +125,17 @@ enum class MacroClass {
 MacroClass StrToMacroClass(std::string const &str_macro_class);
 std::string MacroClassStr(MacroClass macro_class);
 
-enum class SiteClass {
-  PAD = 0,
-  CORE = 1
-};
+enum class SiteClass { PAD = 0, CORE = 1 };
 SiteClass StrToSiteClass(std::string const &str_site_class);
 std::string SiteClassStr(SiteClass site_class);
 
 class Symmetry {
  public:
   Symmetry() = default;
-  Symmetry(
-      bool x_symmetry,
-      bool y_symmetry,
-      bool r90_symmetry
-  ) : x_symmetry_(x_symmetry),
-      y_symmetry_(y_symmetry),
-      r90_symmetry_(r90_symmetry) {}
+  Symmetry(bool x_symmetry, bool y_symmetry, bool r90_symmetry)
+      : x_symmetry_(x_symmetry),
+        y_symmetry_(y_symmetry),
+        r90_symmetry_(r90_symmetry) {}
 
   void SetXSymmetry(bool x_symmetry) { x_symmetry_ = x_symmetry; }
   void SetYSymmetry(bool y_symmetry) { y_symmetry_ = y_symmetry; }
@@ -168,12 +149,13 @@ class Symmetry {
   bool GetYSymmetry() const { return y_symmetry_; }
   bool GetR90Symmetry() const { return r90_symmetry_; }
   std::string Str() const;
+
  private:
   bool x_symmetry_ = false;
   bool y_symmetry_ = false;
   bool r90_symmetry_ = false;
 };
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_ENUMTYPES_H_
+#endif  // PHYDB_ENUMTYPES_H_

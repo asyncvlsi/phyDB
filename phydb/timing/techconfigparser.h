@@ -25,11 +25,9 @@
 
 namespace phydb {
 
-bool ReadTechnologyConfigurationFile(
-    PhyDB *phy_db_ptr,
-    std::string const &tech_config_file_name
-);
+bool ReadTechnologyConfigurationFile(PhyDB *phy_db_ptr,
+                                     std::string const &tech_config_file_name);
 
 }
 
-#endif //PHYDB_TIMING_TECHCONFIGPARSER_H_
+#endif  // PHYDB_TIMING_TECHCONFIGPARSER_H_

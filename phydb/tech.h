@@ -30,8 +30,8 @@
 #include "layer.h"
 #include "lefvia.h"
 #include "macro.h"
-#include "site.h"
 #include "phydb/timing/techconfig.h"
+#include "site.h"
 #include "viarulegenerate.h"
 
 namespace phydb {
@@ -39,6 +39,7 @@ namespace phydb {
 class Tech {
   friend class PhyDB;
   friend class StarPiModelEstimator;
+
  public:
   Tech() : manufacturing_grid_(-1), database_micron_(-1) {}
   ~Tech();
@@ -49,29 +50,18 @@ class Tech {
   void SetManufacturingGrid(double manufacture_grid);
   double GetManufacturingGrid() const;
   bool IsSiteExisting(std::string const &site_name);
-  Site *AddSite(
-      std::string const &site_name,
-      const std::string &class_name,
-      double width,
-      double height
-  );
+  Site *AddSite(std::string const &site_name, const std::string &class_name,
+                double width, double height);
   int GetSiteId(std::string const &site_name);
   std::vector<Site> &GetSitesRef();
-  void SetPlacementGrids(
-      double placement_grid_value_x,
-      double placement_grid_value_y
-  );
-  bool GetPlacementGrids(
-      double &placement_grid_value_x,
-      double &placement_grid_value_y
-  ) const;
+  void SetPlacementGrids(double placement_grid_value_x,
+                         double placement_grid_value_y);
+  bool GetPlacementGrids(double &placement_grid_value_x,
+                         double &placement_grid_value_y) const;
 
   bool IsLayerExisting(std::string const &layer_name);
-  Layer *AddLayer(
-      std::string const &layer_name,
-      LayerType type,
-      MetalDirection direction = MetalDirection::HORIZONTAL
-  );
+  Layer *AddLayer(std::string const &layer_name, LayerType type,
+                  MetalDirection direction = MetalDirection::HORIZONTAL);
   Layer *GetLayerPtr(std::string const &layer_name);
   int GetLayerId(std::string const &layer_name);
   const std::string &GetLayerName(int layer_id);
@@ -93,35 +83,24 @@ class Tech {
   ViaRuleGenerate *GetViaRuleGeneratePtr(std::string const &name);
   std::vector<ViaRuleGenerate> &GetViaRuleGeneratesRef();
 
-  void SetNwellLayer(
-      double width,
-      double spacing,
-      double op_spacing,
-      double max_plug_dist,
-      double overhang
-  );
-  void SetPwellLayer(
-      double width,
-      double spacing,
-      double op_spacing,
-      double max_plug_dist,
-      double overhang
-  );
+  void SetNwellLayer(double width, double spacing, double op_spacing,
+                     double max_plug_dist, double overhang);
+  void SetPwellLayer(double width, double spacing, double op_spacing,
+                     double max_plug_dist, double overhang);
   void SetNpwellSpacing(double same_diff, double any_diff);
   bool IsWellInfoSet() const;
   WellLayer *GetNwellLayerPtr();
   WellLayer *GetPwellLayerPtr();
-  void GetDiffWellSpacing(
-      double &same_diff_spacing,
-      double &any_diff_spacing
-  ) const;
+  void GetDiffWellSpacing(double &same_diff_spacing,
+                          double &any_diff_spacing) const;
   std::optional<double> GetPreEndCapMinWidth() const;
   std::optional<double> GetPreEndCapMinPHeight() const;
   std::optional<double> GetPreEndCapMinNHeight() const;
   std::optional<double> GetPostEndCapMinWidth() const;
   std::optional<double> GetPostEndCapMinPHeight() const;
   std::optional<double> GetPostEndCapMinNHeight() const;
-  void ReportWellShape(); // report the well shape_ for each BlockType for debugging purposes.
+  void ReportWellShape();  // report the well shape_ for each BlockType for
+                           // debugging purposes.
 
   std::string GetLefName() const;
   void SetLefName(std::string const &lef_file_name);
@@ -130,22 +109,14 @@ class Tech {
   TechConfig &GetTechConfigRef();
   void SetTechConfigLayerCount(int number_of_layers);
   void AddTechConfigCorner(int corner_index);
-  ConfigTable &InitConfigTable(
-      TableType type,
-      int layer_index,
-      int index0,
-      int index1,
-      int corner_index
-  );
+  ConfigTable &InitConfigTable(TableType type, int layer_index, int index0,
+                               int index1, int corner_index);
   void FixResOverTable();
   void SetResistanceUnit(bool from_tech_config, bool is_report);
   void SetCapacitanceUnit(bool from_tech_config, bool is_report);
   void ReportLayersTechConfig();
-  void SetUnitResAndCap(
-      double unit_res,
-      double unit_fringe_cap,
-      double unit_area_cap
-  );
+  void SetUnitResAndCap(double unit_res, double unit_fringe_cap,
+                        double unit_area_cap);
 
   /****Print all sorts of information****/
   void ReportSites();
@@ -212,6 +183,6 @@ class Tech {
 
 std::ostream &operator<<(std::ostream &, const Tech &);
 
-}
+}  // namespace phydb
 
-#endif //PHYDB_TECH_H_
+#endif  // PHYDB_TECH_H_
