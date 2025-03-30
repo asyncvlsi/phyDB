@@ -28,7 +28,7 @@
 #include "config.h"
 
 #if PHYDB_USE_GALOIS
-#include <galois/eda/liberty/CellLib.h>
+#include <galois/eda/utility/DelayLib.h>
 #include <galois/eda/parasitics/Edge.h>
 #include <galois/eda/parasitics/Manager.h>
 #include <galois/eda/parasitics/Node.h>
@@ -209,11 +209,11 @@ class ActPhyDBTimingAPI {
 
 #if PHYDB_USE_GALOIS
   void SetParaManager(galois::eda::parasitics::Manager *manager);
-  void AddCellLib(galois::eda::liberty::CellLib *lib);
+  void AddCellLib(galois::eda::model::CellLib *lib);
   void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor);
 
   galois::eda::parasitics::Manager *GetParaManager();
-  std::vector<galois::eda::liberty::CellLib *> &GetCellLibs();
+  std::vector<galois::eda::model::CellLib *> &GetCellLibs();
   galois::eda::utility::ExtNetlistAdaptor *GetNetlistAdaptor();
 
   galois::eda::parasitics::Node *PhyDBPinToSpefNode(PhydbPin phydb_pin);
@@ -260,7 +260,7 @@ class ActPhyDBTimingAPI {
   std::unordered_map<PhydbPin, void *, PhydbPinHasher> component_pin_id_2_act_;
 #if PHYDB_USE_GALOIS
   galois::eda::parasitics::Manager *para_manager_;
-  std::vector<galois::eda::liberty::CellLib *> libs_;
+  std::vector<galois::eda::model::CellLib *> libs_;
   galois::eda::utility::ExtNetlistAdaptor *adaptor_;
 #endif
 

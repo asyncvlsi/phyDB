@@ -188,10 +188,10 @@ class PhyDB {
   ActPhyDBTimingAPI &GetTimingApi();
 #if PHYDB_USE_GALOIS
   void SetParaManager(galois::eda::parasitics::Manager *manager);
-  void AddCellLib(galois::eda::liberty::CellLib *lib);
+  void AddCellLib(galois::eda::model::CellLib *lib);
   void SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor);
   galois::eda::parasitics::Manager *GetParaManager();
-  std::vector<galois::eda::liberty::CellLib *> &GetCellLibs();
+  std::vector<galois::eda::model::CellLib *> &GetCellLibs();
   galois::eda::utility::ExtNetlistAdaptor *GetNetlistAdaptor();
 
   void CreatePhydbActAdaptor();

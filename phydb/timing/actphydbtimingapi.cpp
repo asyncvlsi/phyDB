@@ -326,7 +326,7 @@ void ActPhyDBTimingAPI::GetViolatedTimingConstraints(std::vector<int> &violated_
 void ActPhyDBTimingAPI::SetParaManager(galois::eda::parasitics::Manager *manager) {
   para_manager_ = manager;
 }
-void ActPhyDBTimingAPI::AddCellLib(galois::eda::liberty::CellLib *lib) {
+void ActPhyDBTimingAPI::AddCellLib(galois::eda::model::CellLib *lib) {
   libs_.push_back(lib);
 }
 void ActPhyDBTimingAPI::SetNetlistAdaptor(galois::eda::utility::ExtNetlistAdaptor *adaptor) {
@@ -337,7 +337,7 @@ galois::eda::parasitics::Manager *ActPhyDBTimingAPI::GetParaManager() {
   return para_manager_;
 }
 
-std::vector<galois::eda::liberty::CellLib *> &ActPhyDBTimingAPI::GetCellLibs() {
+std::vector<galois::eda::model::CellLib *> &ActPhyDBTimingAPI::GetCellLibs() {
   return libs_;
 }
 

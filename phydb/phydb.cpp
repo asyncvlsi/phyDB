@@ -751,7 +751,7 @@ void PhyDB::SetParaManager(galois::eda::parasitics::Manager *manager) {
   timing_api_.SetParaManager(manager);
 }
 
-void PhyDB::AddCellLib(galois::eda::liberty::CellLib *lib) {
+void PhyDB::AddCellLib(galois::eda::model::CellLib *lib) {
   timing_api_.AddCellLib(lib);
 }
 
@@ -763,7 +763,7 @@ galois::eda::parasitics::Manager *PhyDB::GetParaManager() {
   return timing_api_.GetParaManager();
 }
 
-std::vector<galois::eda::liberty::CellLib *> &PhyDB::GetCellLibs() {
+std::vector<galois::eda::model::CellLib *> &PhyDB::GetCellLibs() {
   return timing_api_.GetCellLibs();
 }
 
@@ -795,7 +795,7 @@ void PhyDB::AddNetsAndCompPinsToSpefManager() {
   auto *spef_manager = GetParaManager();
   PhyDBExpects(spef_manager != nullptr,
                "Cannot push RC to the timer because the SPEF manager is not set");
-  std::vector<galois::eda::liberty::CellLib *> &libs = GetCellLibs();
+  std::vector<galois::eda::model::CellLib *> &libs = GetCellLibs();
   PhyDBExpects(!libs.empty(), "No cell library found in the timer?");
 
   //std::cout << "before adding anything\n";
