@@ -28,7 +28,7 @@
 #include "config.h"
 
 #if PHYDB_USE_GALOIS
-#include <galois/eda/utility/DelayLib.h>
+#include <galois/eda/model/DelayLib.h>
 #include <galois/eda/parasitics/Edge.h>
 #include <galois/eda/parasitics/Manager.h>
 #include <galois/eda/parasitics/Node.h>
