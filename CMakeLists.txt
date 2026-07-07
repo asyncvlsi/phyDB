@@ -5,6 +5,10 @@ project(
     LANGUAGES CXX
 )
 
+if(POLICY CMP0167)
+    cmake_policy(SET CMP0167 NEW)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -30,17 +34,6 @@ message(STATUS "Found libdef.a: " ${DEF_LIBRARY})
 
 # Find galois_eda and configure the config.h header file
 include(cmake/FindGaloisEDA.cmake)
-
-############################################################################
-# Check Boost library
-############################################################################
-message(STATUS "Detecting Boost libraries...")
-#set(Boost_USE_STATIC_LIBS ON) # turn on/off static linking
-find_package(Boost 1.60.0 COMPONENTS log_setup log filesystem REQUIRED)
-message(STATUS "Boost include path: ${Boost_INCLUDE_DIR}")
-message(STATUS "Boost library path: ${Boost_LIBRARY_DIRS}")
-message(STATUS "Boost libs: ${Boost_LIBRARIES}")
-include_directories(${Boost_INCLUDE_DIRS})
 
 # Set a default build type if none was specified
 set(default_build_type "RELEASE")
@@ -83,7 +76,6 @@ add_library(
 target_link_libraries(
     phydb
     ${LEF_LIBRARY} ${DEF_LIBRARY}
-    ${Boost_LIBRARIES}
     ${Galois_LIBRARIES}
 )
 

@@ -7,9 +7,9 @@
 * GNU Compiler Collection (GCC), version >= 9.3.0
 
 ### Pre-requisite libraries
-* Boost, version >= 1.71.0
 * Si2 LEF/DEF parser, a mirror can be found [here](https://github.com/asyncvlsi/lefdef).
 * [ACT](https://github.com/asyncvlsi/act): environment variable `ACT_HOME` determines the installation destination of this package, and contains some optional libraries.
+* Boost headers, required by Galois public headers when timing support is enabled.
 
 ### Clone, compile, and install
     $ git clone https://github.com/asyncvlsi/phyDB.git

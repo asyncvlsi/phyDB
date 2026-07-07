@@ -22,34 +22,91 @@
 #define PHYDB_COMMON_LOGGING_H_
 
 #include <cassert>
+#include <cstdlib>
 #include <cstring>
+#include <iomanip>
 #include <iostream>
 #include <map>
+#include <ostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
 namespace phydb {
 
-#define PhyDBExpects(e, error_message)                                    \
-  do {                                                                    \
-    if (!(e)) {                                                           \
-      std::cout << "\033[0;31m"                                           \
-                << "FATAL ERROR:" << "\n"                                 \
-                << "    " << error_message << "\n"                        \
-                << __FILE__ << " : " << __LINE__ << " : " << __FUNCTION__ \
-                << "\033[0m" << std::endl;                                \
-      exit(1);                                                            \
-    }                                                                     \
+enum class severity {
+  trace = 0,
+  debug = 1,
+  info = 2,
+  warning = 3,
+  error = 4,
+  fatal = 5,
+};
+
+/** Return the printable name for a logging severity. */
+const char* SeverityName(severity level);
+
+/**
+ * Builds a log record with stream syntax and flushes it when destroyed.
+ *
+ * This mirrors Dali's lightweight logger so PhyDB does not depend on Boost.Log.
+ */
+class LogMessage {
+ public:
+  explicit LogMessage(severity level);
+  LogMessage(const LogMessage&) = delete;
+  LogMessage& operator=(const LogMessage&) = delete;
+  LogMessage(LogMessage&&) = default;
+  ~LogMessage();
+
+  std::ostream& Stream();
+
+ private:
+  severity level_;
+  std::ostringstream stream_;
+};
+
+/** Convert verbosity level 0-5 to a logging severity. */
+severity IntToLoggingLevel(int level);
+
+/** Convert a verbosity string 0-5 to a logging severity. */
+severity StrToLoggingLevel(const std::string& severity_level_str);
+
+/**
+ * Initialize console and file logging.
+ *
+ * If log_file_name is empty, a unique phydb<N>.log file is created in the
+ * current working directory.
+ */
+void InitLogging(const std::string& log_file_name = "",
+                 severity severity_level = severity::info,
+                 bool disable_log_prefix = false);
+
+/** Remove active logging sinks and release their resources. */
+void CloseLogging();
+
+#define PHYDB_LOG(level) ::phydb::LogMessage(::phydb::severity::level).Stream()
+
+#define PhyDBExpects(e, error_message)                            \
+  do {                                                            \
+    if (!(e)) {                                                   \
+      PHYDB_LOG(fatal) << "\033[0;31m"                            \
+                       << "FATAL ERROR:" << "\n"                  \
+                       << "    " << error_message << "\n"         \
+                       << __FILE__ << " : " << __LINE__ << " : "  \
+                       << __FUNCTION__ << "\033[0m" << std::endl; \
+      exit(1);                                                    \
+    }                                                             \
   } while (0)
 
-#define PhyDBWarns(e, warning_message)               \
-  do {                                               \
-    if ((e)) {                                       \
-      std::cout << "\033[0;34m"                      \
-                << "WARNING:" << "\n"                \
-                << "    " << warning_message << "\n" \
-                << "\033[0m" << std::endl;           \
-    }                                                \
+#define PhyDBWarns(e, warning_message)                               \
+  do {                                                               \
+    if ((e)) {                                                       \
+      PHYDB_LOG(warning) << "\033[0;34m"                             \
+                         << "WARNING:" << "\n"                       \
+                         << "    " << warning_message << "\n\033[0m" \
+                         << std::endl;                               \
+    }                                                                \
   } while (0)
 
 }  // namespace phydb

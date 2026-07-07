@@ -21,11 +21,11 @@
 #ifndef PHYDB_TIMING_ACTPHYDBTIMINGAPI_H_
 #define PHYDB_TIMING_ACTPHYDBTIMINGAPI_H_
 
-#include <boost/functional/hash.hpp>
 #include <unordered_map>
 #include <vector>
 
 #include "config.h"
+#include "phydb/common/hash.h"
 
 #if PHYDB_USE_GALOIS
 #include <galois/eda/model/DelayLib.h>
@@ -87,8 +87,8 @@ class PhydbPin {
 struct PhydbPinHasher {
   std::size_t operator()(const PhydbPin &phydb_pin) const {
     std::size_t seed = 0;
-    boost::hash_combine(seed, boost::hash_value(phydb_pin.InstanceId()));
-    boost::hash_combine(seed, boost::hash_value(phydb_pin.PinId()));
+    HashCombine(seed, phydb_pin.InstanceId());
+    HashCombine(seed, phydb_pin.PinId());
     return seed;
   }
 };
