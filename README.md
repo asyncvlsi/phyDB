@@ -9,7 +9,9 @@
 ### Pre-requisite libraries
 * Si2 LEF/DEF parser, a mirror can be found [here](https://github.com/asyncvlsi/lefdef).
 * [ACT](https://github.com/asyncvlsi/act): environment variable `ACT_HOME` determines the installation destination of this package, and contains some optional libraries.
-* Boost headers, required by Galois public headers when timing support is enabled.
+
+PhyDB does not directly depend on Boost libraries. If timing support is enabled
+through Galois, Boost headers may still be required by Galois public headers.
 
 ### Clone, compile, and install
     $ git clone https://github.com/asyncvlsi/phyDB.git
