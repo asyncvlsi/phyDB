@@ -21,6 +21,7 @@
 #ifndef PHYDB_TIMING_ACTPHYDBTIMINGAPI_H_
 #define PHYDB_TIMING_ACTPHYDBTIMINGAPI_H_
 
+#include <ostream>
 #include <unordered_map>
 #include <vector>
 
