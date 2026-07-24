@@ -53,6 +53,8 @@ endif()
 
 if(Galois_FOUND)
     set(PHYDB_USE_GALOIS 1)
+# we need Boost now!
+    find_package(Boost 1.58.0 REQUIRED COMPONENTS serialization iostreams)
 else()
     set(PHYDB_USE_GALOIS 0)
 endif()
