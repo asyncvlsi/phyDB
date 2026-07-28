@@ -82,6 +82,7 @@ target_link_libraries(
     ${LEF_LIBRARY} ${DEF_LIBRARY}
     ${Boost_LIBRARIES}
     ${Galois_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
 )
 else()
 target_link_libraries(
