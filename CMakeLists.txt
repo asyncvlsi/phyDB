@@ -34,6 +34,9 @@ message(STATUS "Found libdef.a: " ${DEF_LIBRARY})
 
 # Find galois_eda and configure the config.h header file
 include(cmake/FindGaloisEDA.cmake)
+if(PHYDB_USE_GALOIS)
+  include_directories(${Boost_INCLUDE_DIRS})
+endif()
 
 # Set a default build type if none was specified
 set(default_build_type "RELEASE")
@@ -73,11 +76,21 @@ add_library(
     STATIC
     ${SOURCES}
 )
+if(PHYDB_USE_GALOIS)
+target_link_libraries(
+    phydb
+    ${LEF_LIBRARY} ${DEF_LIBRARY}
+    ${Boost_LIBRARIES}
+    ${Galois_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+)
+else()
 target_link_libraries(
     phydb
     ${LEF_LIBRARY} ${DEF_LIBRARY}
     ${Galois_LIBRARIES}
 )
+endif()
 
 add_executable(PhyDB_test test/test.cpp)
 target_link_libraries(PhyDB_test PRIVATE phydb)
