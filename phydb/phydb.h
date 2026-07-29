@@ -183,6 +183,8 @@ class PhyDB {
       void (*callback_function)(std::vector<int> &));
   void SetGetPerformanceWitnessCB(void (*callback_function)(
       int performance_id, std::vector<ActEdge> &path));
+  void SetGetCriticalCycleCB(
+      bool (*callback_function)(double *period, int *unroll_factor));
   bool IsDriverPin(PhydbPin &phydb_pin);
   std::string GetFullCompPinName(PhydbPin &phydb_pin, char delimiter = ':');
   ActPhyDBTimingAPI &GetTimingApi();
@@ -194,7 +196,15 @@ class PhyDB {
   std::vector<galois::eda::model::CellLib *> &GetCellLibs();
   galois::eda::utility::ExtNetlistAdaptor *GetNetlistAdaptor();
 
-  void CreatePhydbActAdaptor();
+  /**
+   * Bind physical nets and pins to their ACT timing objects.
+   *
+   * Layout generation may add physical-only nets, such as top-level I/O
+   * adapters, that intentionally have no timing-graph object. Strict mapping
+   * remains the default for existing callers; timing-placement flows may skip
+   * those auxiliary nets explicitly.
+   */
+  void CreatePhydbActAdaptor(bool require_all_nets = true);
   void AddNetsAndCompPinsToSpefManager();
 #endif
 

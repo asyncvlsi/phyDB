@@ -160,6 +160,12 @@ struct ActEdge {
   double delay = -1;
 };
 
+/** One physically mapped net leg from a timing path. */
+struct PhydbNetTimingStep {
+  int net_index = -1;
+  double delay = 0.0;
+};
+
 class ActPhyDBTimingAPI {
   friend class PhyDB;
 
@@ -192,9 +198,15 @@ class ActPhyDBTimingAPI {
       void (*callback_function)(std::vector<int> &));
   void SetGetPerformanceWitnessCB(void (*callback_function)(
       int performance_id, std::vector<ActEdge> &path));
+  void SetGetCriticalCycleCB(
+      bool (*callback_function)(double *period, int *unroll_factor));
 
   // APIs for Dali and SPRoute
   bool ReadyForTimingDriven();
+  /** Return true when the host can report critical-cycle performance. */
+  bool ReadyForCriticalCycleTiming() const;
+  /** Return true when the host can also return critical-cycle net legs. */
+  bool ReadyForCriticalCycleNets() const;
   bool IsActNetPtrExisting(void *act_net);
   int ActNetPtr2Id(void *act_net);
   void *PhydbNetId2ActPtr(int net_id);
@@ -230,6 +242,10 @@ class ActPhyDBTimingAPI {
   double GetPerformanceSlack(int performance_id);
   void GetViolatedPerformanceConstraints(std::vector<int> &performance_ids);
   void GetPerformanceWitness(int performance_id, PhydbPath &phydb_path);
+  /** Read the latest critical-cycle period and its graph-unroll factor. */
+  bool GetCriticalCyclePeriod(double *period, int *unroll_factor) const;
+  /** Return physically mapped net legs from the latest critical cycle. */
+  void GetCriticalCycleNetTiming(std::vector<PhydbNetTimingStep> &steps);
 #endif
  private:
   int (*GetNumConstraintsCB)() = nullptr;
@@ -251,6 +267,7 @@ class ActPhyDBTimingAPI {
       std::vector<int> &performance_ids) = nullptr;
   void (*GetPerformanceWitnessCB)(int performance_id,
                                   std::vector<ActEdge> &path) = nullptr;
+  bool (*GetCriticalCycleCB)(double *period, int *unroll_factor) = nullptr;
 
   // act net pointer <=> phydb net index
   std::unordered_map<void *, int> net_act_2_id_;

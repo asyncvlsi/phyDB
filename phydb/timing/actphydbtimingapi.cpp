@@ -134,6 +134,28 @@ bool ActPhyDBTimingAPI::ReadyForTimingDriven() {
   return true;
 }
 
+bool ActPhyDBTimingAPI::ReadyForCriticalCycleTiming() const {
+#if PHYDB_USE_GALOIS == 0
+  return false;
+#else
+  return UpdateTimingIncrementalCB != nullptr && GetCriticalCycleCB != nullptr;
+#endif
+}
+
+void ActPhyDBTimingAPI::SetGetCriticalCycleCB(
+    bool (*callback_function)(double *period, int *unroll_factor)) {
+  GetCriticalCycleCB = callback_function;
+}
+
+bool ActPhyDBTimingAPI::ReadyForCriticalCycleNets() const {
+#if PHYDB_USE_GALOIS == 0
+  return false;
+#else
+  return ReadyForCriticalCycleTiming() &&
+         GetPerformanceWitnessCB != nullptr;
+#endif
+}
+
 bool ActPhyDBTimingAPI::IsActNetPtrExisting(void *act_net) {
   return net_act_2_id_.find(act_net) != net_act_2_id_.end();
 }
@@ -425,6 +447,29 @@ void ActPhyDBTimingAPI::GetPerformanceWitness(
   std::vector<ActEdge> act_path;
   GetPerformanceWitnessCB(performance_id, act_path);
   TranslateActPathToPhydbPath(act_path, phydb_path);
+}
+
+bool ActPhyDBTimingAPI::GetCriticalCyclePeriod(double *period,
+                                               int *unroll_factor) const {
+  if (period == nullptr || unroll_factor == nullptr ||
+      GetCriticalCycleCB == nullptr) {
+    return false;
+  }
+  return GetCriticalCycleCB(period, unroll_factor);
+}
+
+void ActPhyDBTimingAPI::GetCriticalCycleNetTiming(
+    std::vector<PhydbNetTimingStep> &steps) {
+  PhyDBExpects(GetPerformanceWitnessCB != nullptr,
+               "Callback function for GetCriticalCycleNetTiming() is not set");
+  std::vector<ActEdge> act_path;
+  GetPerformanceWitnessCB(0, act_path);
+  steps.clear();
+  steps.reserve(act_path.size());
+  for (const ActEdge &edge : act_path) {
+    if (edge.net_ptr == nullptr || !IsActNetPtrExisting(edge.net_ptr)) continue;
+    steps.push_back({ActNetPtr2Id(edge.net_ptr), edge.delay});
+  }
 }
 
 void ActPhyDBTimingAPI::TranslateActPathToPhydbPath(

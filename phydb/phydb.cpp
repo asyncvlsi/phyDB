@@ -719,6 +719,11 @@ void PhyDB::SetGetPerformanceWitnessCB(
   timing_api_.SetGetPerformanceWitnessCB(callback_function);
 }
 
+void PhyDB::SetGetCriticalCycleCB(
+    bool (*callback_function)(double *period, int *unroll_factor)) {
+  timing_api_.SetGetCriticalCycleCB(callback_function);
+}
+
 bool PhyDB::IsDriverPin(PhydbPin &phydb_pin) {
   int comp_id = phydb_pin.InstanceId();
   Macro *macro_ptr = design_.GetComponentsRef()[comp_id].GetMacro();
@@ -771,22 +776,42 @@ galois::eda::utility::ExtNetlistAdaptor *PhyDB::GetNetlistAdaptor() {
   return timing_api_.GetNetlistAdaptor();
 }
 
-void PhyDB::CreatePhydbActAdaptor() {
+void PhyDB::CreatePhydbActAdaptor(bool require_all_nets) {
   auto *timer_adaptor = GetNetlistAdaptor();
   PhyDBExpects(timer_adaptor != nullptr,
                "Timer netlist adaptor no found! Cannot build phydb-act adaptor");
   int number_of_nets = static_cast<int>(design_.GetNetsRef().size());
   for (int i = 0; i < number_of_nets; ++i) {
     Net &net = design_.GetNetsRef()[i];
+    // Top-level DEF I/O connectivity may be represented by layout-generated
+    // adapter nets that do not exist in Cyclone's internal timing graph.
+    if (!require_all_nets && !net.GetIoPinIdsRef().empty()) continue;
     void *act_net = timer_adaptor->getNetFromFullName(net.GetName(), '.');
-    PhyDBExpects(
-        act_net != nullptr,
-        "Net cannot be found in the timer netlist adaptor: " << net.GetName()
-    );
-    timing_api_.AddActNetPtrIdPair(act_net, i);
+    if (act_net == nullptr) {
+      PhyDBExpects(!require_all_nets,
+                   "Net cannot be found in the timer netlist adaptor: "
+                       << net.GetName());
+      continue;
+    }
+    bool all_pins_mapped = true;
+    for (auto &phydb_pin : net.GetPinsRef()) {
+      std::string pin_name = GetFullCompPinName(phydb_pin, ':');
+      if (timer_adaptor->getPinFromFullName(pin_name) == nullptr) {
+        all_pins_mapped = false;
+        break;
+      }
+    }
+    if (!all_pins_mapped) {
+      PhyDBExpects(!require_all_nets,
+                   "A pin on net cannot be found in the timer netlist "
+                   "adaptor: "
+                       << net.GetName());
+      continue;
+    }
 
-    for (auto &physb_pin : net.GetPinsRef()) {
-      BindPhydbPinToActPin_(physb_pin);
+    timing_api_.AddActNetPtrIdPair(act_net, i);
+    for (auto &phydb_pin : net.GetPinsRef()) {
+      BindPhydbPinToActPin_(phydb_pin);
     }
   }
 }
@@ -805,7 +830,8 @@ void PhyDB::AddNetsAndCompPinsToSpefManager() {
   int number_of_nets = (int) design_.GetNetsRef().size();
   for (int i = 0; i < number_of_nets; ++i) {
     Net &net = design_.GetNetsRef()[i];
-    void *act_net = timing_api_.net_id_2_act_[i];
+    void *act_net = timing_api_.PhydbNetId2ActPtr(i);
+    if (act_net == nullptr) continue;
     PhyDBExpects(
         act_net != nullptr,
         "Cannot map from a PhyDB net to an ACT net, net name: "
