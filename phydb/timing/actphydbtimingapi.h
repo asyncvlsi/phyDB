@@ -187,6 +187,9 @@ class ActPhyDBTimingAPI {
       int timing_constraint_id, std::vector<ActEdge> &path));
   void SetGetFastWitnessCB(void (*callback_function)(
       int timing_constraint_id, std::vector<ActEdge> &path));
+  void SetGetConstraintEndpointsCB(bool (*callback_function)(
+      int timing_constraint_id, PhydbPin &root, PhydbPin &fast_terminal,
+      PhydbPin &slow_terminal));
   void SetGetNumPerformanceConstraintsCB(int (*callback_function)());
   void SetSpecifyPerformanceTopKsCB(void (*callback_function)(int top_k));
   void SetSpecifyPerformanceTopKCB(void (*callback_function)(int performance_id,
@@ -221,6 +224,9 @@ class ActPhyDBTimingAPI {
   void UpdateTimingIncremental();
   double GetSlack(int tc_num);
   void GetViolatedTimingConstraints(std::vector<int> &violated_tc_nums);
+  bool GetConstraintEndpoints(int tc_num, PhydbPin &root,
+                              PhydbPin &fast_terminal,
+                              PhydbPin &slow_terminal);
 
 #if PHYDB_USE_GALOIS
   void SetParaManager(galois::eda::parasitics::Manager *manager);
@@ -260,6 +266,9 @@ class ActPhyDBTimingAPI {
                            std::vector<ActEdge> &path) = nullptr;
   void (*GetFastWitnessCB)(int timing_constraint_id,
                            std::vector<ActEdge> &path) = nullptr;
+  bool (*GetConstraintEndpointsCB)(int timing_constraint_id, PhydbPin &root,
+                                   PhydbPin &fast_terminal,
+                                   PhydbPin &slow_terminal) = nullptr;
   int (*GetNumPerformanceConstraintsCB)() = nullptr;
   void (*SpecifyPerformanceTopKsCB)(int top_k) = nullptr;
   void (*SpecifyPerformanceTopKCB)(int performance_id, int top_k) = nullptr;

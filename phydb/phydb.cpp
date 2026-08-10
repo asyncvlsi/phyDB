@@ -675,6 +675,11 @@ void PhyDB::SetGetFastWitnessCB(
   timing_api_.SetGetFastWitnessCB(callback_function);
 }
 
+void PhyDB::SetGetConstraintEndpointsCB(
+    bool (*callback_function)(int, PhydbPin &, PhydbPin &, PhydbPin &)) {
+  timing_api_.SetGetConstraintEndpointsCB(callback_function);
+}
+
 void PhyDB::SetGetNumPerformanceConstraintsCB(int (*callback_function)()) {
   timing_api_.SetGetNumPerformanceConstraintsCB(callback_function);
 }

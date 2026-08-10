@@ -271,6 +271,18 @@ void ActPhyDBTimingAPI::SetGetFastWitnessCB(
   GetFastWitnessCB = callback_function;
 }
 
+void ActPhyDBTimingAPI::SetGetConstraintEndpointsCB(
+    bool (*callback_function)(int, PhydbPin &, PhydbPin &, PhydbPin &)) {
+  GetConstraintEndpointsCB = callback_function;
+}
+
+bool ActPhyDBTimingAPI::GetConstraintEndpoints(
+    int tc_num, PhydbPin &root, PhydbPin &fast_terminal,
+    PhydbPin &slow_terminal) {
+  if (GetConstraintEndpointsCB == nullptr) return false;
+  return GetConstraintEndpointsCB(tc_num, root, fast_terminal, slow_terminal);
+}
+
 void ActPhyDBTimingAPI::SetGetNumPerformanceConstraintsCB(
     int (*callback_function)()
 ) {

@@ -79,6 +79,16 @@ void GetWitness(int, std::vector<phydb::ActEdge> &path) {
   path.push_back({&source_pin, &target_pin, witness_net, 12.5});
 }
 
+bool GetConstraintEndpoints(int constraint_id, phydb::PhydbPin &root,
+                            phydb::PhydbPin &fast_terminal,
+                            phydb::PhydbPin &slow_terminal) {
+  if (constraint_id != 7) return false;
+  root = phydb::PhydbPin(1, 2);
+  fast_terminal = phydb::PhydbPin(3, 4);
+  slow_terminal = phydb::PhydbPin(5, 6);
+  return true;
+}
+
 bool CheckOptionalIoNetPinBinding() {
   phydb::PhyDB db;
   phydb::Macro *macro = db.AddMacro("CELL");
@@ -149,10 +159,35 @@ bool CheckPhysicalEndpointNetIdentity() {
   return true;
 }
 
+bool CheckConstraintEndpointCallback() {
+  phydb::ActPhyDBTimingAPI timing_api;
+  phydb::PhydbPin root;
+  phydb::PhydbPin fast_terminal;
+  phydb::PhydbPin slow_terminal;
+  if (timing_api.GetConstraintEndpoints(7, root, fast_terminal,
+                                        slow_terminal)) {
+    fprintf(stderr, "constraint endpoints succeeded without a callback\n");
+    return false;
+  }
+  timing_api.SetGetConstraintEndpointsCB(GetConstraintEndpoints);
+  if (!timing_api.GetConstraintEndpoints(7, root, fast_terminal,
+                                         slow_terminal) ||
+      root != phydb::PhydbPin(1, 2) ||
+      fast_terminal != phydb::PhydbPin(3, 4) ||
+      slow_terminal != phydb::PhydbPin(5, 6) ||
+      timing_api.GetConstraintEndpoints(8, root, fast_terminal,
+                                        slow_terminal)) {
+    fprintf(stderr, "constraint endpoint callback did not preserve values\n");
+    return false;
+  }
+  return true;
+}
+
 } // namespace
 
 int main() {
-  return CheckOptionalIoNetPinBinding() && CheckPhysicalEndpointNetIdentity()
+  return CheckOptionalIoNetPinBinding() && CheckPhysicalEndpointNetIdentity() &&
+                 CheckConstraintEndpointCallback()
              ? 0
              : 1;
 }

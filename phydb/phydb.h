@@ -169,6 +169,9 @@ class PhyDB {
       int timing_constraint_id, std::vector<ActEdge> &path));
   void SetGetFastWitnessCB(void (*callback_function)(
       int timing_constraint_id, std::vector<ActEdge> &path));
+  void SetGetConstraintEndpointsCB(bool (*callback_function)(
+      int timing_constraint_id, PhydbPin &root, PhydbPin &fast_terminal,
+      PhydbPin &slow_terminal));
   // the following APIs are for performance constraints
   void SetGetNumPerformanceConstraintsCB(int (*callback_function)());
   void SetSpecifyPerformanceTopKsCB(void (*callback_function)(
