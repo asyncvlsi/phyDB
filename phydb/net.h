@@ -48,6 +48,16 @@ class Net {
   std::vector<Rect3D<int>> &GetRoutingGuidesRef();
   std::vector<Path> &GetPathsRef();
 
+  /**
+   * Record which pin drives this net.
+   *
+   * `pin_id` is a position within one of this net's two pin lists, and which
+   * one is decided by `is_driver_io_pin`: an index into GetPinsRef() for a
+   * component pin, or into GetIoPinIdsRef() for a design input port. A net
+   * driven from a port has no component driver, so a consumer that reads
+   * GetDriverPinId() without checking IsDriverIoPin() would index the wrong
+   * list.
+   */
   void SetDriverPin(bool is_driver_io_pin, int pin_id);
   bool IsDriverIoPin() const { return is_driver_io_pin_; }
   int GetDriverPinId() const { return driver_pin_id_; }
