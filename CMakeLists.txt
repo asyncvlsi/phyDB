@@ -5,6 +5,8 @@ project(
     LANGUAGES CXX
 )
 
+enable_testing()
+
 if(POLICY CMP0167)
     cmake_policy(SET CMP0167 NEW)
 endif()
@@ -97,6 +99,12 @@ target_link_libraries(PhyDB_test PRIVATE phydb)
 
 add_executable(parser_test test/test_parser.cpp)
 target_link_libraries(parser_test PRIVATE phydb)
+
+if(PHYDB_USE_GALOIS)
+  add_executable(phydb_act_adaptor_test test/test_act_adaptor.cpp)
+  target_link_libraries(phydb_act_adaptor_test PRIVATE phydb)
+  add_test(NAME phydb_act_adaptor_test COMMAND phydb_act_adaptor_test)
+endif()
 
 ############################################################################
 # Specify the installation directory: ${ACT_HOME}

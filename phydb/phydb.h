@@ -256,7 +256,7 @@ class PhyDB {
   ActPhyDBTimingAPI timing_api_;
 
 #if PHYDB_USE_GALOIS
-  void BindPhydbPinToActPin_(PhydbPin &phydb_pin);
+  bool BindPhydbPinToActPin_(PhydbPin &phydb_pin);
 #endif
 };
 

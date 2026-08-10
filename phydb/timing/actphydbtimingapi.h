@@ -173,6 +173,7 @@ class ActPhyDBTimingAPI {
   // APIs for ACT
   void AddActNetPtrIdPair(void *act_net, int net_id);
   void BindActPinAndPhydbPin(void *act_pin, PhydbPin phydb_pin);
+  void BindPhydbPinToNet(PhydbPin phydb_pin, int net_id);
 
   void SetGetNumConstraintsCB(int (*callback_function)());
   void SetSpecifyTopKsCB(void (*callback_function)(int));
@@ -213,6 +214,7 @@ class ActPhyDBTimingAPI {
   bool IsActComPinPtrExisting(void *act_pin);
   PhydbPin ActCompPinPtr2Id(void *act_pin);
   void *PhydbCompPin2ActPtr(PhydbPin phydb_pin);
+  int PhydbPin2NetId(PhydbPin phydb_pin) const;
   int GetNumConstraints();
   void SpecifyTopKs(int k);
   void SpecifyTopK(int tc_num, int k);
@@ -276,6 +278,7 @@ class ActPhyDBTimingAPI {
   // act component-pin pointer <=> phydb component-pin index
   std::unordered_map<void *, PhydbPin> component_pin_act_2_id_;
   std::unordered_map<PhydbPin, void *, PhydbPinHasher> component_pin_id_2_act_;
+  std::unordered_map<PhydbPin, int, PhydbPinHasher> phydb_pin_2_net_id_;
 #if PHYDB_USE_GALOIS
   galois::eda::parasitics::Manager *para_manager_;
   std::vector<galois::eda::model::CellLib *> libs_;

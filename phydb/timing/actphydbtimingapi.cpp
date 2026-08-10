@@ -195,6 +195,12 @@ void ActPhyDBTimingAPI::BindActPinAndPhydbPin(
   component_pin_id_2_act_.insert(tmp_pair_1);
 }
 
+void ActPhyDBTimingAPI::BindPhydbPinToNet(PhydbPin phydb_pin, int net_id) {
+  auto result = phydb_pin_2_net_id_.emplace(phydb_pin, net_id);
+  PhyDBExpects(result.second || result.first->second == net_id,
+               "PhyDB pin is connected to multiple nets: " << phydb_pin);
+}
+
 bool ActPhyDBTimingAPI::IsActComPinPtrExisting(void *act_pin) {
   return component_pin_act_2_id_.find(act_pin)
       != component_pin_act_2_id_.end();
@@ -213,6 +219,11 @@ void *ActPhyDBTimingAPI::PhydbCompPin2ActPtr(PhydbPin phydb_pin) {
     return ret->second;
   }
   return nullptr;
+}
+
+int ActPhyDBTimingAPI::PhydbPin2NetId(PhydbPin phydb_pin) const {
+  auto result = phydb_pin_2_net_id_.find(phydb_pin);
+  return result == phydb_pin_2_net_id_.end() ? -1 : result->second;
 }
 
 void ActPhyDBTimingAPI::SetGetNumConstraintsCB(int (*callback_function)()) {
@@ -483,26 +494,16 @@ void ActPhyDBTimingAPI::TranslateActPathToPhydbPath(
   for (size_t i = 0; i < sz; ++i) {
     ActEdge &act_edge = act_path[i];
     if (!IsActComPinPtrExisting(act_edge.source)) {
-      std::cout << "before getFullName4Pin() for source" << std::endl;
       std::string pin_name = adaptor_->getFullName4Pin(act_edge.source);
       PhyDBExpects(false,
                    "ActEdge source pin, " + pin_name
                        + " corresponds to no PhyDB pin");
     }
     if (!IsActComPinPtrExisting(act_edge.target)) {
-      std::cout << "before getFullName4Pin() for target" << std::endl;
       std::string pin_name = adaptor_->getFullName4Pin(act_edge.target);
       PhyDBExpects(false,
                    "ActEdge target pin, " + pin_name
                        + " corresponds to no PhyDB pin");
-    }
-    if ((act_edge.net_ptr != nullptr)
-        && !IsActNetPtrExisting(act_edge.net_ptr)) {
-      std::cout << "before getFullName4Net()" << std::endl;
-      std::string net_name = adaptor_->getFullName4Net(act_edge.net_ptr);
-      PhyDBExpects(false,
-                   "ActEdge net_ptr, " + net_name
-                       + " corresponds to no PhyDB net");
     }
     PhyDBExpects(act_edge.delay >= 0, "Negative delay?");
 
@@ -512,7 +513,24 @@ void ActPhyDBTimingAPI::TranslateActPathToPhydbPath(
 
     PhydbPin source = ActCompPinPtr2Id(act_edge.source);
     PhydbPin target = ActCompPinPtr2Id(act_edge.target);
-    int net_index = ActNetPtr2Id(act_edge.net_ptr);
+    int net_index = -1;
+    if (act_edge.net_ptr != nullptr) {
+      const int source_net = PhydbPin2NetId(source);
+      const int target_net = PhydbPin2NetId(target);
+      if (source_net >= 0 || target_net >= 0) {
+        // Flattened ACT net names can collide, so physical endpoints are the
+        // authoritative source for an interconnect edge. Cell arcs have no
+        // net pointer and therefore keep the sentinel net id.
+        PhyDBExpects(source_net >= 0 && source_net == target_net,
+                     "Physical endpoints do not identify one common PhyDB net: "
+                     << "source " << source << ", target " << target);
+        net_index = source_net;
+      } else {
+        PhyDBExpects(IsActNetPtrExisting(act_edge.net_ptr),
+                     "Timing edge corresponds to no PhyDB net");
+        net_index = ActNetPtr2Id(act_edge.net_ptr);
+      }
+    }
     double delay = act_edge.delay;
     phydb_path.AddEdge(source, target, net_index, delay, 1);
   }

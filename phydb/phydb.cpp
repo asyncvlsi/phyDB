@@ -783,36 +783,27 @@ void PhyDB::CreatePhydbActAdaptor(bool require_all_nets) {
   int number_of_nets = static_cast<int>(design_.GetNetsRef().size());
   for (int i = 0; i < number_of_nets; ++i) {
     Net &net = design_.GetNetsRef()[i];
-    // Top-level DEF I/O connectivity may be represented by layout-generated
-    // adapter nets that do not exist in Cyclone's internal timing graph.
-    if (!require_all_nets && !net.GetIoPinIdsRef().empty()) continue;
     void *act_net = timer_adaptor->getNetFromFullName(net.GetName(), '.');
     if (act_net == nullptr) {
       PhyDBExpects(!require_all_nets,
                    "Net cannot be found in the timer netlist adaptor: "
                        << net.GetName());
-      continue;
     }
     bool all_pins_mapped = true;
     for (auto &phydb_pin : net.GetPinsRef()) {
-      std::string pin_name = GetFullCompPinName(phydb_pin, ':');
-      if (timer_adaptor->getPinFromFullName(pin_name) == nullptr) {
+      timing_api_.BindPhydbPinToNet(phydb_pin, i);
+      if (!BindPhydbPinToActPin_(phydb_pin)) {
         all_pins_mapped = false;
-        break;
       }
     }
-    if (!all_pins_mapped) {
+    if (act_net == nullptr || !all_pins_mapped) {
       PhyDBExpects(!require_all_nets,
-                   "A pin on net cannot be found in the timer netlist "
-                   "adaptor: "
+                   "Net or pin cannot be found in the timer netlist adaptor: "
                        << net.GetName());
       continue;
     }
 
     timing_api_.AddActNetPtrIdPair(act_net, i);
-    for (auto &phydb_pin : net.GetPinsRef()) {
-      BindPhydbPinToActPin_(phydb_pin);
-    }
   }
 }
 
@@ -1255,7 +1246,7 @@ void PhyDB::WriteGuide(std::string const &guide_file_name) {
 }
 
 #if PHYDB_USE_GALOIS
-void PhyDB::BindPhydbPinToActPin_(PhydbPin &phydb_pin) {
+bool PhyDB::BindPhydbPinToActPin_(PhydbPin &phydb_pin) {
   auto *timer_adaptor = GetNetlistAdaptor();
   PhyDBExpects(
       timer_adaptor != nullptr,
@@ -1263,6 +1254,7 @@ void PhyDB::BindPhydbPinToActPin_(PhydbPin &phydb_pin) {
   );
   std::string pin_name = GetFullCompPinName(phydb_pin, ':');
   void *act_pin = timer_adaptor->getPinFromFullName(pin_name);
+  if (act_pin == nullptr) return false;
   if (timing_api_.IsActComPinPtrExisting(act_pin)) {
     if (timing_api_.ActCompPinPtr2Id(act_pin) != phydb_pin) {
       PhydbPin existing_pin = timing_api_.ActCompPinPtr2Id(act_pin);
@@ -1277,6 +1269,7 @@ void PhyDB::BindPhydbPinToActPin_(PhydbPin &phydb_pin) {
   } else {
     timing_api_.BindActPinAndPhydbPin(act_pin, phydb_pin);
   }
+  return true;
 }
 #endif
 
