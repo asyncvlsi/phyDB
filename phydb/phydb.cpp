@@ -27,6 +27,7 @@
 #include "defwriter.h"
 #include "phydb/common/helper.h"
 #include "phydb/timing/techconfigparser.h"
+#include <cstdlib>
 #include "lefdefparser.h"
 
 namespace phydb {
@@ -781,6 +782,23 @@ galois::eda::utility::ExtNetlistAdaptor *PhyDB::GetNetlistAdaptor() {
   return timing_api_.GetNetlistAdaptor();
 }
 
+/*
+ * Per-net/per-pin adaptor tracing, off unless SetAdaptorDebug(true) is called.
+ *
+ * CreatePhydbActAdaptor walks every net and every pin, so unconditional
+ * output here is one line per pin on a real design and buries genuine
+ * warnings. Kept because binding failures between PhyDB nets and the ACT
+ * netlist are otherwise invisible until something downstream reports a
+ * missing pin with no indication of which net it came from.
+ */
+void PhyDB::SetAdaptorDebug(bool adaptor_debug) {
+  adaptor_debug_ = adaptor_debug;
+}
+
+bool PhyDB::IsAdaptorDebug() const {
+  return adaptor_debug_;
+}
+
 void PhyDB::CreatePhydbActAdaptor(bool require_all_nets) {
   auto *timer_adaptor = GetNetlistAdaptor();
   PhyDBExpects(timer_adaptor != nullptr,
@@ -788,14 +806,23 @@ void PhyDB::CreatePhydbActAdaptor(bool require_all_nets) {
   int number_of_nets = static_cast<int>(design_.GetNetsRef().size());
   for (int i = 0; i < number_of_nets; ++i) {
     Net &net = design_.GetNetsRef()[i];
+    if (adaptor_debug_)
+      std::cerr << "[adaptor] net " << i << "/" << number_of_nets << " "
+              << net.GetName() << std::endl;
     void *act_net = timer_adaptor->getNetFromFullName(net.GetName(), '.');
+    if (adaptor_debug_)
+      std::cerr << "[adaptor]   getNetFromFullName ok, act_net=" << act_net
+              << " pins=" << net.GetPinsRef().size() << std::endl;
     if (act_net == nullptr) {
       PhyDBExpects(!require_all_nets,
                    "Net cannot be found in the timer netlist adaptor: "
                        << net.GetName());
     }
     bool all_pins_mapped = true;
+    int pin_index = 0;
     for (auto &phydb_pin : net.GetPinsRef()) {
+      if (adaptor_debug_)
+        std::cerr << "[adaptor]     pin " << pin_index++ << std::endl;
       timing_api_.BindPhydbPinToNet(phydb_pin, i);
       if (!BindPhydbPinToActPin_(phydb_pin)) {
         all_pins_mapped = false;

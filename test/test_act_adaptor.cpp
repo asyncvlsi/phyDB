@@ -10,8 +10,13 @@
  *************************************************************************
  */
 #include <cstdio>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
+
+#include <unistd.h>
 
 #include <galois/eda/utility/ExtNetlistAdaptor.h>
 
@@ -183,11 +188,69 @@ bool CheckConstraintEndpointCallback() {
   return true;
 }
 
+// Runs CreatePhydbActAdaptor on a one-net design and returns what it wrote
+// to stderr.
+std::string AdaptorTrace(bool adaptor_debug) {
+  phydb::PhyDB db;
+  phydb::Macro *macro = db.AddMacro("CELL");
+  macro->AddPin("Y", phydb::SignalDirection::OUTPUT, phydb::SignalUse::SIGNAL);
+  db.AddComponent("driver", macro, phydb::PlaceStatus::PLACED, 0, 0,
+                  phydb::CompOrient::N);
+  db.AddNet("out");
+  db.AddCompPinToNet("driver", "Y", "out");
+  TestNetlistAdaptor adaptor;
+  db.SetNetlistAdaptor(&adaptor);
+  db.SetAdaptorDebug(adaptor_debug);
+
+  char path[] = "/tmp/phydb_adaptor_trace.XXXXXX";
+  int fd = mkstemp(path);
+  if (fd < 0) return "<mkstemp failed>";
+  std::cerr.flush();
+  fflush(stderr);
+  int saved = dup(STDERR_FILENO);
+  dup2(fd, STDERR_FILENO);
+  db.CreatePhydbActAdaptor(false);
+  std::cerr.flush();
+  fflush(stderr);
+  dup2(saved, STDERR_FILENO);
+  close(saved);
+  close(fd);
+  std::ifstream in(path);
+  std::stringstream text;
+  text << in.rdbuf();
+  unlink(path);
+  return text.str();
+}
+
+// Tracing is controlled only by SetAdaptorDebug: off by default, on when set,
+// whatever the environment holds.
+bool CheckAdaptorDebugIsExplicit() {
+  phydb::PhyDB db;
+  if (db.IsAdaptorDebug()) {
+    fprintf(stderr, "adaptor debug is on by default\n");
+    return false;
+  }
+  setenv("PHYDB_ADAPTOR_DEBUG", "1", 1);
+  std::string off = AdaptorTrace(false);
+  unsetenv("PHYDB_ADAPTOR_DEBUG");
+  std::string on = AdaptorTrace(true);
+  if (off.find("[adaptor]") != std::string::npos) {
+    fprintf(stderr, "adaptor traced with debug off: %s\n", off.c_str());
+    return false;
+  }
+  if (on.find("[adaptor] net 0/1 out") == std::string::npos) {
+    fprintf(stderr, "adaptor did not trace with debug on: '%s'\n",
+            on.c_str());
+    return false;
+  }
+  return true;
+}
+
 } // namespace
 
 int main() {
   return CheckOptionalIoNetPinBinding() && CheckPhysicalEndpointNetIdentity() &&
-                 CheckConstraintEndpointCallback()
+                 CheckConstraintEndpointCallback() && CheckAdaptorDebugIsExplicit()
              ? 0
              : 1;
 }

@@ -208,6 +208,9 @@ class PhyDB {
    * those auxiliary nets explicitly.
    */
   void CreatePhydbActAdaptor(bool require_all_nets = true);
+  // Per-net/per-pin tracing in CreatePhydbActAdaptor; off by default.
+  void SetAdaptorDebug(bool adaptor_debug);
+  bool IsAdaptorDebug() const;
   void AddNetsAndCompPinsToSpefManager();
 #endif
 
@@ -257,6 +260,7 @@ class PhyDB {
   Tech tech_;
   Design design_;
   ActPhyDBTimingAPI timing_api_;
+  bool adaptor_debug_ = false;
 
 #if PHYDB_USE_GALOIS
   bool BindPhydbPinToActPin_(PhydbPin &phydb_pin);
