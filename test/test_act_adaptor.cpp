@@ -188,6 +188,23 @@ bool CheckConstraintEndpointCallback() {
   return true;
 }
 
+bool IsForkVacuous(int constraint_id) { return constraint_id == 3; }
+
+bool CheckForkVacuousCallback() {
+  phydb::ActPhyDBTimingAPI timing_api;
+  // Hosts that never register the callback report no vacuous forks.
+  if (timing_api.IsForkVacuous(3)) {
+    fprintf(stderr, "fork reported vacuous without a callback\n");
+    return false;
+  }
+  timing_api.SetIsForkVacuousCB(IsForkVacuous);
+  if (!timing_api.IsForkVacuous(3) || timing_api.IsForkVacuous(4)) {
+    fprintf(stderr, "vacuous-fork callback did not preserve values\n");
+    return false;
+  }
+  return true;
+}
+
 // Runs CreatePhydbActAdaptor on a one-net design and returns what it wrote
 // to stderr.
 std::string AdaptorTrace(bool adaptor_debug) {
@@ -250,7 +267,8 @@ bool CheckAdaptorDebugIsExplicit() {
 
 int main() {
   return CheckOptionalIoNetPinBinding() && CheckPhysicalEndpointNetIdentity() &&
-                 CheckConstraintEndpointCallback() && CheckAdaptorDebugIsExplicit()
+                 CheckConstraintEndpointCallback() &&
+                 CheckForkVacuousCallback() && CheckAdaptorDebugIsExplicit()
              ? 0
              : 1;
 }

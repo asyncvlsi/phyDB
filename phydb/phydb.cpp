@@ -681,6 +681,10 @@ void PhyDB::SetGetConstraintEndpointsCB(
   timing_api_.SetGetConstraintEndpointsCB(callback_function);
 }
 
+void PhyDB::SetIsForkVacuousCB(bool (*callback_function)(int)) {
+  timing_api_.SetIsForkVacuousCB(callback_function);
+}
+
 void PhyDB::SetGetNumPerformanceConstraintsCB(int (*callback_function)()) {
   timing_api_.SetGetNumPerformanceConstraintsCB(callback_function);
 }

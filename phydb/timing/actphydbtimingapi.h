@@ -187,6 +187,9 @@ class ActPhyDBTimingAPI {
       int timing_constraint_id, std::vector<ActEdge> &path));
   void SetGetFastWitnessCB(void (*callback_function)(
       int timing_constraint_id, std::vector<ActEdge> &path));
+  // Optional. A vacuous fork has a constant fast end, so it can never be
+  // violated; hosts that do not register this report no vacuous forks.
+  void SetIsForkVacuousCB(bool (*callback_function)(int timing_constraint_id));
   void SetGetConstraintEndpointsCB(bool (*callback_function)(
       int timing_constraint_id, PhydbPin &root, PhydbPin &fast_terminal,
       PhydbPin &slow_terminal));
@@ -224,6 +227,7 @@ class ActPhyDBTimingAPI {
   void UpdateTimingIncremental();
   double GetSlack(int tc_num);
   void GetViolatedTimingConstraints(std::vector<int> &violated_tc_nums);
+  bool IsForkVacuous(int tc_num);
   bool GetConstraintEndpoints(int tc_num, PhydbPin &root,
                               PhydbPin &fast_terminal,
                               PhydbPin &slow_terminal);
@@ -266,6 +270,7 @@ class ActPhyDBTimingAPI {
                            std::vector<ActEdge> &path) = nullptr;
   void (*GetFastWitnessCB)(int timing_constraint_id,
                            std::vector<ActEdge> &path) = nullptr;
+  bool (*IsForkVacuousCB)(int timing_constraint_id) = nullptr;
   bool (*GetConstraintEndpointsCB)(int timing_constraint_id, PhydbPin &root,
                                    PhydbPin &fast_terminal,
                                    PhydbPin &slow_terminal) = nullptr;

@@ -276,6 +276,16 @@ void ActPhyDBTimingAPI::SetGetConstraintEndpointsCB(
   GetConstraintEndpointsCB = callback_function;
 }
 
+void ActPhyDBTimingAPI::SetIsForkVacuousCB(
+    bool (*callback_function)(int timing_constraint_id)) {
+  IsForkVacuousCB = callback_function;
+}
+
+bool ActPhyDBTimingAPI::IsForkVacuous(int tc_num) {
+  if (IsForkVacuousCB == nullptr) return false;
+  return IsForkVacuousCB(tc_num);
+}
+
 bool ActPhyDBTimingAPI::GetConstraintEndpoints(
     int tc_num, PhydbPin &root, PhydbPin &fast_terminal,
     PhydbPin &slow_terminal) {
