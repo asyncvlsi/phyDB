@@ -21,6 +21,8 @@
 
 #include "actphydbtimingapi.h"
 
+#include <algorithm>
+
 #include "phydb/common/logging.h"
 
 namespace phydb {
@@ -199,6 +201,25 @@ void ActPhyDBTimingAPI::BindPhydbPinToNet(PhydbPin phydb_pin, int net_id) {
   auto result = phydb_pin_2_net_id_.emplace(phydb_pin, net_id);
   PhyDBExpects(result.second || result.first->second == net_id,
                "PhyDB pin is connected to multiple nets: " << phydb_pin);
+}
+
+void ActPhyDBTimingAPI::BindIoPinToNet(PhydbPin io_pin, int net_id) {
+  PhyDBExpects(!io_pin.IsComponentPin(),
+               "BindIoPinToNet expects an I/O pin: " << io_pin);
+  BindPhydbPinToNet(io_pin, net_id);
+  std::vector<PhydbPin> &io_pins = net_id_2_io_pins_[net_id];
+  if (std::find(io_pins.begin(), io_pins.end(), io_pin) == io_pins.end()) {
+    io_pins.push_back(io_pin);
+  }
+}
+
+bool ActPhyDBTimingAPI::IsPrimaryPseudoPin(void *act_pin) const {
+  if (adaptor_ == nullptr) return false;
+  const std::string name = adaptor_->getFullName4Pin(act_pin);
+  const std::size_t colon = name.rfind(':');
+  const std::string pin = name.substr(colon == std::string::npos ? 0
+                                                                 : colon + 1);
+  return pin.compare(0, 3, "pi$") == 0 || pin.compare(0, 3, "po$") == 0;
 }
 
 bool ActPhyDBTimingAPI::IsActComPinPtrExisting(void *act_pin) {
@@ -505,6 +526,19 @@ void ActPhyDBTimingAPI::GetCriticalCycleNetTiming(
   }
 }
 
+/*
+ * Translate a timer witness into PhyDB pins and nets.
+ *
+ * Every endpoint must be a bound component pin, with one exception: the
+ * timer's pseudo-pin for a primary input or output of the timed netlist
+ * (`pi$N` / `po$N`, see IsPrimaryPseudoPin) has no cell pin, so the one I/O
+ * pin on its net stands in for it (BindIoPinToNet). The net is the physical
+ * net of the edge's other, bound endpoint: flattened ACT net pointers collide,
+ * and on asymmetric_fork_join_io the output channel's acknowledge edge carried
+ * the net pointer of input.d[0]. The ACT net is used only when neither
+ * endpoint is bound. Any other unbound pin is a broken binding and aborts, as
+ * does a pseudo-pin whose net has no unique I/O pin.
+ */
 void ActPhyDBTimingAPI::TranslateActPathToPhydbPath(
     std::vector<ActEdge> &act_path,
     PhydbPath &phydb_path
@@ -513,28 +547,45 @@ void ActPhyDBTimingAPI::TranslateActPathToPhydbPath(
 
   size_t sz = act_path.size();
 
+  auto stand_in = [this](void *act_pin, int net_id, const char *role) {
+    auto io_pins = net_id_2_io_pins_.find(net_id);
+    if (IsPrimaryPseudoPin(act_pin) && io_pins != net_id_2_io_pins_.end() &&
+        io_pins->second.size() == 1) {
+      return io_pins->second.front();
+    }
+    std::string pin_name = adaptor_ != nullptr
+                               ? adaptor_->getFullName4Pin(act_pin)
+                               : std::string("<no netlist adaptor>");
+    PhyDBExpects(false, "ActEdge " << role << " pin, " << pin_name
+                 << " corresponds to no PhyDB pin, and is not a primary"
+                    " input/output with a unique I/O pin on its net");
+    return PhydbPin(-1, -1);
+  };
+
   for (size_t i = 0; i < sz; ++i) {
     ActEdge &act_edge = act_path[i];
-    if (!IsActComPinPtrExisting(act_edge.source)) {
-      std::string pin_name = adaptor_->getFullName4Pin(act_edge.source);
-      PhyDBExpects(false,
-                   "ActEdge source pin, " + pin_name
-                       + " corresponds to no PhyDB pin");
+    const bool source_bound = IsActComPinPtrExisting(act_edge.source);
+    const bool target_bound = IsActComPinPtrExisting(act_edge.target);
+    int edge_net = -1;
+    if (source_bound) {
+      edge_net = PhydbPin2NetId(ActCompPinPtr2Id(act_edge.source));
+    } else if (target_bound) {
+      edge_net = PhydbPin2NetId(ActCompPinPtr2Id(act_edge.target));
+    } else if (IsActNetPtrExisting(act_edge.net_ptr)) {
+      edge_net = ActNetPtr2Id(act_edge.net_ptr);
     }
-    if (!IsActComPinPtrExisting(act_edge.target)) {
-      std::string pin_name = adaptor_->getFullName4Pin(act_edge.target);
-      PhyDBExpects(false,
-                   "ActEdge target pin, " + pin_name
-                       + " corresponds to no PhyDB pin");
-    }
+    PhydbPin source = source_bound ? ActCompPinPtr2Id(act_edge.source)
+                                   : stand_in(act_edge.source, edge_net,
+                                              "source");
+    PhydbPin target = target_bound ? ActCompPinPtr2Id(act_edge.target)
+                                   : stand_in(act_edge.target, edge_net,
+                                              "target");
     PhyDBExpects(act_edge.delay >= 0, "Negative delay?");
 
     if (i == 0) {
-      phydb_path.root = ActCompPinPtr2Id(act_edge.source);
+      phydb_path.root = source;
     }
 
-    PhydbPin source = ActCompPinPtr2Id(act_edge.source);
-    PhydbPin target = ActCompPinPtr2Id(act_edge.target);
     int net_index = -1;
     if (act_edge.net_ptr != nullptr) {
       const int source_net = PhydbPin2NetId(source);

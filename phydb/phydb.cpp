@@ -832,6 +832,9 @@ void PhyDB::CreatePhydbActAdaptor(bool require_all_nets) {
         all_pins_mapped = false;
       }
     }
+    for (int io_pin_id : net.GetIoPinIdsRef()) {
+      timing_api_.BindIoPinToNet(PhydbPin(-1, io_pin_id), i);
+    }
     if (act_net == nullptr || !all_pins_mapped) {
       PhyDBExpects(!require_all_nets,
                    "Net or pin cannot be found in the timer netlist adaptor: "

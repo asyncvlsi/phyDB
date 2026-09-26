@@ -174,6 +174,18 @@ class ActPhyDBTimingAPI {
   void AddActNetPtrIdPair(void *act_net, int net_id);
   void BindActPinAndPhydbPin(void *act_pin, PhydbPin phydb_pin);
   void BindPhydbPinToNet(PhydbPin phydb_pin, int net_id);
+  /**
+   * Record that I/O pin `io_pin` (instance id -1) is on PhyDB net `net_id`.
+   *
+   * A primary input or output of the timed netlist has no cell pin, so a
+   * witness that starts at one names a timer pseudo-pin (`pi$N`) that no
+   * PhyDB component pin corresponds to. Its physical counterpart is the I/O
+   * pin on the net it drives; TranslateActPathToPhydbPath uses this record to
+   * substitute it.
+   */
+  void BindIoPinToNet(PhydbPin io_pin, int net_id);
+  /** True for the timer's `pi$N` / `po$N` pseudo-pins (by adaptor name). */
+  bool IsPrimaryPseudoPin(void *act_pin) const;
 
   void SetGetNumConstraintsCB(int (*callback_function)());
   void SetSpecifyTopKsCB(void (*callback_function)(int));
@@ -293,6 +305,8 @@ class ActPhyDBTimingAPI {
   std::unordered_map<void *, PhydbPin> component_pin_act_2_id_;
   std::unordered_map<PhydbPin, void *, PhydbPinHasher> component_pin_id_2_act_;
   std::unordered_map<PhydbPin, int, PhydbPinHasher> phydb_pin_2_net_id_;
+  // phydb net index => the I/O pins on it
+  std::unordered_map<int, std::vector<PhydbPin>> net_id_2_io_pins_;
 #if PHYDB_USE_GALOIS
   galois::eda::parasitics::Manager *para_manager_;
   std::vector<galois::eda::model::CellLib *> libs_;

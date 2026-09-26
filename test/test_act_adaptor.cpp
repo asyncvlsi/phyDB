@@ -11,11 +11,13 @@
  */
 #include <cstdio>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include <galois/eda/utility/ExtNetlistAdaptor.h>
@@ -40,7 +42,9 @@ public:
     return nullptr;
   }
 
-  std::string getFullName4Pin(void *const) const override { return "driver:Y"; }
+  std::string getFullName4Pin(void *const pin) const override {
+    return pin == pseudo_pin ? "kernel.cx0:pi$1" : "driver:Y";
+  }
   std::string getFullName4Inst(void *const) const override { return "driver"; }
   std::string getFullName4Net(void *const) const override { return "out"; }
   void *getInst4Pin(void *const) const override { return nullptr; }
@@ -65,6 +69,7 @@ public:
   bool isSamePin(void *const a, void *const b) const override { return a == b; }
 
   void *driver_pin() { return &driver_pin_; }
+  void *pseudo_pin = nullptr;  // named as the timer's primary-input pin
   const std::string &last_pin_name() const { return last_pin_name_; }
 
 private:
@@ -109,6 +114,10 @@ bool CheckOptionalIoNetPinBinding() {
   db.SetNetlistAdaptor(&adaptor);
   db.CreatePhydbActAdaptor(false);
 
+  if (db.GetTimingApi().PhydbPin2NetId(phydb::PhydbPin(-1, 0)) != 0) {
+    fprintf(stderr, "the net's I/O pin was not bound to it\n");
+    return false;
+  }
   if (!db.GetTimingApi().IsActComPinPtrExisting(adaptor.driver_pin())) {
     fprintf(stderr,
             "component endpoint on optional I/O net was not bound; pins=%zu "
@@ -205,6 +214,91 @@ bool CheckForkVacuousCallback() {
   return true;
 }
 
+int primary_input_pin;  // a timer `pi$N` pseudo-pin: bound to nothing
+int load_pin;
+int input_net;
+
+void GetPrimaryInputWitness(int, std::vector<phydb::ActEdge> &path) {
+  path.push_back({&primary_input_pin, &load_pin, &input_net, 4.0});
+}
+
+// Runs `body` in a child and reports whether it aborted.
+bool Aborts(const std::function<void()> &body) {
+  pid_t child = fork();
+  if (child == 0) {
+    freopen("/dev/null", "w", stderr);
+    freopen("/dev/null", "w", stdout);
+    body();
+    _exit(0);
+  }
+  int status = 0;
+  waitpid(child, &status, 0);
+  return !(WIFEXITED(status) && WEXITSTATUS(status) == 0);
+}
+
+// A witness that starts at a primary input translates, with the one I/O pin
+// on the load's physical net standing in for the pseudo-pin. The witness's ACT
+// net deliberately maps to another net with its own I/O pin, as colliding
+// flattened names did on asymmetric_fork_join_io: the physical net must win.
+// Binding the same I/O pin twice changes nothing. Without an I/O pin, or for
+// an unbound pin that is not a pseudo-pin, translation still aborts.
+bool CheckPrimaryInputMapsToIoPin() {
+  constexpr int net_id = 5;
+  constexpr int colliding_net_id = 9;
+  const phydb::PhydbPin io_pin(-1, 2);
+  const phydb::PhydbPin colliding_io_pin(-1, 0);
+  const phydb::PhydbPin load(7, 1);
+  auto build = [&](phydb::ActPhyDBTimingAPI &timing_api,
+                   TestNetlistAdaptor &adaptor, bool with_io_pin) {
+    timing_api.SetNetlistAdaptor(&adaptor);
+    timing_api.BindActPinAndPhydbPin(&load_pin, load);
+    timing_api.BindPhydbPinToNet(load, net_id);
+    if (with_io_pin) {
+      timing_api.BindIoPinToNet(io_pin, net_id);
+      timing_api.BindIoPinToNet(io_pin, net_id);
+    }
+    timing_api.BindIoPinToNet(colliding_io_pin, colliding_net_id);
+    timing_api.AddActNetPtrIdPair(&input_net, colliding_net_id);
+    timing_api.SetGetSlowWitnessCB(GetPrimaryInputWitness);
+  };
+  {
+    TestNetlistAdaptor adaptor;
+    adaptor.pseudo_pin = &primary_input_pin;
+    phydb::ActPhyDBTimingAPI timing_api;
+    build(timing_api, adaptor, true);
+    phydb::PhydbPath path;
+    timing_api.GetSlowWitness(0, path);
+    if (path.root != io_pin || path.edges.size() != 1 ||
+        path.edges.front().target != load ||
+        path.edges.front().net_index != net_id) {
+      fprintf(stderr, "primary-input witness did not map to its I/O pin\n");
+      return false;
+    }
+  }
+  if (!Aborts([&] {
+        TestNetlistAdaptor adaptor;
+        adaptor.pseudo_pin = &primary_input_pin;
+        phydb::ActPhyDBTimingAPI timing_api;
+        build(timing_api, adaptor, false);
+        phydb::PhydbPath path;
+        timing_api.GetSlowWitness(0, path);
+      })) {
+    fprintf(stderr, "a primary input with no I/O pin was translated\n");
+    return false;
+  }
+  if (!Aborts([&] {
+        TestNetlistAdaptor adaptor;  // names the unbound pin "driver:Y"
+        phydb::ActPhyDBTimingAPI timing_api;
+        build(timing_api, adaptor, true);
+        phydb::PhydbPath path;
+        timing_api.GetSlowWitness(0, path);
+      })) {
+    fprintf(stderr, "an unbound ordinary pin was given an I/O pin\n");
+    return false;
+  }
+  return true;
+}
+
 // Runs CreatePhydbActAdaptor on a one-net design and returns what it wrote
 // to stderr.
 std::string AdaptorTrace(bool adaptor_debug) {
@@ -268,7 +362,8 @@ bool CheckAdaptorDebugIsExplicit() {
 int main() {
   return CheckOptionalIoNetPinBinding() && CheckPhysicalEndpointNetIdentity() &&
                  CheckConstraintEndpointCallback() &&
-                 CheckForkVacuousCallback() && CheckAdaptorDebugIsExplicit()
+                 CheckForkVacuousCallback() && CheckAdaptorDebugIsExplicit() &&
+                 CheckPrimaryInputMapsToIoPin()
              ? 0
              : 1;
 }
