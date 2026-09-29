@@ -357,13 +357,28 @@ bool CheckAdaptorDebugIsExplicit() {
   return true;
 }
 
+/*
+ * A net the timer cannot bind is skipped: its wire RC never reaches timing.
+ * That must be visible in one summary line, even with the trace off. The
+ * fake adaptor knows no net, so "out" is unbound.
+ */
+bool CheckUnboundNetsAreSummarized() {
+  const std::string text = AdaptorTrace(false);
+  if (text.find("PhyDB: 1 net not bound to the timer") == std::string::npos ||
+      text.find(" out") == std::string::npos) {
+    fprintf(stderr, "unbound net not summarized: '%s'\n", text.c_str());
+    return false;
+  }
+  return true;
+}
+
 } // namespace
 
 int main() {
   return CheckOptionalIoNetPinBinding() && CheckPhysicalEndpointNetIdentity() &&
                  CheckConstraintEndpointCallback() &&
                  CheckForkVacuousCallback() && CheckAdaptorDebugIsExplicit() &&
-                 CheckPrimaryInputMapsToIoPin()
+                 CheckPrimaryInputMapsToIoPin() && CheckUnboundNetsAreSummarized()
              ? 0
              : 1;
 }

@@ -808,6 +808,7 @@ void PhyDB::CreatePhydbActAdaptor(bool require_all_nets) {
   PhyDBExpects(timer_adaptor != nullptr,
                "Timer netlist adaptor no found! Cannot build phydb-act adaptor");
   int number_of_nets = static_cast<int>(design_.GetNetsRef().size());
+  std::vector<std::string> unbound_nets;
   for (int i = 0; i < number_of_nets; ++i) {
     Net &net = design_.GetNetsRef()[i];
     if (adaptor_debug_)
@@ -839,10 +840,21 @@ void PhyDB::CreatePhydbActAdaptor(bool require_all_nets) {
       PhyDBExpects(!require_all_nets,
                    "Net or pin cannot be found in the timer netlist adaptor: "
                        << net.GetName());
+      unbound_nets.push_back(net.GetName());
       continue;
     }
 
     timing_api_.AddActNetPtrIdPair(act_net, i);
+  }
+  if (!unbound_nets.empty()) {
+    std::cerr << "PhyDB: " << unbound_nets.size()
+              << (unbound_nets.size() == 1 ? " net" : " nets")
+              << " not bound to the timer (net or a pin not in the timing "
+                 "graph), so no wire RC reaches it:";
+    const size_t shown = std::min<size_t>(unbound_nets.size(), 5);
+    for (size_t k = 0; k < shown; ++k) std::cerr << " " << unbound_nets[k];
+    if (shown < unbound_nets.size()) std::cerr << " ...";
+    std::cerr << std::endl;
   }
 }
 
