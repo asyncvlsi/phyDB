@@ -100,6 +100,10 @@ target_link_libraries(PhyDB_test PRIVATE phydb)
 add_executable(parser_test test/test_parser.cpp)
 target_link_libraries(parser_test PRIVATE phydb)
 
+add_executable(phydb_design_structure_test test/test_design_structure.cpp)
+target_link_libraries(phydb_design_structure_test PRIVATE phydb)
+add_test(NAME phydb_design_structure_test COMMAND phydb_design_structure_test)
+
 if(PHYDB_USE_GALOIS)
   add_executable(phydb_act_adaptor_test test/test_act_adaptor.cpp)
   target_link_libraries(phydb_act_adaptor_test PRIVATE phydb)

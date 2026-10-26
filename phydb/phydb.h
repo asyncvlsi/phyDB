@@ -26,6 +26,7 @@
 
 #include "datatype.h"
 #include "design.h"
+#include "phydb/structure/design_structure.h"
 #include "phydb/timing/actphydbtimingapi.h"
 #include "tech.h"
 
@@ -242,6 +243,14 @@ class PhyDB {
   void SaveWellToRectFile(std::string const &file_name);
 
   /************************************************
+   * Design structure recorded by synthesis (synth2 -H) and instantiated
+   * over the ACT hierarchy by interact. Empty unless explicitly loaded;
+   * no other phyDB API reads it.
+   * ************************************************/
+
+  DesignStructure &GetDesignStructureRef() { return design_structure_; }
+
+  /************************************************
    * The following APIs are for file IO
    * ************************************************/
 
@@ -262,6 +271,7 @@ class PhyDB {
   Design design_;
   ActPhyDBTimingAPI timing_api_;
   bool adaptor_debug_ = false;
+  DesignStructure design_structure_;
 
 #if PHYDB_USE_GALOIS
   bool BindPhydbPinToActPin_(PhydbPin &phydb_pin);
